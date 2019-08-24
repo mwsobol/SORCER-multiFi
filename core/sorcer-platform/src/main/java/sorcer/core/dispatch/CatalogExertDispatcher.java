@@ -26,6 +26,7 @@ import sorcer.core.Dispatcher;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -268,23 +269,25 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 			throws MogramException {
 
 		try {
-			ServiceTemplate st = new ServiceTemplate(null, new Class[]{Concatenator.class}, null);
-			ServiceItem[] concatenators = Accessor.get().getServiceItems(st, null);
+		    if (((ServiceSignature)block.getProcessSignature()).isRemote()) {
+                ServiceTemplate st = new ServiceTemplate(null, new Class[]{Concatenator.class}, null);
+                ServiceItem[] concatenators = Accessor.get().getServiceItems(st, null);
 			/*
 			 * check if there is any available concatenator in the network and
 			 * delegate the inner block to the available Concatenator. In the future, a
 			 * efficient load balancing algorithm should be implemented for
 			 * dispatching inner jobs. Currently, it only does round robin.
 			 */
-			for (int i = 0; i < concatenators.length; i++) {
-				if (concatenators[i] != null) {
-					if (!provider.getProviderID().equals(concatenators[i].serviceID)) {
-						logger.trace("Concatenator: [{}] ServiceID: {}", i, concatenators[i].serviceID);
-						Exerter rconcatenator = (Exerter) concatenators[i].service;
-						return rconcatenator.exert(block, null);
-					}
-				}
-			}
+                for (int i = 0; i < concatenators.length; i++) {
+                    if (concatenators[i] != null) {
+                        if (!provider.getProviderID().equals(concatenators[i].serviceID)) {
+                            logger.trace("Concatenator: [{}] ServiceID: {}", i, concatenators[i].serviceID);
+                            Exerter rconcatenator = (Exerter) concatenators[i].service;
+                            return rconcatenator.exert(block, null);
+                        }
+                    }
+                }
+            }
 
 			/*
 			 * Create a new explorer thread for the inner job, if no available
@@ -297,6 +300,13 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 			dispatcher = MogramDispatcherFactory.getFactory()
 					.createDispatcher(block, sharedContexts, true, provider);
 
+            for (Mogram mog : block.getMograms()) {
+                if (mog.getDataContext() != null && mog.getDataContext().getScope() == null) {
+                    if (block.getContext() != null) {
+                        mog.getDataContext().setScope(block.getContext());
+                    }
+                }
+            }
             dispatcher.exec(args);
 			// wait until a block is done by explorer
 			Block out = (Block) dispatcher.getResult().exertion;

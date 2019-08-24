@@ -87,6 +87,9 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                         se.setContext(previous);
                     dispatchExertion(se, args);
                     previous = se.getContext();
+                    if (mogram instanceof Block) {
+                        xrt.getDataContext().append(previous);
+                    }
                 } else if (mogram instanceof EntModel) {
                     ((EntModel)mogram).updateEntries(xrt.getContext());
                     xrt.getDataContext().append((Context) ((Model) mogram).getResponse());
@@ -121,8 +124,9 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
             state = FAILED;
             try {
                 String pn = provider.getProviderName();
-                if (pn == null)
+                if (pn == null) {
                     pn = provider.getClass().getName();
+                }
                 RoutineException fe = new RoutineException(pn
                         + " received failed task: " + se.getName(), se);
                 xrt.reportException(fe);
