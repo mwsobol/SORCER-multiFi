@@ -549,6 +549,9 @@ public class DataTable implements ModelTable, Response, rsp {
 		setColumnIdentifiers(convertToList(newIdentifiers));
 	}
 
+	public void setRowIdentifiers(Object[] newIdentifiers) {
+		setRowIdentifiers(convertToList(newIdentifiers));
+	}
 	/**
 	 * Sets the number of columns in the model. If the new size is greater than
 	 * the current size, new columns are added to the end of the model with
