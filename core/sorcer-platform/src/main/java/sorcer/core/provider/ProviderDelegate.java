@@ -2109,15 +2109,15 @@ public class ProviderDelegate {
 		/**
 		 * initializes this config object (loads all information).
 		 */
-		public void init(boolean exitOnEmptyName, String propsFilename) {
+		public void init(boolean exitOnEmptyName, String providerCinfigFilename) {
 			// load configuration from a provider properties file
-			logger.info("propsFilename = " + propsFilename);
-			if (propsFilename != null && propsFilename.length() > 0)
-				loadConfiguration(propsFilename);
+			logger.info("provider config filename = " + providerCinfigFilename);
+			if (providerCinfigFilename != null && providerCinfigFilename.length() > 0)
+				loadConfiguration(providerCinfigFilename);
 			// load configuration as defined in provider Jini configuration file
 			// or as defined in SBP in relevant opstrings
 			loadJiniConfiguration(jiniConfig);
-			checkProviderName(exitOnEmptyName);
+			checkProviderName(exitOnEmptyName, providerCinfigFilename);
 			fillInProviderHost();
 			logger.info("*** provider deployment configuration: \n"
 				+ GenericUtil.getPropertiesString(props));
@@ -2127,11 +2127,11 @@ public class ProviderDelegate {
 			return jiniConfig;
 		}
 
-		private void checkProviderName(boolean exitOnEmptyName) {
+		private void checkProviderName(boolean exitOnEmptyName, String providerCinfigFilename) {
 			String str;
 			String providerName;
 
-			// set provider key if defined in provider's properties
+			// set provider name if defined in provider's properties
 			str = getProperty(P_PROVIDER_NAME);
 			if (str != null) {
 				providerName = str.trim();
@@ -2139,11 +2139,13 @@ public class ProviderDelegate {
 					props.setProperty(P_PROVIDER_NAME, providerName);
 			} else {
 				if (exitOnEmptyName) {
-					logger.error("Provider HALTED: its key not defined in the provider config file");
+					logger.error("Provider HALTED: its name not defined in the provider config file: "
+						+ providerCinfigFilename);
 					try {
 						provider.destroy();
 					} catch (Exception e) {
-						logger.warn("Problem trying to destroy the provider due to empty key in the provider config file");
+						logger.warn("Problem trying to destroy the provider due to empty key in the provider config file: "
+							+ providerCinfigFilename);
 					}
 				}
 			}

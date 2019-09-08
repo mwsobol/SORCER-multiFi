@@ -3583,6 +3583,11 @@ operator extends Operator {
         return signature;
     }
 
+    public static Signature discSig(Signature signature) {
+        ((ServiceSignature)signature).addRank(new Kind[]{Kind.DISCIPLINE, Kind.TASKER});
+        return signature;
+    }
+
     public static Signature modelSig(Signature signature) {
         ((ServiceSignature)signature).addRank(new Kind[]{Kind.MODEL, Kind.TASKER});
         return signature;
