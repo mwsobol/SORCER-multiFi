@@ -91,6 +91,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     protected Differentiator differentiator;
 
+    protected Differentiator fdDifferentiator;
+
     protected Fidelity<MdaEntry> mdaFi;
 
     protected List<Coupling> couplings;
@@ -1018,6 +1020,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     @Override
     public String getProjectionFi(String projectionName) throws ContextException, RemoteException {
         return ((FidelityManager)fiManager).getProjectionFi(projectionName);
+    }
+
+    public Differentiator getFdDifferentiator() {
+        return fdDifferentiator;
+    }
+
+    public void setFdDifferentiator(Differentiator fdDifferentiator) {
+        this.fdDifferentiator = fdDifferentiator;
     }
 
     public Differentiator getDifferentiator() {
