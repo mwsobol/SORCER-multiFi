@@ -26,6 +26,8 @@ public interface Differentiator {
 
 	public Functionality.Type getType();
 
+	public void setWrt(Wrt wrt);
+
 	public DataTable differentiate(Arg... args) throws EvaluationException;
 
 	public double[] getGradient(String gradientName) throws EvaluationException;
