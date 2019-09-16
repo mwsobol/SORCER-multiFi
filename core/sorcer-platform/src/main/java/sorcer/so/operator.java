@@ -206,11 +206,11 @@ public class operator extends Operator {
         return discipline.getout();
     }
 
-    public static Mogram result(Discipline discipline) {
+    public static Dispatcher result(Discipline discipline) {
         return discipline.getOutDispatcher();
     }
 
-    public static Mogram outDisp(Discipline discipline) {
+    public static Dispatcher outDisp(Discipline discipline) {
         return discipline.getOutDispatcher();
     }
 

@@ -55,7 +55,7 @@ public interface Discipline extends Service, Contextion {
      * @return a dispatcher of this discipline
      * @throws RoutineException
      */
-    public Subroutine getDispatcher() throws RoutineException;
+    public Dispatcher getDispatcher() throws RoutineException;
 
     /**
      * Returns an executed dispatcherof this discipline
@@ -63,7 +63,7 @@ public interface Discipline extends Service, Contextion {
      * @return an executed dispatcher of this discipline
      * @throws RoutineException
      */
-    public Subroutine getOutDispatcher();
+    public Dispatcher getOutDispatcher();
 
     /**
      * Returns a service governance multifidelity

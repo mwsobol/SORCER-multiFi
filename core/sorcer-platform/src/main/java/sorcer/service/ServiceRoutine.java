@@ -898,12 +898,12 @@ public abstract class ServiceRoutine extends ServiceMogram implements Subroutine
      *
      * @see sorcer.service.Evaluation#execute()
      */
-    public Object evaluate(Arg... entries) throws EvaluationException,
+    public Object evaluate(Arg... args) throws EvaluationException,
             RemoteException {
         Context cxt = null;
         try {
-            substitute(entries);
-            Subroutine evaluatedExertion = exert(entries);
+            substitute(args);
+            Subroutine evaluatedExertion = exert(args);
             Context.Return rp = (Context.Return)evaluatedExertion.getDataContext()
                     .getContextReturn();
             if (evaluatedExertion instanceof Job) {
@@ -935,6 +935,15 @@ public abstract class ServiceRoutine extends ServiceMogram implements Subroutine
             throw new InvocationException(e);
         }
         return cxt;
+    }
+
+    @Override
+    public Context dispatch(Context context, Arg... args) throws DispatchException, RemoteException {
+        try {
+            return evaluate(context,args);
+        } catch (EvaluationException e) {
+            throw new DispatchException(e);
+        }
     }
 
     /**

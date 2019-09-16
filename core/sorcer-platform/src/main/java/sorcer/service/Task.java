@@ -457,5 +457,4 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 	public Object get(String component) {
 		return ((ServiceFidelity)multiFi).getSelect(component);
 	}
-
 }
