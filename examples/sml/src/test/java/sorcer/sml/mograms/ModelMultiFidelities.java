@@ -556,7 +556,7 @@ public class ModelMultiFidelities {
         assertTrue(value(context(mog), "result/y").equals(500.0));
     }
 
-    public mog getMorphingModel() throws Exception {
+    public static mog getMorphingModel() throws Exception {
 
         sig add = sig("add", Adder.class,
             result("y1", inPaths("arg/x1", "arg/x2")));
@@ -717,5 +717,24 @@ public class ModelMultiFidelities {
 //        logger.info("result: " + getValue(context(mdlBlock), "mFi4"));
 
         assertTrue(value(context(mdlBlock), "morpher3").equals(920.0));
+    }
+
+    @Ignore
+    @Test
+    public void morphingDiscipline() throws Exception {
+
+        // cxtn1 is a free contextion for a discipline dipatcher
+        Block mdlDispatch = block(
+            loop(condition(cxt -> (double)
+                value(cxt, "morpher3") < 900.0), model("cxtn1")));
+
+        Discipline morphDis = disc(
+            cxtnFi("cxtn1", sig("cxtn1", ModelMultiFidelities.class, "getMorphingModel")),
+            dsptFi("dspt1", mdlDispatch));
+
+        // out is the discipline output
+        Context out  = eval(morphDis, fi("cxtn1", "dspt1"));
+
+
     }
 }

@@ -44,7 +44,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected ServiceFidelity dispatchMultiFi;
 
-    protected ServiceFidelity governanceMultiFi;
+    protected ServiceFidelity contextionMultiFi;
 
     // the input of this discipline
     protected Context input;
@@ -80,23 +80,46 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     public ServiceDiscipline(Subroutine... dispatchs) {
-        governanceMultiFi = new ServiceFidelity(dispatchs);
+        contextionMultiFi = new ServiceFidelity(dispatchs);
+    }
+
+    public ServiceDiscipline(Fidelity serviceFi, Fidelity dispatchFi) {
+        this(serviceFi, dispatchFi, null);
+    }
+
+    public ServiceDiscipline(Fidelity serviceFi, Fidelity dispatchFi, Fidelity contextFi) {
+        Subroutine dispatch = (Subroutine) dispatchFi.getSelect();
+        dispatch.setName(dispatchFi.getName());
+        Service service = (Service)serviceFi.getSelect();
+        if (service instanceof Signature) {
+            ((ServiceSignature)service).setName(serviceFi.getName());
+        } else if (service instanceof Request) {
+            ((Request)service).setName(serviceFi.getName());
+        }
+        dispatchMultiFi = new ServiceFidelity(new Subroutine[] { dispatch });
+        contextionMultiFi = new ServiceFidelity(new Service[] { service});
+
+        if (contextFi != null) {
+            Context context = (Context)contextFi.getSelect();
+            context.setName(contextFi.getName());
+            contextMultiFi = new ServiceFidelity(new Service[]{context});
+        }
     }
 
     public ServiceDiscipline(Service service, Subroutine dispatch) {
-        governanceMultiFi = new ServiceFidelity(new Service[] { service });
+        contextionMultiFi = new ServiceFidelity(new Service[] { service });
         dispatchMultiFi = new ServiceFidelity(new Service[] { dispatch });
     }
 
     public ServiceDiscipline(Service[] services, Subroutine[] dispatchs) {
-        governanceMultiFi = new ServiceFidelity(services);
+        contextionMultiFi = new ServiceFidelity(services);
         dispatchMultiFi = new ServiceFidelity(dispatchs);
     }
 
     public ServiceDiscipline(List<Service> services, List<Subroutine> dispatchs) {
         Subroutine[] cArray = new Subroutine[dispatchs.size()];
         Service[] pArray = new Subroutine[services.size()];
-        governanceMultiFi = new ServiceFidelity(services.toArray(cArray));
+        contextionMultiFi = new ServiceFidelity(services.toArray(cArray));
         dispatchMultiFi = new ServiceFidelity(dispatchs.toArray(pArray));
     }
 
@@ -105,7 +128,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     public void add(Service service, Subroutine dispatch, Context context) {
-        governanceMultiFi.getSelects().add(service);
+        contextionMultiFi.getSelects().add(service);
         dispatchMultiFi.getSelects().add(dispatch);
         if (context != null) {
             contextMultiFi.getSelects().add(context);
@@ -129,7 +152,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             ((Request)service).setName(serviceFi.getName());
         }
         dispatchMultiFi.getSelects().add(dispatch);
-        governanceMultiFi.getSelects().add((Service)service);
+        contextionMultiFi.getSelects().add((Service)service);
         if (contextFi != null) {
             contextFi.getSelects().add(contextFi.getSelect());
         }
@@ -138,10 +161,10 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     @Override
     public Service getGovernance() {
         // if no governance then dispatch is standalone
-        if (governanceMultiFi == null || governanceMultiFi.returnSelect() == null) {
+        if (contextionMultiFi == null || contextionMultiFi.returnSelect() == null) {
             return null;
         }
-        return governanceMultiFi.getSelect();
+        return contextionMultiFi.getSelect();
     }
 
     @Override
@@ -164,8 +187,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
-    public ServiceFidelity getGovernanceMultiFi() {
-        return governanceMultiFi;
+    public ServiceFidelity getContextionMultiFi() {
+        return contextionMultiFi;
     }
 
     public Service getout() {
@@ -281,10 +304,10 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         if (fi.getPath().isEmpty()) {
             DisciplineFidelity discFi = disciplineFidelities.get(fi.getName());
             dispatchMultiFi.selectSelect(discFi.getDispatcherFi().getName());
-            if (governanceMultiFi != null && discFi.getGovernanceFi() != null) {
-                governanceMultiFi.findSelect(discFi.getGovernanceFi().getName());
+            if (contextionMultiFi != null && discFi.getGovernanceFi() != null) {
+                contextionMultiFi.findSelect(discFi.getGovernanceFi().getName());
             } else {
-                governanceMultiFi.setSelect(null);
+                contextionMultiFi.setSelect(null);
             }
             if (contextMultiFi != null) {
                 if (discFi.getContextFi() != null) {
@@ -295,8 +318,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             }
         } else {
             dispatchMultiFi.selectSelect(fi.getPath());
-            if (governanceMultiFi != null) {
-                governanceMultiFi.selectSelect(fi.getName());
+            if (contextionMultiFi != null) {
+                contextionMultiFi.selectSelect(fi.getName());
             }
             if (contextMultiFi != null) {
                 contextMultiFi.selectSelect((String) fi.getSelect());
@@ -366,7 +389,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Context<Object> getContext(String path) throws ContextException, RemoteException {
-        return ((Mogram)governanceMultiFi.getSelect(path)).getContext();
+        return ((Mogram) contextionMultiFi.getSelect(path)).getContext();
     }
 
     @Override

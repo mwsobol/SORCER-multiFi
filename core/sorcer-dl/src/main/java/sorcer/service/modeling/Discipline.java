@@ -68,7 +68,7 @@ public interface Discipline extends Service, Contextion {
     /**
      * Returns a service governance multifidelity
      */
-    public ServiceFidelity getGovernanceMultiFi();
+    public ServiceFidelity getContextionMultiFi();
 
     /**
      * Returns a discipline input context.

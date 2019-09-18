@@ -895,6 +895,33 @@ public class operator {
         return multidisc.getDiscipline(name);
     }
 
+
+    public static Discipline disc(Fidelity... discFis) {
+        return disc((String)null, discFis);
+    }
+
+    public static Discipline disc(String name, Fidelity... discFis) {
+        ServiceDiscipline srvDisc = null;
+        if (discFis[0] instanceof DisciplineFidelity) {
+            srvDisc = new ServiceDiscipline(((DisciplineFidelity)discFis[0]).getGovernanceFi(),
+                ((DisciplineFidelity)discFis[0]).getDispatcherFi(),
+                ((DisciplineFidelity)discFis[0]).getContextFi());
+            srvDisc.getDisciplineFidelities().put(discFis[0].getName(), (DisciplineFidelity) discFis[0]);
+            for (int i = 1; i < discFis.length; i++) {
+                srvDisc.add(((DisciplineFidelity)discFis[i]).getGovernanceFi(),
+                    ((DisciplineFidelity)discFis[i]).getDispatcherFi(),
+                    ((DisciplineFidelity)discFis[0]).getContextFi());
+                srvDisc.getDisciplineFidelities().put(discFis[i].getName(), (DisciplineFidelity) discFis[i]);
+            }
+        } else {
+            srvDisc = new ServiceDiscipline(discFis[0], discFis[1]);
+        }
+        if (name != null) {
+            srvDisc.setName(name);
+        }
+        return srvDisc;
+    }
+
     public static Discipline add(Discipline disciplne, Service server, Subroutine client) {
         disciplne.add(server, client, null);
         return disciplne;
