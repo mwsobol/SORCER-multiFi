@@ -20,11 +20,8 @@ package sorcer.core.dispatch;
 import net.jini.config.ConfigurationException;
 import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
-import sorcer.service.Exerter;
+import sorcer.service.*;
 import sorcer.core.provider.ServiceExerter;
-import sorcer.service.Arg;
-import sorcer.service.Block;
-import sorcer.service.ContextException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +85,7 @@ public class BlockThread extends Thread {
 			logger.debug("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + result.state
 					+ " for block***\n" + block.getControlContext());
             this.result = (Block) result.exertion;
-        } catch (DispatcherException de) {
+        } catch (DispatchException de) {
 			de.printStackTrace();
 		}
 		//result = (Block) explorer.getMogram();

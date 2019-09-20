@@ -56,7 +56,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected Context outConnector;
 
-    // the executed governance
+    // the executed contextion
     protected Service out;
 
     // the executed dispatcher
@@ -159,8 +159,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
-    public Service getGovernance() {
-        // if no governance then dispatch is standalone
+    public Service getContextion() {
+        // if no contextion then dispatch is standalone
         if (contextionMultiFi == null || contextionMultiFi.returnSelect() == null) {
             return null;
         }
@@ -273,7 +273,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
                     throw new ServiceException(e);
                 }
             }
-            Subroutine xrt = (Subroutine) getDispatcher();
+            Subroutine xrt = getDispatcher();
             Context cxt = null;
             if (contextMultiFi != null) {
                 cxt = (Context) contextMultiFi.getSelect();
@@ -288,14 +288,14 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
                     xrt.setContext(input);
                 }
             }
-            out = getGovernance();
+            out = this.getContextion();
             if (out != null) {
                 xrt.dispatch(out);
             }
             outDispatcher = xrt.exert();
 
             return getOutput();
-        } catch (RemoteException e) {
+        } catch (DispatchException | RemoteException e) {
             throw new ServiceException(e);
         }
     }
@@ -304,8 +304,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         if (fi.getPath().isEmpty()) {
             DisciplineFidelity discFi = disciplineFidelities.get(fi.getName());
             dispatchMultiFi.selectSelect(discFi.getDispatcherFi().getName());
-            if (contextionMultiFi != null && discFi.getGovernanceFi() != null) {
-                contextionMultiFi.findSelect(discFi.getGovernanceFi().getName());
+            if (contextionMultiFi != null && discFi.getContextionFi() != null) {
+                contextionMultiFi.findSelect(discFi.getContextionFi().getName());
             } else {
                 contextionMultiFi.setSelect(null);
             }

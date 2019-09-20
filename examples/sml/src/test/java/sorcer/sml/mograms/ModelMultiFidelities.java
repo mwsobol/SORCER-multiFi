@@ -719,11 +719,10 @@ public class ModelMultiFidelities {
         assertTrue(value(context(mdlBlock), "morpher3").equals(920.0));
     }
 
-    @Ignore
     @Test
     public void morphingDiscipline() throws Exception {
 
-        // cxtn1 is a free contextion for a discipline dipatcher
+        // cxtn1 is a free contextion for a discipline dispatcher
         Block mdlDispatch = block(
             loop(condition(cxt -> (double)
                 value(cxt, "morpher3") < 900.0), model("cxtn1")));
@@ -734,6 +733,8 @@ public class ModelMultiFidelities {
 
         // out is the discipline output
         Context out  = eval(morphDis, fi("cxtn1", "dspt1"));
+
+        assertTrue(value(out, "morpher3").equals(920.0));
 
 
     }

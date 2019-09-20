@@ -36,6 +36,10 @@ public class ModelStrategy implements MogramStrategy, Serializable {
 
     private Opti optiType;
 
+    private List<Signature> signatures = new ArrayList<Signature>();
+
+    private  Map<String, Service> freeServices;
+
     protected transient FileURLHandler dataService;
 
     // dependency management for this Model
@@ -268,6 +272,18 @@ public class ModelStrategy implements MogramStrategy, Serializable {
 
     public void setModelDependeciesExecuted(boolean modelDependeciesExecuted) {
         this.modelDependeciesExecuted = modelDependeciesExecuted;
+    }
+
+    public Map<String, Service> getFreeServices() {
+        return freeServices;
+    }
+
+    public List<Signature> getSignatures() {
+        return signatures;
+    }
+
+    public void setSignatures(List<Signature> signatures) {
+        this.signatures = signatures;
     }
 
     public void setAccessType(Access access) {

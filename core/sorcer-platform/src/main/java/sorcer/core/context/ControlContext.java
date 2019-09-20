@@ -33,7 +33,7 @@ import java.io.StringWriter;
 import java.util.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class ControlContext extends ServiceContext<Object> implements StrategyContext {
+public class ControlContext extends ServiceContext<Object> implements RoutineStrategy {
 
 	private static final long serialVersionUID = 7280700425027799253L;
 
@@ -157,6 +157,8 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 	private List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
 
 	private List<Signature> signatures = new ArrayList<Signature>();
+
+	private  Map<String, Service> freeServices = new HashMap();
 
 	private List<String> traceList = new ArrayList<String>();
 
@@ -647,6 +649,10 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 			sb.append(exceptionTrace.stackTrace).append("\n");
 		}
 		return sb.toString();
+	}
+
+	public Map<String, Service> getFreeServices() {
+		return freeServices;
 	}
 
 	public List<Signature> getSignatures() {

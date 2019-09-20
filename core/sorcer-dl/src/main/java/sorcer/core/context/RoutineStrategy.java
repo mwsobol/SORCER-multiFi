@@ -20,9 +20,6 @@ import sorcer.service.Context;
 import sorcer.service.MogramStrategy;
 import sorcer.service.Strategy;
 
-/**
- * @author Rafał Krupiński
- */
-public interface StrategyContext extends MogramStrategy, Context<Object>, Strategy {
+public interface RoutineStrategy extends MogramStrategy, Context<Object>, Strategy {
 
 }

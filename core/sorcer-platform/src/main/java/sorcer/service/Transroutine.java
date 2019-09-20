@@ -129,6 +129,23 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 		return mograms;
 	}
 
+	public List<Mogram> getAllMograms() {
+		List<Mogram> allMograms = new ArrayList<>();
+		allMograms.addAll(mograms);
+		for (Mogram mog : mograms) {
+			mog.getMograms(allMograms);
+		}
+		return allMograms;
+	}
+
+	public List<Mogram> getMograms(List<Mogram> allMograms) {
+		allMograms.addAll(mograms);
+		for (Mogram mog : mograms) {
+			mog.getMograms(allMograms);
+		}
+		return allMograms;
+	}
+
 	public boolean hasChild(String childName) {
 		for (Mogram ext : mograms) {
 			if (ext.getName().equals(childName))

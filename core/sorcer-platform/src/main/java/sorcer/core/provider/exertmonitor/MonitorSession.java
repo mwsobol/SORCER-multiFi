@@ -23,7 +23,7 @@ import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ControlContext;
-import sorcer.core.context.StrategyContext;
+import sorcer.core.context.RoutineStrategy;
 import sorcer.core.exertion.AltTask;
 import sorcer.core.monitor.MonitorEvent;
 import sorcer.core.monitor.MonitorableSession;
@@ -238,7 +238,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		return lease;
 	}
 
-	public void update(Context<?> ctx, StrategyContext controlContext, int aspect) {
+	public void update(Context<?> ctx, RoutineStrategy controlContext, int aspect) {
 		if (ctx == null)
 			throw new NullPointerException("Assertion Failed: ctx cannot be NULL");
 		logger.info("Updating state of exertion: " + runtimeExertion.getName() + ": " + Exec.State.name(aspect));
@@ -251,7 +251,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		persist();
 	}
 
-	public void done(Context<?> ctx, StrategyContext controlContext) throws MonitorException {
+	public void done(Context<?> ctx, RoutineStrategy controlContext) throws MonitorException {
         logger.info("Done exertion: {}", runtimeExertion.getName());
 		if (ctx == null)
 			throw new NullPointerException("Assertion Failed: ctx cannot be null");
@@ -277,7 +277,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		mLandlord.remove(this);
 	}
 
-	public void failed(Context<?> ctx, StrategyContext controlContext) throws MonitorException {
+	public void failed(Context<?> ctx, RoutineStrategy controlContext) throws MonitorException {
 		if (ctx == null)
 			throw new NullPointerException("Assertion Failed: ctx cannot be NULL");
 

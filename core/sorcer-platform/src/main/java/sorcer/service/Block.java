@@ -124,10 +124,6 @@ public abstract class Block extends Transroutine {
 		return mograms;
 	}
 
-	public List<Mogram> getAllMograms() {
-		return mograms;
-	}
-	
 	/* (non-Javadoc)
 	 * @see sorcer.service.ServiceRoutine#linkContext(sorcer.service.Context, java.lang.String)
 	 */

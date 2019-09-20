@@ -105,20 +105,17 @@ public class ServiceSpacer extends SorcerExerterBean implements Spacer {
             logger.trace("*** TaskThread Started ***");
             try {
                 SpaceTaskDispatcher dispatcher = getDispatcherFactory(task).createDispatcher(task, provider);
-                try {
-                    task.getControlContext().appendTrace("spacer: "
-                            +(provider != null ? provider.getProviderName() + " " : "")
-                            + dispatcher.getClass().getName());
-                } catch (RemoteException e) {
-                    //ignore it, local prc
-                }
+                task.getControlContext().appendTrace("spacer: "
+                    +(provider != null ? provider.getProviderName() + " " : "")
+                    + dispatcher.getClass().getName());
+
                 dispatcher.exec();
                 DispatchResult dispatchResult = dispatcher.getResult();
                 logger.debug("Dispatcher State: " + dispatchResult.state);
-				result = (NetTask) dispatchResult.exertion;
-            } catch (DispatcherException e) {
-                logger.warn("Error while executing space task {}", task.getName(), e);
-                task.reportException(e);
+
+                result = (NetTask) dispatchResult.exertion;
+            } catch (DispatchException | RemoteException e) {
+                logger.warn("TaskThread failed for: " + task);
             }
         }
 

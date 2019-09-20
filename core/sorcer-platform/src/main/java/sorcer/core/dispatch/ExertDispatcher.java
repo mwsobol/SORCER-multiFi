@@ -197,7 +197,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         if(xrt.isProvisionable() && xrt.getDeployments().size()>0) {
             try {
                 provisionManager.deployServices();
-            } catch (DispatcherException e) {
+            } catch (DispatchException e) {
             	logger.warn("Unable to deploy services", e);
                 throw new RoutineException("Unable to deploy services", e);
             }

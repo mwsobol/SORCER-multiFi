@@ -2726,7 +2726,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see sorcer.service.Context#getGovernance()
+	 * @see sorcer.service.Context#getContextion()
 	 */
 	@Override
 	public Exerter getProvider() throws SignatureException {

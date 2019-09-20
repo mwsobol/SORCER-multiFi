@@ -19,6 +19,11 @@ package sorcer.service;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.context.model.ent.Function;
+import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.ServiceSignature;
+import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -32,10 +37,28 @@ import java.util.List;
  */
 public class FreeMogram extends ServiceMogram {
 
-    Mogram mogram;
+    private Mogram mogram;
 
     public FreeMogram(String name) {
         this.key = name;
+    }
+
+    public FreeMogram(String name, Functionality.Type type) {
+        this.key = name;
+        this.type = type;
+    }
+
+    public void bind(Signature signature) throws SignatureException, MogramException {
+        if (signature != null) {
+            mogram = (Mogram) ((ObjectSignature)signature).build();
+            builder = signature;
+        }
+        mogram.setBuilder(builder);
+        if (mogram instanceof Model) {
+            type = Functionality.Type.MODEL;
+        } else if (mogram instanceof Subroutine) {
+            type = Functionality.Type.ROUTINE;
+        }
     }
 
     @Override
@@ -70,6 +93,14 @@ public class FreeMogram extends ServiceMogram {
     @Override
     public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
         return null;
+    }
+
+    public boolean isModel() {
+        return type == Functionality.Type.MODEL;
+    }
+
+    public boolean isRoutine() {
+        return type == Functionality.Type.ROUTINE;
     }
 
     @Override

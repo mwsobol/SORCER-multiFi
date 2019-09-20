@@ -345,6 +345,8 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
      */
     public boolean isExportControlled();
 
+	List<Mogram> getMograms(List<Mogram> allMograms);
+
     /**
      *  Returns a signature builder that returns instances of this model.
      *  A inConnector specifies a map of an input context as needed by another collaborating service.

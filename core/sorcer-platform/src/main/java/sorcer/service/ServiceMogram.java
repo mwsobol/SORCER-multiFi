@@ -46,57 +46,33 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     static final long serialVersionUID = 1L;
 
     protected Uuid mogramId;
-
     protected Uuid parentId;
-
     protected Mogram parent;
-
     protected String parentPath = "";
-
     protected ExecPath execPath;
-
     protected Uuid sessionId;
-
     protected String subjectId;
-
     protected Subject subject;
-
     protected String ownerId;
-
     protected String runtimeId;
-
     protected Long lsbId;
-
     protected Long msbId;
-
     protected String domainId;
-
     protected String subdomainId;
-
     protected String domainName;
-
     protected String subdomainName;
-
     protected FidelityManagement fiManager;
-
     protected Projection projection;
-
     // the last morphed projection
     protected String[] metaFiNames;
-
     // list of fidelities of this mogram
     protected String[] profile;
-
     protected MogramStrategy mogramStrategy;
-
     protected Differentiator differentiator;
-
     protected Differentiator fdDifferentiator;
-
+    protected Differentiator globalDifferentiator;
     protected Fidelity<MdaEntry> mdaFi;
-
     protected List<Coupling> couplings;
-
     protected ContextSelector contextSelector;
 
     /**
@@ -1100,6 +1076,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     @Override
     public void appendTrace(String info) throws RemoteException {
 
+    }
+
+    public Differentiator getGlobalDifferentiator() {
+        return globalDifferentiator;
+    }
+
+    public void setGlobalDifferentiator(Differentiator globalDifferentiator) {
+        this.globalDifferentiator = globalDifferentiator;
     }
 
     @Override

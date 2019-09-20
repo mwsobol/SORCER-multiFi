@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import sorcer.core.context.StrategyContext;
+import sorcer.core.context.RoutineStrategy;
 import sorcer.core.provider.Jobber;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
@@ -74,7 +74,7 @@ public interface Subroutine extends Dependency, Dispatcher, Invocation<Object>, 
 	/**
 	 * Assigns a dispatch for this exertion.
 	 */
-	public void dispatch(Service service);
+	public void dispatch(Service service) throws DispatchException;
 
 	/**
 	 * Returns a deployment ID for this exertion.
@@ -147,7 +147,7 @@ public interface Subroutine extends Dependency, Dispatcher, Invocation<Object>, 
 	 * @return a control context
 
 	 */
-	public StrategyContext getControlContext();
+	public RoutineStrategy getControlContext();
 	
 	public String getExecTime();
 	

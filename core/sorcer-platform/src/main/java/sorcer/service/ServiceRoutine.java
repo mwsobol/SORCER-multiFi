@@ -90,8 +90,17 @@ public abstract class ServiceRoutine extends ServiceMogram implements Subroutine
     /*
      * Assigns a provider for this exertion.
      */
-    public void dispatch(Service service) {
+    public void dispatch(Service service) throws DispatchException {
         // to be implemented in subclasses
+        if (service instanceof Signature) {
+            if (controlContext.getFreeServices().get(((Signature) service).getName()) != null) {
+                try {
+                    ((FreeMogram)controlContext.getFreeServices().get(((Signature) service).getName())).bind((Signature)service);
+                } catch (SignatureException | MogramException e) {
+                    throw new DispatchException(e);
+                }
+            }
+        }
     }
 
     protected void init() {

@@ -85,7 +85,7 @@ public class ModelThread extends Thread {
 			logger.debug("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + result.state
 					+ " for block***\n" + task.getControlContext());
             this.result = (Task) result.exertion;
-        } catch (DispatcherException de) {
+        } catch (DispatchException de) {
 			de.printStackTrace();
 		}
 		//result = (Block) explorer.getMogram();

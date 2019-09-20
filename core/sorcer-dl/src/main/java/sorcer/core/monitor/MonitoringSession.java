@@ -19,7 +19,7 @@ package sorcer.core.monitor;
 
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.server.TransactionConstants;
-import sorcer.core.context.StrategyContext;
+import sorcer.core.context.RoutineStrategy;
 import sorcer.service.Context;
 import sorcer.service.MonitorException;
 import sorcer.service.Monitorable;
@@ -148,7 +148,7 @@ public interface MonitoringSession extends Serializable {
 	 *             if there is a communication error
 	 **/
 
-	void changed(Context ctx, StrategyContext controlContext, int aspect) throws RemoteException, MonitorException;
+	void changed(Context ctx, RoutineStrategy controlContext, int aspect) throws RemoteException, MonitorException;
 
 	/**
 	 * The lease for this session

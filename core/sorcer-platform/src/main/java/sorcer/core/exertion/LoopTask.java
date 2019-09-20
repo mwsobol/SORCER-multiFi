@@ -108,6 +108,10 @@ public class LoopTask extends ConditionalTask {
 	@Override
 	public Task doTask(Transaction txn, Arg... args) throws EvaluationException {
 		try {
+			// use bound mogram
+			if (target instanceof FreeMogram) {
+				target = ((FreeMogram)target).getMogram();
+			}
 			// update the scope of target
 			if (target.getScope() == null) {
 				target.setScope(scope);

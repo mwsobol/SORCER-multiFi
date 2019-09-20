@@ -29,7 +29,7 @@ import net.jini.id.Uuid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.UEID;
-import sorcer.core.context.StrategyContext;
+import sorcer.core.context.RoutineStrategy;
 import sorcer.core.monitor.MonitorEvent;
 import sorcer.core.monitor.MonitoringManagement;
 import sorcer.core.provider.MonitorManagementSession;
@@ -241,7 +241,7 @@ public class ExertMonitor extends ServiceExerter implements MonitoringManagement
 	 * @throws MonitorException
 	 *             1) If there is no such session 2) The session is not valid
 	 */
-    private void update(int aspect, Uuid cookie, Context ctx, StrategyContext controlContext) throws MonitorException {
+    private void update(int aspect, Uuid cookie, Context ctx, RoutineStrategy controlContext) throws MonitorException {
 		// Get the SessionResource corresponding to this cookie
 		MonitorSession resource = findSessionResource(cookie);
 		if (resource == null)
@@ -261,7 +261,7 @@ public class ExertMonitor extends ServiceExerter implements MonitoringManagement
 	 *             1) If there is no such session 2) The exertion does not
 	 *             belong to this session
      */
-    private void done(Uuid cookie, Context ctx, StrategyContext controlContext) throws MonitorException {
+    private void done(Uuid cookie, Context ctx, RoutineStrategy controlContext) throws MonitorException {
 		// Get the SessionResource corresponding to this cookie
 		MonitorSession resource = findSessionResource(cookie);
 		if (resource == null)
@@ -281,7 +281,7 @@ public class ExertMonitor extends ServiceExerter implements MonitoringManagement
 	 *             1) If there is no such session 2) The exertion does not
 	 *             belong to this session
 	 */
-	private void failed(Uuid cookie, Context ctx, StrategyContext controlContext) throws MonitorException {
+	private void failed(Uuid cookie, Context ctx, RoutineStrategy controlContext) throws MonitorException {
 		MonitorSession resource = findSessionResource(cookie);
 		if (resource == null)
 			throw new MonitorException("There exists no such session");
@@ -389,7 +389,7 @@ public class ExertMonitor extends ServiceExerter implements MonitoringManagement
     }
 
     @Override
-	public void update(Uuid cookie, Context ctx, StrategyContext controlContext, int aspect) throws MonitorException {
+	public void update(Uuid cookie, Context ctx, RoutineStrategy controlContext, int aspect) throws MonitorException {
 		if (aspect==Exec.UPDATED || aspect==Exec.PROVISION) {
 			update(aspect, cookie, ctx, controlContext);
 		} else if (aspect==Exec.DONE) {

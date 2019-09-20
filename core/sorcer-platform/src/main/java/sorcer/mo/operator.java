@@ -29,7 +29,6 @@ import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
-import sorcer.core.dispatch.DispatcherException;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
@@ -588,6 +587,10 @@ public class operator {
         return model;
     }
 
+    public static FreeMogram model(String name) {
+        return new FreeMogram(name, Functionality.Type.MODEL);
+    }
+
     public static Model model(Object... items) throws ContextException {
         String name = "unknown" + count++;
         boolean hasEntry = false;
@@ -867,7 +870,7 @@ public class operator {
         return new SrvModelAutoDeps((SrvModel)model).printDeps();
     }
 
-    public static boolean provision(Signature... signatures) throws  DispatcherException {
+    public static boolean provision(Signature... signatures) throws  DispatchException {
         ProvisionManager provisionManager = new ProvisionManager(Arrays.asList(signatures));
         return provisionManager.deployServices();
     }
@@ -903,12 +906,12 @@ public class operator {
     public static Discipline disc(String name, Fidelity... discFis) {
         ServiceDiscipline srvDisc = null;
         if (discFis[0] instanceof DisciplineFidelity) {
-            srvDisc = new ServiceDiscipline(((DisciplineFidelity)discFis[0]).getGovernanceFi(),
+            srvDisc = new ServiceDiscipline(((DisciplineFidelity)discFis[0]).getContextionFi(),
                 ((DisciplineFidelity)discFis[0]).getDispatcherFi(),
                 ((DisciplineFidelity)discFis[0]).getContextFi());
             srvDisc.getDisciplineFidelities().put(discFis[0].getName(), (DisciplineFidelity) discFis[0]);
             for (int i = 1; i < discFis.length; i++) {
-                srvDisc.add(((DisciplineFidelity)discFis[i]).getGovernanceFi(),
+                srvDisc.add(((DisciplineFidelity)discFis[i]).getContextionFi(),
                     ((DisciplineFidelity)discFis[i]).getDispatcherFi(),
                     ((DisciplineFidelity)discFis[0]).getContextFi());
                 srvDisc.getDisciplineFidelities().put(discFis[i].getName(), (DisciplineFidelity) discFis[i]);

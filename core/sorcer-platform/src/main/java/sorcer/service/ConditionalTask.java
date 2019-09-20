@@ -17,6 +17,7 @@
 
 package sorcer.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -48,6 +49,11 @@ abstract public class ConditionalTask extends Task {
 
 	public void setTarget(Mogram target) {
 		this.target = target;
+	}
+
+	public List<Mogram> getMograms(List<Mogram> list) {
+		list.addAll(getTargets());
+		return list;
 	}
 
 	/**

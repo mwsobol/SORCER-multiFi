@@ -17,6 +17,7 @@
 package sorcer.service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Mike Sobolewski on 8/2/15.
@@ -61,4 +62,7 @@ public interface MogramStrategy {
 
     public Strategy.Opti getOpti();
 
+    public List<Signature> getSignatures();
+
+    public Map<String, Service> getFreeServices();
 }

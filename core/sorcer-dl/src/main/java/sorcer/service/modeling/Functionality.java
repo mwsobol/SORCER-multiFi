@@ -41,7 +41,7 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 		INPUT, CONSTANT, DOMAIN_CONSTANT, INVARIANT, OUTPUT, SHARED, INOUT, RESPONSE, DESIGN, INITIAL_DESIGN, PARAMETER,
 		LINKED, CONSTRAINT, OBJECTIVE, DERIVATIVE, GRADIENT, RANDOM, BOUNDED, FUNDAMENTAL, RAW, DELEGATION, COMPOSITION,
 		MULTIVAL, PRED, DOMAIN_PRED, FILTER, PERSISTER, EVALUATOR, EVALUATION, PRODUCT, WATCHABLE, ENT, PROC,
-		NEURON, VAR, SRV, LAMBDA, VAL, THRESHOLD, BIAS, FUNCTION, DATA, CONTEXT, ARRAY, LIST, MODEL, DOMAIN, EXERTION, MOGRAM,
+		NEURON, VAR, SRV, LAMBDA, VAL, THRESHOLD, BIAS, FUNCTION, DATA, CONTEXT, ARRAY, LIST, ROUTINE, MODEL, DOMAIN, EXERTION, MOGRAM,
 		SELF, CONDITION, FIDELITY, LOCATOR, ARG, PATH, CONFIG, PROXY, OBJECTIVE_GRADIENT, CONSTRAINT_GRADIENT, COUPLED, MADO,
         // in ResponsModel transTypes
         // All-at-Once (AAO),
@@ -51,10 +51,11 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 		 AAO, SAND, IDF, MDF, MDA, NONE,
 
 		// Finite Difference Functionality
-		DFD,   	// derivative finite difference - finite difference evaluators
-		PDFD,  	// parallel derivative finite difference
-		MFD,	// model finite difference (GradientDifferentiator)
-		PMFD   	// parallel model finite difference
+		VGD,	// var GradientDifferentiator
+		GGD, 	// global gradient differentiator for coupled domains
+		FDG,   	// finite difference gradient
+		MPFD,  // model parallel finite difference gradient
+		VPFD  	// var parallel finite difference
 	}
 
 	public enum MathType {

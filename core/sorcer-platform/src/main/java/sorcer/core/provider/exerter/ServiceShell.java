@@ -36,7 +36,6 @@ import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.deploy.ServiceDeployment;
-import sorcer.core.dispatch.DispatcherException;
 import sorcer.core.dispatch.ExertionSorter;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.exertion.ObjectTask;
@@ -291,14 +290,10 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			if (exertion.getProcessSignature() != null) {
 				if (exertion.isTask() && (exertion.isProvisionable()
 						|| ((ServiceSignature) exertion.getProcessSignature()).isProvisionable())) {
-					try {
-						List<ServiceDeployment> deploymnets = exertion.getDeploymnets();
-						if (deploymnets.size() > 0) {
-							ProvisionManager provisionManager = new ProvisionManager(exertion);
-							provisionManager.deployServices();
-						}
-					} catch (DispatcherException e) {
-						throw new RoutineException("Unable to deploy services for: " + mogram.getName(), e);
+					List<ServiceDeployment> deploymnets = exertion.getDeploymnets();
+					if (deploymnets.size() > 0) {
+						ProvisionManager provisionManager = new ProvisionManager(exertion);
+						provisionManager.deployServices();
 					}
 				}
 			}

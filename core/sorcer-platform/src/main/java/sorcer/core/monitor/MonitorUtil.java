@@ -16,7 +16,7 @@
 
 package sorcer.core.monitor;
 
-import sorcer.core.context.StrategyContext;
+import sorcer.core.context.RoutineStrategy;
 import sorcer.service.*;
 import sorcer.util.StringUtils;
 
@@ -35,7 +35,7 @@ public class MonitorUtil {
         Subroutine mxrt = context.getMogram();
         if (mxrt == null)
             return;
-        StrategyContext controlContext = mxrt.getControlContext();
+        RoutineStrategy controlContext = mxrt.getControlContext();
         MonitoringSession monSession = getMonitoringSession(controlContext);
         if (controlContext.isMonitorable() && monSession != null) {
             try {
@@ -59,7 +59,7 @@ public class MonitorUtil {
         Subroutine mxrt = context.getMogram();
         if (mxrt == null)
             return;
-        StrategyContext controlContext = mxrt.getControlContext();
+        RoutineStrategy controlContext = mxrt.getControlContext();
         MonitoringSession monSession = getMonitoringSession(controlContext);
         if (mxrt.isMonitorable() && monSession != null) {
             monSession.changed(context, controlContext, aspect.ordinal());
@@ -70,7 +70,7 @@ public class MonitorUtil {
         setMonitoringSession(exertion.getControlContext(), monitorSession);
     }
 
-    public static void setMonitoringSession(StrategyContext controlContext, MonitoringSession monitorSession) {
+    public static void setMonitoringSession(RoutineStrategy controlContext, MonitoringSession monitorSession) {
         try {
             controlContext.putValue(KEY_MONITORING_SESSION, monitorSession);
         } catch (ContextException e) {
@@ -82,7 +82,7 @@ public class MonitorUtil {
         return getMonitoringSession(((Subroutine)mogram).getControlContext());
     }
 
-    public static MonitoringSession getMonitoringSession(StrategyContext controlContext) {
+    public static MonitoringSession getMonitoringSession(RoutineStrategy controlContext) {
         try {
             return (MonitoringSession) controlContext.getValue(KEY_MONITORING_SESSION);
         } catch (ContextException | RemoteException e) {

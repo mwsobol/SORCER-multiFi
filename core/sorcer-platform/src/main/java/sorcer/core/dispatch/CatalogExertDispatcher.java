@@ -246,7 +246,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
     }
 
     protected Job execJob(Job job, Arg ... args)
-            throws DispatcherException, InterruptedException,
+            throws DispatchException, InterruptedException,
             RemoteException {
 
         runningExertionIDs.add(job.getId());
@@ -314,7 +314,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                     ? provider.getProviderName() + " " : "")
                     + "executed block: " +  block.getName() + " explorer: " + getClass().getName());
 			return out;
-		} catch (RemoteException | RoutineException | DispatcherException ex) {
+		} catch (RemoteException | RoutineException | DispatchException ex) {
 			throw new MogramException(ex);
 		}
 	}

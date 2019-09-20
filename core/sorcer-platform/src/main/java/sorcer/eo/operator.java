@@ -3733,6 +3733,11 @@ operator extends Operator {
                     e.getDataContext().updateEntries(pm.getScope());
                 }
             }
+            for (Mogram mog : block.getAllMograms()) {
+                if (mog instanceof FreeMogram) {
+                    block.getControlContext().getFreeServices().put(mog.getName(), mog);
+                }
+            }
         } catch (Exception ex) {
             throw new RoutineException(ex);
         }
