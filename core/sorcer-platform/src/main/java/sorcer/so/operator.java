@@ -292,10 +292,6 @@ public class operator extends Operator {
         }
     }
 
-    public static ServiceContext eval(Mogram mogram, Object... items) throws ContextException {
-        return response(mogram, items);
-    }
-
     public static ServiceContext response(Mogram mogram, Object... items) throws ContextException {
         if (mogram instanceof Subroutine) {
             return exertionResponse((Subroutine) mogram, items);
@@ -309,6 +305,28 @@ public class operator extends Operator {
             return modelResponse((ContextDomain) mogram, items);
         }
     }
+
+    public static ServiceContext eval(Mogram mogram, Object... items) throws ContextException {
+        return response(mogram, items);
+    }
+
+    //TODO reconcile with the eval above
+//    public static Context eval(Contextion contextion, Arg... args) throws ContextException {
+//        try {
+//            Context cxt = Arg.selectContext(args);
+//            return contextion.evaluate(cxt, args);
+//        } catch (RemoteException e) {
+//            throw new ContextException(e);
+//        }
+//    }
+//
+//    public static Context eval(Contextion contextion, Context context, Arg... args) throws ContextException {
+//        try {
+//            return contextion.evaluate(context, args);
+//        } catch (RemoteException e) {
+//            throw new ContextException(e);
+//        }
+//    }
 
     public static ServiceContext modelResponse(ContextDomain model, Object... items) throws ContextException {
         try {

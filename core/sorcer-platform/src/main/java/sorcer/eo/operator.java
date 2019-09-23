@@ -269,10 +269,6 @@ operator extends Operator {
         return context(entries);
     }
 
-    public static Context<Float> weights(Entry... entries) throws ContextException {
-        return context((Object[])entries);
-    }
-
     public static ServiceContext context(Object... entries) throws ContextException {
         // do not create a context from Context, jut return
         if (entries == null || entries.length == 0) {
