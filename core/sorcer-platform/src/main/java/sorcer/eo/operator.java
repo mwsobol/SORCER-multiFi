@@ -269,6 +269,10 @@ operator extends Operator {
         return context(entries);
     }
 
+    public static Context<Float> weights(Entry... entries) throws ContextException {
+        return context((Object[])entries);
+    }
+
     public static ServiceContext context(Object... entries) throws ContextException {
         // do not create a context from Context, jut return
         if (entries == null || entries.length == 0) {
@@ -3171,9 +3175,14 @@ operator extends Operator {
         Paths paths = null;
         List<Object> objs = new ArrayList();
         Paths ps = new Paths();
+        Paths dps = null;
         for (Object o : args) {
             if (o instanceof Paths) {
-                paths = (Paths) o;
+                if (((Paths)o).type == Functionality.Type.DUAL) {
+                    dps = (Paths)o;
+                } else {
+                    paths = (Paths) o;
+                }
             } else {
                 // a contextReturn in args is used as dependent entry
                 // and also as a  contextReturn in context
@@ -3193,6 +3202,10 @@ operator extends Operator {
             } else {
                 paths.addAll(ps);
             }
+        }
+        if (dps != null) {
+            paths.addAll(dps);
+            objs.addAll(dps);
         }
 
         return new Args(objs, paths);

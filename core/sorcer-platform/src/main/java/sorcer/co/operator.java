@@ -1507,6 +1507,12 @@ public class operator extends Operator {
         return list;
     }
 
+	public static Paths dualPaths(Object... paths) {
+		Paths list = createPaths(paths);
+		list.type = Type.DUAL;
+		return list;
+	}
+
     public static Paths paths(Object... paths) {
         Paths list = createPaths(paths);
         list.type = Type.PATH;

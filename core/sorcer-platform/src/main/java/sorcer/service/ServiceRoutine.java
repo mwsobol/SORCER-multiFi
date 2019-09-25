@@ -1054,9 +1054,6 @@ public abstract class ServiceRoutine extends ServiceMogram implements Subroutine
         ServiceSignature ss = (ServiceSignature) getProcessSignature();
         if (ss != null) {
             state = ((ServiceSignature) getProcessSignature()).getOperation().isProvisionable;
-            if (state.equals(false)) {
-                return controlContext.isProvisionable();
-            }
         }
         return state;
     }
