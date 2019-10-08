@@ -179,7 +179,7 @@ public class Invokers {
     }
 
     @Test
-    public void execProc() throws Exception {
+    public void execPrc() throws Exception {
 
 	    // constant entry
         ent x1 = ent("x1", 1.0);
