@@ -90,7 +90,7 @@ public interface Discipline extends Service, Contextion {
      * Adds a dispatcher-contextion fidelity of this discipline.
      * Fidelity names are names of dispatcher and service correspondingly.
      */
-    public void add(Service contextion, Subroutine dispatcher, Context context);
+    public void add(Service contextion, Routine dispatcher, Context context);
 
     /**
      * Adds a dispatcher and contextion fidelities to this discipline

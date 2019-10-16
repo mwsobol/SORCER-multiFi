@@ -44,14 +44,14 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
     private MonitorSessionManagement sessionMonitor;
     private LeaseRenewalManager lrm;
 
-    public MonitoringControlFlowManager(Subroutine exertion,
+    public MonitoringControlFlowManager(Routine exertion,
                                         ProviderDelegate delegate) throws RemoteException, ConfigurationException {
         super(exertion, delegate);
         sessionMonitor = Accessor.get().getService(null, MonitoringManagement.class);
         lrm = new LeaseRenewalManager(delegate.getProviderConfiguration());
     }
 
-    public MonitoringControlFlowManager(Subroutine exertion,
+    public MonitoringControlFlowManager(Routine exertion,
                                         ProviderDelegate delegate,
                                         SorcerExerterBean serviceBean) throws RemoteException, ConfigurationException {
         super(exertion, delegate, serviceBean);
@@ -60,11 +60,11 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
     }
 
     @Override
-    public Subroutine process() throws RoutineException {
+    public Routine process() throws RoutineException {
         MonitoringSession monSession = getMonitoringSession(exertion);
         if (sessionMonitor==null) {
             logger.error("Monitoring enabled but ExertMonitor service could not be found!");
-            return (Subroutine) super.process();
+            return (Routine) super.process();
         }
         try {
             if (monSession==null) {
@@ -75,7 +75,7 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
             logger.error("Failed registering exertion into monitoring session", e);
         }
         monSession = getMonitoringSession(exertion);
-        ServiceRoutine result;
+        Subroutine result;
         if (!(exertion instanceof Transroutine) && !exertion.isSpacable()) {
             try {
                 monSession.init((Monitorable) delegate.getProxy(), DEFAULT_LEASE_PERIOD, DEFAULT_TIMEOUT_PERIOD);
@@ -85,7 +85,7 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
                 log.error("Failed issuing monitoring calls", e);
             }
 
-            result = (ServiceRoutine) super.process();
+            result = (Subroutine) super.process();
             logger.info("Got result: {}", result);
             Exec.State resultState = result.getStatus() <= FAILED ? Exec.State.FAILED : Exec.State.DONE;
 
@@ -107,14 +107,14 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
                 }
             }
         } else {
-            result = (ServiceRoutine) super.process();
+            result = (Subroutine) super.process();
         }
         return result;
     }
 
-    private Subroutine register(Subroutine exertion) throws RemoteException, MonitorException {
+    private Routine register(Routine exertion) throws RemoteException, MonitorException {
 
-        ServiceRoutine registeredExertion = (ServiceRoutine) (sessionMonitor.register(null,
+        Subroutine registeredExertion = (Subroutine) (sessionMonitor.register(null,
                                                                                         exertion,
                                                                                         DEFAULT_LEASE_PERIOD));
         MonitoringSession session = getMonitoringSession(registeredExertion);

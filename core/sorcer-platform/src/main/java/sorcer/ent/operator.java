@@ -276,8 +276,8 @@ public class operator extends Operator {
 
 	public static Prc add(Prc callEntry, Object to)
 			throws ContextException {
-		if (to instanceof Subroutine) {
-			((ServiceRoutine)to).addPersister(callEntry);
+		if (to instanceof Routine) {
+			((Subroutine)to).addPersister(callEntry);
 			return callEntry;
 		}
 		return callEntry;
@@ -572,7 +572,7 @@ public class operator extends Operator {
 		return new GroovyInvoker(expression);
 	}
 
-	public static ServiceInvoker invoker(Subroutine exertion) {
+	public static ServiceInvoker invoker(Routine exertion) {
         return new ExertInvoker(exertion);
     }
 
@@ -652,15 +652,15 @@ public class operator extends Operator {
 		return mi;
 	}
 
-	public static ExertInvoker exertInvoker(String name, Subroutine exertion, String path, Prc... callEntries) {
+	public static ExertInvoker exertInvoker(String name, Routine exertion, String path, Prc... callEntries) {
 		return new ExertInvoker(name, exertion, path, callEntries);
 	}
 
-	public static ExertInvoker exertInvoker(Subroutine exertion, String path, Prc... callEntries) {
+	public static ExertInvoker exertInvoker(Routine exertion, String path, Prc... callEntries) {
 		return new ExertInvoker(exertion, path, callEntries);
 	}
 
-	public static ExertInvoker exertInvoker(Subroutine exertion, Prc... callEntries) {
+	public static ExertInvoker exertInvoker(Routine exertion, Prc... callEntries) {
 		return new ExertInvoker(exertion, callEntries);
 	}
 

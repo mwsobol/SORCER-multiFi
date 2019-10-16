@@ -35,7 +35,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
     private final Logger logger = LoggerFactory.getLogger(CatalogSequentialDispatcher.class);
 
 	@SuppressWarnings("rawtypes")
-    public CatalogSequentialDispatcher(Subroutine job,
+    public CatalogSequentialDispatcher(Routine job,
                                        Set<Context> sharedContext,
                                        boolean isSpawned,
                                        Exerter provider,
@@ -79,8 +79,8 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
             }
 
             try {
-                if (mogram instanceof Subroutine) {
-                    ServiceRoutine se = (ServiceRoutine) mogram;
+                if (mogram instanceof Routine) {
+                    Subroutine se = (Subroutine) mogram;
                     // support for continuous pre and post execution of task
                     // signatures
                     if (previous != null && se.isTask() && ((Task) se).isContinous())
@@ -102,7 +102,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         }
 
         if (masterXrt != null) {
-            masterXrt = (ServiceRoutine) execExertion(masterXrt, args); // executeMasterExertion();
+            masterXrt = (Subroutine) execExertion(masterXrt, args); // executeMasterExertion();
             if (masterXrt.getStatus() <= FAILED) {
                 state = FAILED;
                 xrt.setStatus(FAILED);
@@ -117,8 +117,8 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         xrt.setStatus(DONE);
     }
 
-    protected void dispatchExertion(ServiceRoutine se, Arg... args) throws SignatureException, RoutineException {
-        se = (ServiceRoutine) execExertion(se, args);
+    protected void dispatchExertion(Subroutine se, Arg... args) throws SignatureException, RoutineException {
+        se = (Subroutine) execExertion(se, args);
         if (se.getStatus() <= FAILED) {
             xrt.setStatus(FAILED);
             state = FAILED;

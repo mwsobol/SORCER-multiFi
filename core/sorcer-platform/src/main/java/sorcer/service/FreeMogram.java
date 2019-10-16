@@ -17,11 +17,8 @@
 package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ThrowableTrace;
-import sorcer.core.context.model.ent.Function;
 import sorcer.core.signature.ObjectSignature;
-import sorcer.core.signature.ServiceSignature;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Model;
 
@@ -56,7 +53,7 @@ public class FreeMogram extends ServiceMogram {
         mogram.setBuilder(builder);
         if (mogram instanceof Model) {
             type = Functionality.Type.MODEL;
-        } else if (mogram instanceof Subroutine) {
+        } else if (mogram instanceof Routine) {
             type = Functionality.Type.ROUTINE;
         }
     }

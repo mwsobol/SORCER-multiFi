@@ -87,7 +87,7 @@ public class ServiceModeler extends SorcerExerterBean implements Modeler {
                     result = (Mogram) contextSelector.doSelect(result);
                 }
             }
-            ((ServiceRoutine)mogram).setContext((Context)result);
+            ((Subroutine)mogram).setContext((Context)result);
             logger.trace("<==== Result: " + result);
 
         } catch (Throwable e) {

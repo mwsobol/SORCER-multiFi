@@ -17,7 +17,7 @@
  */
 package sorcer.ext;
 
-import sorcer.service.Subroutine;
+import sorcer.service.Routine;
 
 /**
  * The <code>RoutineException</code> represents an exception that is thrown
@@ -34,12 +34,12 @@ public class ProvisioningException extends Exception {
 	/**
 	 * The exertion relevant to this exception.
 	 */
-	private Subroutine exertion;
+	private Routine exertion;
 
 	public ProvisioningException() {
 	}
 
-	public ProvisioningException(Subroutine exertion) {
+	public ProvisioningException(Routine exertion) {
 		this.exertion = exertion;
 	}
 
@@ -60,7 +60,7 @@ public class ProvisioningException extends Exception {
 	 * @param exertion
 	 *            the embedded exertion
 	 */
-	public ProvisioningException(String message, Subroutine exertion) {
+	public ProvisioningException(String message, Routine exertion) {
 		super(message);
 		this.exertion = exertion;
 	}
@@ -78,7 +78,7 @@ public class ProvisioningException extends Exception {
 	 * @param cause
 	 *            the nested throwable cause
 	 */
-	public ProvisioningException(String message, Subroutine exertion, Throwable cause) {
+	public ProvisioningException(String message, Routine exertion, Throwable cause) {
 		super(message, cause);
 		this.exertion = exertion;
 	}
@@ -88,7 +88,7 @@ public class ProvisioningException extends Exception {
 	 * 
 	 * @return embedded exertion
 	 */
-	public Subroutine getExertion() {
+	public Routine getExertion() {
 		return exertion;
 	}
 	

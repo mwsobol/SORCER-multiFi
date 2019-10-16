@@ -347,7 +347,20 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
 
 	List<Mogram> getMograms(List<Mogram> allMograms);
 
-    /**
+	/**
+	 * Returns the list of direct component exertions.
+	 * @return Routine list
+	 */
+	public List<Mogram> getMograms();
+
+	/**
+	 * Returns the list of all nested component exertions/
+	 * @return Routine list
+	 */
+	public List<Mogram> getAllMograms();
+
+
+	/**
      *  Returns a signature builder that returns instances of this model.
      *  A inConnector specifies a map of an input context as needed by another collaborating service.
      *
@@ -363,5 +376,15 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
     public MogramStrategy getMogramStrategy();
 
     public void setBuilder(Signature builder) throws MogramException;
+
+	/**
+	 * Returns true if this exertion is a branching or looping exertion.
+	 */
+	public boolean isConditional();
+
+	/**
+	 * Returns true if this exertion is composed of other exertions.
+	 */
+	public boolean isCompound();
 
 }

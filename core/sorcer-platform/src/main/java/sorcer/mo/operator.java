@@ -377,7 +377,7 @@ public class operator {
     public static ServiceContext result(Mogram mogram) throws ContextException {
         if (mogram instanceof ContextDomain) {
             return (ServiceContext)((ServiceContext) mogram).getMogramStrategy().getOutcome();
-        } else if (mogram instanceof Subroutine) {
+        } else if (mogram instanceof Routine) {
             return (ServiceContext)mogram.getContext();
         }
         return null;
@@ -390,7 +390,7 @@ public class operator {
     public static Object result(Mogram mogram, String path) throws ContextException {
         if (mogram instanceof ContextDomain) {
             return ((ServiceContext) mogram).getMogramStrategy().getOutcome().asis(path);
-        } else if (mogram instanceof Subroutine) {
+        } else if (mogram instanceof Routine) {
             try {
                 return mogram.getContext().getValue(path);
             } catch (RemoteException e) {
@@ -605,7 +605,7 @@ public class operator {
         for (Object i : items) {
             if (i instanceof String) {
                 name = (String) i;
-            } else if (i instanceof Subroutine) {
+            } else if (i instanceof Routine) {
                 hasExertion = true;
             } else if (i instanceof Signature) {
                 hasSignature = true;
@@ -875,7 +875,7 @@ public class operator {
         return provisionManager.deployServices();
     }
 
-    public static Subroutine[] clients(Subroutine... consumers) {
+    public static Routine[] clients(Routine... consumers) {
         return consumers;
     }
 
@@ -883,14 +883,14 @@ public class operator {
         return servers;
     }
 
-    public static Discipline disc(Service server, Subroutine consumer) {
+    public static Discipline disc(Service server, Routine consumer) {
         return new ServiceDiscipline(server, consumer);
     }
-    public static Discipline disc(Service[] servers, Subroutine[] clients) {
+    public static Discipline disc(Service[] servers, Routine[] clients) {
         return new ServiceDiscipline(servers, clients);
     }
 
-    public static Discipline disc(List<Service> servers, List<Subroutine> clients) {
+    public static Discipline disc(List<Service> servers, List<Routine> clients) {
         return new ServiceDiscipline(servers, clients);
     }
 
@@ -925,7 +925,7 @@ public class operator {
         return srvDisc;
     }
 
-    public static Discipline add(Discipline disciplne, Service server, Subroutine client) {
+    public static Discipline add(Discipline disciplne, Service server, Routine client) {
         disciplne.add(server, client, null);
         return disciplne;
     }
@@ -935,7 +935,7 @@ public class operator {
         return disciplne;
     }
 
-    public static Discipline add(Discipline disciplne, Service server, Subroutine client, Context context) {
+    public static Discipline add(Discipline disciplne, Service server, Routine client, Context context) {
         disciplne.add(server, client, context);
         return disciplne;
     }

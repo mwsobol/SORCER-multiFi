@@ -41,7 +41,7 @@ public class GovernanceExplorer implements Service, Exploration {
 //            if (fis != null && fis.size() > 0) {
 //                ((ServiceFidelity)governance.getMultiFi()).selectFi(fis.get(0));
 //            }
-//            Subroutine xrt = (Subroutine) governance.getDispatcher();
+//            Routine xrt = (Routine) governance.getDispatcher();
 //            if (governance.input != null) {
 //                if (governance.inConnector != null) {
 //                    xrt.setContext(((ServiceContext) governance.input).updateContextWith(governance.inConnector));

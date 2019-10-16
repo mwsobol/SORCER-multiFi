@@ -584,12 +584,12 @@ public class Contexts implements SorcerConstants {
 							.asList(getAllContextNodes((Context) obj));
 					if (additional.size() > 0)
 						allNodes.addAll(additional);
-				} else if (obj instanceof ServiceRoutine) {
+				} else if (obj instanceof Subroutine) {
 					additional = Arrays
-							.asList(getTaskContextNodes((ServiceRoutine) obj));
+							.asList(getTaskContextNodes((Subroutine) obj));
 				} else if (obj instanceof Job) {
 					additional = Arrays
-							.asList(getTaskContextNodes((ServiceRoutine) obj));
+							.asList(getTaskContextNodes((Subroutine) obj));
 				}
 			}
 		} catch (MalformedURLException e) {
@@ -601,7 +601,7 @@ public class Contexts implements SorcerConstants {
 		return result;
 	}
 
-	public static ContextNode[] getTaskContextNodes(ServiceRoutine task)
+	public static ContextNode[] getTaskContextNodes(Subroutine task)
 			throws ContextException {
 		List allNodes = new ArrayList();
 		List additional = null;
@@ -622,9 +622,9 @@ public class Contexts implements SorcerConstants {
 
 		List<Mogram> exertions = ((Job) job).getMograms();
 		for (Object exertion : exertions) {
-			if (exertion instanceof ServiceRoutine) {
+			if (exertion instanceof Subroutine) {
 				additional = Arrays
-						.asList(getTaskContextNodes((ServiceRoutine) exertion));
+						.asList(getTaskContextNodes((Subroutine) exertion));
 				if (additional.size() > 0)
 					allNodes.addAll(additional);
 			} else if (exertion instanceof Job) {

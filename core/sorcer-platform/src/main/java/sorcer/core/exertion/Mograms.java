@@ -53,13 +53,13 @@ public class Mograms implements SorcerConstants {
 				&& Access.PUSH.equals(cc.get(cc.EXERTION_ACCESS));
 	}
 
-	public static boolean isCatalogBlock(Subroutine exertion) {
+	public static boolean isCatalogBlock(Routine exertion) {
 		ControlContext cc = (ControlContext)exertion.getControlContext();
 		return exertion instanceof Block
 				&& Access.PUSH.equals(cc.get(cc.EXERTION_ACCESS));
 	}
 
-	public static boolean isSpaceBlock(Subroutine exertion) {
+	public static boolean isSpaceBlock(Routine exertion) {
 		ControlContext cc = (ControlContext)exertion.getControlContext();
 		return exertion instanceof Block
 				&& Access.PULL.equals(cc.get(cc.EXERTION_ACCESS));
@@ -108,7 +108,7 @@ public class Mograms implements SorcerConstants {
 		if (job == null || job.size() == 0)
 			return null;
 		List<Mogram> exertions = new ArrayList<Mogram>();
-		Subroutine master = job.getMasterExertion();
+		Routine master = job.getMasterExertion();
 		for (int i = 0; i < job.size(); i++)
 			if (!(job.get(i).equals(master) || job
 					.getControlContext().isSkipped(job.get(i))))
@@ -146,10 +146,10 @@ public class Mograms implements SorcerConstants {
 	public static void removeExceptions(Job job) throws ContextException {
 		removeExceptions(job.getContext());
 		for (int i = 0; i < job.size(); i++) {
-			if (((ServiceRoutine) job.get(i)).isJob())
+			if (((Subroutine) job.get(i)).isJob())
 				removeExceptions((Job) job.get(i));
 			else
-				removeExceptions(((ServiceRoutine) job.get(i))
+				removeExceptions(((Subroutine) job.get(i))
 						.getContext());
 		}
 	}
@@ -168,10 +168,10 @@ public class Mograms implements SorcerConstants {
 		// sc.removeAttribute(SORCER.EXCEPTIONS);
 	}
 
-	public static void replaceNullIDs(Subroutine ex) throws ContextException {
+	public static void replaceNullIDs(Routine ex) throws ContextException {
 		if (ex == null)
 			return;
-		if (((ServiceRoutine) ex).isJob()) {
+		if (((Subroutine) ex).isJob()) {
 			Job job = (Job) ex;
 			if (job.getId() == null)
 				job.setId(getId());
@@ -180,10 +180,10 @@ public class Mograms implements SorcerConstants {
 			for (int i = 0; i < job.size(); i++)
 				replaceNullIDs(job.get(i));
 		} else
-			replaceNullIDs((ServiceRoutine) ex);
+			replaceNullIDs((Subroutine) ex);
 	}
 
-	public static void replaceNullIDs(ServiceRoutine task) throws ContextException {
+	public static void replaceNullIDs(Subroutine task) throws ContextException {
 		if (task.getId() == null)
 			task.setId(getId());
 		if (task.getContext() != null) {
@@ -205,12 +205,12 @@ public class Mograms implements SorcerConstants {
 		return Long.toHexString(new Date().getTime());
 	}
 
-	public static ExertionEnvelop getEntryEnvelop(Subroutine ex)
+	public static ExertionEnvelop getEntryEnvelop(Routine ex)
 			throws RoutineException {
 		if (ex == null)
 			return null;
 		else if (ex.getProcessSignature() != null)
-			throw new RoutineException("No Method For Subroutine e=" + ex);
+			throw new RoutineException("No Method For Routine e=" + ex);
 
 		ExertionEnvelop eenv = ExertionEnvelop.getTemplate();
 		try {
@@ -226,14 +226,14 @@ public class Mograms implements SorcerConstants {
 		return eenv;
 	}
 
-	public static List<Context> getTaskContexts(Subroutine ex) throws ContextException {
+	public static List<Context> getTaskContexts(Routine ex) throws ContextException {
 		List<Context> v = new ArrayList<Context>();
 		collectTaskContexts(ex, v);
 		return v;
 	}
 
 	// For Recursion
-	private static void collectTaskContexts(Subroutine exertion, List<Context> contexts) throws ContextException {
+	private static void collectTaskContexts(Routine exertion, List<Context> contexts) throws ContextException {
 		if (exertion.isConditional())
 			contexts.add(exertion.getDataContext());
 		else if (exertion instanceof Job) {

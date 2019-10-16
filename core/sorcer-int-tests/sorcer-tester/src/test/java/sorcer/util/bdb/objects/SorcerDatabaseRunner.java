@@ -160,7 +160,7 @@ public class SorcerDatabaseRunner {
 	}
 	
 	 /**
-     * Populate the Subroutine database in a single transaction.
+     * Populate the Routine database in a single transaction.
      */
 	public class PopulateExertionDatabase implements TransactionWorker {
 
@@ -320,7 +320,7 @@ public class SorcerDatabaseRunner {
 	 * @throws RoutineException
      */
 	private void addExertions() throws RoutineException, SignatureException, ContextException {
-		StoredValueSet<Subroutine> exertionSet = views.getRoutineSet();
+		StoredValueSet<Routine> exertionSet = views.getRoutineSet();
 		exertionSet.add(getTask());
 		exertionSet.add(getJob());
 	}
@@ -373,9 +373,9 @@ public class SorcerDatabaseRunner {
      */
 	public List<String> returnExertionNames() throws IOException, ClassNotFoundException {
 		List<String> names = new ArrayList<String>();
-		Iterator<Subroutine> iterator = views.getRoutineSet().iterator();
+		Iterator<Routine> iterator = views.getRoutineSet().iterator();
 		while (iterator.hasNext()) {
-			Subroutine xrt = iterator.next();
+			Routine xrt = iterator.next();
 			names.add(xrt.getName());
 		}
 		return names;

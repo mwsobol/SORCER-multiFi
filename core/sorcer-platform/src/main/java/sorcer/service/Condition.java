@@ -298,14 +298,14 @@ import java.util.Map;
 		return closureExpression;
 	}
 	
-	static public void cleanupScripts(Subroutine exertion) throws ContextException {
+	static public void cleanupScripts(Routine exertion) throws ContextException {
 		if (exertion == null)
 			return;
 		clenupContextScripts(exertion.getContext());
 		for (Mogram e : exertion.getMograms()) {
-			if (e instanceof Subroutine) {
+			if (e instanceof Routine) {
 				clenupContextScripts(e.getContext());
-				clenupExertionScripts((Subroutine) e);
+				clenupExertionScripts((Routine) e);
 			}
 		}
 	}
@@ -334,7 +334,7 @@ import java.util.Map;
 		}
 	}
 
-	public static void clenupExertionScripts(Subroutine exertion)
+	public static void clenupExertionScripts(Routine exertion)
 			throws ContextException {
 		if (exertion instanceof ConditionalTask) {
 			List<Conditional> cs = ((ConditionalTask) exertion)
@@ -344,8 +344,8 @@ import java.util.Map;
 			}
 			List<Mogram> tl = ((ConditionalTask) exertion).getTargets();
 			for (Mogram vt : tl) {
-				if (vt != null && vt instanceof Subroutine)
-					clenupContextScripts(((Subroutine)vt).getContext());
+				if (vt != null && vt instanceof Routine)
+					clenupContextScripts(((Routine)vt).getContext());
 			}
 		}
 	}

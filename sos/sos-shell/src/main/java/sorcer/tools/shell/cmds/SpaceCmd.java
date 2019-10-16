@@ -37,7 +37,7 @@ import sorcer.core.exertion.ExertionEnvelop;
 import sorcer.jini.lookup.AttributesUtil;
 import sorcer.service.*;
 import sorcer.service.Exec.State;
-import sorcer.service.ServiceRoutine;
+import sorcer.service.Subroutine;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.tools.shell.WhitespaceTokenizer;
@@ -58,7 +58,7 @@ public class SpaceCmd extends ShellCmd {
 			+ "\n\t\t\t  | (-e | -c | -cc | -ccc) [<exertion index>] [-s <filename>]";
 
 		COMMAND_HELP = "Support for exertion spaces; 'space' mode"
-				+ "\n  'no option'; show Subroutine Spaces, set the 'space' mode"
+				+ "\n  'no option'; show Routine Spaces, set the 'space' mode"
 				+ "\n  <Space index>   select the Space given <Space index>"
 				+ "\n  -sp set the 'space' mode" 
 				+ "\n  -a   show all space disciplines, set the 'exertion' mode"
@@ -194,7 +194,7 @@ public class SpaceCmd extends ShellCmd {
 					}
 					if (selectedExertion < 0
 							|| selectedExertion >= instanceList.size()) {
-						out.println("No such Subroutine for: " + next);
+						out.println("No such Routine for: " + next);
 					}
 					else
 						printExertion(selectedExertion, true, true);
@@ -228,7 +228,7 @@ public class SpaceCmd extends ShellCmd {
 					printExertion(selectedExertion, isContext,
 							isControlContext);
 				} else
-					out.println("No such Subroutine for: " + selectedExertion);
+					out.println("No such Routine for: " + selectedExertion);
 			}
 		} else {
 			out.println(COMMAND_USAGE);
@@ -276,9 +276,9 @@ public class SpaceCmd extends ShellCmd {
 	}
 
 	private void printExertion(int index, boolean isContext, boolean isControlContext) throws ContextException {
-		Subroutine xrt = ((ExertionEnvelop)instanceList.get(index)).exertion;
+		Routine xrt = ((ExertionEnvelop)instanceList.get(index)).exertion;
 		out.println("--------- EXERTION # " + index + " ---------");
-		out.println(((ServiceRoutine) xrt).describe());
+		out.println(((Subroutine) xrt).describe());
 		if (isContext) {
 			out.println("\nData Context:");
 			out.println(xrt.getContext());

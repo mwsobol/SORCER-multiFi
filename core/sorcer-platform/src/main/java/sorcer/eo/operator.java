@@ -84,8 +84,8 @@ operator extends Operator {
 
     protected static final Logger logger = LoggerFactory.getLogger(operator.class.getName());
 
-    public static void requestTime(Subroutine exertion) {
-        ((ServiceRoutine) exertion).setExecTimeRequested(true);
+    public static void requestTime(Routine exertion) {
+        ((Subroutine) exertion).setExecTimeRequested(true);
     }
 
     public static ServiceConsumer consumer(Class consumerType, String... args) {
@@ -166,17 +166,17 @@ operator extends Operator {
         return new Complement<T>(path, value);
     }
 
-    public static void add(Subroutine exertion, Identifiable... entries)
+    public static void add(Routine exertion, Identifiable... entries)
         throws ContextException, RemoteException {
         sorcer.mo.operator.add(exertion.getContext(), entries);
     }
 
-    public static void put(Subroutine exertion, Identifiable... entries)
+    public static void put(Routine exertion, Identifiable... entries)
         throws ContextException, RemoteException {
         put(exertion.getContext(), entries);
     }
 
-    public static Subroutine setContext(Subroutine exertion, Context context) {
+    public static Routine setContext(Routine exertion, Context context) {
         exertion.setContext(context);
         return exertion;
     }
@@ -202,21 +202,21 @@ operator extends Operator {
         return signature;
     }
 
-    public static ControlContext control(Subroutine exertion)
+    public static ControlContext control(Routine exertion)
         throws ContextException {
-        return ((ServiceRoutine) exertion).getControlContext();
+        return ((Subroutine) exertion).getControlContext();
     }
 
-    public static ControlContext control(Subroutine exertion, String childName)
+    public static ControlContext control(Routine exertion, String childName)
         throws ContextException {
-        return (ControlContext) ((Subroutine) exertion.getMogram(childName)).getControlContext();
+        return (ControlContext) ((Routine) exertion.getMogram(childName)).getControlContext();
     }
 
-    public static Context ccxt(Subroutine exertion) throws ContextException {
-        return ((ServiceRoutine) exertion).getControlContext();
+    public static Context ccxt(Routine exertion) throws ContextException {
+        return ((Subroutine) exertion).getControlContext();
     }
 
-    public static Context upcxt(Subroutine mogram) throws ContextException {
+    public static Context upcxt(Routine mogram) throws ContextException {
         return snapshot(mogram);
     }
 
@@ -235,12 +235,12 @@ operator extends Operator {
             return  mogram.getDataContext();
     }
 
-    public static Context snapshot(Subroutine mogram) throws ContextException {
+    public static Context snapshot(Routine mogram) throws ContextException {
         return upcontext(mogram);
     }
 
-    public static Context taskContext(String path, Subroutine service) throws ContextException {
-        if (service instanceof ServiceRoutine) {
+    public static Context taskContext(String path, Routine service) throws ContextException {
+        if (service instanceof Transroutine) {
             return ((Transroutine) service).getComponentContext(path);
         } else
             throw new ContextException("Service not an exertion: " + service);
@@ -297,17 +297,17 @@ operator extends Operator {
         Strategy.FidelityManagement fm = null;
         FidelityManager fiManager = null;
         Projection projection = null;
-        if (entries[0] instanceof Subroutine) {
-            Subroutine xrt = (Subroutine) entries[0];
+        if (entries[0] instanceof Routine) {
+            Routine xrt = (Routine) entries[0];
             if (entries.length >= 2 && entries[1] instanceof String)
-                xrt = (Subroutine) (xrt).getComponentMogram((String) entries[1]);
+                xrt = (Routine) (xrt).getComponentMogram((String) entries[1]);
             return (ServiceContext) xrt.getDataContext();
         } else if (entries[0] instanceof Link) {
             return (ServiceContext) ((Link) entries[0]).getContext();
         } else if (entries.length == 1 && entries[0] instanceof String) {
             return new PositionalContext((String) entries[0]);
         } else if (entries.length == 2 && entries[0] instanceof String
-            && entries[1] instanceof Subroutine) {
+            && entries[1] instanceof Routine) {
             return (ServiceContext) ((Transroutine) entries[1]).getComponentMogram(
                 (String) entries[0]).getContext();
         } else if (entries[0] instanceof Context && entries[1] instanceof List) {
@@ -1591,8 +1591,8 @@ operator extends Operator {
         return new EvaluationSignature(name, evaluator);
     }
 
-    public static Signature sig(Subroutine exertion, String componentExertionName) {
-        Subroutine component = (Subroutine) exertion.getMogram(componentExertionName);
+    public static Signature sig(Routine exertion, String componentExertionName) {
+        Routine component = (Routine) exertion.getMogram(componentExertionName);
         return component.getProcessSignature();
     }
 
@@ -1714,7 +1714,7 @@ operator extends Operator {
         return ((Identifiable) mogram.getMultiFi().getSelect()).getName();
     }
 
-    public static Fi srvFis(Subroutine exertion) {
+    public static Fi srvFis(Routine exertion) {
         return exertion.getMultiFi();
     }
 
@@ -2395,12 +2395,12 @@ operator extends Operator {
         return task;
     }
 
-
     public static List<Mogram> mograms(Mogram mogram) {
-        if (mogram instanceof Subroutine)
-            return ((Subroutine)mogram).getAllMograms();
-        else
+        if (mogram instanceof Mogram) {
+            return mogram.getAllMograms();
+        } else {
             return new ArrayList();
+        }
     }
 
     public static Mogram mog(Object... items) throws MogramException {
@@ -2428,7 +2428,7 @@ operator extends Operator {
         for (Object i : items) {
             if (i instanceof String) {
                 name = (String) i;
-            } else if (i instanceof Subroutine) {
+            } else if (i instanceof Routine) {
                 hasExertion = true;
             } else if (i instanceof Context) {
                 hasContext = true;
@@ -2450,19 +2450,19 @@ operator extends Operator {
         }
     }
 
-    public static Subroutine xrt(String name, Object... items) throws RoutineException,
+    public static Routine xrt(String name, Object... items) throws RoutineException,
         ContextException, SignatureException {
         return exertion(name, items);
     }
 
-    public static <E extends Subroutine> E exertion(String name, Object... items) throws RoutineException,
+    public static <E extends Routine> E exertion(String name, Object... items) throws RoutineException,
         ContextException, SignatureException {
         List<Mogram> exertions = new ArrayList<Mogram>();
         Signature sig = null;
         Context cxt = null;
         boolean isBlock =false;
         for (int i = 0; i < items.length; i++) {
-            if (items[i] instanceof Subroutine || items[i] instanceof EntModel) {
+            if (items[i] instanceof Routine || items[i] instanceof EntModel) {
                 exertions.add((Mogram) items[i]);
                 if (items[i] instanceof ConditionalTask)
                     isBlock = true;
@@ -2492,7 +2492,7 @@ operator extends Operator {
         ControlContext controlStrategy = null;
         Context data = null;
         Context.Return rp = null;
-        List<Subroutine> exertions = new ArrayList();
+        List<Routine> exertions = new ArrayList();
         List<Pipe> pipes = new ArrayList();
         FidelityManager fiManager = null;
         Strategy.FidelityManagement fm = null;
@@ -2507,8 +2507,8 @@ operator extends Operator {
         for (int i = 0; i < elems.length; i++) {
             if (elems[i] instanceof String) {
                 name = (String) elems[i];
-            } else if (elems[i] instanceof Subroutine) {
-                exertions.add((Subroutine) elems[i]);
+            } else if (elems[i] instanceof Routine) {
+                exertions.add((Routine) elems[i]);
             } else if (elems[i] instanceof ControlContext) {
                 controlStrategy = (ControlContext) elems[i];
             } else if (elems[i] instanceof MapContext) {
@@ -2651,23 +2651,23 @@ operator extends Operator {
         }
 
         if (exertions.size() > 0) {
-            for (Subroutine ex : exertions) {
+            for (Routine ex : exertions) {
                 job.addMogram(ex);
             }
             for (Pipe p : pipes) {
 //				logger.debug("from context: "
-//						+ ((Subroutine) p.in).getDataContext().getName()
+//						+ ((Routine) p.in).getDataContext().getName()
 //						+ " contextReturn: " + p.inPath);
 //				logger.debug("to context: "
-//						+ ((Subroutine) p.out).getDataContext().getName()
+//						+ ((Routine) p.out).getDataContext().getName()
 //						+ " contextReturn: " + p.outPath);
                 // find component disciplines for thir paths
                 if (!p.isExertional()) {
-                    p.out = (Subroutine)job.getComponentMogram(p.outComponentPath);
-                    p.in = (Subroutine)job.getComponentMogram(p.inComponentPath);
+                    p.out = (Routine)job.getComponentMogram(p.outComponentPath);
+                    p.in = (Routine)job.getComponentMogram(p.inComponentPath);
                 }
-                ((Subroutine) p.out).getDataContext().connect(p.outPath,
-                    p.inPath, ((Subroutine) p.in).getContext());
+                ((Routine) p.out).getDataContext().connect(p.outPath,
+                    p.inPath, ((Routine) p.in).getContext());
             }
         } else
             throw new RoutineException("No component exertion defined.");
@@ -2739,7 +2739,7 @@ operator extends Operator {
         }
     }
 
-    public static Mogram sub(Subroutine mogram, String path) {
+    public static Mogram sub(Routine mogram, String path) {
         return mogram.getComponentMogram(path);
     }
 
@@ -2765,11 +2765,11 @@ operator extends Operator {
         return obj;
     }
 
-    public static Object get(Subroutine exertion, String component, String path)
+    public static Object get(Routine exertion, String component, String path)
         throws RoutineException {
-        Subroutine c = (Subroutine) exertion.getMogram(component);
+        Routine c = (Routine) exertion.getMogram(component);
         try {
-            return get((ServiceRoutine) c, path);
+            return get((Subroutine) c, path);
         } catch (Exception e) {
             throw new RoutineException(e);
         }
@@ -2855,17 +2855,17 @@ operator extends Operator {
         return values;
     }
 
-    public static Mogram exertion(Subroutine exertion, String componentExertionName) {
+    public static Mogram exertion(Routine exertion, String componentExertionName) {
         return exertion.getComponentMogram(componentExertionName);
     }
-    public static Mogram xrt(Subroutine exertion, String componentExertionName) {
+    public static Mogram xrt(Routine exertion, String componentExertionName) {
         return exertion.getComponentMogram(componentExertionName);
     }
 
     public static Mogram tracable(Mogram mogram) {
         List<Mogram> mograms = ((ServiceMogram) mogram).getAllMograms();
         for (Mogram m : mograms) {
-            ((Subroutine) m).getControlContext().setTracable(true);
+            ((Routine) m).getControlContext().setTracable(true);
         }
         return mogram;
     }
@@ -2874,7 +2874,7 @@ operator extends Operator {
         List<Mogram> mograms = ((ServiceMogram)mogram).getAllMograms();
         List<String> trace = new ArrayList<String>();
         for (Mogram m : mograms) {
-            trace.addAll(((Subroutine) m).getControlContext().getTrace());
+            trace.addAll(((Routine) m).getControlContext().getTrace());
         }
         return trace;
     }
@@ -3306,18 +3306,18 @@ operator extends Operator {
 
         Prc callEntry;
 
-        Pipe(Subroutine out, String outPath, Contextion in, String inPath) {
+        Pipe(Routine out, String outPath, Contextion in, String inPath) {
             this.out = out;
             this.outPath = outPath;
             this.in = in;
             this.inPath = inPath;
-            if ((in instanceof Subroutine) && (out instanceof Subroutine)) {
+            if ((in instanceof Routine) && (out instanceof Routine)) {
                 try {
                     callEntry = new Prc(outPath, inPath, in);
                 } catch (ContextException e) {
                     e.printStackTrace();
                 }
-                ((ServiceRoutine) out).addPersister(callEntry);
+                ((Subroutine) out).addPersister(callEntry);
             }
         }
 
@@ -3329,13 +3329,13 @@ operator extends Operator {
             this.inPath = inEndPoint.inPath;
             this.inComponentPath = inEndPoint.inComponentPath;
 
-            if ((in instanceof Subroutine) && (out instanceof Subroutine)) {
+            if ((in instanceof Routine) && (out instanceof Routine)) {
                 try {
                     callEntry = new Prc(outPath, inPath, in);
                 } catch (ContextException e) {
                     e.printStackTrace();
                 }
-                ((ServiceRoutine) out).addPersister(callEntry);
+                ((Subroutine) out).addPersister(callEntry);
             }
         }
 
@@ -3386,7 +3386,7 @@ operator extends Operator {
     }
 
     public static OutEndPoint outPoint(Mogram outExertion, String outPath) {
-        return new OutEndPoint((Subroutine)outExertion, outPath);
+        return new OutEndPoint((Routine)outExertion, outPath);
     }
 
     public static InEndPoint inPoint(String inComponent, String inPath) {
@@ -3394,7 +3394,7 @@ operator extends Operator {
     }
 
     public static InEndPoint inPoint(Mogram inExertion, String inPath) {
-        return new InEndPoint((Subroutine)inExertion, inPath);
+        return new InEndPoint((Routine)inExertion, inPath);
     }
 
     public static Pipe pipe(OutEndPoint outEndPoint, InEndPoint inEndPoint) {
@@ -3566,11 +3566,11 @@ operator extends Operator {
     }
 
     public static LoopTask loop(String name, Condition condition,
-                                Subroutine target) {
+                                Routine target) {
         return new LoopTask(name, condition, target);
     }
 
-    public static Subroutine xrt(Contextion mappable, String path)
+    public static Routine xrt(Contextion mappable, String path)
         throws ContextException {
         Object obj = ((ServiceContext) mappable).asis(path);
         while (obj instanceof Contextion || obj instanceof Prc) {
@@ -3580,8 +3580,8 @@ operator extends Operator {
                 throw new ContextException(e);
             }
         }
-        if (obj instanceof Subroutine)
-            return (Subroutine) obj;
+        if (obj instanceof Routine)
+            return (Routine) obj;
         else
             throw new NoneException("No such exertion at: " + path + " in: "
                 + mappable.getName());
@@ -3640,7 +3640,7 @@ operator extends Operator {
         Context context = null;
         Evaluator evaluator = null;
         for (int i = 0; i < items.length; i++) {
-            if (items[i] instanceof Subroutine || items[i] instanceof EntModel) {
+            if (items[i] instanceof Routine || items[i] instanceof EntModel) {
                 mograms.add((Mogram) items[i]);
             } else if (items[i] instanceof Evaluation) {
                 evaluators.add((Evaluator)items[i]);
@@ -3728,7 +3728,7 @@ operator extends Operator {
                         } else {
                             p.setScope(pm);
                         }
-                        if (target instanceof Subroutine && target.getContext().getContextReturn() == null)
+                        if (target instanceof Routine && target.getContext().getContextReturn() == null)
                             ((ServiceContext)target.getContext()).setContextReturn(p.getName());
                     }
                 } else if (e instanceof EvaluationTask) {
@@ -3737,7 +3737,7 @@ operator extends Operator {
                         Prc p = (Prc)((EvaluationTask)e).getEvaluation();
                         pm.getScope().addPrc(p);
                     }
-                } else if (e instanceof Subroutine) {
+                } else if (e instanceof Routine) {
                     e.getDataContext().setScope(pm.getScope());
                     e.getDataContext().updateEntries(pm.getScope());
                 }
@@ -4011,13 +4011,13 @@ operator extends Operator {
         return deployment;
     }
 
-    public static Subroutine add(Subroutine compound, Subroutine component)
+    public static Routine add(Routine compound, Routine component)
         throws RoutineException {
         compound.addMogram(component);
         return compound;
     }
 
-    public static Block block(Loop loop, Subroutine exertion)
+    public static Block block(Loop loop, Routine exertion)
         throws RoutineException, SignatureException {
         List<String> names = loop.getNames(exertion.getName());
         Block block;
@@ -4027,10 +4027,10 @@ operator extends Operator {
         } else {
             block = new ObjectBlock(exertion.getName() + "-block");
         }
-        Subroutine xrt = null;
+        Routine xrt = null;
         for (String name : names) {
-            xrt = (Subroutine) ObjectCloner.cloneAnnotatedWithNewIDs(exertion);
-            ((ServiceRoutine) xrt).setName(name);
+            xrt = (Routine) ObjectCloner.cloneAnnotatedWithNewIDs(exertion);
+            ((Subroutine) xrt).setName(name);
             block.addMogram(xrt);
         }
         return block;

@@ -47,8 +47,8 @@ public class MogramThread implements Runnable {
 	}
 
 	public void run() {
-		logger.debug("*** Subroutine explorer started with control context ***\n"
-			+ ((Subroutine)job).getControlContext());
+		logger.debug("*** Routine explorer started with control context ***\n"
+			+ ((Routine)job).getControlContext());
 		Dispatcher dispatcher = null;
 		try {
 		if (job instanceof Job)
@@ -56,7 +56,7 @@ public class MogramThread implements Runnable {
 		else
 			dispatcher = dispatcherFactory.createDispatcher((Task)job, provider);
 
-			((Subroutine)job).getControlContext().appendTrace((
+			((Routine)job).getControlContext().appendTrace((
 				provider.getProviderName() != null ? provider.getProviderName() + " " : "") +
 				"run: " + job.getName() + " explorer: " + dispatcher.getClass().getName());
 		} catch (DispatchException | RemoteException e) {
@@ -70,7 +70,7 @@ public class MogramThread implements Runnable {
 					&& explorer.getState() != Exec.SUSPENDED) {
 				 count--;
 				 if (count < 0) {
-				 logger.debug("*** Mogramber's Subroutine Dispatcher waiting in state: "
+				 logger.debug("*** Mogramber's Routine Dispatcher waiting in state: "
 				 + explorer.getState());
 				 count = COUNT;
 				 }
@@ -79,7 +79,7 @@ public class MogramThread implements Runnable {
 		dispatcher.exec();
 		DispatchResult dispatchResult = dispatcher.getResult();
 		logger.debug("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + dispatchResult.state
-			+ " for job***\n" + ((Subroutine)job).getControlContext());
+			+ " for job***\n" + ((Routine)job).getControlContext());
 		result = (Mogram) dispatchResult.exertion;
 	}
 

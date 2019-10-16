@@ -31,7 +31,7 @@ import java.util.List;
 
 
 /**
- * The loop Subroutine executes its target exertion while its condition is true.
+ * The loop Routine executes its target exertion while its condition is true.
  * Other types of looping types depend on parameters provided as described for
  * each LoopExertion constructor.
  * 
@@ -52,7 +52,7 @@ public class LoopTask extends ConditionalTask {
 	 * @param name
 	 * @param exertion
 	 */
-	public LoopTask(String name, Subroutine exertion) {
+	public LoopTask(String name, Routine exertion) {
 		super(name);
 		condition = new Condition(true);
 		target = exertion;
@@ -138,7 +138,7 @@ public class LoopTask extends ConditionalTask {
 					}
 				}
 				while (condition.isTrue()) {
-					if (target instanceof Subroutine) {
+					if (target instanceof Routine) {
 						Signature sig = target.getProcessSignature();
 						if (sig != null && sig.getVariability() != null) {
 							target.getContext().append(condition.getConditionalContext());

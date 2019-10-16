@@ -166,11 +166,11 @@ public class NetSignature extends ObjectSignature implements sig {
     }
 
 
-    public void setExertion(Subroutine exertion) throws RoutineException {
+    public void setExertion(Routine exertion) throws RoutineException {
         this.exertion = exertion;
 	}
 
-	public Subroutine getExertion() {
+	public Routine getExertion() {
 		return exertion;
 	}
 
@@ -283,13 +283,13 @@ public class NetSignature extends ObjectSignature implements sig {
 			((Closing)provider).close();
 	}
 
-	public Subroutine invokeMethod(Subroutine ex) throws RemoteException,
+	public Routine invokeMethod(Routine ex) throws RemoteException,
 			RoutineException {
 		// If customized method provided by Mobile Agent
 		Method m = getSubstituteMethod(new Class[] { Mogram.class });
 		try {
 			if (m != null)
-				return (Subroutine) m.invoke(this, new Object[] { ex });
+				return (Routine) m.invoke(this, new Object[] { ex });
 
 			if (((ServiceExerter) provider).isValidMethod(operation.selector)) {
 				return ((ServiceExerter) provider).getDelegate()
@@ -401,7 +401,7 @@ public class NetSignature extends ObjectSignature implements sig {
 
 	@Override
 	public Object execute(Arg... args) throws MogramException {
-		Subroutine mog = Arg.selectRoutine(args);
+		Routine mog = Arg.selectRoutine(args);
 		Context cxt = (Context) Arg.selectDomain(args);
 		if (cxt == null && contextReturn != null) {
 			cxt = contextReturn.getDataContext();

@@ -31,8 +31,8 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.DatabaseStorer.Store;
 import sorcer.core.provider.ProviderRuntime;
 import sorcer.service.Context;
+import sorcer.service.Routine;
 import sorcer.service.Subroutine;
-import sorcer.service.ServiceRoutine;
 import sorcer.util.DataTable;
 import sorcer.util.ModelTable;
 
@@ -73,7 +73,7 @@ public class SorcerDatabaseViews {
 		
 		SerialBinding exertiontKeyBinding = new SerialBinding(catalog, UuidKey.class);
 		EntityBinding exertionDataBinding = new ExertionBinding(catalog,
-				UuidKey.class, ServiceRoutine.class);
+				UuidKey.class, Subroutine.class);
 	
 		routineMap = new StoredSortedMap(db.getExertionDatabase(),
 				exertiontKeyBinding, exertionDataBinding, true);
@@ -108,9 +108,9 @@ public class SorcerDatabaseViews {
 	// convenience methods are provided here to return them in order to avoid
 	// down-casting elsewhere.
 	/**
-	 * Return a map view of the Subroutine storage container.
+	 * Return a map view of the Routine storage container.
 	 */
-	public StoredMap<UuidKey, Subroutine> getRoutineMap() {
+	public StoredMap<UuidKey, Routine> getRoutineMap() {
 		return routineMap;
 	}
 
@@ -136,9 +136,9 @@ public class SorcerDatabaseViews {
 	}
 
 	/**
-	 * Return an entity setValue view of the Subroutine storage container.
+	 * Return an entity setValue view of the Routine storage container.
 	 */
-	public StoredValueSet<Subroutine> getRoutineSet() {
+	public StoredValueSet<Routine> getRoutineSet() {
 		return (StoredValueSet) routineMap.values();
 	}
 
@@ -179,7 +179,7 @@ public class SorcerDatabaseViews {
 	
 	/**
 	 * ExertionBinding is used to bind the stored key/data entry pair to a
-	 * combined data object (entity - Subroutine).
+	 * combined data object (entity - Routine).
 	 */
 	private static class ExertionBinding extends SerialSerialBinding {
 
@@ -194,7 +194,7 @@ public class SorcerDatabaseViews {
 		 * Create the entity by combining the stored key and data. 
 		 */
 		public Object entryToObject(Object keyInput, Object object) {
-			((ServiceRoutine)object).setId(((UuidKey)keyInput).getId());
+			((Subroutine)object).setId(((UuidKey)keyInput).getId());
 			return object;
 		}
 
@@ -202,7 +202,7 @@ public class SorcerDatabaseViews {
 		 * Create the stored key from the entity.
 		 */
 		public Object objectToKey(Object object) {
-			UuidKey key = new UuidKey(((Subroutine)object).getId());
+			UuidKey key = new UuidKey(((Routine)object).getId());
 			return key;
 		}
 

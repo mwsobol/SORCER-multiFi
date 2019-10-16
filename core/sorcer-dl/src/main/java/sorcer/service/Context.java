@@ -251,9 +251,9 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 	/**
 	 * Returns the mogram associated with this context.
 	 *
-	 * @return Subroutine
+	 * @return Routine
 	 */
-	public Subroutine getMogram();
+	public Routine getMogram();
 
 	/**
 	 * Returns the service exerter associated with this context
@@ -276,7 +276,7 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 	 * @param task
 	 *            The task to set.
 	 */
-	public void setRoutine(Subroutine task);
+	public void setRoutine(Routine task);
 
 	/**
 	 * Returns the subject path in this context. A subject is a path/execute

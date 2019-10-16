@@ -87,7 +87,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	protected Multitype multitype = new Multitype();
 
 	// associated exertion only if needed
-	protected Subroutine exertion;
+	protected Routine exertion;
 
 	/** preprocess, compute, postprocess, append context */
 	protected Type execType = Type.PROC;
@@ -158,11 +158,11 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
         execType = Type.PROC;
     }
 
-	public void setExertion(Subroutine exertion) throws RoutineException {
+	public void setExertion(Routine exertion) throws RoutineException {
 		this.exertion = exertion;
 	}
 
-	public Subroutine getExertion() {
+	public Routine getExertion() {
 		return exertion;
 	}
 

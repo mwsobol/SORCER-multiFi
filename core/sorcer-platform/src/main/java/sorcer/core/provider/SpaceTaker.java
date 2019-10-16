@@ -329,7 +329,7 @@ public class SpaceTaker implements Runnable {
 		return TX.createTransaction(transactionLeaseTimeout);
 	}
 
-	protected boolean isAbandoned(Subroutine exertion) {
+	protected boolean isAbandoned(Routine exertion) {
 		if (space != null) {
 			ExertionEnvelop ee = new ExertionEnvelop();
 			ee.parentID = exertion.getParentId();
@@ -446,11 +446,11 @@ public class SpaceTaker implements Runnable {
 		}
 
 		public Entry doEnvelope(ExertionEnvelop ee, Transaction transaction, String threadId, Transaction.Created txn) {
-			ServiceRoutine se;
-            ServiceRoutine out;
+			Subroutine se;
+            Subroutine out;
             try {
 				ee.exertion.getControlContext().appendTrace("spacer: "+data.provider.getProviderName());
-				se = (ServiceRoutine) ee.exertion;
+				se = (Subroutine) ee.exertion;
                 MonitoringSession monSession = MonitorUtil.getMonitoringSession(se);
 
                 if (se.isMonitorable() && se.isTask() && monSession!=null) {

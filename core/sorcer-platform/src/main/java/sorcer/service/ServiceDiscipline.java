@@ -60,7 +60,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     protected Service out;
 
     // the executed dispatcher
-    protected Subroutine outDispatcher;
+    protected Routine outDispatcher;
 
     protected Task precondition;
 
@@ -79,7 +79,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         disciplineId = UuidFactory.generate();
     }
 
-    public ServiceDiscipline(Subroutine... dispatchs) {
+    public ServiceDiscipline(Routine... dispatchs) {
         contextionMultiFi = new ServiceFidelity(dispatchs);
     }
 
@@ -88,7 +88,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     public ServiceDiscipline(Fidelity serviceFi, Fidelity dispatchFi, Fidelity contextFi) {
-        Subroutine dispatch = (Subroutine) dispatchFi.getSelect();
+        Routine dispatch = (Routine) dispatchFi.getSelect();
         dispatch.setName(dispatchFi.getName());
         Service service = (Service)serviceFi.getSelect();
         if (service instanceof Signature) {
@@ -96,7 +96,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         } else if (service instanceof Request) {
             ((Request)service).setName(serviceFi.getName());
         }
-        dispatchMultiFi = new ServiceFidelity(new Subroutine[] { dispatch });
+        dispatchMultiFi = new ServiceFidelity(new Routine[] { dispatch });
         contextionMultiFi = new ServiceFidelity(new Service[] { service});
 
         if (contextFi != null) {
@@ -106,28 +106,28 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         }
     }
 
-    public ServiceDiscipline(Service service, Subroutine dispatch) {
+    public ServiceDiscipline(Service service, Routine dispatch) {
         contextionMultiFi = new ServiceFidelity(new Service[] { service });
         dispatchMultiFi = new ServiceFidelity(new Service[] { dispatch });
     }
 
-    public ServiceDiscipline(Service[] services, Subroutine[] dispatchs) {
+    public ServiceDiscipline(Service[] services, Routine[] dispatchs) {
         contextionMultiFi = new ServiceFidelity(services);
         dispatchMultiFi = new ServiceFidelity(dispatchs);
     }
 
-    public ServiceDiscipline(List<Service> services, List<Subroutine> dispatchs) {
-        Subroutine[] cArray = new Subroutine[dispatchs.size()];
-        Service[] pArray = new Subroutine[services.size()];
+    public ServiceDiscipline(List<Service> services, List<Routine> dispatchs) {
+        Routine[] cArray = new Routine[dispatchs.size()];
+        Service[] pArray = new Routine[services.size()];
         contextionMultiFi = new ServiceFidelity(services.toArray(cArray));
         dispatchMultiFi = new ServiceFidelity(dispatchs.toArray(pArray));
     }
 
-    public void add(Service service, Subroutine dispatch) {
+    public void add(Service service, Routine dispatch) {
         add(service, dispatch, null);
     }
 
-    public void add(Service service, Subroutine dispatch, Context context) {
+    public void add(Service service, Routine dispatch, Context context) {
         contextionMultiFi.getSelects().add(service);
         dispatchMultiFi.getSelects().add(dispatch);
         if (context != null) {
@@ -140,7 +140,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
     @Override
     public void add(Fidelity serviceFi, Fidelity dispatchFi, Fidelity contextFi) {
-        Subroutine dispatch = (Subroutine) dispatchFi.getSelect();
+        Routine dispatch = (Routine) dispatchFi.getSelect();
         dispatch.setName(dispatchFi.getName());
         Service service = null;
         if (serviceFi != null) {
@@ -196,8 +196,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
-    public Subroutine getDispatcher() {
-        return (Subroutine) dispatchMultiFi.getSelect();
+    public Routine getDispatcher() {
+        return (Routine) dispatchMultiFi.getSelect();
     }
 
     @Override
@@ -246,7 +246,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         return output;
     }
 
-    public Subroutine getOutDispatcher() {
+    public Routine getOutDispatcher() {
         return outDispatcher;
     }
 
@@ -273,7 +273,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
                     throw new ServiceException(e);
                 }
             }
-            Subroutine xrt = getDispatcher();
+            Routine xrt = getDispatcher();
             Context cxt = null;
             if (contextMultiFi != null) {
                 cxt = (Context) contextMultiFi.getSelect();

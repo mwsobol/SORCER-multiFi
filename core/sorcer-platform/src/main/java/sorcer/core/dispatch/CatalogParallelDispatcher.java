@@ -56,17 +56,17 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 
     public void doExec(Arg... args) throws RoutineException,
 			SignatureException {
-        List<Future<Subroutine>> results = new ArrayList<Future<Subroutine>>(inputXrts.size());
+        List<Future<Routine>> results = new ArrayList<Future<Routine>>(inputXrts.size());
         for (Mogram mogram : inputXrts) {
-            if (mogram instanceof Subroutine)
-                results.add(executor.submit(new ExecExertion((Subroutine)mogram)));
+            if (mogram instanceof Routine)
+                results.add(executor.submit(new ExecExertion((Routine)mogram)));
 		}
 
         boolean isFailed = false;
         boolean isSuspended = false;
-        for (Future<Subroutine> result : results) {
+        for (Future<Routine> result : results) {
             try {
-                ServiceRoutine se = (ServiceRoutine) result.get();
+                Subroutine se = (Subroutine) result.get();
                 se.stopExecTime();
                 if (se.getStatus() == FAILED)
                     isFailed = true;
@@ -105,8 +105,8 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 				dispatchers.remove(xrt.getId());
 				return;
 			}*/
-			// finally exert Master Subroutine
-			masterXrt = (ServiceRoutine) execExertion(masterXrt);
+			// finally exert Master Routine
+			masterXrt = (Subroutine) execExertion(masterXrt);
 			masterXrt.stopExecTime();
 			if (masterXrt.getStatus() <= FAILED)
 				xrt.setStatus(FAILED);
@@ -124,15 +124,15 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
         return Mograms.getInputExertions(((Job) xrt));
     }
 
-    protected class ExecExertion implements Callable<Subroutine> {
-        private final Subroutine exertion;
+    protected class ExecExertion implements Callable<Routine> {
+        private final Routine exertion;
 
-        public ExecExertion(Subroutine exertion) {
+        public ExecExertion(Routine exertion) {
             this.exertion = exertion;
         }
 
         @Override
-        public Subroutine call() throws Exception {
+        public Routine call() throws Exception {
             return execExertion(exertion);
         }
 	}

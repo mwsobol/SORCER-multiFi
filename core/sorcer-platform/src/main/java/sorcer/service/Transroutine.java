@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * @author Mike Sobolewski
  */
-abstract public class Transroutine extends ServiceRoutine implements Collaboration {
+abstract public class Transroutine extends Subroutine implements Collaboration {
 	/**
 	 * Component disciplines of this job (the Composite Design pattern)
 	 */
@@ -55,7 +55,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 
 	public void reset(int state) {
 		for(Mogram e : mograms)
-			((ServiceRoutine)e).reset(state);
+			((Subroutine)e).reset(state);
 
 		this.setStatus(state);
 	}
@@ -68,7 +68,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 		mograms.set(i, ex);
 	}
 
-	public Subroutine getMasterExertion() {
+	public Routine getMasterExertion() {
 		Uuid uuid = null;
 		try {
 			uuid = (Uuid) controlContext.getValue(ControlContext.MASTER_EXERTION);
@@ -79,9 +79,9 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 				&& controlContext.getFlowType().equals(ControlContext.SEQUENTIAL)) {
 			return (size() > 0) ? get(size() - 1) : null;
 		} else {
-			Subroutine master = null;
+			Routine master = null;
 			for (int i = 0; i < size(); i++) {
-				if (((ServiceRoutine) get(i)).getId().equals(
+				if (((Subroutine) get(i)).getId().equals(
 						uuid)) {
 					master = get(i);
 					break;
@@ -105,8 +105,8 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 	/**
 	 * Returns the exertion at the specified index.
 	 */
-	public Subroutine get(int index) {
-		return (Subroutine) mograms.get(index);
+	public Routine get(int index) {
+		return (Routine) mograms.get(index);
 	}
 
 	public void setMograms(List<Mogram> mograms) {
@@ -114,7 +114,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 
 	}
 
-	public Mogram addExertion(Subroutine exertion, int priority) throws RoutineException {
+	public Mogram addExertion(Routine exertion, int priority) throws RoutineException {
 		addMogram(exertion);
 		controlContext.setPriority(exertion, priority);
 		return this;
@@ -131,19 +131,15 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 
 	public List<Mogram> getAllMograms() {
 		List<Mogram> allMograms = new ArrayList<>();
-		allMograms.addAll(mograms);
-		for (Mogram mog : mograms) {
-			mog.getMograms(allMograms);
-		}
-		return allMograms;
+		return getMograms(allMograms);
 	}
 
-	public List<Mogram> getMograms(List<Mogram> allMograms) {
-		allMograms.addAll(mograms);
-		for (Mogram mog : mograms) {
-			mog.getMograms(allMograms);
+	public List<Mogram> getMograms(List<Mogram> mogramList) {
+		for (Mogram e : mograms) {
+			e.getMograms(mogramList);
 		}
-		return allMograms;
+		mogramList.add(this);
+		return mogramList;
 	}
 
 	public boolean hasChild(String childName) {
@@ -162,7 +158,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 		return null;
 	}
 
-	public int compareByIndex(Subroutine e) {
+	public int compareByIndex(Routine e) {
 		if (this.getIndex() > ((Transroutine) e).getIndex())
 			return 1;
 		else if (this.getIndex() < ((Transroutine) e).getIndex())
@@ -189,7 +185,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 	public Context evaluate(Context context, Arg... args) throws EvaluationException {
 		try {
 		    getContext().substitute(context);
-			Subroutine out = exert(args);
+			Routine out = exert(args);
 			return out.getContext();
 		} catch (MogramException | RemoteException e) {
 			throw new EvaluationException(e);

@@ -61,9 +61,9 @@ public class ControlFlowManager {
 	protected ProviderDelegate delegate;
 
 	/**
-	 * The Subroutine that is going to be executed.
+	 * The Routine that is going to be executed.
 	 */
-	protected Subroutine exertion;
+	protected Routine exertion;
 
     /**
      * Reference to a jobber proxy if available.
@@ -87,16 +87,16 @@ public class ControlFlowManager {
 	}
 
 	/**
-	 * Overloaded constructor which takes in an Subroutine and an ExerterDelegate.
+	 * Overloaded constructor which takes in an Routine and an ExerterDelegate.
 	 * 
 	 * @param exertion
-	 *            Subroutine
+	 *            Routine
 	 * @param delegate
 	 *            ExerterDelegate
      * @throws ConfigurationException
      * @throws RemoteException
      */
-	public ControlFlowManager(Subroutine exertion, ProviderDelegate delegate)
+	public ControlFlowManager(Routine exertion, ProviderDelegate delegate)
             throws RemoteException, ConfigurationException {
 		this.delegate = delegate;
 		this.exertion = exertion;
@@ -104,11 +104,11 @@ public class ControlFlowManager {
 	}
 
     /**
-     * Overloaded constructor which takes in an Subroutine, ExerterDelegate, and
+     * Overloaded constructor which takes in an Routine, ExerterDelegate, and
      * Spacer. This constructor is used when handling {@link sorcer.service.Job}s.
      *
      * @param exertion
-     *            Subroutine
+     *            Routine
      * @param delegate
      *            ExerterDelegate
      * @param serviceBean
@@ -116,7 +116,7 @@ public class ControlFlowManager {
      * @throws ConfigurationException
      * @throws RemoteException
      */
-    public ControlFlowManager(Subroutine exertion, ProviderDelegate delegate,
+    public ControlFlowManager(Routine exertion, ProviderDelegate delegate,
 							  SorcerExerterBean serviceBean) throws RemoteException, ConfigurationException {
         this.delegate = delegate;
         this.exertion = exertion;
@@ -134,11 +134,11 @@ public class ControlFlowManager {
 
 
     /**
-     * Overloaded constructor which takes in an Subroutine, ExerterDelegate, and
+     * Overloaded constructor which takes in an Routine, ExerterDelegate, and
      * Spacer. This constructor is used when handling {@link sorcer.service.Job}s.
      *
      * @param exertion
-     *            Subroutine
+     *            Routine
      * @param delegate
      *            ExerterDelegate
  	 * @param jobber
@@ -146,17 +146,17 @@ public class ControlFlowManager {
      * @throws ConfigurationException
      * @throws RemoteException
      */
-	public ControlFlowManager(Subroutine exertion, ProviderDelegate delegate,
+	public ControlFlowManager(Routine exertion, ProviderDelegate delegate,
 							  Jobber jobber) throws RemoteException, ConfigurationException {
         this(exertion, delegate);
 		this.jobber = jobber;
 	}
 	/**
-	 * Overloaded constructor which takes in an Subroutine, ExerterDelegate, and
+	 * Overloaded constructor which takes in an Routine, ExerterDelegate, and
 	 * Concatenator. This constructor is used when handling {@link sorcer.service.Block}s.
 	 * 
 	 * @param exertion
-	 *            Subroutine
+	 *            Routine
 	 * @param delegate
 	 *            ExerterDelegate
 	 * @param concatenator
@@ -164,7 +164,7 @@ public class ControlFlowManager {
      * @throws ConfigurationException
      * @throws RemoteException
 	 */
-	public ControlFlowManager(Subroutine exertion, ProviderDelegate delegate,
+	public ControlFlowManager(Routine exertion, ProviderDelegate delegate,
 							  Concatenator concatenator) throws RemoteException, ConfigurationException {
 		this(exertion, delegate);
 		this.concatenator = concatenator;
@@ -193,10 +193,10 @@ public class ControlFlowManager {
 
 
     /**
-     * Process the Subroutine accordingly if it is a job, task, or a Conditional
-     * Subroutine.
+     * Process the Routine accordingly if it is a job, task, or a Conditional
+     * Routine.
      *
-     * @return Subroutine the result
+     * @return Routine the result
      * @see NetJob
      * @see NetTask
      * @see Conditional
@@ -295,7 +295,7 @@ public class ControlFlowManager {
      * @throws RemoteException
      * @throws RoutineException
      */
-    public Mogram doRendezvousExertion(ServiceRoutine xrt) throws RemoteException, MogramException {
+    public Mogram doRendezvousExertion(Subroutine xrt) throws RemoteException, MogramException {
         try {
             if (xrt.isSpacable()) {
                 logger.info("exertion isSpacable");
@@ -346,17 +346,17 @@ public class ControlFlowManager {
     }
     /**
      * This method handles the {@link Conditional} Exertions. It determines if
-     * the conditional Subroutine: {@link OptTask}, {@link AltTask}, and
+     * the conditional Routine: {@link OptTask}, {@link AltTask}, and
      * {@link LoopTask}.
      *
      * @param exertion
-     *            Conditional multitype Subroutine
-     * @return Subroutine
+     *            Conditional multitype Routine
+     * @return Routine
      * @throws SignatureException
      * @throws RoutineException
      * @throws RemoteException
      */
-    public Task doConditional(Subroutine exertion) throws RemoteException,
+    public Task doConditional(Routine exertion) throws RemoteException,
             MogramException, SignatureException {
         return ((Task) exertion).doTask();
     }
@@ -432,14 +432,14 @@ public class ControlFlowManager {
 */
 
     /*
-     * Checks if the Subroutine is valid for this provider. Returns true if it is
+     * Checks if the Routine is valid for this provider. Returns true if it is
      * valid otherwise returns false.
      *
      * @param exertion
-     *            Subroutine interface
+     *            Routine interface
      * @return boolean
 
-    public boolean isValidExertion(Subroutine exertion) {
+    public boolean isValidExertion(Routine exertion) {
         String pn = exertion.getProcessSignature().getProviderName();
 
         if (!(pn == null || pn.equals(SorcerConstants.NULL) || SorcerConstants.ANY
@@ -475,7 +475,7 @@ public class ControlFlowManager {
      *
      * @param exertion
      *            Either a task or job
-    public void resetExertionStatus(Subroutine exertion) {
+    public void resetExertionStatus(Routine exertion) {
 		if (exertion.isTask()) {
             ((Task) exertion).setStatus(Exec.INITIAL);
 		} else if (exertion.isJob()) {

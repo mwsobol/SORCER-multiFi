@@ -94,13 +94,13 @@ public class ExertMonitor extends ServiceExerter implements MonitoringManagement
         eventHandler = new ExertMonitorEventHandler(getProviderConfiguration());
 	}
 
-	public Subroutine register(RemoteEventListener lstnr, Subroutine ex, long duration) throws MonitorException {
+	public Routine register(RemoteEventListener lstnr, Routine ex, long duration) throws MonitorException {
 		MonitorSession resource = new MonitorSession(ex, lstnr, duration);
 		synchronized (resourcesWriteLock) {
 			try {
 				persist(resource);
 			} catch (IOException e) {
-				logger.warn("Problem persisting Subroutine", e);
+				logger.warn("Problem persisting Routine", e);
 			}
 		}
 		return resource.getRuntimeExertion();
@@ -129,7 +129,7 @@ public class ExertMonitor extends ServiceExerter implements MonitoringManagement
 		if (resource == null)
 			throw new MonitorException("There exists no such session");
         Lease lease = resource.init(mntrbl, duration, timeout);
-        Subroutine exertion = resource.getRuntimeExertion();
+        Routine exertion = resource.getRuntimeExertion();
         eventHandler.fire(new MonitorEvent(getProxy(), exertion, exertion.getStatus()));
 		return lease;
 	}
@@ -198,7 +198,7 @@ public class ExertMonitor extends ServiceExerter implements MonitoringManagement
 		if (resource == null)
 			throw new MonitorException("There exists no such session");
 		resource.init(duration, timeout);
-        Subroutine exertion = resource.getRuntimeExertion();
+        Routine exertion = resource.getRuntimeExertion();
         eventHandler.fire(new MonitorEvent(getProxy(), exertion, exertion.getStatus()));
 	}
 
@@ -226,7 +226,7 @@ public class ExertMonitor extends ServiceExerter implements MonitoringManagement
 		if (resource == null)
 			throw new MonitorException("There exists no such session");
         Lease lease = resource.init(mntrbl);
-        Subroutine exertion = resource.getRuntimeExertion();
+        Routine exertion = resource.getRuntimeExertion();
         eventHandler.fire(new MonitorEvent(getProxy(), exertion, exertion.getStatus()));
 		return lease;
 	}
@@ -247,7 +247,7 @@ public class ExertMonitor extends ServiceExerter implements MonitoringManagement
 		if (resource == null)
 			throw new MonitorException("There exists no such session for: "+ cookie);
 		resource.update(ctx, controlContext, aspect);
-        Subroutine exertion = resource.getRuntimeExertion();
+        Routine exertion = resource.getRuntimeExertion();
         eventHandler.fire(new MonitorEvent(getProxy(), exertion, exertion.getStatus()));
 	}
 
@@ -267,7 +267,7 @@ public class ExertMonitor extends ServiceExerter implements MonitoringManagement
 		if (resource == null)
 			throw new MonitorException("There exists no such session");
 		resource.done(ctx, controlContext);
-        Subroutine exertion = resource.getRuntimeExertion();
+        Routine exertion = resource.getRuntimeExertion();
         eventHandler.fire(new MonitorEvent(getProxy(), exertion, exertion.getStatus()));
 	}
 
@@ -286,7 +286,7 @@ public class ExertMonitor extends ServiceExerter implements MonitoringManagement
 		if (resource == null)
 			throw new MonitorException("There exists no such session");
 		resource.failed(ctx, controlContext);
-        Subroutine exertion = resource.getRuntimeExertion();
+        Routine exertion = resource.getRuntimeExertion();
         eventHandler.fire(new MonitorEvent(getProxy(), exertion, exertion.getStatus()));
 	}
 
@@ -329,7 +329,7 @@ public class ExertMonitor extends ServiceExerter implements MonitoringManagement
     private Map<Uuid, ExertionInfo> getMonitorableExertionInfo(MonitorSession monitorSession, UuidKey key, Exec.State state, Principal principal) throws RemoteException,MonitorException {
         Map<Uuid, ExertionInfo> table = new HashMap<>();
         logger.debug("Trying to getValue exertionInfos for: {} state: {} for: {}", monitorSession, (state==null?"null":state.toString()), principal);
-        ServiceRoutine xrt = (ServiceRoutine) (monitorSession).getRuntimeExertion();
+        Subroutine xrt = (Subroutine) (monitorSession).getRuntimeExertion();
         if (xrt.getPrincipal().getId()
                 .equals(((SorcerPrincipal) principal).getId())) {
             if (state == null || state.equals(Exec.State.NULL)
@@ -343,9 +343,9 @@ public class ExertMonitor extends ServiceExerter implements MonitoringManagement
         return table;
     }
 
-    public Subroutine getMonitorableExertion(Uuid id, Principal principal) throws MonitorException {
-        Subroutine xrt = getSession(id).getRuntimeExertion();
-        if (((ServiceRoutine) xrt).getPrincipal().getId().equals(((SorcerPrincipal) principal).getId()))
+    public Routine getMonitorableExertion(Uuid id, Principal principal) throws MonitorException {
+        Routine xrt = getSession(id).getRuntimeExertion();
+        if (((Subroutine) xrt).getPrincipal().getId().equals(((SorcerPrincipal) principal).getId()))
             return xrt;
         else
             return null;
@@ -355,12 +355,12 @@ public class ExertMonitor extends ServiceExerter implements MonitoringManagement
      * For this reference ID, which references a exertion in a monitor, getValue the
 	 * exertion if the client has enough credentials.
 	 */
-	public Subroutine getMonitorableExertion(UEID cookie, Principal principal) throws MonitorException {
+	public Routine getMonitorableExertion(UEID cookie, Principal principal) throws MonitorException {
         UuidKey lkey = cacheSessionKeyMap.get(cookie.exertionID);
-        Subroutine ex;
+        Routine ex;
         if (lkey!=null) {
             ex = (getSession(lkey)).getRuntimeExertion();
-            if (ex!=null && ((ServiceRoutine) ex).getPrincipal().getId().equals(((SorcerPrincipal) principal).getId()))
+            if (ex!=null && ((Subroutine) ex).getPrincipal().getId().equals(((SorcerPrincipal) principal).getId()))
                 return ex;
             else
                 return null;
@@ -371,7 +371,7 @@ public class ExertMonitor extends ServiceExerter implements MonitoringManagement
 			ex = (getSession(lkey)).getRuntimeExertion();
             if (ex!=null) cacheSessionKeyMap.put(ex.getId(), lkey);
             if (cookie.exertionID.equals(ex.getId().toString())
-					&& ((ServiceRoutine) ex).getPrincipal().getId().equals(((SorcerPrincipal) principal).getId()))
+					&& ((Subroutine) ex).getPrincipal().getId().equals(((SorcerPrincipal) principal).getId()))
 				return ex;
 		}
 		return null;

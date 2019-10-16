@@ -128,7 +128,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 	@Test
 	public void multiFiObjectTaskTest() throws Exception {
-		ServiceRoutine.debug = true;
+		Subroutine.debug = true;
 
 		Task task = task("add",
 			sigFi("object", sig("add", Adder.class)),
@@ -628,7 +628,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		return context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0));
 	}
 
-	public static Subroutine createJob() throws Exception {
+	public static Routine createJob() throws Exception {
 		return createJob(Flow.SEQ, Access.PUSH);
 	}
 

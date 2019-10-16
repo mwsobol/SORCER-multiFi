@@ -91,7 +91,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected Context initContext;
 
 	/** The exertion that uses this context */
-	protected ServiceRoutine exertion;
+	protected Subroutine exertion;
 	protected String currentPrefix;
 	protected boolean isFinalized = false;
 	protected Functionality.Type type = Functionality.Type.CONTEXT;
@@ -192,7 +192,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		subdomainId = cxt.getSubdomainId();
 		domainName = cxt.getDomainName();
 		subdomainName = cxt.getSubdomainName();
-		exertion = (ServiceRoutine) cxt.getMogram();
+		exertion = (Subroutine) cxt.getMogram();
 		principal = cxt.getPrincipal();
 		isPersistantTaskAssociated = cxt.isPersistantTaskAssociated;
 	}
@@ -346,13 +346,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this.initContext = initContext;
 	}
 
-	public Subroutine getMogram() {
+	public Routine getMogram() {
 		return exertion;
 	}
 
-	public void setRoutine(Subroutine exertion) {
-		if (exertion == null || exertion instanceof Subroutine)
-			this.exertion = (ServiceRoutine) exertion;
+	public void setRoutine(Routine exertion) {
+		if (exertion == null || exertion instanceof Routine)
+			this.exertion = (Subroutine) exertion;
 	}
 
 	public T getReturnValue(Arg... entries) throws RemoteException,
@@ -3391,7 +3391,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/* (non-Javadoc)
-     * @see sorcer.service.Service#exert(sorcer.service.Subroutine, net.jini.core.transaction.Transaction)
+     * @see sorcer.service.Service#exert(sorcer.service.Routine, net.jini.core.transaction.Transaction)
      */
     public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
         try {

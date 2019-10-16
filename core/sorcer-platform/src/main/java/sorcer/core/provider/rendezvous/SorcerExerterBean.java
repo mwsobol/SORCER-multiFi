@@ -70,8 +70,8 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 		return true;
 	}
 	
-	protected void replaceNullExertionIDs(Subroutine ex) {
-		if (ex != null && ((ServiceRoutine) ex).getId() == null) {
+	protected void replaceNullExertionIDs(Routine ex) {
+		if (ex != null && ((Subroutine) ex).getId() == null) {
 			ex.setId(UuidFactory.generate());
 			if (ex.isJob()) {
 				for (int i = 0; i < ((Job) ex).size(); i++)
@@ -80,7 +80,7 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 		}
 	}
 
-	protected void notifyViaEmail(Subroutine ex) throws ContextException {
+	protected void notifyViaEmail(Routine ex) throws ContextException {
 		if (ex == null || ex.isTask())
 			return;
 		Job job = (Job) ex;
@@ -147,7 +147,7 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.core.provider.ServiceBean#service(sorcer.service.Subroutine, net.jini.core.transaction.Transaction)
+	 * @see sorcer.core.provider.ServiceBean#service(sorcer.service.Routine, net.jini.core.transaction.Transaction)
 	 */
 	public Mogram exert(Mogram mogram, Transaction transaction, Arg... args) throws RemoteException, RoutineException {
 		Mogram out = null;
@@ -165,7 +165,7 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 				out = getControlFlownManager(mogram).process();
 			}
 
-			if (mogram instanceof Subroutine)
+			if (mogram instanceof Routine)
 				mogram.getDataContext().setRoutine(null);
         }
 		catch (Exception e) {
@@ -177,11 +177,11 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 
 	protected ControlFlowManager getControlFlownManager(Mogram exertion) throws RoutineException {
         try {
-            if (exertion instanceof Subroutine) {
+            if (exertion instanceof Routine) {
                 if (exertion.isMonitorable())
-                    return new MonitoringControlFlowManager((Subroutine)exertion, delegate, this);
+                    return new MonitoringControlFlowManager((Routine)exertion, delegate, this);
                 else
-                    return new ControlFlowManager((Subroutine)exertion, delegate, this);
+                    return new ControlFlowManager((Routine)exertion, delegate, this);
             }
             else
                 return null;

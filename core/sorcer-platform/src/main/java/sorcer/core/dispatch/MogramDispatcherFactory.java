@@ -72,18 +72,18 @@ public class MogramDispatcherFactory implements DispatcherFactory {
                                        Exerter provider) throws DispatchException {
         Dispatcher dispatcher = null;
         ProvisionManager provisionManager = null;
-        if (mogram instanceof Subroutine) {
-            List<ServiceDeployment> deployments = ((ServiceRoutine) mogram).getDeployments();
+        if (mogram instanceof Routine) {
+            List<ServiceDeployment> deployments = ((Subroutine) mogram).getDeployments();
             if (deployments.size() > 0 && (((ServiceSignature) mogram.getProcessSignature()).isProvisionable()
-                    || ((Subroutine)mogram).isProvisionable()))
-                provisionManager = new ProvisionManager((Subroutine)mogram);
+                    || ((Routine)mogram).isProvisionable()))
+                provisionManager = new ProvisionManager((Routine)mogram);
         }
 
         try {
             if(mogram instanceof Job)
                 mogram = new ExertionSorter((Job)mogram).getSortedJob();
 
-            if ( mogram instanceof Block && Mograms.isCatalogBlock((Subroutine)mogram)) {
+            if ( mogram instanceof Block && Mograms.isCatalogBlock((Routine)mogram)) {
                 logger.info("Running Catalog Block Dispatcher...");
                 dispatcher = new CatalogBlockDispatcher((Block)mogram,
                                                         sharedContexts,
@@ -92,7 +92,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
                                                         provisionManager);
             } else if (isSpaceSequential(mogram)) {
                 logger.info("Running Space Sequential Dispatcher...");
-                dispatcher = new SpaceSequentialDispatcher((Subroutine)mogram,
+                dispatcher = new SpaceSequentialDispatcher((Routine)mogram,
                                                            sharedContexts,
                                                            isSpawned,
                                                            loki,
@@ -140,7 +140,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
                 lrm.renewUntil(monSession.getLease(), Lease.FOREVER, LEASE_RENEWAL_PERIOD, null);
                 dispatcher.setLrm(lrm);
 
-                logger.debug("Subroutine state: " + Exec.State.name(mogram.getStatus()));
+                logger.debug("Routine state: " + Exec.State.name(mogram.getStatus()));
                 logger.debug("Session for the mogram = " + monSession);
                 logger.debug("Lease to be renewed for duration = " +
                         (monSession.getLease().getExpiration() - System

@@ -351,7 +351,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
             if (sFi != null) {
                 sFi.selectSelect(fi.getName());
                 sFi.setChanged(true);
-                if (mogram instanceof Subroutine) {
+                if (mogram instanceof Routine) {
                     ((ServiceMogram)mogram).setSelectedFidelity((ServiceFidelity) sFi.getSelect());
                     if (mogram.getClass()==Task.class) {
                         ((Task)mogram).setDelegate(null);

@@ -39,7 +39,7 @@ import static sorcer.service.Exec.*;
 abstract public class CatalogExertDispatcher extends ExertDispatcher {
     private final Logger logger = LoggerFactory.getLogger(CatalogExertDispatcher.class);
 
-    public CatalogExertDispatcher(Subroutine job,
+    public CatalogExertDispatcher(Routine job,
                                   Set<Context> sharedContext,
                                   boolean isSpawned,
                                   Exerter provider,
@@ -47,12 +47,12 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         super(job, sharedContext, isSpawned, provider, provisionManager);
     }
 
-    protected Subroutine execExertion(Subroutine ex, Arg... args) throws SignatureException,
+    protected Routine execExertion(Routine ex, Arg... args) throws SignatureException,
             RoutineException {
         beforeExec(ex);
         // setValue subject before task goes out.
         // ex.setSubject(subject);
-        ServiceRoutine result = null;
+        Subroutine result = null;
         try {
             if (ex.isTask()) {
                 result = execTask((Task) ex, args);
@@ -61,7 +61,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
             } else if (ex.isBlock()) {
                 result = execBlock((Block) ex, args);
             } else {
-                logger.warn("Unknown ServiceRoutine: {}", ex);
+                logger.warn("Unknown Subroutine: {}", ex);
             }
             afterExec(ex, result);
             // setValue subject after result is received
@@ -70,7 +70,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         } catch (Exception e) {
             logger.warn("Error while executing exertion: ", e);
             // return original exertion with exception
-            result = (ServiceRoutine) ex;
+            result = (Subroutine) ex;
             result.reportException(e);
             result.setStatus(FAILED);
             setState(Exec.FAILED);
@@ -79,9 +79,9 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         return result;
     }
 
-    protected void afterExec(Subroutine ex, Subroutine result)
+    protected void afterExec(Routine ex, Routine result)
             throws SignatureException, RoutineException, ContextException {
-        ServiceRoutine ser = (ServiceRoutine) result;
+        Subroutine ser = (Subroutine) result;
 		((Transroutine)xrt).setMogramAt(result, ex.getIndex());
         if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
             ser.setStatus(DONE);

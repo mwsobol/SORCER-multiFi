@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * The alternative Subroutine that executes sequentially a collection of optional
+ * The alternative Routine that executes sequentially a collection of optional
  * disciplines. It executes the first optExertion in the collection such that its
  * condition is true.
  * 
@@ -72,12 +72,12 @@ public class AltTask extends ConditionalTask {
 //					opt.setContextScope(cxt);
 					opt.setContextScope(dataContext);
 					Mogram mog = opt.getTarget();
-					if (mog instanceof Subroutine) {
-                        ((ServiceRoutine)mog).setContextScope(cxt);
+					if (mog instanceof Routine) {
+                        ((Subroutine)mog).setContextScope(cxt);
                     } else {
                         mog.setScope(cxt);
                     }
-					Subroutine out = mog.exert(txn, args);
+					Routine out = mog.exert(txn, args);
 					opt.setTarget(out);
 					dataContext = (ServiceContext) out.getContext();
 					controlContext.append(out.getControlContext());
@@ -122,7 +122,7 @@ public class AltTask extends ConditionalTask {
 	}
 	
 	public void reset(int state) {
-			for (ServiceRoutine e : optExertions)
+			for (Subroutine e : optExertions)
 				e.reset(state);
 		
 		this.setStatus(state);
@@ -141,8 +141,8 @@ public class AltTask extends ConditionalTask {
 
 	@Override
 	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) {
-		for (Subroutine ext : optExertions) {
-			exceptions.addAll(((ServiceRoutine)ext).getExceptions(exceptions));
+		for (Routine ext : optExertions) {
+			exceptions.addAll(((Subroutine)ext).getExceptions(exceptions));
 		}
 		exceptions.addAll(this.getExceptions());
 		return exceptions;
@@ -151,7 +151,7 @@ public class AltTask extends ConditionalTask {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Subroutine#getMograms()
+	 * @see sorcer.service.Routine#getMograms()
 	 */
 	@Override
 	public List<Mogram> getMograms() {
@@ -161,8 +161,8 @@ public class AltTask extends ConditionalTask {
 	}
 	
 	public List<Mogram> getMograms(List<Mogram> exs) {
-		for (Subroutine e : optExertions)
-			((ServiceRoutine) e).getMograms(exs);
+		for (Routine e : optExertions)
+			((Subroutine) e).getMograms(exs);
 		exs.add(this);
 		return exs;
 	}
@@ -179,7 +179,7 @@ public class AltTask extends ConditionalTask {
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Subroutine#isCompound()
+	 * @see sorcer.service.Routine#isCompound()
 	 */
 	@Override
 	public boolean isCompound() {

@@ -43,7 +43,7 @@ public class ServiceRendezvous extends SorcerExerterBean implements Rendezvous, 
 	
 	public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
 			throws TransactionException, RoutineException, RemoteException {
-		Subroutine exertion = (Subroutine) mogram;
+		Routine exertion = (Routine) mogram;
 		if (!isConfigured)
 			try {
 				configure();

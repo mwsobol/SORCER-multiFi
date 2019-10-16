@@ -52,7 +52,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     protected LokiMemberUtil loki;
     private final Logger logger = LoggerFactory.getLogger(SpaceParallelDispatcher.class);
 
-    public SpaceParallelDispatcher(Subroutine exertion,
+    public SpaceParallelDispatcher(Routine exertion,
                                    Set<Context> sharedContexts,
                                    boolean isSpawned,
                                    LokiMemberUtil loki,
@@ -92,7 +92,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 
         for (Mogram mogram : inputXrts) {
             logger.info("Calling monSession.init from SpaceParallelDispatcher for: {}", mogram.getName());
-            MonitoringSession monSession = MonitorUtil.getMonitoringSession((Subroutine)mogram);
+            MonitoringSession monSession = MonitorUtil.getMonitoringSession((Routine)mogram);
             if (xrt.isMonitorable() && monSession!=null) {
                 try {
                     if (monSession.getState()==State.INITIAL.ordinal()) {
@@ -103,16 +103,16 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                     logger.error("Problem starting monitoring for {}", xrt.getName(), e);
                 }
             }
-            dispatchExertion((Subroutine)mogram);
+            dispatchExertion((Routine)mogram);
             try {
-                afterExec((Subroutine)mogram);
+                afterExec((Routine)mogram);
             } catch (ContextException ce) {
                 logger.warn("Problem sending state to monitor");
             }
         }
 	}
 
-    protected void dispatchExertion(Subroutine exertion) throws RoutineException, SignatureException {
+    protected void dispatchExertion(Routine exertion) throws RoutineException, SignatureException {
         logger.debug("exertion #{}: exertion: {}", exertion.getIndex(), exertion);
         try {
             writeEnvelop(exertion);
@@ -202,10 +202,10 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         for (ExertionEnvelop resultEnvelop : results) {
 
             logger.debug("HandleResult got result: " + resultEnvelop.describe());
-            ServiceRoutine input = (ServiceRoutine) ((NetJob) xrt)
+            Subroutine input = (Subroutine) ((NetJob) xrt)
                     .get(resultEnvelop.exertion
                             .getIndex());
-            ServiceRoutine result = (ServiceRoutine) resultEnvelop.exertion;
+            Subroutine result = (Subroutine) resultEnvelop.exertion;
             int status = result.getStatus();
             if(status == DONE)
                 postExecExertion(input, result);
@@ -226,7 +226,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         }
     }
 
-    protected void addPoison(Subroutine exertion) {
+    protected void addPoison(Routine exertion) {
         space = SpaceAccessor.getSpace();
         if (space == null) {
             return;
@@ -253,7 +253,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     // abstract in ExertionDispatcher
-    protected void preExecExertion(Subroutine exertion) throws RoutineException,
+    protected void preExecExertion(Routine exertion) throws RoutineException,
             SignatureException {
 //		try {
 //			exertion.getControlContext().appendTrace(provider.getProviderName()
@@ -266,15 +266,15 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         } catch (ContextException e) {
             throw new RoutineException(e);
         }
-        ((ServiceRoutine) exertion).startExecTime();
-        ((ServiceRoutine) exertion).setStatus(RUNNING);
+        ((Subroutine) exertion).startExecTime();
+        ((Subroutine) exertion).setStatus(RUNNING);
     }
 
-/*    private void provisionProviderForExertion(Subroutine exertion) {
+/*    private void provisionProviderForExertion(Routine exertion) {
         ProviderProvisionManager.provision(exertion, this);
     }*/
 
-    protected void writeEnvelop(Subroutine exertion) throws
+    protected void writeEnvelop(Routine exertion) throws
             RoutineException, SignatureException, RemoteException {
         // setSubject before exertion is dropped
         space = SpaceAccessor.getSpace();
@@ -285,7 +285,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         /*if (exertion.isProvisionable())
             provisionProviderForExertion(exertion);*/
 
-        ((ServiceRoutine) exertion).setSubject(subject);
+        ((Subroutine) exertion).setSubject(subject);
         preExecExertion(exertion);
         ExertionEnvelop ee = ExertionEnvelop.getTemplate(exertion);
         ee.state = INITIAL;
@@ -322,12 +322,12 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         }
     }
 
-    protected void postExecExertion(Subroutine ex, Subroutine result)
+    protected void postExecExertion(Routine ex, Routine result)
             throws RoutineException, SignatureException {
-        ((ServiceRoutine) result).stopExecTime();
+        ((Subroutine) result).stopExecTime();
         try {
             ((NetJob) xrt).setMogramAt(result, ex.getIndex());
-            ServiceRoutine ser = (ServiceRoutine) result;
+            Subroutine ser = (Subroutine) result;
             if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
                 ser.setStatus(DONE);
                 collectOutputs(result);
@@ -342,7 +342,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         changeDoneExertionIndex(result.getIndex());
     }
 
-    protected void handleError(Subroutine exertion) throws RemoteException {
+    protected void handleError(Routine exertion) throws RemoteException {
         if (exertion != xrt)
             ((NetJob) xrt).setMogramAt(exertion,
                     exertion.getIndex());

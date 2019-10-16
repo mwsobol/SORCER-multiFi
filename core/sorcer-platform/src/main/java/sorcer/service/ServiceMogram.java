@@ -108,7 +108,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     // for already existing names
     protected String serviceFidelitySelector;
 
-    // Date of creation of this Subroutine
+    // Date of creation of this Routine
     protected Date creationDate = new Date();
 
     protected Date lastUpdateDate;
@@ -166,6 +166,10 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         principal = new SorcerPrincipal(System.getProperty("user.name"));
         principal.setId(principal.getName());
         setSubject(principal);
+    }
+
+    public void reset(int state) {
+        status = state;
     }
 
     @Override
@@ -1121,8 +1125,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
                 } catch (RemoteException e) {
                     throw new ContextException(e);
                 }
-            } else if (this instanceof Subroutine) {
-                ((Subroutine) this).getValue(path);
+            } else if (this instanceof Routine) {
+                ((Routine) this).getValue(path);
             }
         }
         throw new ContextException(getName() + "mogram not evaluated yet");
@@ -1145,6 +1149,13 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.metaFiNames = metaFiNames;
     }
 
+    @Override
+    public List<Mogram> getMograms() {
+        List<Mogram> mograms = new ArrayList<>();
+        mograms.add(this);
+        return mograms;
+    }
+
     public Mogram clear() throws MogramException {
         if (mogramStrategy != null) {
             mogramStrategy.getOutcome().clear();
@@ -1158,5 +1169,19 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     @Override
     public void substitute(Arg... args) throws SetterException, RemoteException {
             dataContext.substitute(args);
+    }
+
+    /**
+     * Returns true if this exertion is a branching or looping exertion.
+     */
+    public boolean isConditional() {
+        return false;
+    }
+
+    /**
+     * Returns true if this exertion is composed of other exertions.
+     */
+    public boolean isCompound() {
+        return false;
     }
 }

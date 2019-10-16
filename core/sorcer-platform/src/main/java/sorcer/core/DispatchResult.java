@@ -17,16 +17,16 @@
 package sorcer.core;
 
 import sorcer.service.Exec;
-import sorcer.service.Subroutine;
+import sorcer.service.Routine;
 
 /**
  * @author Rafał Krupiński
  */
 public class DispatchResult {
     public final Exec.State state;
-    public final Subroutine exertion;
+    public final Routine exertion;
 
-    public DispatchResult(Exec.State state, Subroutine exertion) {
+    public DispatchResult(Exec.State state, Routine exertion) {
         this.state = state;
         this.exertion = exertion;
     }
