@@ -123,7 +123,10 @@ public interface Routine extends Dependency, Dispatcher, Invocation<Object>, Par
 	 * @return a referenced by a path object
 	 */
 	public Object getValue(String path, Arg... args) throws ContextException;
-		
+
+	public Object getOutValue(Context.Out outPaths ) throws ContextException;
+
+	public void updateValue(Object value) throws ContextException;
 	/**
 	 * Returns a return execute associated with a return path in this exertion's context.
 	 * 
