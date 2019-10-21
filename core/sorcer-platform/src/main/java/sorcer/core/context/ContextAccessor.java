@@ -35,14 +35,13 @@ public interface ContextAccessor {
 	 * Performs a save operation, storing and returning the context with a
 	 * incremented version. The id remains unchanged.
 	 * 
-	 * @param cntxt
+	 * @param context
 	 *            a context to place in the data store.
 	 * @return the stored ServiceContext with incremented version
 	 * @throws ContextException
 	 *             thrown if context is not already in data store or if the
 	 *             context's GAppPrincipal does not provide the required
 	 *             authorization.
-	 * @see Context.setPrincipal
 	 */
 	public Context save(Context context) throws ContextException;
 
@@ -50,13 +49,12 @@ public interface ContextAccessor {
 	 * Saves context to the data store, assigning a unique id with version setValue
 	 * to 1.0 to the returned context.
 	 * 
-	 * @param cntxt
+	 * @param context
 	 *            a context to persist in the data store.
 	 * @return the stored ServiceContext with new id
 	 * @throws ContextException
 	 *             thrown if context's GAppPrincipal does not provide the
 	 *             required authorization.
-	 * @see Context.setPrincipal
 	 */
 	public Context saveAs(Context context) throws ContextException;
 
@@ -65,7 +63,7 @@ public interface ContextAccessor {
 	 * 
 	 * @param id
 	 *            the context identification
-	 * @param prin
+	 * @param principal
 	 *            provides authorization
 	 * @throws ContextException
 	 *             thrown if given id doesn't exist in context storage or if
@@ -83,7 +81,7 @@ public interface ContextAccessor {
 	 * @param version
 	 *            the version number for this context; if < 0, latest version
 	 *            returned.
-	 * @param prin
+	 * @param principal
 	 *            provides authorization
 	 * @throws ContextException
 	 *             thrown if id and/or version doesn't exist in context storage

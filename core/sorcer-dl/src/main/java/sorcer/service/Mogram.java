@@ -27,7 +27,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * An top-level common interface for all mograms in SORCER.
+ * A top-level interface for mograms - models of the {@link sorcer.service.modeling.Model} type
+ * and routines of the {@link sorcer.service.Routine} type, or both.
  *
  * @author Mike Sobolewski
  */
