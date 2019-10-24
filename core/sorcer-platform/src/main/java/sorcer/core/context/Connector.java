@@ -1,9 +1,11 @@
 package sorcer.core.context;
 
+import sorcer.service.Opservice;
+
 /**
  * Created by Mike Sobolewski on 02/13/15.
  */
-public class MapContext extends ServiceContext {
+public class Connector extends ServiceContext implements Opservice {
 
     public enum Direction { IN, OUT, FILTER }
 
@@ -11,7 +13,7 @@ public class MapContext extends ServiceContext {
 
     public boolean isRedundant = false;
 
-    public MapContext() {
+    public Connector() {
         super();
 
     }
@@ -21,7 +23,7 @@ public class MapContext extends ServiceContext {
      * @param name
      * @see ServiceContext
      */
-    public MapContext(String name) {
+    public Connector(String name) {
         super(name);
     }
 }

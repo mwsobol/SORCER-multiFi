@@ -1716,8 +1716,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	// TODO in/out/inout marking as defined in the connector
 	public Context updateContextWith(Context context) throws ContextException {
 		boolean isRedundant = false;
-		if (context instanceof MapContext) {
-			isRedundant = ((MapContext) context).isRedundant;
+		if (context instanceof Connector) {
+			isRedundant = ((Connector) context).isRedundant;
 		}
 		if (context != null) {
 			Iterator it = ((ServiceContext)context).entryIterator();

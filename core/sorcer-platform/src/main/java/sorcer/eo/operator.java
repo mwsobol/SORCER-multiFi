@@ -291,7 +291,7 @@ operator extends Operator {
 
         ServiceContext cxt = null;
         List<ServiceContext> cxts = new ArrayList<ServiceContext>();;
-        List<MapContext> connList = new ArrayList<MapContext>();
+        List<Connector> connList = new ArrayList<Connector>();
         Strategy.Access accessType = null;
         Strategy.Flow flowType = null;
         Strategy.FidelityManagement fm = null;
@@ -369,8 +369,8 @@ operator extends Operator {
                 name = (String) o;
             } else if (o instanceof EntryList) {
                 entryLists.add((EntryList) o);
-            } else if (o instanceof MapContext) {
-                connList.add((MapContext) o);
+            } else if (o instanceof Connector) {
+                connList.add((Connector) o);
             } else if (o instanceof ExecDependency) {
                 depList.add((ExecDependency) o);
             } else if (o instanceof Signature) {
@@ -519,8 +519,8 @@ operator extends Operator {
             cxt.setEntryLists(entryLists);
         }
         if (connList.size() > 0) {
-            for (MapContext conn : connList) {
-                if (conn.direction == MapContext.Direction.IN) {
+            for (Connector conn : connList) {
+                if (conn.direction == Connector.Direction.IN) {
                     cxt.getMogramStrategy().setInConnector(conn);
                 } else {
                     cxt.getMogramStrategy().setOutConnector(conn);
@@ -1156,7 +1156,7 @@ operator extends Operator {
         // if context is provided for created signature
         if (context instanceof ServiceContext
             // not applied to connectors in Signatures
-            && context.getClass() != MapContext.class) {
+            && context.getClass() != Connector.class) {
             if (signature.getContextReturn() == null) {
                 signature.setContextReturn(new Context.Return());
             }
@@ -1233,7 +1233,7 @@ operator extends Operator {
         // if context is provided for created signature
         if (context instanceof ServiceContext
             // not applied to connectors in Signatures
-            && context.getClass() != MapContext.class) {
+            && context.getClass() != Connector.class) {
             if (newSig.getContextReturn() == null) {
                 newSig.setContextReturn(new Context.Return());
             }
@@ -1280,7 +1280,7 @@ operator extends Operator {
     public static ServiceSignature sig(String operation, Class serviceType, Object... items) throws SignatureException {
         ProviderName providerName = null;
         Provision p = null;
-        List<MapContext> connList = new ArrayList<MapContext>();
+        List<Connector> connList = new ArrayList<Connector>();
         Multitype srvType = null;
         List<Class> sigTypes = new ArrayList<>();
         Args args = null;
@@ -1293,8 +1293,8 @@ operator extends Operator {
                         providerName.setName(Sorcer.getActualName(providerName.getName()));
                 } else if (o instanceof Provision) {
                     p = (Provision) o;
-                } else if (o instanceof MapContext) {
-                    connList.add(((MapContext) o));
+                } else if (o instanceof Connector) {
+                    connList.add(((Connector) o));
                 } else if (o instanceof Multitype) {
                     srvType = (Multitype) o;
                 } else if (o instanceof Exerter) {
@@ -1338,8 +1338,8 @@ operator extends Operator {
         ((ServiceSignature) sig).setName(operation);
 
         if (connList != null) {
-            for (MapContext conn : connList) {
-                if (conn.direction == MapContext.Direction.IN)
+            for (Connector conn : connList) {
+                if (conn.direction == Connector.Direction.IN)
                     ((ServiceSignature) sig).setInConnector(conn);
                 else
                     ((ServiceSignature) sig).setOutConnector(conn);
@@ -1383,7 +1383,7 @@ operator extends Operator {
                     ((ObjectSignature) sig).setTargetSignature(((ServiceSignature) o));
                 } else if (o instanceof ServiceContext
                     // not applied to connectors in Signatures
-                    && o.getClass() != MapContext.class) {
+                    && o.getClass() != Connector.class) {
                     if (sig.getContextReturn() == null) {
                         sig.setContextReturn(new Context.Return());
                     }
@@ -2499,7 +2499,7 @@ operator extends Operator {
         List<Service> fis = new ArrayList<>();
         List<Fidelity> metaFis = new ArrayList();
         MorphFidelity mFi = null;
-        List<MapContext> connList = new ArrayList();
+        List<Connector> connList = new ArrayList();
         Context.Out outPaths = null;
         Context.In inPaths = null;
 
@@ -2511,8 +2511,8 @@ operator extends Operator {
                 exertions.add((Routine) elems[i]);
             } else if (elems[i] instanceof ControlContext) {
                 controlStrategy = (ControlContext) elems[i];
-            } else if (elems[i] instanceof MapContext) {
-                connList.add(((MapContext) elems[i]));
+            } else if (elems[i] instanceof Connector) {
+                connList.add(((Connector) elems[i]));
             } else if (elems[i] instanceof Context) {
                 data = (Context<?>) elems[i];
             } else if (elems[i] instanceof Pipe) {
@@ -2642,8 +2642,8 @@ operator extends Operator {
         }
 
         if (connList != null) {
-            for (MapContext conn : connList) {
-                if (conn.direction == MapContext.Direction.IN)
+            for (Connector conn : connList) {
+                if (conn.direction == Connector.Direction.IN)
                     ((ServiceContext)job.getDataContext()).getMogramStrategy().setInConnector(conn);
                 else
                     ((ServiceContext)job.getDataContext()).getMogramStrategy().setOutConnector(conn);

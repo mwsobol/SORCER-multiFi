@@ -49,6 +49,8 @@ import sorcer.service.IndexedContext;
  * implicit contextReturn: array/out/[i]/comment<br>
  *<li>the description of the i-th element: by ovd(i) and the setter ovd(i, description);<br>
  * implicit contextReturn: array/out/[i]/description
+ *
+ * @author Mike Sobolewski
  */
 public class ArrayContext extends ServiceContext implements IndexedContext,
 		SorcerConstants {

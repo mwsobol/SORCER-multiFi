@@ -21,7 +21,7 @@ import sorcer.co.tuple.ExecDependency;
 import sorcer.co.tuple.InoutValue;
 import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
-import sorcer.core.context.MapContext;
+import sorcer.core.context.Connector;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
@@ -317,15 +317,15 @@ public class operator {
 
     public static Model inConn(Model model, Context inConnector) {
         ((ServiceContext)model).getMogramStrategy().setInConnector(inConnector);
-        if (inConnector instanceof MapContext)
-            ((MapContext)inConnector).direction =  MapContext.Direction.IN;
+        if (inConnector instanceof Connector)
+            ((Connector)inConnector).direction =  Connector.Direction.IN;
         return model;
     }
 
     public static Model outConn(Model model, Context outConnector) {
         ((ServiceContext) model).getMogramStrategy().setOutConnector(outConnector);
-        if (outConnector instanceof MapContext)
-            ((MapContext)outConnector).direction = MapContext.Direction.OUT;
+        if (outConnector instanceof Connector)
+            ((Connector)outConnector).direction = Connector.Direction.OUT;
         return model;
     }
 
@@ -485,35 +485,35 @@ public class operator {
         ((FidelityManager)mogram.getFidelityManager()).setTraced(isTraced);
     }
 
-    public static Context inConn(List<Entry> entries) throws ContextException {
-        MapContext map = new MapContext();
-        map.direction = MapContext.Direction.IN;
+    public static Connector inConn(List<Entry> entries) throws ContextException {
+        Connector map = new Connector();
+        map.direction = Connector.Direction.IN;
         sorcer.eo.operator.populteContext(map, entries);
         return map;
     }
 
-    public static Context inConn(boolean isRedundant, Value... entries) throws ContextException {
-        MapContext map = new MapContext();
-        map.direction = MapContext.Direction.IN;
+    public static Connector inConn(boolean isRedundant, Value... entries) throws ContextException {
+        Connector map = new Connector();
+        map.direction = Connector.Direction.IN;
         map.isRedundant = isRedundant;
         List<Entry> items = Arrays.asList(entries);
         sorcer.eo.operator.populteContext(map, items);
         return map;
     }
-    public static Context inConn(Value... entries) throws ContextException {
+    public static Connector inConn(Value... entries) throws ContextException {
         return inConn(false, entries);
     }
 
-    public static Context outConn(List<Entry> entries) throws ContextException {
-        MapContext map = new MapContext();
-        map.direction = MapContext.Direction.OUT;
+    public static Connector outConn(List<Entry> entries) throws ContextException {
+        Connector map = new Connector();
+        map.direction = Connector.Direction.OUT;
         sorcer.eo.operator.populteContext(map, entries);
         return map;
     }
 
-    public static Context outConn(Entry... entries) throws ContextException {
-        MapContext map = new MapContext();
-        map.direction = MapContext.Direction.OUT;
+    public static Connector outConn(Entry... entries) throws ContextException {
+        Connector map = new Connector();
+        map.direction = Connector.Direction.OUT;
         List<Entry> items = Arrays.asList(entries);
         sorcer.eo.operator.populteContext(map, items);
         return map;
