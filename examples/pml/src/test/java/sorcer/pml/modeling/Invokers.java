@@ -221,6 +221,14 @@ public class Invokers {
 	}
 
 	@Test
+	public void invokeContext() throws Exception {
+		y = ent("y", invoker("x1 + x2", args("x1", "x2")));
+		Object val = exec(y, context(val("x1", 10.0), val("x2", 20.0)));
+		logger.info("y: " + val);
+		assertTrue(val.equals(30.0));
+	}
+
+	@Test
 	public void substituteInvokeArgs() throws Exception {
 		ent x1, x2, y;
 
