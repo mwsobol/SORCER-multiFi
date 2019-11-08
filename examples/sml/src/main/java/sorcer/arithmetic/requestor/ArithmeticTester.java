@@ -6,7 +6,7 @@ import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.RemoteAdder;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.co.operator;
-import sorcer.core.requestor.SorcerRequestor;
+import sorcer.core.consumer.SorcerRequestor;
 import sorcer.service.*;
 import sorcer.service.Strategy.*;
 import sorcer.util.Log;

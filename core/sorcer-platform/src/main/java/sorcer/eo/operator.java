@@ -44,7 +44,7 @@ import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceModeler;
-import sorcer.core.requestor.ServiceConsumer;
+import sorcer.core.consumer.ServiceConsumer;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.*;
 import sorcer.netlet.ServiceScripter;

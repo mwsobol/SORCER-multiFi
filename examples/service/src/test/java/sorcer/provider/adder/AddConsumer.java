@@ -6,13 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.requestor.ServiceConsumer;
-import sorcer.eo.operator;
+import sorcer.core.consumer.ServiceConsumer;
 import sorcer.requestor.adder.AdderConsumer;
+import sorcer.service.Consumer;
 import sorcer.service.Context;
 
 import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.value;
 import static sorcer.so.operator.exec;
@@ -22,17 +21,14 @@ import static sorcer.so.operator.exec;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/service")
-public class ServiceRequestor {
-	private final static Logger logger = LoggerFactory.getLogger(ServiceRequestor.class);
+public class AddConsumer {
+	private final static Logger logger = LoggerFactory.getLogger(AddConsumer.class);
 
 	@Test
 	public void adderRequestorAsService() throws Exception {
 
-//		ExertRequestor req = new ExertRequestor(AdderConsumer.class, "exertion");
-//		Context cxt = (Context) req.execEnt();
-
-		ServiceConsumer req = consumer(AdderConsumer.class, "exertion");
-//		sorcer.core.consumer.ServiceConsumer req = consumer(AdderConsumer.class, "netlet");
+		Consumer req = consumer(AdderConsumer.class, "routine");
+//		Consumer req = consumer(AdderConsumer.class, "netlet");
 
 		Context cxt = (Context) exec(req);
 

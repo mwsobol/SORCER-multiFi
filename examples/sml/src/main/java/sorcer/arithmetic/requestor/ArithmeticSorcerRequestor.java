@@ -11,7 +11,7 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.co.operator;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.requestor.SorcerRequestor;
+import sorcer.core.consumer.SorcerRequestor;
 import sorcer.service.*;
 
 import static sorcer.co.operator.*;

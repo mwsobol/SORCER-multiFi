@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package sorcer.core.requestor;
+package sorcer.core.consumer;
 
 import groovy.lang.GroovyShell;
 import net.jini.core.transaction.Transaction;
@@ -42,7 +42,7 @@ import static sorcer.eo.operator.prvName;
 /**
  * @author Mike Sobolewski
  */
-public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
+public class ServiceConsumer implements sorcer.service.Consumer, SorcerConstants {
 	/** Logger for logging information about this instance */
 	protected static final Logger logger = LoggerFactory.getLogger(ServiceConsumer.class.getName());
 

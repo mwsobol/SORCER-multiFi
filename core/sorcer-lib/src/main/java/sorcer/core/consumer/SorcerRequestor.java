@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package sorcer.core.requestor;
+package sorcer.core.consumer;
 
 import net.jini.config.EmptyConfiguration;
 import org.slf4j.Logger;
