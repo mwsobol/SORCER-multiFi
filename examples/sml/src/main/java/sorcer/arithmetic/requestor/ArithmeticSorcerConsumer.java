@@ -9,16 +9,16 @@ import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.co.operator;
+import sorcer.core.consumer.SorcerConsumer;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.consumer.SorcerRequestor;
 import sorcer.service.*;
 
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.so.operator.exert;
 
-public class ArithmeticSorcerRequestor extends SorcerRequestor {
+public class ArithmeticSorcerConsumer extends SorcerConsumer {
 
     public Routine getExertion(String... args) throws RoutineException, ContextException, SignatureException {
 

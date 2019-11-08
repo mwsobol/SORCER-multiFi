@@ -52,17 +52,17 @@ import java.util.StringTokenizer;
  * @author M. W. Sobolewski
  * @see SorcerConstants
  */
-abstract public class SorcerRequestor implements SorcerConstants {
+abstract public class SorcerConsumer implements SorcerConstants {
 	/** Logger for logging information about this instance */
-	protected static final Logger logger = LoggerFactory.getLogger(SorcerRequestor.class.getName());
+	protected static final Logger logger = LoggerFactory.getLogger(SorcerConsumer.class.getName());
     private final ScratchManager scratchManager = new ScratchManagerSupport();
 	public static String R_PROPERTIES_FILENAME = "consumer.properties";
-	protected static SorcerRequestor requestor = null;
+	protected static SorcerConsumer requestor = null;
 	protected Properties props;
 	protected int port;
 
 	/**
-	 * Main method for the SorcerRequestor class
+	 * Main method for the SorcerConsumer class
 	 * @param args String array containing arguments for the main method
 	 * @throws Exception
 	 */
@@ -84,7 +84,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 		
 		// Establish a new instance of the class runner
 		try {
-			requestor = (SorcerRequestor) Class.forName(runnerType).newInstance();
+			requestor = (SorcerConsumer) Class.forName(runnerType).newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.info("Not able to create service runner: " + runnerType);
@@ -123,7 +123,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	}
 	
 	/**
-	 * This is an abstract method that runs the SorcerRequestor
+	 * This is an abstract method that runs the SorcerConsumer
 	 * @param args String array containing arguments passed to the main method
 	 * @throws Exception
 	 */

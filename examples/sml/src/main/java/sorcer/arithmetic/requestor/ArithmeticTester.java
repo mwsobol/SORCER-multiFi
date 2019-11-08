@@ -6,7 +6,7 @@ import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.RemoteAdder;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.co.operator;
-import sorcer.core.consumer.SorcerRequestor;
+import sorcer.core.consumer.SorcerConsumer;
 import sorcer.service.*;
 import sorcer.service.Strategy.*;
 import sorcer.util.Log;
@@ -33,7 +33,7 @@ import static sorcer.so.operator.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class ArithmeticTester extends SorcerRequestor {
+public class ArithmeticTester extends SorcerConsumer {
 
 	private static Logger logger = Log.getTestLog();
 

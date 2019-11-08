@@ -42,7 +42,7 @@ import static sorcer.eo.operator.prvName;
 /**
  * @author Mike Sobolewski
  */
-public class ServiceConsumer implements sorcer.service.Consumer, SorcerConstants {
+public class ServiceConsumer implements Consumer, SorcerConstants {
 	/** Logger for logging information about this instance */
 	protected static final Logger logger = LoggerFactory.getLogger(ServiceConsumer.class.getName());
 

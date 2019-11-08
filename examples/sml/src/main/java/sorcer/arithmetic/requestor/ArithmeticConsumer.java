@@ -17,7 +17,7 @@ import sorcer.service.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 
-public class ArithmeticServiceConsumer extends ServiceConsumer {
+public class ArithmeticConsumer extends ServiceConsumer {
 
 	/* (non-Javadoc)
          * @see sorcer.core.requestor.ServiceConsumer#getMogram(java.lang.String[])

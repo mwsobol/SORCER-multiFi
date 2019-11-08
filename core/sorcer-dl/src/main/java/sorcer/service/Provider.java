@@ -17,5 +17,5 @@
 
 package sorcer.service;
 
-interface ServiceProvider extends Service {
+interface Provider extends Service {
 }
