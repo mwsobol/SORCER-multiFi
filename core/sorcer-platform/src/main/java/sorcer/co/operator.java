@@ -604,6 +604,16 @@ public class operator extends Operator {
 		}
 	}
 
+	public static List<Setup> setups(Object aspect, List<String> entryName, String fiName, Entry... entries) throws ContextException {
+		List<Setup> setups   = new ArrayList<>();
+		Setup setup = null;
+		for (String entName : entryName) {
+			setup = setup(aspect, entName, fiName, entries);
+			setups.add(setup);
+		}
+		return setups;
+	}
+
     public static Uuid id(Mogram mogram) {
         return mogram.getId();
     }
