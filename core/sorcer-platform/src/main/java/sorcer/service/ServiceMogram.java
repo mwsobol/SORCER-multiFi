@@ -1184,4 +1184,16 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     public boolean isCompound() {
         return false;
     }
+
+    public Context getInConnector(Arg... args) throws ContextException, RemoteException {
+        return null;
+    }
+
+    public Context getOutConnector(Arg... args) throws ContextException, RemoteException {
+        return null;
+    }
+
+    public void execDependencies(String path, Arg... args) throws ContextException {
+        // implement in subclasses
+    }
 }

@@ -462,10 +462,10 @@ public class Job extends Transroutine {
 			throw new ContextException(ex);
 		}
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see sorcer.service.Contextion#execute(java.lang.String, sorcer.service.Arg[])
-	 */
+         * @see sorcer.service.Contextion#execute(java.lang.String, sorcer.service.Arg[])
+         */
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {
 		if (path.indexOf(key) >= 0) {
@@ -481,7 +481,7 @@ public class Job extends Transroutine {
 		}
 		return val;
 	}
-	
+
 	public Object putValue(String path, Object value) throws ContextException {
 		if (path.indexOf(key) >= 0)
 			putJobValue(path, value);
