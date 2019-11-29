@@ -188,4 +188,9 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion {
     public Context getContext(String path) throws ContextException, RemoteException {
         return null;
     }
+
+    @Override
+    public MogramStrategy getMogramStrategy() {
+        return null;
+    }
 }

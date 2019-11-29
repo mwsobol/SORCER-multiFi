@@ -1,7 +1,7 @@
-package sorcer.service.modeling;
+package sorcer.service;
 /*
- * Copyright 2013 the original author or authors.
- * Copyright 2013 SorcerSoft.org.
+ * Copyright 2019 the original author or authors.
+ * Copyright 2019 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,15 @@ package sorcer.service.modeling;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import sorcer.service.Arg;
-import sorcer.service.Context;
+
+import sorcer.service.modeling.SuperviseException;
 
 import java.rmi.RemoteException;
 
-import java.rmi.RemoteException;
-
-import net.jini.core.event.RemoteEventListener;
-import sorcer.service.Arg;
-import sorcer.service.Context;
-
-public interface Exploration {
+public interface Supervisor {
 
     @SuppressWarnings("rawtypes")
-    public Context explore(Context context, Arg... args) throws ExploreException,
+    public Context supervise(Context context, Arg... args) throws SuperviseException,
             RemoteException;
 
 }

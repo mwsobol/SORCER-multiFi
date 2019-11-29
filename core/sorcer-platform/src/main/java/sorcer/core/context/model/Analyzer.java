@@ -19,14 +19,16 @@ package sorcer.core.context.model;
 
 import sorcer.service.Context;
 import sorcer.service.ContextException;
+import sorcer.service.Request;
+import sorcer.service.Service;
 import sorcer.service.modeling.Model;
 
 /**
  * Created by Mike Sobolewski on 6/3/17.
  */
 @FunctionalInterface
-public interface Mda {
+public interface Analyzer {
 
-    public void analyze(Model model, Context context) throws ContextException;
+    public void analyze(Request request, Context context) throws ContextException;
 
 }

@@ -50,7 +50,7 @@ public class ContextScriptView extends JPanel {
 	 * Constructor for creating the context view panel
 	 * 
 	 * @param dispatcher
-	 *            Remote explorer to use.
+	 *            Remote governor to use.
 	 */
 	public ContextScriptView(SignatureDispatchment dispatcher, BrowserModel model) {
 		super(new BorderLayout());

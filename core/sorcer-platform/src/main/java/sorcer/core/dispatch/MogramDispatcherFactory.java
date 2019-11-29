@@ -149,7 +149,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
 
             logger.info("*** tally of used dispatchers: " + ExertDispatcher.getDispatchers().size());
         } catch (Exception e) {
-            throw new DispatchException("Failed to create the mogram explorer for job: "+ mogram.getName(), e);
+            throw new DispatchException("Failed to create the mogram governor for job: "+ mogram.getName(), e);
         }
         return dispatcher;
     }

@@ -13,7 +13,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Coupling;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.MdaEntry;
+import sorcer.core.context.model.ent.AnalyzerEntry;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
@@ -71,7 +71,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected Differentiator differentiator;
     protected Differentiator fdDifferentiator;
     protected Differentiator globalDifferentiator;
-    protected Fidelity<MdaEntry> mdaFi;
+    protected Fidelity<AnalyzerEntry> mdaFi;
     protected List<Coupling> couplings;
     protected ContextSelector contextSelector;
 
@@ -976,14 +976,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.couplings = couplings;
     }
 
-    public Fidelity<MdaEntry> setMdaFi(Context context) throws ConfigurationException {
+    public Fidelity<AnalyzerEntry> setMdaFi(Context context) throws ConfigurationException {
        if(mdaFi == null) {
            Object mdaComponent = context.get(Context.MDA_PATH);
            if (mdaComponent != null) {
-               if (mdaComponent instanceof MdaEntry) {
-                   mdaFi = new Fidelity(((MdaEntry)mdaComponent).getName());
-                   mdaFi.addSelect((MdaEntry) mdaComponent);
-                   mdaFi.setSelect((MdaEntry)mdaComponent);
+               if (mdaComponent instanceof AnalyzerEntry) {
+                   mdaFi = new Fidelity(((AnalyzerEntry)mdaComponent).getName());
+                   mdaFi.addSelect((AnalyzerEntry) mdaComponent);
+                   mdaFi.setSelect((AnalyzerEntry)mdaComponent);
                } else if (mdaComponent instanceof ServiceFidelity
                        && ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
                    mdaFi = (Fidelity) mdaComponent;
@@ -993,7 +993,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
        return mdaFi;
     }
 
-    public Fidelity<MdaEntry> getMdaFi() {
+    public Fidelity<AnalyzerEntry> getMdaFi() {
         return mdaFi;
     }
 

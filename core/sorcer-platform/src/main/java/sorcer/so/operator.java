@@ -156,11 +156,19 @@ public class operator extends Operator {
         }
     }
 
-    public static Context eval(Model model, Context context)
+    public static Context eval(Request request, Context context)
             throws ContextException {
         Context rc = null;
         try {
-            rc = model.evaluate(context);
+            if (request instanceof Contextion) {
+                rc = ((Contextion) request).evaluate(context);
+            } else {
+                try {
+                    rc = (Context) request.execute(new Arg[] { context });
+                } catch (ServiceException e) {
+                    throw new ContextException(e);
+                }
+            }
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
@@ -251,11 +259,11 @@ public class operator extends Operator {
         }
     }
 
-    public static Object exec(ContextDomain model, String path$domain) throws ContextException {
-        if (model instanceof DataContext) {
-            return value((Context)model, path$domain);
+    public static Object exec(Request request, String path$domain) throws ContextException {
+        if (request instanceof DataContext) {
+            return value((Context)request, path$domain);
         } else {
-            return response(model, path$domain);
+            return response((Model)request, path$domain);
         }
     }
 

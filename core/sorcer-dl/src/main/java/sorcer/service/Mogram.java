@@ -49,10 +49,10 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
      * @param txn
      *            The transaction (if any) under which to exert.
      * @return a resulting exertion
-     * @throws net.jini.core.transaction.TransactionException
-     *             if a transaction error occurs
-     * @throws RoutineException
-     *             if processing this exertion causes an error
+     * @throws MogramException
+     *             if a mogram error occurs
+     * @throws RemoteException
+     *             if remote call causes an error
      */
     public <T extends Mogram> T exert(Transaction txn, Arg... args) throws MogramException, RemoteException;
 
@@ -373,8 +373,6 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
     public Signature getBuilder(Arg... args) throws MogramException;
 
     public void applyFidelity(String name);
-
-    public MogramStrategy getMogramStrategy();
 
     public void setBuilder(Signature builder) throws MogramException;
 

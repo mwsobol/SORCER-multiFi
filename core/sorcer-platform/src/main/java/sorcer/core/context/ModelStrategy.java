@@ -28,7 +28,7 @@ public class ModelStrategy implements MogramStrategy, Serializable {
 
     private boolean isProvisionable = false;
 
-    private Mogram target;
+    private Contextion target;
 
     private Access accessType;
 
@@ -78,7 +78,7 @@ public class ModelStrategy implements MogramStrategy, Serializable {
     // reponse paths of the runtime model
     protected List<Path> responsePaths = new ArrayList<Path>();
 
-    public ModelStrategy(Mogram service) {
+    public ModelStrategy(Contextion service) {
         target = service;
     }
 
@@ -259,11 +259,11 @@ public class ModelStrategy implements MogramStrategy, Serializable {
 
 
     public <T extends Mogram> Mogram exert(Transaction txn, Arg... entries) throws TransactionException, MogramException, RemoteException {
-        return target.exert(txn, entries);
+        return ((Mogram)target).exert(txn, entries);
     }
 
     public <T extends Mogram> Mogram exert(Arg... entries) throws TransactionException, MogramException, RemoteException {
-        return target.exert(entries);
+        return ((Mogram)target).exert(entries);
     }
 
     public boolean isModelDependeciesExecuted() {
@@ -306,7 +306,7 @@ public class ModelStrategy implements MogramStrategy, Serializable {
         this.outcome = outcome;
     }
 
-    public Mogram getTarget() {
+    public Contextion getTarget() {
         return target;
     }
 

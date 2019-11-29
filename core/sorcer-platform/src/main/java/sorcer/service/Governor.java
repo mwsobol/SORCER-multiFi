@@ -1,10 +1,13 @@
 package sorcer.service;
 
 import sorcer.co.tuple.ExecDependency;
+import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.Analyzer;
 import sorcer.core.service.Governance;
 import sorcer.service.modeling.Discipline;
 import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.ExploreException;
+import sorcer.service.modeling.SuperviseException;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -12,17 +15,17 @@ import java.util.Map;
 
 import static sorcer.co.operator.path;
 
-public class GovernanceExplorer implements Service, Exploration {
+public class Governor implements Service, Supervisor {
 
     protected Governance governance;
     // exec discipline dependencies
     protected Map<String, List<ExecDependency>> dependentDisciplines;
 
-    public GovernanceExplorer() {
+    public Governor() {
         // do nothing
     }
 
-    public GovernanceExplorer(Governance governance) {
+    public Governor(Governance governance) {
         this.governance = governance;
     }
 
@@ -36,26 +39,26 @@ public class GovernanceExplorer implements Service, Exploration {
 
     @Override
     public Object execute(Arg... args) throws ServiceException {
-//        try {
-//            List<Fidelity> fis = Arg.selectFidelities(args);
-//            if (fis != null && fis.size() > 0) {
-//                ((ServiceFidelity)governance.getMultiFi()).selectFi(fis.get(0));
-//            }
-//            Routine xrt = (Routine) governance.getDispatcher();
-//            if (governance.input != null) {
-//                if (governance.inConnector != null) {
-//                    xrt.setContext(((ServiceContext) governance.input).updateContextWith(governance.inConnector));
-//                } else {
-//                    xrt.setContext(governance.input);
-//                }
-//            }
-//            xrt.dispatch(governance.getOut());
-//            governance.setOutput(); = xrt.evaluate(input);
+        try {
+            List<Fidelity> fis = Arg.selectFidelities(args);
+            if (fis != null && fis.size() > 0) {
+                ((ServiceFidelity)governance.getMultiFi()).selectSelect(fis.get(0).getName());
+            }
+            Analyzer analyzer = null;
+            if (governance.getAnalyzerFi() != null) {
+                analyzer = governance.getAnalyzerFi().getSelect();
+            }
+            if (governance.getInput() != null && governance.getInConnector() != null) {
+                ((ServiceContext) governance.getInput()).updateContextWith(governance.getInConnector());
+            }
             execDependencies(governance.getName(), args);
+            if (analyzer != null) {
+                analyzer.analyze(governance, governance.getInput());
+            }
             return governance.getOutput();
-//        } catch (ConfigurationException | RemoteException e) {
-//            throw new ServiceException(e);
-//        }
+        } catch (ConfigurationException e) {
+            throw new ServiceException(e);
+        }
     }
 
     public void execDependencies(String path, Arg... args) throws ContextException {
@@ -84,12 +87,12 @@ public class GovernanceExplorer implements Service, Exploration {
     }
 
     @Override
-    public Context explore(Context searchContext, Arg... args) throws ExploreException, RemoteException {
+    public Context supervise(Context searchContext, Arg... args) throws SuperviseException, RemoteException {
         try {
             governance.setInput(searchContext);
             return (Context) execute(args);
         } catch (ServiceException e) {
-            throw new ExploreException(e);
+            throw new SuperviseException(e);
         }
     }
 }

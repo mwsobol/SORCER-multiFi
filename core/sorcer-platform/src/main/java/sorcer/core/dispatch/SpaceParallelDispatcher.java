@@ -257,7 +257,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
             SignatureException {
 //		try {
 //			exertion.getControlContext().appendTrace(provider.getProviderName()
-//					+ " explorer: " + getClass().getName());
+//					+ " governor: " + getClass().getName());
 //		} catch (RemoteException e) {
 //			// ignore it, local prc
 //		}
@@ -334,7 +334,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
             }
             result.getControlContext().appendTrace((provider.getProviderName() != null
                     ? provider.getProviderName() + " " : "")
-                    + "done: " + ex.getName() + " explorer: " + getClass().getName());
+                    + "done: " + ex.getName() + " governor: " + getClass().getName());
 
         } catch (Exception e) {
             throw new RoutineException(e);

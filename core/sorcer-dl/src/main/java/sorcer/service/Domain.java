@@ -26,7 +26,7 @@ import java.rmi.RemoteException;
  *
  * Created by Mike Sobolewski on 11/26/2019.
  */
-public interface Domain extends Mogram, Dependency, mog {
+public interface Domain extends Contextion, Dependency, mog {
 
     /**
      * Returns an execute of the domain at the returnPath as is

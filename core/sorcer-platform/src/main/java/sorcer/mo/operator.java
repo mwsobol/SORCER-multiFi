@@ -945,16 +945,90 @@ public class operator {
         return disciplne;
     }
 
-    public static Governance gov(Discipline... disciplines) {
-        return gov(null, disciplines);
-    }
+    public static Governance gov(Object... data) throws ContextException {
+        String name = getUnknown();
+        List<Discipline> disciplines = new ArrayList<>();
+        List<ServiceFidelity> discFis = new ArrayList<>();
+        Dependency dependency = null;
+        ExecDeps execDeps = null;
+        Paths disciplinePaths = null;
 
-    public static Governance gov(String name, Discipline... contextions) {
-        Governance md = new Governance(null, contextions);
-        if (name != null) {
-            md.setName(name);
+        List<Object> dataList = new ArrayList<>();
+        for (Object o : data) {
+            dataList.add(o);
         }
-        md.setExplorer(new GovernanceExplorer(md));
-        return md;
+        for (int i = 0; i < dataList.size(); i++) {
+            Object o = dataList.get(i);
+            if (o instanceof String) {
+                name = (String) o;
+            } else if (o instanceof Discipline) {
+                disciplines.add((Discipline)o);
+            } else if (o instanceof Dependency) {
+                dependency = (Dependency)o;
+            } else if (o instanceof ExecDeps) {
+                execDeps = (ExecDeps)o;
+            } else if (o instanceof ServiceFidelity) {
+                discFis.add((ServiceFidelity)o);
+            } else if (o instanceof Paths && ((Paths)o).type.equals(Functionality.Type.DISCIPLINE)) {
+                disciplinePaths = (Paths)o;
+            }
+        }
+
+        Governance gov = new Governance(name, disciplines);
+        Object[] names = new Object[disciplines.size()];
+
+        for (int i = 0; i < disciplines.size(); i++) {
+            ((ServiceDiscipline)disciplines.get(i)).setParent(gov);
+            names[i] = disciplines.get(i).getName();
+        }
+
+        if (discFis.size() > 0) {
+            FidelityManager fiManager = new FidelityManager();
+            Map<String, ServiceFidelity> fis = new HashMap<>();
+            for (ServiceFidelity discFi : discFis) {
+                fis.put(discFi.getName(), discFi);
+                gov.getDisciplines().put(discFi.getName(), (Discipline) discFi.getSelect());
+            }
+            fiManager.setFidelities(fis);
+            gov.setFiManager(fiManager);
+        }
+
+        if (disciplinePaths != null) {
+            disciplinePaths.name = gov.getName();
+            gov.setDisciplnePaths(disciplinePaths);
+        }
+
+        if (dependency == null && names.length > 0) {
+            if (disciplinePaths != null) {
+                sorcer.co.operator.dependsOn(gov, ent(gov.getName(), disciplinePaths));
+            } else {
+                sorcer.co.operator.dependsOn(gov, ent(gov.getName(), paths(names)));
+            }
+        } else {
+            List<Evaluation> entries = dependency.getDependers();
+            for (Evaluation e : entries) {
+                if (e instanceof Entry && ((Entry) e).getName().equals("self")) {
+                    e.setName(gov.getName());
+                }
+            }
+        }
+
+        if (execDeps != null && names.length > 0) {
+            ExecDependency[] entries = execDeps.deps;
+            for (Evaluation e : entries) {
+                if (e instanceof Entry && ((Entry) e).getName().equals("self")) {
+                    e.setName(gov.getName());
+                }
+            }
+
+            if (execDeps.getType().equals(Functionality.Type.FUNCTION)) {
+                sorcer.co.operator.dependsOn(gov, execDeps.deps);
+            } else if (execDeps.getType().equals(Functionality.Type.DOMAIN)) {
+                sorcer.co.operator.dependsOn(gov, execDeps.deps);
+            }
+        }
+
+        gov.setGovernor(new Governor(gov));
+        return gov;
     }
 }

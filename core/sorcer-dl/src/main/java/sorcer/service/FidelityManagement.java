@@ -44,7 +44,7 @@ public interface FidelityManagement<T extends Service> extends RemoteEventListen
 
     public List<Fidelity> getDefaultFidelities() throws RemoteException;
 
-    public Mogram getMogram() throws RemoteException;
+    public Contextion getMogram() throws RemoteException;
 
     public List<Fidelity> getFiTrace() throws RemoteException;
 

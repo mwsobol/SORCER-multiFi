@@ -19,12 +19,15 @@ package sorcer.service;
 
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.service.Governance;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.modeling.Discipline;
 import sorcer.service.modeling.Getter;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,13 +73,19 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected Morpher morpher;
 
-    protected Discipline parent;
+    protected Contextion parent;
+
+    // dependency management for this disciline
+    protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
     // default instance new Return(Context.RETURN);
     protected Context.Return contextReturn;
 
+    protected MogramStrategy mogramStrategy;
+
     public ServiceDiscipline() {
         disciplineId = UuidFactory.generate();
+        mogramStrategy = new ModelStrategy(this);
     }
 
     public ServiceDiscipline(Routine... dispatchs) {
@@ -138,6 +147,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     public void add(Fidelity serviceFi, Fidelity dispatchFi) {
         add(serviceFi, dispatchFi, null);
     }
+
     @Override
     public void add(Fidelity serviceFi, Fidelity dispatchFi, Fidelity contextFi) {
         Routine dispatch = (Routine) dispatchFi.getSelect();
@@ -209,10 +219,6 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         return this.input = input;
     }
 
-    public void setParent(Contextion parent) {
-        this.parent = (Discipline) parent;
-    }
-
     @Override
     public Context getOutput(Arg... args) throws ContextException {
         if (outDispatcher == null) {
@@ -253,6 +259,26 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     @Override
     public Signature getBuilder() {
         return builder;
+    }
+
+    @Override
+    public Context getInConnector() {
+        return inConnector;
+    }
+
+    @Override
+    public void setInConnector(Context inConnector) {
+        this.inConnector = inConnector;
+    }
+
+    @Override
+    public Context getOutConnector() {
+        return outConnector;
+    }
+
+    @Override
+    public void setOutConnector(Context inConnector) {
+        this.outConnector = inConnector;
     }
 
     public void setBuilder(Signature builder) {
@@ -329,6 +355,11 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     @Override
     public Context.Return getContextReturn() {
         return contextReturn;
+    }
+
+    @Override
+    public MogramStrategy getMogramStrategy() {
+        return mogramStrategy;
     }
 
     public void setContextReturn() {
@@ -444,4 +475,33 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     public void clear() throws MogramException {
         outDispatcher.clear();
     }
+
+    public Contextion getParent() {
+        return parent;
+    }
+
+    public void setParent(Contextion parent) {
+        this.parent = parent;
+    }
+
+    public Discipline addDepender(Evaluation depender) {
+        if (this.dependers == null)
+            this.dependers = new ArrayList<Evaluation>();
+        dependers.add(depender);
+        return this;
+    }
+
+    @Override
+    public void addDependers(Evaluation... dependers) {
+        if (this.dependers == null)
+            this.dependers = new ArrayList<Evaluation>();
+        for (Evaluation depender : dependers)
+            this.dependers.add(depender);
+    }
+
+    @Override
+    public List<Evaluation> getDependers() {
+        return dependers;
+    }
+
 }

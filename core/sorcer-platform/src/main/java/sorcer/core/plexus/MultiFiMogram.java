@@ -158,22 +158,22 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
 
     @Override
     public List<ThrowableTrace> getExceptions() throws RemoteException {
-        return fiManager.getMogram().getExceptions();
+        return ((Mogram)fiManager.getMogram()).getExceptions();
     }
 
     @Override
     public List<String> getTrace() throws RemoteException {
-        return fiManager.getMogram().getTrace();
+        return ((Mogram)fiManager.getMogram()).getTrace();
     }
 
     @Override
     public List<ThrowableTrace> getAllExceptions() throws RemoteException {
-        return fiManager.getMogram().getAllExceptions();
+        return ((Mogram)fiManager.getMogram()).getAllExceptions();
     }
 
     @Override
     public boolean isMonitorable() throws RemoteException {
-        return fiManager.getMogram().isMonitorable();
+        return ((Mogram)fiManager.getMogram()).isMonitorable();
     }
 
     @Override
@@ -227,7 +227,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
 
     @Override
     public void appendTrace(String info) throws RemoteException {
-        fiManager.getMogram().appendTrace(info);
+        ((Mogram)fiManager.getMogram()).appendTrace(info);
     }
 
     @Override

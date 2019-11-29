@@ -60,7 +60,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     // changed fidelities by morphers
     protected List<Fidelity> fiTrace = new ArrayList();
 
-    protected Mogram mogram;
+    protected Contextion mogram;
 
     protected Mogram child;
 
@@ -158,7 +158,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         this.metafidelities.put(path, fi);
     }
 
-    public Mogram getMogram() {
+    public Contextion getMogram() {
         if (child != null)
             return child;
         else
@@ -247,7 +247,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
                         } else {
                             fiEnt.selectSelect(name, path);
                         }
-                        mogram.applyFidelity(path);
+                        ((Mogram)mogram).applyFidelity(path);
                     }
                 }
             } catch (ConfigurationException e) {

@@ -30,6 +30,7 @@ import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.provider.DatabaseStorer;
+import sorcer.core.service.Governance;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
@@ -1584,22 +1585,23 @@ public class operator extends Operator {
 		}
 
 		ExecDependency[] edArray;
-        if (vals.size() > 0 && ((ServiceContext)dependee).getType().equals(Functionality.Type.MADO)) {
-            edArray = new ExecDependency[vals.size()];
-            return domainDependency(dependee, vals.toArray(edArray));
-        } else if (domain.size() > 0) {
+		if (vals.size() > 0 && (dependee instanceof Governance ||
+				((ServiceContext)dependee).getType().equals(Functionality.Type.MADO))) {
+			edArray = new ExecDependency[vals.size()];
+			return domainDependency(dependee, vals.toArray(edArray));
+		} else if (domain.size() > 0) {
 			edArray = new ExecDependency[domain.size()];
-            return domainDependency(dependee, domain.toArray(edArray));
-        } else if (functional.size() > 0) {
+			return domainDependency(dependee, domain.toArray(edArray));
+		} else if (functional.size() > 0) {
 			edArray = new ExecDependency[functional.size()];
 			return funcDependency(dependee, functional.toArray(edArray));
-        } else if (modelDeps.size() > 0) {
-            edArray = new ExecDependency[modelDeps.size()];
-            return funcDependency(dependee, modelDeps.toArray(edArray));
+		} else if (modelDeps.size() > 0) {
+			edArray = new ExecDependency[modelDeps.size()];
+			return funcDependency(dependee, modelDeps.toArray(edArray));
 		} else {
 			return funcDependency(dependee, dependers);
 		}
-    }
+	}
 
     public static Dependency domainDependency(Dependency dependee,  Evaluation... dependers) throws ContextException {
         String path = null;
@@ -1640,7 +1642,7 @@ public class operator extends Operator {
         }
 
         if (dependers.length > 0 && dependers[0] instanceof ExecDependency) {
-            Map<String, List<ExecDependency>> dm = ((ModelStrategy)((ContextDomain) dependee).getMogramStrategy()).getDependentDomains();
+            Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Contextion) dependee).getMogramStrategy()).getDependentDomains();
             for (Evaluation e : dependers) {
                 if (e != null) {
                     path = ((Identifiable) e).getName();

@@ -47,7 +47,7 @@ public class MogramThread implements Runnable {
 	}
 
 	public void run() {
-		logger.debug("*** Routine explorer started with control context ***\n"
+		logger.debug("*** Routine governor started with control context ***\n"
 			+ ((Routine)job).getControlContext());
 		Dispatcher dispatcher = null;
 		try {
@@ -58,20 +58,20 @@ public class MogramThread implements Runnable {
 
 			((Routine)job).getControlContext().appendTrace((
 				provider.getProviderName() != null ? provider.getProviderName() + " " : "") +
-				"run: " + job.getName() + " explorer: " + dispatcher.getClass().getName());
+				"run: " + job.getName() + " governor: " + dispatcher.getClass().getName());
 		} catch (DispatchException | RemoteException e) {
-			logger.error("exception in explorer: " + e);
+			logger.error("exception in governor: " + e);
 			// ignore it, locall prc
 		}
 /*			 int COUNT = 1000;
 			 int count = COUNT;
-			while (explorer.getState() != Exec.DONE
-					&& explorer.getState() != Exec.FAILED
-					&& explorer.getState() != Exec.SUSPENDED) {
+			while (governor.getState() != Exec.DONE
+					&& governor.getState() != Exec.FAILED
+					&& governor.getState() != Exec.SUSPENDED) {
 				 count--;
 				 if (count < 0) {
 				 logger.debug("*** Mogramber's Routine Dispatcher waiting in state: "
-				 + explorer.getState());
+				 + governor.getState());
 				 count = COUNT;
 				 }
 				Thread.sleep(SLEEP_TIME);

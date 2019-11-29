@@ -99,4 +99,6 @@ public interface Contextion extends Request {
 	 */
 	public Context.Return getContextReturn();
 
+	public MogramStrategy getMogramStrategy();
+
 }
