@@ -1,13 +1,11 @@
 package sorcer.service;
 
 import sorcer.co.tuple.ExecDependency;
+import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.Analyzer;
 import sorcer.core.service.Governance;
-import sorcer.service.modeling.Discipline;
-import sorcer.service.modeling.Exploration;
-import sorcer.service.modeling.ExploreException;
-import sorcer.service.modeling.SuperviseException;
+import sorcer.service.modeling.*;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -19,22 +17,12 @@ public class Governor implements Service, Supervisor {
 
     protected Governance governance;
     // exec discipline dependencies
-    protected Map<String, List<ExecDependency>> dependentDisciplines;
-
     public Governor() {
         // do nothing
     }
 
     public Governor(Governance governance) {
         this.governance = governance;
-    }
-
-    public Map<String, List<ExecDependency>> getDependentDisciplines() {
-        return dependentDisciplines;
-    }
-
-    public void setDependentDisciplines(Map<String, List<ExecDependency>> dependentDisciplines) {
-        this.dependentDisciplines = dependentDisciplines;
     }
 
     @Override
@@ -53,6 +41,7 @@ public class Governor implements Service, Supervisor {
             }
             execDependencies(governance.getName(), args);
             if (analyzer != null) {
+                governance.getInput().putValue(Functionality.Type.DISCIPLINE.toString(), governance.getName());
                 analyzer.analyze(governance, governance.getInput());
             }
             return governance.getOutput();
@@ -62,7 +51,7 @@ public class Governor implements Service, Supervisor {
     }
 
     public void execDependencies(String path, Arg... args) throws ContextException {
-        Map<String, List<ExecDependency>> dpm = dependentDisciplines;
+        Map<String, List<ExecDependency>> dpm = ((ModelStrategy) governance.getMogramStrategy()).getDependentDomains();
         if (dpm != null && dpm.get(path) != null) {
             List<ExecDependency> del = dpm.get(path);
             Discipline dis = governance.getDiscipline(path);
@@ -72,7 +61,14 @@ public class Governor implements Service, Supervisor {
                     if (dpl != null && dpl.size() > 0) {
                         for (Path p : dpl) {
                             try {
-                                governance.getDiscipline(p.path).execute(args);
+                                Discipline disc = governance.getDiscipline(p.path);
+                                disc.evaluate(governance.getOutput(), args);
+                                if (governance.getAnalyzerFi() != null && governance.getAnalyzerFi().getSelect() != null) {
+                                    disc.getOutput().putValue(Functionality.Type.DISCIPLINE.toString(), disc.getName());
+                                    governance.getAnalyzerFi().getSelect().analyze(governance, disc.getOutput());
+                                } else {
+                                    governance.getOutput().append(disc.getOutput());
+                                }
                             } catch (ServiceException e) {
                                 e.printStackTrace();
                             } catch (RemoteException e) {

@@ -1231,6 +1231,13 @@ public class operator extends Operator {
         return setValue((Entry)entry, value);
     }
 
+	public static Request setValue(Request request, String path, Object value) throws ContextException {
+		if (request instanceof Governance) {
+			((Governance)request).getOutput().putValue(path, value);
+		}
+		return request;
+	}
+
     public static Entry setValue(Entry entry, Object value) throws ContextException {
         try {
             entry.setValue(value);
@@ -1998,7 +2005,7 @@ public class operator extends Operator {
 		evaluator.setName(name);
 		return evaluator;
 	}
-	
+
 	public static URL url(String urlName) throws MalformedURLException {
 		return new URL(urlName);
 	}

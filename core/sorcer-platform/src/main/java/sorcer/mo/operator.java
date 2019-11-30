@@ -134,11 +134,19 @@ public class operator {
         return value(context, path, args);
     }
 
+    public static Object value(Request request, String path,
+                               Arg... args) throws ContextException {
+        if (request instanceof Governance) {
+            return ((Governance)request).getOutput().get(path);
+        }
+        return null;
+    }
+
     public static Object value(Response response, String path,
                               Arg... args) throws ContextException {
         if (response instanceof DataTable) {
             try {
-                return  response.getValue(path, args);
+                return  ((DataTable)response).getValue(path, args);
             } catch (RemoteException e) {
                 throw new ContextException(e);
             }
@@ -473,11 +481,13 @@ public class operator {
          return mogram;
     }
 
-    public static ServiceContext out(Mogram mogram) throws ServiceException {
-        if (mogram instanceof Discipline) {
-            return (ServiceContext) ((Discipline)mogram).getOutput();
+    public static ServiceContext out(Contextion contextion) throws ServiceException {
+        if (contextion instanceof Discipline) {
+            return (ServiceContext) ((Discipline)contextion).getOutput();
+        } if (contextion instanceof Governance) {
+            return (ServiceContext) ((Governance)contextion).getOutput();
         } else {
-            return (ServiceContext) mogram.getMogramStrategy().getOutcome();
+            return (ServiceContext) contextion.getMogramStrategy().getOutcome();
         }
     }
 
@@ -898,6 +908,13 @@ public class operator {
         return multidisc.getDiscipline(name);
     }
 
+    public static String disc(Context context) {
+        return (String) context.get(Functionality.Type.DISCIPLINE.toString());
+    }
+
+    public static String domain(Context context) {
+        return (String) context.get(Functionality.Type.DOMAIN.toString());
+    }
 
     public static Discipline disc(Fidelity... discFis) {
         return disc((String)null, discFis);

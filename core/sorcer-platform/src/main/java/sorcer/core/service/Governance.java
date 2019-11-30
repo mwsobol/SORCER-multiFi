@@ -17,6 +17,7 @@
 
 package sorcer.core.service;
 
+import javafx.geometry.Pos;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
@@ -242,7 +243,10 @@ public class Governance implements Contextion, CombinedRequest, Dependency {
 				}
 			}
 		}
-		((ServiceContext)context).getMogramStrategy().setExecState(Exec.State.NULL);
+		((ServiceContext)context).getMogramStrategy().setExecState(Exec.State.INITIAL);
+		if (output == null) {
+			output = new ServiceContext(name);
+		}
 		return analyzerFi;
 	}
 
@@ -295,10 +299,7 @@ public class Governance implements Contextion, CombinedRequest, Dependency {
 				setAnalyzerFi(context);
 			}
 			ModelStrategy strategy = ((ModelStrategy) context.getMogramStrategy());
-			Exec.State state = ((ModelStrategy) context.getMogramStrategy()).getExecState();
-
-
-			if (analyzerFi != null && state.equals(Exec.State.INITIAL)) {
+			if (analyzerFi != null) {
 				strategy.setExecState(Exec.State.RUNNING);
 				// select mda Fi if provided
 				List<Fidelity> fis = Arg.selectFidelities(args);
@@ -309,12 +310,12 @@ public class Governance implements Contextion, CombinedRequest, Dependency {
 				}
 				logger.info("*** analyzerFi: {}", analyzerFi.getSelect().getName());
 				out = governor.supervise(context, args);
-				analyzerFi.getSelect().analyze(this, out);
 				strategy.setExecState(Exec.State.DONE);
 			} else {
 				out = governor.supervise(context, args);
 			}
-		} catch (ServiceException | SuperviseException | ConfigurationException e) {
+			((ModelStrategy)mogramStrategy).setOutcome(output);
+		} catch (SuperviseException | ConfigurationException e) {
 			throw new EvaluationException(e);
 		}
 		return out;
