@@ -198,7 +198,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public ServiceContext(List<Identifiable> objects) throws ContextException {
-        this("generated from Identifiable object list");
+        this(defaultName + count++);
         for (Identifiable obj : objects) {
 			putValue(obj.getName(), (T)obj);
 		}
@@ -215,7 +215,7 @@ public class ServiceContext<T> extends ServiceMogram implements
     }
 
     public ServiceContext(Object[] objects) throws ContextException {
-		this("generated from object array");
+		this(defaultName + count++);
         if (objects.length > 0 && objects[0] instanceof Entry) {
             for (int i = 0; i < objects.length; i++) {
                 putValue(((Entry)objects[i]).getName(), (T)((Entry)objects[i]).getValue());
