@@ -17,7 +17,6 @@
 
 package sorcer.core.service;
 
-import javafx.geometry.Pos;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
@@ -36,11 +35,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Governance implements Contextion, CombinedRequest, Dependency {
+public class Collaboration implements Contextion, CombinedRequest, Dependency {
 
 	private static final long serialVersionUID = 1L;
 
-	protected static Logger logger = LoggerFactory.getLogger(Governance.class.getName());
+	protected static Logger logger = LoggerFactory.getLogger(Collaboration.class.getName());
 
 	private static int count = 0;
 
@@ -61,7 +60,7 @@ public class Governance implements Contextion, CombinedRequest, Dependency {
     // active disciplnes
     protected Paths disciplnePaths;
 
-	protected ServiceFidelity supervisorFi;
+    protected Governor governor;
 
 	protected Fidelity<AnalyzerEntry> analyzerFi;
 
@@ -69,6 +68,7 @@ public class Governance implements Contextion, CombinedRequest, Dependency {
 
 	// dependency management for this governance
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
+
 
 	private FidelityManager fiManager;
 
@@ -80,11 +80,11 @@ public class Governance implements Contextion, CombinedRequest, Dependency {
 	// context output connector
 	protected Context outConnector;
 
-    public Governance() {
+    public Collaboration() {
         this(null);
     }
 
-    public Governance(String name) {
+    public Collaboration(String name) {
         if (name == null) {
             this.name = getClass().getSimpleName() + "-" + count++;
         } else {
@@ -93,14 +93,14 @@ public class Governance implements Contextion, CombinedRequest, Dependency {
 		mogramStrategy = new ModelStrategy(this);
     }
 
-    public Governance(String name, Discipline[] disciplines) {
+    public Collaboration(String name, Discipline[] disciplines) {
         this(name);
         for (Discipline disc : disciplines) {
                 this.disciplines.put(disc.getName(), disc);
         }
     }
 
-	public Governance(String name, List<Discipline> disciplines) {
+	public Collaboration(String name, List<Discipline> disciplines) {
 		this(name);
 		for (Discipline disc : disciplines) {
 			this.disciplines.put(disc.getName(), disc);
@@ -139,22 +139,14 @@ public class Governance implements Contextion, CombinedRequest, Dependency {
 		return disciplines.get(name);
 	}
 
-    public Supervisor getSuperviser() {
-        return (Supervisor) supervisorFi.getSelect();
+    public Governor getGovernor() {
+        return governor;
     }
 
-    public void setSuperviser(Governor superviser) {
-		if (supervisorFi == null) {
-			supervisorFi = new ServiceFidelity(new Service[]{superviser});
-		} else {
-			supervisorFi.addSelect(superviser);
-			supervisorFi.setSelect(superviser);
-		}
+    public void setGovernor(Governor governor) {
+        this.governor = governor;
     }
 
-	public void selectSuperviser(String name) throws ConfigurationException {
-		supervisorFi.selectSelect(name);
-	}
 	// default instance new Return(Context.RETURN);
 	protected Context.Return contextReturn;
 
@@ -316,10 +308,10 @@ public class Governance implements Contextion, CombinedRequest, Dependency {
 					}
 				}
 				logger.info("*** analyzerFi: {}", analyzerFi.getSelect().getName());
-				out = ((Supervisor)supervisorFi.getSelect()).supervise(context, args);
+				out = governor.supervise(context, args);
 				strategy.setExecState(Exec.State.DONE);
 			} else {
-				out = ((Supervisor)supervisorFi.getSelect()).supervise(context, args);
+				out = governor.supervise(context, args);
 			}
 			((ModelStrategy)mogramStrategy).setOutcome(output);
 		} catch (SuperviseException | ConfigurationException e) {
@@ -347,7 +339,7 @@ public class Governance implements Contextion, CombinedRequest, Dependency {
 		mogramStrategy.addException(t);
 	}
 
-	public Governance addDepender(Evaluation depender) {
+	public Collaboration addDepender(Evaluation depender) {
 		if (this.dependers == null)
 			this.dependers = new ArrayList<Evaluation>();
 		dependers.add(depender);

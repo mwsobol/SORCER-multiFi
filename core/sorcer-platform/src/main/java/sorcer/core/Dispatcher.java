@@ -22,7 +22,7 @@ import sorcer.service.Arg;
 
  public interface Dispatcher {
 
-    void exec(Arg... arg);
+    void exec(Arg... args);
 
     DispatchResult getResult();
 

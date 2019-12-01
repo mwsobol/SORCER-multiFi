@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * @author Mike Sobolewski
  */
-abstract public class Transroutine extends Subroutine implements Collaboration {
+abstract public class Transroutine extends Subroutine implements Transdomain {
 	/**
 	 * Component disciplines of this job (the Composite Design pattern)
 	 */

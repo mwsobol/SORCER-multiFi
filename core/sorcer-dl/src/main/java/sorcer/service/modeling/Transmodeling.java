@@ -15,18 +15,13 @@
  */
 package sorcer.service.modeling;
 
-import sorcer.service.Arg;
-import sorcer.service.Configurable;
-import sorcer.service.Context;
-import sorcer.service.EvaluationException;
+import sorcer.service.*;
 
 import java.rmi.RemoteException;
 
 /**
  * @author Mike Sobolewski
  */
-public interface Transmodeling extends Configurable {
-
-	public Context analyze(Context modelContext, Arg... args) throws EvaluationException, RemoteException;
+public interface Transmodeling extends Model, Configurable {
 
 }

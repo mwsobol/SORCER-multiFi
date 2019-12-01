@@ -1045,7 +1045,7 @@ public class operator {
             }
         }
 
-        gov.setGovernor(new Governor(gov));
+        gov.setSuperviser(new Governor(gov));
         return gov;
     }
 }
