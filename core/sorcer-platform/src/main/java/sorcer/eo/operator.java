@@ -3602,7 +3602,7 @@ operator extends Operator {
         return signature;
     }
 
-    public static Signature modelManagerSig(Signature signature) {
+    public static Signature domainManagerSig(Signature signature) {
         ((ServiceSignature)signature).addRank(Kind.MODEL, Kind.MODEL_MANAGER);
         return signature;
     }
