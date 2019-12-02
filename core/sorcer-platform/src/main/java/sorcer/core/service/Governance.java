@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Governance implements Contextion, CombinedRequest, Dependency {
+public class Governance implements Contextion, CombinedRequest, Transdiscipline, Dependency {
 
 	private static final long serialVersionUID = 1L;
 
@@ -365,5 +365,15 @@ public class Governance implements Contextion, CombinedRequest, Dependency {
 	@Override
 	public List<Evaluation> getDependers() {
 		return dependers;
+	}
+
+	@Override
+	public Map<String, Discipline> getChildren() {
+		return disciplines;
+	}
+
+	@Override
+	public Discipline getChild(String name) {
+		return disciplines.get(name);
 	}
 }

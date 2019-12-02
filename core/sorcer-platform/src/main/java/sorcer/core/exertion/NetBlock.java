@@ -78,8 +78,4 @@ public class NetBlock extends Block implements Invocation<Object> {
 		return (Block)se.exert(txn, null, args);
 	}
 
-	@Override
-	public Map<String, Mogram> getChildren() {
-		return null;
-	}
 }

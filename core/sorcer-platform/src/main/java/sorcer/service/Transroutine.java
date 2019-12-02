@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * @author Mike Sobolewski
  */
-abstract public class Transroutine extends Subroutine implements Transdomain {
+abstract public class Transroutine extends Subroutine {
 	/**
 	 * Component disciplines of this job (the Composite Design pattern)
 	 */
@@ -192,12 +192,4 @@ abstract public class Transroutine extends Subroutine implements Transdomain {
 		}
 	}
 
-	@Override
-	public Map<String, Mogram> getChildren() {
-		Map<String, Mogram> children = new HashMap<>();
-		for (Mogram child : mograms) {
-			children.put(child.getName(), child);
-		}
-		return children;
-	}
 }
