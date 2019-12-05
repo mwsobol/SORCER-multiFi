@@ -348,7 +348,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		Signature signature = exertion.getProcessSignature();
 		Object provider = null;
 		try {
-			// If the exertion is a job rearrange the inner disciplines to make sure the
+			// If the exertion is a job rearrange the inner domains to make sure the
 			// dependencies are not broken
 			if (exertion.isJob()) {
 				ExertionSorter es = new ExertionSorter(exertion);
@@ -558,7 +558,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 
 	/**
 	 * Depending on provider access fiType correct inconsistent signatures for
-	 * composite disciplines only. Tasks go either to its provider directly or
+	 * composite domains only. Tasks go either to its provider directly or
 	 * Spacer depending on their provider access fiType (PUSH or PULL).
 	 *
 	 * @return the corrected signature

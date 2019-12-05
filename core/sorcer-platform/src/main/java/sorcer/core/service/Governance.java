@@ -17,7 +17,6 @@
 
 package sorcer.core.service;
 
-import javafx.geometry.Pos;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
@@ -27,7 +26,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.AnalyzerEntry;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
-import sorcer.service.modeling.Discipline;
+import sorcer.service.Discipline;
 import sorcer.service.modeling.SuperviseException;
 
 import java.rmi.RemoteException;
@@ -36,7 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Governance implements Contextion, CombinedRequest, Transdiscipline, Dependency {
+public class Governance implements Contextion, Transdiscipline, Dependency {
 
 	private static final long serialVersionUID = 1L;
 

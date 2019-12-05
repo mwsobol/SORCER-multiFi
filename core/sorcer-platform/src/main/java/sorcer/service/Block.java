@@ -187,9 +187,9 @@ public abstract class Block extends Transroutine {
 	}
 
 	/**
-	 * Returns the number of disciplines in this Block.
+	 * Returns the number of domains in this Block.
 	 * 
-	 * @return the number of disciplines in this Block.
+	 * @return the number of domains in this Block.
 	 */
 	public int size() {
 		return mograms.size();

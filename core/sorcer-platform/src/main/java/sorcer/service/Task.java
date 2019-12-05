@@ -300,11 +300,11 @@ public class Task extends Subroutine implements ElementaryRequest {
 	}
 
 	/**
-	 * Returns true; elementary disciplines are always "trees."
+	 * Returns true; elementary domains are always "trees."
 	 * 
 	 * @param visited
 	 *            ignored
-	 * @return true; elementary disciplines are always "trees"
+	 * @return true; elementary domains are always "trees"
 	 * @see Routine#isTree()
 	 */
 	public boolean isTree(Set visited) {
@@ -353,7 +353,7 @@ public class Task extends Subroutine implements ElementaryRequest {
 	 */
 	@Override
 	public Mogram addMogram(Mogram component) {
-		throw new RuntimeException("Tasks do not contain component disciplines!");
+		throw new RuntimeException("Tasks do not contain component domains!");
 	}
 
 	public Task getDelegate() {

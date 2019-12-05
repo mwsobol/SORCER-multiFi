@@ -40,6 +40,7 @@ import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
 import sorcer.service.modeling.*;
+import sorcer.service.Discipline;
 import sorcer.util.DataTable;
 import sorcer.util.url.sos.SdbUtil;
 

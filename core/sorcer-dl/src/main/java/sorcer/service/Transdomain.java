@@ -21,7 +21,7 @@ import java.util.Map;
 
 public interface Transdomain extends Contextion, CombinedRequest {
 
-    public Map<String, Mogram> getChildren();
+    public Map<String, Domain> getChildren();
 
     public Mogram getChild(String name);
 }

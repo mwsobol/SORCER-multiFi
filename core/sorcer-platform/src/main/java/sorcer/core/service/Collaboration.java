@@ -26,7 +26,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.AnalyzerEntry;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
-import sorcer.service.modeling.Discipline;
+import sorcer.service.Discipline;
 import sorcer.service.modeling.SuperviseException;
 
 import java.rmi.RemoteException;
@@ -35,7 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Collaboration implements Contextion, CombinedRequest, Dependency {
+public class Collaboration implements Contextion, Transdomain, Dependency {
 
 	private static final long serialVersionUID = 1L;
 
@@ -64,7 +64,7 @@ public class Collaboration implements Contextion, CombinedRequest, Dependency {
 
 	protected Fidelity<AnalyzerEntry> analyzerFi;
 
-	protected Map<String, Discipline> disciplines = new HashMap<>();
+	protected Map<String, Domain> domains = new HashMap<>();
 
 	// dependency management for this governance
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
@@ -93,17 +93,17 @@ public class Collaboration implements Contextion, CombinedRequest, Dependency {
 		mogramStrategy = new ModelStrategy(this);
     }
 
-    public Collaboration(String name, Discipline[] disciplines) {
+    public Collaboration(String name, Domain[] domains) {
         this(name);
-        for (Discipline disc : disciplines) {
-                this.disciplines.put(disc.getName(), disc);
+        for (Domain domain : domains) {
+                this.domains.put(domain.getName(), domain);
         }
     }
 
-	public Collaboration(String name, List<Discipline> disciplines) {
+	public Collaboration(String name, List<Domain> domains) {
 		this(name);
-		for (Discipline disc : disciplines) {
-			this.disciplines.put(disc.getName(), disc);
+		for (Domain domain : domains) {
+			this.domains.put(domain.getName(), domain);
 		}
 	}
 
@@ -131,12 +131,12 @@ public class Collaboration implements Contextion, CombinedRequest, Dependency {
         this.disciplnePaths = disciplnePaths;
     }
 
-    public Map<String, Discipline> getDisciplines() {
-		return disciplines;
+    public Map<String, Domain> getDomains() {
+		return domains;
 	}
 
-	public Discipline getDiscipline(String name) {
-		return disciplines.get(name);
+	public Domain getDiscipline(String name) {
+		return domains.get(name);
 	}
 
     public Governor getGovernor() {
@@ -218,14 +218,14 @@ public class Collaboration implements Contextion, CombinedRequest, Dependency {
 		this.analyzerFi = analyzerFi;
 	}
 
-	public List<Discipline> getDisciplineList() {
-		List<Discipline> discList = new ArrayList<>();
-		for (Discipline disc : disciplines.values()) {
+	public List<Domain> getDisciplineList() {
+		List<Domain> domainList = new ArrayList<>();
+		for (Domain disc : domains.values()) {
 			if (disc instanceof Discipline) {
-				discList.add(disc);
+				domainList.add(disc);
 			}
 		}
-		return discList;
+		return domainList;
 	}
 
 	public Fidelity<AnalyzerEntry> setAnalyzerFi(Context context) throws ConfigurationException {
@@ -357,5 +357,15 @@ public class Collaboration implements Contextion, CombinedRequest, Dependency {
 	@Override
 	public List<Evaluation> getDependers() {
 		return dependers;
+	}
+
+	@Override
+	public Map<String, Domain> getChildren() {
+		return domains;
+	}
+
+	@Override
+	public Mogram getChild(String name) {
+		return null;
 	}
 }

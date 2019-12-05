@@ -22,11 +22,11 @@ import sorcer.service.modeling.mog;
 import java.rmi.RemoteException;
 
 /**
- * Common functionality of Domain types.
+ * Common functionality of Discipline types.
  *
  * Created by Mike Sobolewski on 11/26/2019.
  */
-public interface Domain extends Contextion, Dependency, mog {
+public interface Domain extends Contextion, CombinedRequest, Dependency, mog {
 
     /**
      * Returns an execute of the domain at the returnPath as is

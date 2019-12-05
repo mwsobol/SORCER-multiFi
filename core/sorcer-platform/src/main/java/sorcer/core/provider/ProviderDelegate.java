@@ -265,7 +265,7 @@ public class ProviderDelegate {
 	 * provider can be invoked via the Service remote interface,
 	 * {@code Service.service(Mogram)} - the recommended access proxy approach.
 	 * The provider's direct invocation methods are embedded into service signatures
-	 * of serviced disciplines.
+	 * of serviced domains.
 	 */
 	private Remote outerProxy = null;
 

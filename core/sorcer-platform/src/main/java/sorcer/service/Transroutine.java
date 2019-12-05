@@ -32,7 +32,7 @@ import java.util.Map;
  */
 abstract public class Transroutine extends Subroutine {
 	/**
-	 * Component disciplines of this job (the Composite Design pattern)
+	 * Component domains of this job (the Composite Design pattern)
 	 */
 	protected List<Mogram> mograms = new ArrayList<Mogram>();
 
@@ -123,7 +123,7 @@ abstract public class Transroutine extends Subroutine {
 	/**
 	 * Returns all component <code>Mograms</code>s of this composite exertion.
 	 *
-	 * @return all component disciplines
+	 * @return all component domains
 	 */
 	public List<Mogram> getMograms() {
 		return mograms;

@@ -306,7 +306,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public List<ThrowableTrace> getExceptions() {
 		if (exertion != null)
-			// compatibility for contexts with disciplines
+			// compatibility for contexts with domains
 			return exertion.getExceptions();
 		else
 			return ((ModelStrategy)mogramStrategy).getAllExceptions();

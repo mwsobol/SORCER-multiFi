@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sorcer.service.modeling;
+package sorcer.service;
 
 import sorcer.service.*;
 
@@ -23,7 +23,7 @@ import sorcer.service.*;
  *  Service governance is the indeterminate multifidelity process of decision-making
  *  and the process by which decisions are actualized in the form of a service federation.
  */
-public interface Discipline extends Service, Contextion, Dependency {
+public interface Discipline extends Contextion, CombinedRequest, Dependency {
 
     /**
      * Returns a context multifidelity

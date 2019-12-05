@@ -17,10 +17,6 @@
 
 package sorcer.service;
 
-import sorcer.service.CombinedRequest;
-import sorcer.service.Contextion;
-import sorcer.service.modeling.Discipline;
-
 import java.util.Map;
 
 public interface Transdiscipline extends Contextion, CombinedRequest {

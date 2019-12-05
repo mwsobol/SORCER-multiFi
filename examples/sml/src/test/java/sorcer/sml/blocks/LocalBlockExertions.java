@@ -194,7 +194,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 						opt(condition((Context<Double> cxt) -> value(cxt, "arg/t4") <= value(cxt, "arg/t5")), t6)));
 
 //		logger.info("block: " + block);
-//		logger.info("disciplines: " + disciplines(block));
+//		logger.info("domains: " + domains(block));
 //		logger.info("block context: " + context(block));
 
 		Block result = exert(block);

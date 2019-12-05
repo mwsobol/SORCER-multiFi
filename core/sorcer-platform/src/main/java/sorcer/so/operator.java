@@ -34,6 +34,7 @@ import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
+import sorcer.service.Discipline;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;

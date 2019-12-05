@@ -92,16 +92,16 @@ public class SmlOperators {
 		ent e6 = execEnt(model());;
 		ent e7 = execEnt(model(), "path");
 
-		// Exerting disciplines
+		// Exerting domains
 		mog m3 = exert(task());
 		mog m4 = exert(job());
 		mog m5 = exert(model());
 
-		// Data context of disciplines
+		// Data context of domains
 		cxt c2 = context(job());
 		cxt c3 = context(exert(job()));
 
-		// Evaluate disciplines
+		// Evaluate domains
 		cxt c4 = eval(model());
 		cxt c5 = eval(ex2);
 		// Mogram results

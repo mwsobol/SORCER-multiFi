@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * The alternative Routine that executes sequentially a collection of optional
- * disciplines. It executes the first optExertion in the collection such that its
+ * domains. It executes the first optExertion in the collection such that its
  * condition is true.
  * 
  * @author Mike Sobolewski

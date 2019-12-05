@@ -47,7 +47,7 @@ public class ServiceExertionTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		// create an disciplines
+		// create an domains
 		eTask = createTask();	
 		eJob = createJob();
 	}
@@ -106,7 +106,7 @@ public class ServiceExertionTest {
 		//logger.info("j2 exertion: " + exertion(eJob, "j2"));
 		assertTrue(name(xrt(eJob, "j1/j2")).equals("j2"));
 		
-		//logger.info("j2 exertion names: " + names(disciplines(exertion(eJob, "j2"))));
+		//logger.info("j2 exertion names: " + names(domains(exertion(eJob, "j2"))));
 		assertTrue(names(mograms(xrt(eJob, "j1/j2"))).equals(list("t4", "t5", "j2")));
 	}
 

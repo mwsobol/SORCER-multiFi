@@ -312,7 +312,7 @@ public class Invokers {
 		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 			result("result/y"));
 
-		// disciplines
+		// domains
 		Task t3 = task(
 			"t3",
 			sig("subtract", SubtractorImpl.class),

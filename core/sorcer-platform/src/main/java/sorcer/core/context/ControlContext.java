@@ -45,7 +45,7 @@ public class ControlContext extends ServiceContext<Object> implements RoutineStr
 
 	/**
 	 * A flow multitype indicates if this exertion can be executed sequentially, in
-	 * parallel, or concurrently with other component disciplines within this
+	 * parallel, or concurrently with other component domains within this
 	 * exertion. The concurrent execution requires all mapped inputs in the
 	 * exertion context to be assigned before this exertion can be executed.
 	 */
@@ -106,7 +106,7 @@ public class ControlContext extends ServiceContext<Object> implements RoutineStr
 
 	// .rerun is an attribute used as buffer by client to store information
 	// about what all
-	// disciplines are to be rerun. Stored as an attribute in control context of
+	// domains are to be rerun. Stored as an attribute in control context of
 	// job / jobExertions
 	// It is removed before the job is submitted for running.
 	public final static String RERUN = "RERUN";

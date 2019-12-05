@@ -847,7 +847,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         List<Mogram> exertions = getAllMograms();
         // logger.info(" eval = " + eval);
         // logger.info(" this exertion = " + this);
-        // logger.info(" disciplines = " + disciplines);
+        // logger.info(" domains = " + domains);
         for (Mogram e : exertions) {
             if (e instanceof Routine && !((Routine)e).isJob()) {
                 // logger.info(" exertion i = "+ e.getName());
@@ -1118,7 +1118,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
                     .append("\tParent ID:            " + parentId + "\n")
                     .append("\tOwner ID:             " + ownerId + "\n")
                     .append("\tSubject ID:           " + subjectId + "\n")
-                    .append("\tDomain ID:            " + domainId + "\n")
+                    .append("\tDiscipline ID:            " + domainId + "\n")
                     .append("\tSubdomain ID:         " + subdomainId + "\n")
                     .append("\tlsb ID:               " + lsbId + "\n")
                     .append("\tmsb ID:               " + msbId + "\n")

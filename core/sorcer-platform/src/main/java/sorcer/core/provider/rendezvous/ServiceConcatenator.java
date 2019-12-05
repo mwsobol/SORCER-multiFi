@@ -28,8 +28,8 @@ import java.rmi.RemoteException;
 
 /**
  * ServiceJobber - The SORCER rendezvous service provider that manages
- * coordination for executing disciplines using service providers that
- * form a dynamic service federation as specified signatures of component disciplines.
+ * coordination for executing domains using service providers that
+ * form a dynamic service federation as specified signatures of component domains.
  * 
  * @author Mike Sobolewski
  */

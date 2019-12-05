@@ -73,7 +73,7 @@ public class ExertionEnvelop implements Entry {
 	}
 	
 	/**
-	 * Create a template with an exertionID as the disciplines's parentID.
+	 * Create a template with an exertionID as the domains's parentID.
 	 * 
 	 * @param exertionID
 	 * @param providerName
@@ -88,7 +88,7 @@ public class ExertionEnvelop implements Entry {
 	}
 	
 	/**
-	 * Create a template for disciplines.
+	 * Create a template for domains.
 	 * 
 	 * @param exertionID
 	 * @param providerName

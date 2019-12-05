@@ -1,6 +1,5 @@
 package sorcer.sml.mograms;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -18,6 +17,7 @@ import sorcer.core.plexus.MultiFiMogram;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.modeling.*;
+import sorcer.service.Discipline;
 
 import java.rmi.RemoteException;
 
