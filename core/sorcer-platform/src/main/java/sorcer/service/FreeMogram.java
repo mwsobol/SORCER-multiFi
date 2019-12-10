@@ -104,4 +104,24 @@ public class FreeMogram extends ServiceMogram {
     public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... entries) throws MogramException, RemoteException {
         return null;
     }
+
+    @Override
+    public Object asis(String path) throws ContextException {
+        return null;
+    }
+
+    @Override
+    public Object getValue(String path, Arg... args) throws ContextException, RemoteException {
+        return null;
+    }
+
+    @Override
+    public void addDependers(Evaluation... dependers) {
+
+    }
+
+    @Override
+    public List<Evaluation> getDependers() {
+        return null;
+    }
 }
