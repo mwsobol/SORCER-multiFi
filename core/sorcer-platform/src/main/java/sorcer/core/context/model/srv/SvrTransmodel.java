@@ -2,7 +2,7 @@ package sorcer.core.context.model.srv;
 
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
-import sorcer.service.modeling.Transmodeling;
+import sorcer.service.modeling.Transmodel;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Created by Mike Sobolewski on 11/10/2019.
  */
-public class Transmodel extends SrvModel implements Transmodeling {
+public class SvrTransmodel extends SrvModel implements Transmodel {
 
     protected Map<String, Domain> children = new HashMap<>();
 
@@ -18,11 +18,11 @@ public class Transmodel extends SrvModel implements Transmodeling {
 
     protected FidelityManager collabFiManager;
 
-    public Transmodel() {
+    public SvrTransmodel() {
         super();
     }
 
-    public Transmodel(String name) {
+    public SvrTransmodel(String name) {
         super(name);
     }
 
