@@ -28,10 +28,13 @@ import sorcer.service.ContextException;
  */
 public interface Conversion<T> {
 
+	public enum Type { READ, WRITE };
+
 	/**
 	 * Returns the converted value for the given value.
 	 * 
 	 * @return the converted value of given vvaluealuation
 	 */
 	public Object convert(Object value) throws ContextException;
+
 }
