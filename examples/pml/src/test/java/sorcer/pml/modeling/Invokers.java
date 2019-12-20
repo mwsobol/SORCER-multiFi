@@ -13,10 +13,7 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.Prc;
-import sorcer.core.invoker.AltInvoker;
-import sorcer.core.invoker.Updater;
-import sorcer.core.invoker.OptInvoker;
-import sorcer.core.invoker.ServiceInvoker;
+import sorcer.core.invoker.*;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -256,7 +253,7 @@ public class Invokers {
         Opservice sigOut = sig("multiply", MultiplierImpl.class,
                 result("z", inPaths("lambdaOut", "exprOut")));
 
-        Evaluator opspl = pl(
+        Pipeline opspl = pl(
                 lambdaOut,
                 exprOut,
                 sigOut);
@@ -289,7 +286,7 @@ public class Invokers {
 		Opservice sigOut = sig("multiply", MultiplierImpl.class,
 				result("z", inPaths("lambdaOut", "exprOut")));
 
-		Evaluator pp = n2("n-squared", data,
+		Pipeline pp = n2("n-squared", data,
 				lambdaOut,
 				exprOut,
 				sigOut,

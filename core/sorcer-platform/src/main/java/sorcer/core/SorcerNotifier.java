@@ -25,7 +25,7 @@ import sorcer.service.Exerter;
 import net.jini.core.event.RemoteEvent;
 import net.jini.core.event.RemoteEventListener;
 
-public interface SorcerNotifierProtocol extends Exerter {
+public interface SorcerNotifier extends Exerter {
 
 	public Integer register(RemoteEventListener listener, Object handback,
 			Integer regFor, String userId, Vector sessionJobs, String sessionID)

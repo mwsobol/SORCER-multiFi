@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.container.jeri.AbstractExporterFactory;
 import sorcer.container.jeri.ExporterFactories;
 import sorcer.core.SorcerConstants;
-import sorcer.core.SorcerNotifierProtocol;
+import sorcer.core.SorcerNotifier;
 import sorcer.core.analytics.AnalyticsRecorder;
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ServiceContext;
@@ -1966,7 +1966,7 @@ public class ProviderDelegate {
 
 		try {
 			MsgRef mr;
-			SorcerNotifierProtocol notifier = Accessor.get().getService(null, SorcerNotifierProtocol.class);
+			SorcerNotifier notifier = Accessor.get().getService(null, SorcerNotifier.class);
 
 			mr = new MsgRef(task.getId(), notificationType,
 				config.getProviderName(), message,
