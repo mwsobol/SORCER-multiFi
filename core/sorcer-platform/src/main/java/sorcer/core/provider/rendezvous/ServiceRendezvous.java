@@ -42,13 +42,13 @@ public class ServiceRendezvous extends SorcerExerterBean implements Rendezvous, 
 	}
 	
 	public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-			throws TransactionException, RoutineException, RemoteException {
+			throws TransactionException, ContextException, RemoteException {
 		Routine exertion = (Routine) mogram;
 		if (!isConfigured)
 			try {
 				configure();
 			} catch (ConfigurationException ex) {
-				throw new RoutineException(ex);
+				throw new ContextException(ex);
 			}
 		
 		logger.info("*********************************************ServiceRendezvous.exert, exertion = " + exertion);
@@ -60,7 +60,7 @@ public class ServiceRendezvous extends SorcerExerterBean implements Rendezvous, 
 			if ((exertion.getControlContext()).getAccessType() == Access.PUSH) {
 				ServiceJobber jobber = (ServiceJobber) delegate
 						.getBean(Jobber.class);
-				return jobber.exert(exertion, txn, args);
+				return (Mogram)jobber.exert(exertion, txn, args);
 			} else if ((exertion.getControlContext())
 					.getAccessType() == Access.PULL) {
 				ServiceSpacer spacer = (ServiceSpacer) delegate
@@ -70,9 +70,9 @@ public class ServiceRendezvous extends SorcerExerterBean implements Rendezvous, 
 		} else if (exertion instanceof Block) {
 			ServiceConcatenator concatenator = (ServiceConcatenator) delegate
 					.getBean(Concatenator.class);
-			return concatenator.exert(exertion, txn, args);
+			return (Mogram)concatenator.exert(exertion, txn, args);
 		}
-		throw new RoutineException("now rendevous service available for exertion of this fiType: " + exertion.getClass());
+		throw new ContextException("now rendevous service available for exertion of this fiType: " + exertion.getClass());
 	}
 
 	@SuppressWarnings("unchecked")

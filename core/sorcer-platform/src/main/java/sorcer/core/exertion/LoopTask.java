@@ -21,6 +21,7 @@ import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.srv.SrvModel;
+import sorcer.core.invoker.Pipeline;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -80,7 +81,7 @@ public class LoopTask extends ConditionalTask {
 	 * @param condition
 	 * @param mogram
 	 */
-	public LoopTask(String name, Condition condition, Mogram mogram) {
+	public LoopTask(String name, Condition condition, Contextion mogram) {
 		super(name);
 		this.condition = condition;
 		target = mogram;
@@ -111,6 +112,8 @@ public class LoopTask extends ConditionalTask {
 			// use bound mogram
 			if (target instanceof FreeMogram) {
 				target = ((FreeMogram)target).getMogram();
+			} else if (target instanceof FreeContextion) {
+				target = ((FreeContextion)target).getContextion();
 			}
 			// update the scope of target
 			if (target.getScope() == null) {
@@ -119,7 +122,10 @@ public class LoopTask extends ConditionalTask {
 				target.getScope().append(scope);
 			}
 
-			Context.Return rp = (Context.Return)target.getContext().getContextReturn();
+			Context.Return rp = null;
+			if (target.getContext() != null) {
+				rp = target.getContext().getContextReturn();
+			}
 
 			if (condition == null) {
 				for (int i = 0; i < max - min; i++) {
@@ -136,10 +142,16 @@ public class LoopTask extends ConditionalTask {
 					if (cxt != null && cxt.size() > 0) {
 						((Context) target).append(cxt);
 					}
+				} else if (target instanceof Pipeline) {
+					Context cxt = condition.getConditionalContext();
+					condition.setConditionalContext(target.getContext());
+					if (cxt != null && cxt.size() > 0) {
+						((Context) target).append(cxt);
+					}
 				}
 				while (condition.isTrue()) {
 					if (target instanceof Routine) {
-						Signature sig = target.getProcessSignature();
+						Signature sig = ((Mogram)target).getProcessSignature();
 						if (sig != null && sig.getVariability() != null) {
 							target.getContext().append(condition.getConditionalContext());
 						}
@@ -205,7 +217,7 @@ public class LoopTask extends ConditionalTask {
 	@Override
 	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) {
 		try {
-			exceptions.addAll(target.getExceptions());
+			exceptions.addAll(((Mogram)target).getExceptions());
 		} catch (RemoteException e) {
 			exceptions.add(new ThrowableTrace("Problem while collecting exceptions", e));
 		}
@@ -214,17 +226,27 @@ public class LoopTask extends ConditionalTask {
 	}
 	
 	public List<Mogram> getMograms(List<Mogram> exs) {
-		exs.add(target);
-		exs.add(this);
+		if (target instanceof Mogram) {
+			exs.add((Mogram) target);
+			exs.add(this);
+		}
 		return exs;
 	}
-	
+
+	public List<Contextion> getContextions(List<Contextion> exs) {
+		if (target instanceof Contextion) {
+			exs.add(target);
+			exs.add(this);
+		}
+		return exs;
+	}
+
 	/* (non-Javadoc)
 	 * @see sorcer.service.ConditionalExertion#getTargets()
 	 */
 	@Override
-	public List<Mogram> getTargets() {
-		List<Mogram> tl = new ArrayList<Mogram>();
+	public List<Contextion> getTargets() {
+		List<Contextion> tl = new ArrayList<Contextion>();
 		tl.add(target);
 		return tl;
 	}

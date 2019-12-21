@@ -18,7 +18,10 @@
 package sorcer.service;
 
 
+import net.jini.core.transaction.Transaction;
+
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * An instance of the Contextion type represents a functional mapping with a domain
@@ -26,7 +29,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Contextion extends Request {
+public interface Contextion extends Request, Scopable {
 
     /**
      * Returns the context of evaluation of this contextion.
@@ -39,7 +42,20 @@ public interface Contextion extends Request {
      */
     public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException;
 
-    /**
+	/**
+	 * Generic federated execution called exertion by federated services.
+	 *
+	 * @param txn
+	 *            The transaction (if any) under which to exert.
+	 * @return a resulting exertion
+	 * @throws MogramException
+	 *             if a mogram error occurs
+	 * @throws RemoteException
+	 *             if remote call causes an error
+	 */
+	public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException;
+
+	/**
 	 * Returns the data context of this contextion.
 	 *
 	 * @return the data context
@@ -100,5 +116,7 @@ public interface Contextion extends Request {
 	public Context.Return getContextReturn();
 
 	public MogramStrategy getMogramStrategy();
+
+	public List<Contextion> getContextions(List<Contextion> contextionList);
 
 }

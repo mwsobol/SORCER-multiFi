@@ -42,7 +42,7 @@ public class ServiceJobber extends SorcerExerterBean implements Jobber {
 	}
 
 	public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-			throws TransactionException, RoutineException, RemoteException {
+			throws TransactionException, ContextException, RemoteException {
 
             setServiceID(mogram);
             try {

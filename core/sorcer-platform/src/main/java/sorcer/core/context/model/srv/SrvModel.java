@@ -475,7 +475,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
     }
 
     @Override
-    public Context exert(Transaction txn, Arg... entries) throws RoutineException, RemoteException {
+    public Context exert(Transaction txn, Arg... entries) throws ContextException, RemoteException {
         Signature signature = null;
         ServiceFidelity sFi = (ServiceFidelity)multiFi.getSelect();
         try {
@@ -494,7 +494,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                 return this;
             }
         } catch (Exception e) {
-            throw new RoutineException(e);
+            throw new ContextException(e);
         }
     }
 

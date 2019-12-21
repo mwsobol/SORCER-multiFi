@@ -124,6 +124,13 @@ public abstract class Block extends Transroutine {
 		return mograms;
 	}
 
+	@Override
+	public List<Contextion> getContextions() {
+		List<Contextion> contextions = new ArrayList<>();
+		contextions.addAll(mograms);
+		return contextions;
+	}
+
 	/* (non-Javadoc)
 	 * @see sorcer.service.Subroutine#linkContext(sorcer.service.Context, java.lang.String)
 	 */
@@ -175,7 +182,16 @@ public abstract class Block extends Transroutine {
 		mogramList.add(this);
 		return mogramList;
 	}
-	
+
+	@Override
+	public List<Contextion> getContextions(List<Contextion> contextionList) {
+		for (Contextion e : mograms) {
+			e.getContextions(contextionList);
+		}
+		contextionList.add(this);
+		return contextionList;
+	}
+
 	public URL persistContext() throws MogramException, SignatureException, ContextException {
 		if (contextURL == null) {
 			contextURL = SdbUtil.store(dataContext);

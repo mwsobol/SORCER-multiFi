@@ -1492,7 +1492,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 		}
 	}
 
-	public Routine serviceContextOnly(Context mogram) throws RoutineException, RemoteException {
+	public Mogram serviceContextOnly(Context mogram) throws ContextException, RemoteException {
 		Task task = null;
 		try {
 			Object subject = mogram.getSubjectValue();
@@ -1500,10 +1500,10 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 				task = new NetTask((Signature)mogram.getSubjectValue(), mogram);
 				task = delegate.doTask(task, null);
 			} else {
-				throw new RoutineException("no signature in the service context");
+				throw new ContextException("no signature in the service context");
 			}
 		} catch (Exception e) {
-			throw new RoutineException(e);
+			throw new ContextException(e);
 		}
 		return task;
 	}
@@ -1514,13 +1514,13 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 	}
 
 	@Override
-	public Mogram exert(Mogram mogram, Transaction txn, Arg... args)
-			throws MogramException, RemoteException {
+	public Mogram exert(Contextion mogram, Transaction txn, Arg... args)
+			throws ContextException, RemoteException {
 		if (mogram instanceof Task) {
 			ServiceContext cxt;
 			try {
-				cxt = (ServiceContext) mogram.getDataContext();
-				cxt.updateContextWith(mogram.getProcessSignature().getInConnector());
+				cxt = (ServiceContext) ((Mogram)mogram).getDataContext();
+				cxt.updateContextWith(((Mogram)mogram).getProcessSignature().getInConnector());
 				Uuid id = cxt.getId();
 				// a created session to be used in the implementation class of the bean itself
 				ProviderSession ps = (ProviderSession) sessions.get(id);

@@ -51,38 +51,10 @@ public class Disciplines {
     private final static Logger logger = LoggerFactory.getLogger(Disciplines.class);
 
     @Test
-    public void opservicePipeline() throws Exception {
+    public void morphPipelineDiscipline() throws Exception {
 
         Opservice lambdaOut = invoker("lambdaOut",
-            (Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
-            args("x", "y"));
-
-        Opservice exprOut = invoker("exprOut", "lambdaOut - y", args("lambdaOut", "y"));
-
-        Opservice sigOut = sig("multiply", MultiplierImpl.class,
-            result("z", inPaths("lambdaOut", "exprOut")));
-
-        Pipeline opspl = pl(
-            lambdaOut,
-            exprOut,
-            sigOut);
-
-        setContext(opspl, context("mfprc",
-            inVal("x", 20.0),
-            inVal("y", 80.0)));
-
-        Context out = (Context) exec(opspl);
-
-        logger.info("pipeline: " + out);
-        assertEquals(130.0, value(out, "lambdaOut"));
-        assertEquals(50.0, value(out, "exprOut"));
-        assertEquals(6500.0, value(out, "z"));
-    }
-
-    public Pipeline getPipeline() throws Exception {
-
-        Opservice lambdaOut = invoker("lambdaOut",
-            (Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
+            (Context<Double> cxt) -> value(cxt, "lambdaOut") + value(cxt, "x") + value(cxt, "y") + 10,
             args("x", "y"));
 
         Opservice exprOut = invoker("exprOut", "lambdaOut - y", args("lambdaOut", "y"));
@@ -98,33 +70,30 @@ public class Disciplines {
         // cxtn1 is a free contextion for a discipline dispatcher
         Block plDispatch = block(
             loop(condition(cxt -> (double)
-                value(cxt, "morpher3") < 900.0), model("cxtn1")));
+                value(cxt, "lambdaOut") < 500.0), pipeline("cxtn1")));
 
         Discipline plDis = disc(
             cxtnFi("cxtn1", opspl),
             dsptFi("dspt1", plDispatch));
 
+        setContext(opspl, context("mfprc",
+            inVal("lambdaOut", 20.0),
+            inVal("x", 20.0),
+            inVal("y", 80.0)));
+
+
         // out is the discipline output
         Context out  = eval(plDis, fi("cxtn1", "dspt1"));
 
-
-        return opspl;
-
-//        setContext(opspl, context("mfprc",
-//            inVal("x", 20.0),
-//            inVal("y", 80.0)));
-//
-//        Context out = (Context) exec(opspl);
-//
-//        logger.info("pipeline: " + out);
-//        assertEquals(130.0, value(out, "lambdaOut"));
-//        assertEquals(50.0, value(out, "exprOut"));
-//        assertEquals(6500.0, value(out, "z"));
+        logger.info("pipeline out: " + out);
+        assertEquals(570.0, value(out, "lambdaOut"));
+        assertEquals(490.0, value(out, "exprOut"));
+        assertEquals(279300.0, value(out, "multiply"));
     }
 
 
     @Test
-    public void morphingDiscipline() throws Exception {
+    public void morphModelDiscipline() throws Exception {
 
         // cxtn1 is a free contextion for a discipline dispatcher
         Block mdlDispatch = block(
@@ -138,8 +107,7 @@ public class Disciplines {
         // out is the discipline output
         Context out  = eval(morphDis, fi("cxtn1", "dspt1"));
 
-        assertTrue(value(out, "morpher3").equals(920.0));
-
+        assertTrue(value(out, "morpher3").equals(920.0));Ja pracuję praktycznie stale, w przerwach dwa razy w tygodniu na fizykoterapii i sporo spraw domowych udało mi się zorganizować.
 
     }
 }

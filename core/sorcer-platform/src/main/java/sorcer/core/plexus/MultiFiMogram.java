@@ -100,7 +100,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(Transaction txn, Arg... entries) throws ContextException, RemoteException {
         Mogram mogram = (Mogram) morphFidelity.getSelect();
         mogram.getContext().setScope(scope);
         T out = mogram.exert(txn, entries);
@@ -110,7 +110,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public <T extends Mogram> T exert(Arg... entries) throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(Arg... entries) throws ContextException, RemoteException {
         return exert(null, entries);
     }
 
@@ -201,7 +201,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
         return null;
     }
 

@@ -28,9 +28,11 @@ import sorcer.core.exertion.AltTask;
 import sorcer.core.exertion.EvaluationTask;
 import sorcer.core.exertion.LoopTask;
 import sorcer.core.exertion.OptTask;
+import sorcer.core.invoker.Pipeline;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
+import sorcer.eo.operator;
 import sorcer.service.Exerter;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.service.*;
@@ -94,10 +96,12 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             postUpdate(result);
             Condition.cleanupScripts(result);
             if (result instanceof ConditionalTask) {
-                Mogram target = ((ConditionalTask)result).getTarget();
+                Contextion target = ((ConditionalTask)result).getTarget();
                 if (target instanceof Model) {
-                    xrt.getContext().append((Context)((Model)target).getResult());
-                }
+					xrt.getContext().append((Context)((Model)target).getResult());
+				} else if (target instanceof Pipeline) {
+					xrt.getContext().append(((Pipeline)target).getResult());
+				}
             }
             //TODO Not very nice
             /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(result);

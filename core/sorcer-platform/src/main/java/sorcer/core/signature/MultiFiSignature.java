@@ -178,7 +178,7 @@ public class MultiFiSignature extends MultiFiSlot<String, Signature> implements 
     }
 
     @Override
-    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
         return ((Signature)multiFi.getSelect()).exert(mogram, txn, args);
     }
 }

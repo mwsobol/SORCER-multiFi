@@ -3369,7 +3369,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws RoutineException, RemoteException {
+	public <T extends Contextion> T exert(Transaction txn, Arg... entries) throws ContextException, RemoteException {
 		Signature signature = null;
 		try {
 			if (subjectValue instanceof Class) {
@@ -3381,19 +3381,19 @@ public class ServiceContext<T> extends ServiceMogram implements
 				return (T) this;
 			}
 		} catch (Exception e) {
-			throw new RoutineException(e);
+			throw new ContextException(e);
 		}
 	}
 
 	@Override
-	public <T extends Mogram> T exert(Arg... entries) throws RoutineException, RemoteException {
+	public <T extends Contextion> T exert(Arg... entries) throws ContextException, RemoteException {
 		return exert(null, entries);
 	}
 
 	/* (non-Javadoc)
      * @see sorcer.service.Service#exert(sorcer.service.Routine, net.jini.core.transaction.Transaction)
      */
-    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
         try {
             if (mogram instanceof NetTask) {
                 Task task = (NetTask)mogram;
@@ -3417,13 +3417,13 @@ public class ServiceContext<T> extends ServiceMogram implements
             return (T) exertion.exert(txn);
         } catch (Exception e) {
             e.printStackTrace();
-            mogram.getContext().reportException(e);
+			((Mogram)mogram).getContext().reportException(e);
             if (e instanceof Exception)
-                mogram.setStatus(FAILED);
+				((Mogram)mogram).setStatus(FAILED);
             else
-                mogram.setStatus(ERROR);
+				((Mogram)mogram).setStatus(ERROR);
 
-            throw new RoutineException(e);
+            throw new ContextException(e);
         }
     }
 

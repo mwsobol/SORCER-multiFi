@@ -55,15 +55,15 @@ public class ServiceSpacer extends SorcerExerterBean implements Spacer {
 
     @Override
     public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-            throws TransactionException, RoutineException, RemoteException {
-         if (mogram instanceof Routine && ((Routine)mogram).isCompound())
+            throws TransactionException, ContextException, RemoteException {
+         if (mogram instanceof Routine && mogram.isCompound())
             return doCompound(mogram, txn);
         else
             return doTask((Task)mogram);
     }
 
     public Mogram doCompound(Mogram mogram, Transaction txn, Arg... args)
-            throws TransactionException, RoutineException, RemoteException {
+            throws TransactionException, ContextException, RemoteException {
         setServiceID(mogram);
         try {
             MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Routine)mogram));

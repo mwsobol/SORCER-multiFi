@@ -418,9 +418,21 @@ public class Task extends Subroutine implements ElementaryRequest {
 		return exs;
 	}
 
+	public List<Contextion> getContextions(List<Contextion> exs) {
+		exs.add(this);
+		return exs;
+	}
+
 	@Override
 	public List<Mogram> getMograms() {
 		List<Mogram> ml = new ArrayList<Mogram>();
+		ml.add(this);
+		return ml;
+	}
+
+	@Override
+	public List<Contextion> getContextions() {
+		List<Contextion> ml = new ArrayList<Contextion>();
 		ml.add(this);
 		return ml;
 	}

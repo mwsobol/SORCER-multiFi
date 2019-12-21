@@ -501,9 +501,9 @@ public class operator extends Operator {
         }
     }
 
-    public static <T extends Mogram> T exert(T input,
+    public static <T extends Contextion> T exert(T input,
                                              Transaction transaction,
-                                             Arg... entries) throws RoutineException {
+                                             Arg... entries) throws ContextException {
         return new sorcer.core.provider.exerter.ServiceShell().exert(input, transaction, entries);
     }
 

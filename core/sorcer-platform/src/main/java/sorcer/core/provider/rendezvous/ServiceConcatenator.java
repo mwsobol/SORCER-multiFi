@@ -41,7 +41,7 @@ public class ServiceConcatenator extends SorcerExerterBean implements Concatenat
 	}
 
 	public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-			throws TransactionException, RoutineException, RemoteException {
+			throws TransactionException, ContextException, RemoteException {
 		Routine exertion = (Routine) mogram;
 		setServiceID(exertion);
 		Block result;
@@ -59,9 +59,9 @@ public class ServiceConcatenator extends SorcerExerterBean implements Concatenat
 				Condition.cleanupScripts(result);
 				logger.trace("<==== Result: " + result);
 			}
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			logger.error("Failed exerting {}", mogram.getName(), e);
-			throw new RoutineException(e);
+			throw new ContextException(e);
 		}
 		return result;
 	}

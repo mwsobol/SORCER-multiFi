@@ -17,6 +17,7 @@
 
 package sorcer.core.service;
 
+import net.jini.core.transaction.Transaction;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
@@ -320,6 +321,11 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 		return out;
 	}
 
+	@Override
+	public Context exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
+		return evaluate(input, args);
+	}
+
 	public void reportException(String message, Throwable t) {
 		mogramStrategy.addException(t);
 	}
@@ -367,5 +373,24 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 	@Override
 	public Mogram getChild(String name) {
 		return null;
+	}
+
+	@Override
+	public Context getScope() {
+		return null;
+	}
+
+	@Override
+	public void setScope(Context scope) {
+
+	}
+
+	@Override
+	public List<Contextion> getContextions(List<Contextion> contextionList) {
+		for (Contextion e : getChildren().values()) {
+			e.getContextions(contextionList);
+		}
+		contextionList.add(this);
+		return contextionList;
 	}
 }

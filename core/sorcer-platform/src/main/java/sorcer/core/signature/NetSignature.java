@@ -335,17 +335,17 @@ public class NetSignature extends ObjectSignature implements sig {
 	}
 
 	@Override
-	public Context exert(Mogram mogram) throws MogramException, RemoteException {
+	public Context exert(Contextion mogram) throws ContextException, RemoteException {
 		return exert(mogram, null);
 	}
 
 	@Override
-	public Context exert(Mogram mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
+	public Context exert(Contextion mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
 		try {
 			Exerter prv = null;
 			if (this.isShellRemote()) {
 				prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
-				return prv.exert(mogram, txn).getContext();
+				return ((Mogram)prv.exert(mogram, txn)).getContext();
 			}
 			Context cxt = null, out = null;
 			NetTask task = null;
@@ -368,7 +368,7 @@ public class NetSignature extends ObjectSignature implements sig {
 
 			return out;
 		} catch (Exception e) {
-			throw new MogramException(e);
+			throw new ContextException(e);
 		}
 	}
 

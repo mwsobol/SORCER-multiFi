@@ -28,6 +28,7 @@ import sorcer.core.context.model.ent.Prc;
 import sorcer.core.deploy.DeploymentIdFactory;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.invoker.ExertInvoker;
+import sorcer.core.invoker.Pipeline;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
@@ -100,6 +101,14 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
                     throw new DispatchException(e);
                 }
             }
+        } else if (service instanceof Contextion) {
+            if (controlContext.getFreeServices().get(((Contextion) service).getName()) != null) {
+                if (service instanceof Mogram) {
+                    ((FreeMogram) controlContext.getFreeServices().get(((Contextion) service).getName())).setMogram((Mogram) service);
+                } else {
+                    ((FreeContextion) controlContext.getFreeServices().get(((Contextion) service).getName())).setContextion((Contextion) service);
+                }
+            }
         }
     }
 
@@ -128,8 +137,8 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      * @see sorcer.service.Service#service(sorcer.service.Routine,
      * net.jini.core.transaction.Transaction)
      */
-    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args)
-            throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args)
+            throws ContextException, RemoteException {
         try {
             if (mogram instanceof Routine) {
                 Subroutine exertion = (Subroutine) mogram;
@@ -152,18 +161,18 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
             } else if (mogram instanceof Context) {
                 return (T) invoke((Context) mogram, args);
             } else {
-                getContext().appendContext(mogram.getContext());
+                getContext().appendContext(((Mogram)mogram).getContext());
             }
             return (T) exert(txn);
         } catch (Exception e) {
             e.printStackTrace();
-            mogram.getContext().reportException(e);
+            ((Mogram)mogram).getContext().reportException(e);
             if (e instanceof Exception)
-                mogram.setStatus(FAILED);
+                ((Mogram)mogram).setStatus(FAILED);
             else
-                mogram.setStatus(ERROR);
+                ((Mogram)mogram).setStatus(ERROR);
 
-            throw new RoutineException(e);
+            throw new ContextException(e);
         }
     }
 
@@ -281,12 +290,12 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      * sorcer.servie.Arg[])
      */
     public Routine exert(Transaction txn, Arg... entries)
-            throws MogramException, RemoteException {
+            throws ContextException, RemoteException {
         try {
             substitute(entries);
         } catch (SetterException e) {
             logger.error("Error in exertion {}", mogramId, e);
-            throw new MogramException(e);
+            throw new ContextException(e);
         }
         String prvName = null;
         for(Arg arg : entries) {
@@ -304,12 +313,12 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      *
      * @see sorcer.service.Routine#exert(sorcer.core.context.Path.Entry[])
      */
-    public <T extends Mogram> T  exert(Arg... entries) throws MogramException, RemoteException {
+    public <T extends Contextion> T  exert(Arg... entries) throws ContextException, RemoteException {
         try {
             substitute(entries);
         } catch (SetterException e) {
             e.printStackTrace();
-            throw new RoutineException(e);
+            throw new ContextException(e);
         }
         ServiceShell se = new ServiceShell(this);
         return se.exert(entries);

@@ -74,7 +74,7 @@ public class OptTask extends ConditionalTask {
 //				} else {
 //					target.setScope(dataContext);
 //				}
-				dataContext = (ServiceContext) target.getDataContext();
+				dataContext = (ServiceContext) ((Mogram)target).getDataContext();
 				if (target instanceof Routine) {
 					target.getContext().setRoutine(null);
 					controlContext.append(((Routine)target).getControlContext());
@@ -119,7 +119,7 @@ public class OptTask extends ConditionalTask {
 	}
 	
 	public List<Mogram> getMograms(List<Mogram> exs) {
-		exs.add(target);
+		exs.add((Mogram)target);
 		exs.add(this);
 		return exs;
 	}
@@ -127,7 +127,7 @@ public class OptTask extends ConditionalTask {
 	@Override
 	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) {
 		try {
-			exceptions.addAll(target.getExceptions());
+			exceptions.addAll(((Mogram)target).getExceptions());
 		} catch (RemoteException e) {
 			exceptions.add(new ThrowableTrace("Problem while collecting exceptions", e));
 		}
@@ -139,8 +139,8 @@ public class OptTask extends ConditionalTask {
 	 * @see sorcer.service.ConditionalExertion#getTargets()
 	 */
 	@Override
-	public List<Mogram> getTargets() {
-		List<Mogram> tl = new ArrayList<Mogram>();
+	public List<Contextion> getTargets() {
+		List<Contextion> tl = new ArrayList<Contextion>();
 		tl.add(target);
 		return tl;
 	}

@@ -149,9 +149,11 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 	/* (non-Javadoc)
 	 * @see sorcer.core.provider.ServiceBean#service(sorcer.service.Routine, net.jini.core.transaction.Transaction)
 	 */
-	public Mogram exert(Mogram mogram, Transaction transaction, Arg... args) throws RemoteException, RoutineException {
+	public Contextion exert(Contextion exertion, Transaction transaction, Arg... args) throws ContextException, RemoteException {
 		Mogram out = null;
+		Mogram mogram = (Mogram)exertion;
 		try {
+
 			setServiceID(mogram);
 			mogram.appendTrace("mogram: " + mogram.getName() + " rendezvous: " +
 					(provider != null ? provider.getProviderName() + " " : "")
@@ -170,7 +172,7 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
         }
 		catch (Exception e) {
 			logger.debug("exert failed for: " + mogram.getName(), e);
-			throw new RoutineException();
+			throw new ContextException(e);
 		}
 		return out;
 	}
@@ -192,16 +194,16 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
     }
 
 	abstract public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-			throws TransactionException, RoutineException, RemoteException;
+			throws TransactionException, ContextException, RemoteException;
 
 	@Override
-	public Object execute(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws ContextException, RemoteException {
 		Mogram mog = Arg.selectMogram(args);
 		if (mog != null)
 			try {
 				return exert(mog, null, args);
 			} catch (Exception e) {
-				throw new MogramException(e);
+				throw new ContextException(e);
 			}
 		else
 			return null;

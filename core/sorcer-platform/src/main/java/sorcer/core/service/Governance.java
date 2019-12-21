@@ -17,6 +17,7 @@
 
 package sorcer.core.service;
 
+import net.jini.core.transaction.Transaction;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
@@ -78,6 +79,8 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 
 	// context output connector
 	protected Context outConnector;
+
+	protected Context scope;
 
     public Governance() {
         this(null);
@@ -327,6 +330,11 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 		return out;
 	}
 
+	@Override
+	public Context exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
+		return evaluate(input, args);
+	}
+
 	public void reportException(String message, Throwable t) {
 		mogramStrategy.addException(t);
 	}
@@ -374,5 +382,24 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 	@Override
 	public Discipline getChild(String name) {
 		return disciplines.get(name);
+	}
+
+	@Override
+	public Context getScope() {
+		return scope;
+	}
+
+	@Override
+	public void setScope(Context scope) {
+		this.scope = scope;
+	}
+
+	@Override
+	public List<Contextion> getContextions(List<Contextion> contextionList) {
+		for (Contextion e : disciplines.values()) {
+			e.getContextions(contextionList);
+		}
+		contextionList.add(this);
+		return contextionList;
 	}
 }

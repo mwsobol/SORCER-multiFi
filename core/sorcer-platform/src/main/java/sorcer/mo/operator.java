@@ -602,6 +602,14 @@ public class operator {
         return new FreeMogram(name, Functionality.Type.MODEL);
     }
 
+    public static FreeMogram routine(String name) {
+        return new FreeMogram(name, Functionality.Type.ROUTINE);
+    }
+
+    public static FreeContextion pipeline(String name) {
+        return new FreeContextion(name, Functionality.Type.PIPELINE);
+    }
+
     public static Model model(Object... items) throws ContextException {
         String name = "unknown" + count++;
         boolean hasEntry = false;

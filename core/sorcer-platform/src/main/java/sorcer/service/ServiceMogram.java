@@ -205,7 +205,18 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return exs;
     }
 
+    public List<Contextion> getAllContextions() {
+        List<Contextion> exs = new ArrayList<Contextion>();
+        getContextions(exs);
+        return exs;
+    }
+
     public List<Mogram> getMograms(List<Mogram> exs) {
+        exs.add(this);
+        return exs;
+    }
+
+    public List<Contextion> getContextions(List<Contextion> exs) {
         exs.add(this);
         return exs;
     }
@@ -295,12 +306,12 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public <T extends Mogram> T exert(Transaction txn, Arg... args) throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
         return null;
     }
 
     @Override
-    public <T extends Mogram> T exert(Arg... args) throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(Arg... args) throws ContextException, RemoteException {
         return null;
     }
 
@@ -1154,6 +1165,13 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         List<Mogram> mograms = new ArrayList<>();
         mograms.add(this);
         return mograms;
+    }
+
+    @Override
+    public List<Contextion> getContextions() {
+        List<Contextion> contextiona = new ArrayList<>();
+        contextiona.add(this);
+        return contextiona;
     }
 
     public Mogram clear() throws MogramException {

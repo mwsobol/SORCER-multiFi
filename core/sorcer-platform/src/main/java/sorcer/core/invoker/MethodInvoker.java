@@ -246,7 +246,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 					} else if (Mogram.class.isAssignableFrom(paramTypes[0])
 							&& selector.equals("exert"))	{
 						paramTypes = new Class[3];
-						paramTypes[0] = Mogram.class;
+						paramTypes[0] = Contextion.class;
 						paramTypes[1] = Transaction.class;
 						paramTypes[2] = Arg[].class;
 						Object[] parameters2 = new Object[3];

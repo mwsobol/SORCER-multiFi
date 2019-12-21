@@ -45,7 +45,7 @@ public class ServiceModeler extends SorcerExerterBean implements Modeler {
     }
 
     public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-            throws TransactionException, RoutineException, RemoteException {
+            throws TransactionException, ContextException, RemoteException {
         setServiceID(mogram);
         Mogram result = null;
         Model model = null;
@@ -90,8 +90,8 @@ public class ServiceModeler extends SorcerExerterBean implements Modeler {
             ((Subroutine)mogram).setContext((Context)result);
             logger.trace("<==== Result: " + result);
 
-        } catch (Throwable e) {
-            throw new RoutineException(e);
+        } catch (Exception e) {
+            throw new ContextException(e);
         }
         return mogram;
     }

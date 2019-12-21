@@ -151,7 +151,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
         throws MonitorException {
         for (int i = 0; i<initial.getTargets().size(); i++) {
             try {
-                if (!runtime.getTargets().get(i).isMonitorable())
+                if (!((Mogram)runtime.getTargets().get(i)).isMonitorable())
                     ((Subroutine)runtime.getTargets().get(i)).setMonitored(true);
             } catch (RemoteException e) {
                 throw new MonitorException("Could not determine whether Routine is monitorable", e);

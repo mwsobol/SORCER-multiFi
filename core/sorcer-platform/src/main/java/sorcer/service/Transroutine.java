@@ -134,12 +134,25 @@ abstract public class Transroutine extends Subroutine {
 		return getMograms(allMograms);
 	}
 
+	public List<Contextion> getAllContextions() {
+		List<Contextion> allContextions = new ArrayList<>();
+		return getContextions(allContextions);
+	}
+
 	public List<Mogram> getMograms(List<Mogram> mogramList) {
 		for (Mogram e : mograms) {
 			e.getMograms(mogramList);
 		}
 		mogramList.add(this);
 		return mogramList;
+	}
+
+	public List<Contextion> getContextions(List<Contextion> contextionList) {
+		for (Mogram e : mograms) {
+			e.getContextions(contextionList);
+		}
+		contextionList.add(this);
+		return contextionList;
 	}
 
 	public boolean hasChild(String childName) {

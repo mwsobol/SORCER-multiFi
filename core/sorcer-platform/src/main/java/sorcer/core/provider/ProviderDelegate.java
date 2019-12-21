@@ -1139,8 +1139,8 @@ public class ProviderDelegate {
 			try {
 				// select the proper method for the bean type
 				if (selector.equals("exert") && (bean instanceof ContextDomain
-					||  bean instanceof Routine)) {
-					m = bean.getClass().getMethod(selector, Mogram.class, Transaction.class, Arg[].class);
+					||  bean instanceof Contextion)) {
+					m = bean.getClass().getMethod(selector, Contextion.class, Transaction.class, Arg[].class);
 					isContextual = true;
 				} else if (selector.equals("evaluate") && bean instanceof ContextDomain) {
 					m = bean.getClass().getMethod(selector, Context.class, Arg[].class);

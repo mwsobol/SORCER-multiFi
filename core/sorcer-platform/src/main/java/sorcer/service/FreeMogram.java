@@ -101,7 +101,7 @@ public class FreeMogram extends ServiceMogram {
     }
 
     @Override
-    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... entries) throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... entries) throws ContextException, RemoteException {
         return null;
     }
 

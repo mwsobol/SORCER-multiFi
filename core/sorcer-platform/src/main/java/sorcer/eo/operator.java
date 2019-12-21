@@ -3552,7 +3552,7 @@ operator extends Operator {
 
 
     public static LoopTask loop(Condition condition,
-                                Mogram target) {
+                                Contextion target) {
         return new LoopTask(null, condition, target);
     }
 
@@ -3632,7 +3632,7 @@ operator extends Operator {
         return signature;
     }
 
-    public static Block block(Object...  items) throws RoutineException {
+    public static Block block(Object...  items) throws ContextException {
         List<Mogram> mograms = new ArrayList<>();
         List<Evaluator> evaluators = new ArrayList<>();
         String name = null;
@@ -3683,7 +3683,7 @@ operator extends Operator {
                 block.addMogram(new EvaluationTask(e));
             }
         } catch (Exception se) {
-            throw new RoutineException(se);
+            throw new ContextException(se);
         }
         //make sure it has EntModel as the data context
         EntModel pm = null;
@@ -3716,7 +3716,7 @@ operator extends Operator {
                         ((LoopTask) e).getCondition().setConditionalContext(pm);
                     }
 
-                    Mogram target = ((LoopTask)e).getTarget();
+                    Contextion target = ((LoopTask)e).getTarget();
                     if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Entry) {
                         ServiceContext ltcxt = (ServiceContext) ((EvaluationTask)target).getDataContext();
                         if (ltcxt == null || ltcxt.size() == 0) {
@@ -3742,13 +3742,15 @@ operator extends Operator {
                     e.getDataContext().updateEntries(pm.getScope());
                 }
             }
-            for (Mogram mog : block.getAllMograms()) {
-                if (mog instanceof FreeMogram) {
-                    block.getControlContext().getFreeServices().put(mog.getName(), mog);
+            for (Contextion cxtn : block.getAllContextions()) {
+                if (cxtn instanceof FreeMogram) {
+                    block.getControlContext().getFreeServices().put(cxtn.getName(), cxtn);
+                } else  if (cxtn instanceof FreeContextion) {
+                    block.getControlContext().getFreeServices().put(cxtn.getName(), cxtn);
                 }
             }
         } catch (Exception ex) {
-            throw new RoutineException(ex);
+            throw new ContextException(ex);
         }
         return block;
     }

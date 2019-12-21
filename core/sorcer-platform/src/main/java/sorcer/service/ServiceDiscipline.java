@@ -17,6 +17,7 @@
 
 package sorcer.service;
 
+import net.jini.core.transaction.Transaction;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.context.ModelStrategy;
@@ -72,6 +73,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     protected Morpher morpher;
 
     protected Contextion parent;
+
+    protected Context scope;
 
     // dependency management for this disciline
     protected List<Evaluation> dependers = new ArrayList<Evaluation>();
@@ -360,6 +363,11 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         return mogramStrategy;
     }
 
+    @Override
+    public List<Contextion> getContextions(List<Contextion> contextionList) {
+        return ((Contextion)contextionMultiFi.getSelect()).getContextions(contextionList);
+    }
+
     public void setContextReturn() {
         this.contextReturn = new Context.Return();
     }
@@ -439,6 +447,11 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
+    public Contextion exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
+        return evaluate(input, args);
+    }
+
+    @Override
     public Context getContext() throws ContextException {
         return output;
     }
@@ -509,4 +522,13 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         return dependers;
     }
 
+    @Override
+    public Context getScope() {
+        return scope;
+    }
+
+    @Override
+    public void setScope(Context scope) {
+        this.scope = scope;
+    }
 }

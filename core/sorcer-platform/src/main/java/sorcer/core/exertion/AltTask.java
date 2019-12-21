@@ -66,12 +66,12 @@ public class AltTask extends ConditionalTask {
 					Context cxt = opt.getCondition().getConditionalContext();
 					if (cxt != null) {
 						Condition.clenupContextScripts(cxt);
-							opt.getTarget().getDataContext().updateEntries(cxt);
+						((Mogram)opt.getTarget()).getDataContext().updateEntries(cxt);
 					}
 					// pass te scope to the option task
 //					opt.setContextScope(cxt);
 					opt.setContextScope(dataContext);
-					Mogram mog = opt.getTarget();
+					Mogram mog = (Mogram)opt.getTarget();
 					if (mog instanceof Routine) {
                         ((Subroutine)mog).setContextScope(cxt);
                     } else {
@@ -171,8 +171,8 @@ public class AltTask extends ConditionalTask {
 	 * @see sorcer.service.ConditionalExertion#getTargets()
 	 */
 	@Override
-	public List<Mogram> getTargets() {
-		List<Mogram> tl = new ArrayList<Mogram>(optExertions.size());
+	public List<Contextion> getTargets() {
+		List<Contextion> tl = new ArrayList<Contextion>(optExertions.size());
 		for (OptTask oe : optExertions)
 			tl.add(oe.getTarget());
 		return tl;

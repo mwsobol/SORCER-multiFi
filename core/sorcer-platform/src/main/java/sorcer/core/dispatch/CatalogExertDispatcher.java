@@ -314,7 +314,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                     ? provider.getProviderName() + " " : "")
                     + "executed block: " +  block.getName() + " governor: " + getClass().getName());
 			return out;
-		} catch (RemoteException | RoutineException | DispatchException ex) {
+		} catch (RemoteException | DispatchException ex) {
 			throw new MogramException(ex);
 		}
 	}

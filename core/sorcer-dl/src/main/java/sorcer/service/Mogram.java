@@ -54,9 +54,9 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
      * @throws RemoteException
      *             if remote call causes an error
      */
-    public <T extends Mogram> T exert(Transaction txn, Arg... args) throws MogramException, RemoteException;
+    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException;
 
-    public <T extends Mogram> T exert(Arg... args) throws MogramException, RemoteException;
+    public <T extends Contextion> T exert(Arg... args) throws ContextException, RemoteException;
 
     public int getIndex();
 
@@ -348,11 +348,16 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
 
 	List<Mogram> getMograms(List<Mogram> allMograms);
 
+	List<Contextion> getContextions(List<Contextion> allContextions);
+
 	/**
 	 * Returns the list of direct component exertions.
 	 * @return Routine list
 	 */
 	public List<Mogram> getMograms();
+
+	public List<Contextion> getContextions();
+
 
 	/**
 	 * Returns the list of all nested component exertions/
@@ -360,6 +365,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
 	 */
 	public List<Mogram> getAllMograms();
 
+	public List<Contextion> getAllContextions();
 
 	/**
      *  Returns a signature builder that returns instances of this model.

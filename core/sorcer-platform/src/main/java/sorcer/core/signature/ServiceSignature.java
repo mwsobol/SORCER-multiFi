@@ -622,8 +622,8 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	@Override
-	public Context exert(Mogram mogram, Transaction txn, Arg... args)
-		throws MogramException, RemoteException {
+	public Context exert(Contextion mogram, Transaction txn, Arg... args)
+		throws ContextException, RemoteException {
 		Context cxt = null;
 		if (mogram instanceof Context) {
 			cxt = (Context)mogram;
@@ -641,7 +641,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		}
 	}
 
-	public Context exert(Mogram mogram) throws MogramException, RemoteException {
+	public Context exert(Contextion mogram) throws ContextException, RemoteException {
 		return exert(mogram, null);
 	}
 

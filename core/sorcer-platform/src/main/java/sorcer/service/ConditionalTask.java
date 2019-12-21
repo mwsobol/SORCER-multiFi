@@ -17,6 +17,8 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.Model;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ abstract public class ConditionalTask extends Task {
 
 	protected Condition condition;
 
-	protected Mogram target;
+	protected Contextion target;
 
 	public ConditionalTask() {
 		super();
@@ -43,7 +45,7 @@ abstract public class ConditionalTask extends Task {
 		this.condition = condition;
 	}
 
-	public Mogram getTarget() {
+	public Contextion getTarget() {
 		return target;
 	}
 
@@ -51,8 +53,17 @@ abstract public class ConditionalTask extends Task {
 		this.target = target;
 	}
 
-	public List<Mogram> getMograms(List<Mogram> list) {
+	public List<Contextion> getContextions(List<Contextion> list) {
 		list.addAll(getTargets());
+		return list;
+	}
+
+	public List<Mogram> getMograms(List<Mogram> list) {
+		for (Contextion cxtn : getContextions()) {
+			if (cxtn instanceof Mogram) {
+				list.add((Mogram)cxtn);
+			}
+		}
 		return list;
 	}
 
@@ -68,7 +79,7 @@ abstract public class ConditionalTask extends Task {
 	 * 
 	 * @return exertion targets
 	 */
-	abstract public List<Mogram> getTargets();
-	
+	abstract public List<Contextion> getTargets();
+
 
 }

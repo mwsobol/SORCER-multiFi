@@ -342,10 +342,10 @@ import java.util.Map;
 			for (Conditional c : cs) {
 				((Condition) c).setClosure(null);
 			}
-			List<Mogram> tl = ((ConditionalTask) exertion).getTargets();
-			for (Mogram vt : tl) {
+			List<Contextion> tl = ((ConditionalTask) exertion).getTargets();
+			for (Contextion vt : tl) {
 				if (vt != null && vt instanceof Routine)
-					clenupContextScripts(((Routine)vt).getContext());
+					clenupContextScripts((vt).getContext());
 			}
 		}
 	}
