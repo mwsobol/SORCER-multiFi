@@ -107,7 +107,6 @@ public class Disciplines {
         // out is the discipline output
         Context out  = eval(morphDis, fi("cxtn1", "dspt1"));
 
-        assertTrue(value(out, "morpher3").equals(920.0));Ja pracuję praktycznie stale, w przerwach dwa razy w tygodniu na fizykoterapii i sporo spraw domowych udało mi się zorganizować.
-
+        assertTrue(value(out, "morpher3").equals(920.0));
     }
 }
