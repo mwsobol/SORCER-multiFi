@@ -106,7 +106,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
                 if (service instanceof Mogram) {
                     ((FreeMogram) controlContext.getFreeServices().get(((Contextion) service).getName())).setMogram((Mogram) service);
                 } else {
-                    ((FreeContextion) controlContext.getFreeServices().get(((Contextion) service).getName())).setContextion((Contextion) service);
+                    ((FreeService) controlContext.getFreeServices().get(((Contextion) service).getName())).bind(service);
                 }
             }
         }
@@ -369,7 +369,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
 
     public Service getService() throws SignatureException {
         NetSignature ps = (NetSignature) getProcessSignature();
-        return (Service) ps.getService();
+        return ps.getService();
     }
 
     public Flow getFlowType() {

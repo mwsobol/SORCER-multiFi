@@ -2187,6 +2187,10 @@ operator extends Operator {
         return task;
     }
 
+    public static FreeEvaluator evaluator(String name) {
+        return new FreeEvaluator(name);
+    }
+
     public static Task task(Object... items) throws EvaluationException {
         if (items.length == 1 &&  items[0] instanceof Evaluation) {
             // evaluation task for a single evalution

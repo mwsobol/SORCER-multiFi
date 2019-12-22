@@ -6,7 +6,7 @@ import sorcer.service.modeling.Functionality;
 import java.rmi.RemoteException;
 import java.util.List;
 
-public class FreeContextion implements Contextion, Arg {
+public class FreeContextion implements FreeService, Contextion, Arg {
 
 	private String name;
 
@@ -142,4 +142,8 @@ public class FreeContextion implements Contextion, Arg {
 
 	}
 
+	@Override
+	public void bind(Object object) {
+		contextion = (Contextion)object;
+	}
 }

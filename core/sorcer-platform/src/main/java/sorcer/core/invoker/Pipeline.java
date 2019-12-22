@@ -158,13 +158,24 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion {
 
     @Override
     public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
-        newInvokeContext = context;
+        invokeContext = context;
+        return evaluate(args);
+    }
+
+    @Override
+    public Context invoke(Context context, Arg... args) throws EvaluationException, RemoteException {
+        invokeContext = context;
         return evaluate(args);
     }
 
     @Override
     public Pipeline exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
-         evaluate(args);
+        Context cxt = Arg.selectContext(args);
+        if (cxt != null) {
+            evaluate(cxt, args);
+        } else {
+            evaluate(args);
+        }
          return this;
     }
 

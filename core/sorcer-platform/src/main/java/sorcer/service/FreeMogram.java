@@ -32,7 +32,7 @@ import java.util.List;
  *
  * @author Mike Sobolewski
  */
-public class FreeMogram extends ServiceMogram {
+public class FreeMogram extends ServiceMogram implements FreeService {
 
     private Mogram mogram;
 
@@ -123,5 +123,10 @@ public class FreeMogram extends ServiceMogram {
     @Override
     public List<Evaluation> getDependers() {
         return null;
+    }
+
+    @Override
+    public void bind(Object object) {
+        mogram = (Mogram)object;
     }
 }

@@ -1,6 +1,6 @@
 /*
- * Copyright 2018 the original author or authors.
- * Copyright 2018 SorcerSoft.org.
+ * Copyright 2019 the original author or authors.
+ * Copyright 2019 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package sorcer.service;
 
-import sorcer.core.context.model.ent.Entry;
+public interface FreeService {
 
-/**
- * A free entry is an instance of Entry that has a name only to be bound at runtime.
- *
- * @see Entry
- *
- * @author Mike Sobolewski
- */
-public class FreeEntry extends Entry implements FreeService {
-
-    private Entry entry;
-
-    public FreeEntry(String name) {
-        this.key = name;
-    }
-
-    @Override
-    public void bind(Object object) {
-        this.entry = (Entry)object;
-    }
+	public void bind(Object object);
 }
