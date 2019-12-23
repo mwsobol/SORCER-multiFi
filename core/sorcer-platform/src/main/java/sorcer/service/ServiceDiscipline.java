@@ -22,6 +22,7 @@ import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Config;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.modeling.Getter;
 
@@ -93,18 +94,18 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         contextionMultiFi = new ServiceFidelity(dispatchs);
     }
 
-    public ServiceDiscipline(Fidelity serviceFi, Fidelity dispatchFi) {
-        this(serviceFi, dispatchFi, null);
+    public ServiceDiscipline(Fidelity contextionFi, Fidelity dispatchFi) {
+        this(contextionFi, dispatchFi, null);
     }
 
-    public ServiceDiscipline(Fidelity serviceFi, Fidelity dispatchFi, Fidelity contextFi) {
+    public ServiceDiscipline(Fidelity contextionFi, Fidelity dispatchFi, Fidelity contextFi) {
         Routine dispatch = (Routine) dispatchFi.getSelect();
         dispatch.setName(dispatchFi.getName());
-        Service service = (Service)serviceFi.getSelect();
+        Service service = (Service)contextionFi.getSelect();
         if (service instanceof Signature) {
-            ((ServiceSignature)service).setName(serviceFi.getName());
+            ((ServiceSignature)service).setName(contextionFi.getName());
         } else if (service instanceof Request) {
-            ((Request)service).setName(serviceFi.getName());
+            ((Request)service).setName(contextionFi.getName());
         }
         dispatchMultiFi = new ServiceFidelity(new Routine[] { dispatch });
         contextionMultiFi = new ServiceFidelity(new Service[] { service});
@@ -112,7 +113,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         if (contextFi != null) {
             Context context = (Context)contextFi.getSelect();
             context.setName(contextFi.getName());
-            contextMultiFi = new ServiceFidelity(new Service[]{context});
+            contextMultiFi = new ServiceFidelity(new Service[] {context});
         }
     }
 
@@ -151,8 +152,13 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public void add(Fidelity serviceFi, Fidelity dispatchFi, Fidelity contextFi) {
-        Routine dispatch = (Routine) dispatchFi.getSelect();
-        dispatch.setName(dispatchFi.getName());
+        Routine dispatch = null;
+        if (dispatchFi != null) {
+            dispatch = (Routine) dispatchFi.getSelect();
+        }
+        if (dispatch != null) {
+            dispatch.setName(dispatchFi.getName());
+        }
         Service service = null;
         if (serviceFi != null) {
             service = (Service)serviceFi.getSelect();
@@ -162,10 +168,17 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         } else if (service instanceof Request) {
             ((Request)service).setName(serviceFi.getName());
         }
-        dispatchMultiFi.getSelects().add(dispatch);
-        contextionMultiFi.getSelects().add((Service)service);
-        if (contextFi != null) {
-            contextFi.getSelects().add(contextFi.getSelect());
+        if (dispatch != null) {
+//            ((Routine)dispatchFi.getSelect()).setName(dispatchFi.getName());
+            dispatchMultiFi.getSelects().add(dispatch);
+        }
+        if (service != null) {
+//            ((Contextion)serviceFi.getSelect()).setName(serviceFi.getName());
+            contextionMultiFi.getSelects().add(service);
+        }
+        if (contextFi != null && contextFi.getSelect() != null) {
+            ((Context)contextFi.getSelect()).setName(contextFi.getName());
+            contextMultiFi.getSelects().add((Service) contextFi.getSelect());
         }
     }
 
@@ -322,7 +335,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             outDispatcher = xrt.exert();
 
             return getOutput();
-        } catch (DispatchException | RemoteException e) {
+        } catch (DispatchException | ConfigurationException |RemoteException e) {
             throw new ServiceException(e);
         }
     }

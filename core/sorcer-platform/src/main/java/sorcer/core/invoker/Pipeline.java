@@ -181,13 +181,16 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion {
 
     @Override
     public Context getContext() throws ContextException {
-        Context rpc = contextReturn.getDataContext();
-        if (rpc != null && rpc.size() > 0) {
-            try {
-                invokeContext.appendContext(rpc);
-                contextReturn.setDataContext(null);
-            } catch (RemoteException e) {
-                throw new ContextException(e);
+        Context rpc = null;
+        if (contextReturn != null) {
+            rpc = contextReturn.getDataContext();
+            if (rpc != null && rpc.size() > 0) {
+                try {
+                    invokeContext.appendContext(rpc);
+                    contextReturn.setDataContext(null);
+                } catch (RemoteException e) {
+                    throw new ContextException(e);
+                }
             }
         }
         return invokeContext;
@@ -216,7 +219,7 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion {
             } else {
                 out = invokeContext;
             }
-        } else if (out.getScope() != null) {
+        } else if (out != null && out.getScope() != null) {
             out.getScope().append(invokeContext);
         } else {
             out = invokeContext;

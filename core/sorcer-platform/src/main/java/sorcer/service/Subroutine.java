@@ -32,6 +32,7 @@ import sorcer.core.invoker.Pipeline;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Strategy.Access;
@@ -89,24 +90,36 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     /*
-     * Assigns a provider for this exertion.
+     * Dispatch execurion of dependent services
      */
-    public void dispatch(Service service) throws DispatchException {
+    public void dispatch(Service service) throws DispatchException, ConfigurationException {
         // to be implemented in subclasses
-        if (service instanceof Signature) {
+        Contextion cxtn = null;
+        if (service != null && service instanceof Contextion) {
+            cxtn = (Contextion)service;
+        } else if (service instanceof ObjectSignature) {
             if (controlContext.getFreeServices().get(((Signature) service).getName()) != null) {
-                try {
-                    ((FreeMogram)controlContext.getFreeServices().get(((Signature) service).getName())).bind((Signature)service);
-                } catch (SignatureException | MogramException e) {
-                    throw new DispatchException(e);
+                FreeService  fsrv = ((FreeService)controlContext.getFreeServices().get(((Signature) service).getName()));
+                if (fsrv != null && fsrv instanceof FreeMogram) {
+                    fsrv.bind(service);
+                    return;
+                } else {
+                    try {
+                        cxtn = (Contextion)((ObjectSignature) service).build();
+                        cxtn.setName(((Signature)service).getName());
+                        cxtn.setContext(dataContext);
+                    } catch (SignatureException | ContextException e) {
+                        throw new DispatchException(e);
+                    }
                 }
             }
-        } else if (service instanceof Contextion) {
-            if (controlContext.getFreeServices().get(((Contextion) service).getName()) != null) {
-                if (service instanceof Mogram) {
-                    ((FreeMogram) controlContext.getFreeServices().get(((Contextion) service).getName())).setMogram((Mogram) service);
+        }
+        if (cxtn instanceof Contextion) {
+            if (controlContext.getFreeServices().get(cxtn.getName()) != null) {
+                if (cxtn instanceof Mogram) {
+                    ((FreeMogram) controlContext.getFreeServices().get(cxtn.getName())).setMogram((Mogram) cxtn);
                 } else {
-                    ((FreeService) controlContext.getFreeServices().get(((Contextion) service).getName())).bind(service);
+                    ((FreeService) controlContext.getFreeServices().get((cxtn).getName())).bind(cxtn);
                 }
             }
         }

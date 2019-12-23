@@ -43,7 +43,7 @@ import static sorcer.mo.operator.value;
 import static sorcer.so.operator.*;
 
 /**
- * Created by Mike Sobolewski on 10/26/15.
+ * Created by Mike Sobolewski on 12/22/19.
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
@@ -120,7 +120,6 @@ public class Disciplines {
         assertEquals(279300.0, value(out, "multiply"));
     }
 
-
     @Test
     public void morphModelDiscipline() throws Exception {
 
@@ -140,7 +139,7 @@ public class Disciplines {
     }
 
     @Test
-    public void multiFiPiplineDisciplineFi_plDisc1() throws Exception {
+    public void multiFiPipelineDisciplineFi_plDisc1() throws Exception {
 
         Signature discSig = sig("getMultiFiPipelineDiscipline",
             MuiltidisciplinaryBuilder.class);
@@ -148,32 +147,30 @@ public class Disciplines {
         // first fidelity
         Context out = eval(discSig, fi("plDisc1"));
 
-        logger.info("pipeline c1:d1: " + out);
+        logger.info("pipeline c1:dspt1:cxt1: " + out);
 
         assertEquals(20.0, value(out, "x"));
         assertEquals(80.0, value(out, "y"));
-        assertEquals(3300.0, value(out, "multiply"));
-        assertEquals(110.0, value(out, "lambdaOut"));
-        assertEquals(30.0, value(out, "exprOut"));
-
+        assertEquals(2000.0, value(out, "multiply"));
+        assertEquals(100.0, value(out, "lambdaOut"));
+        assertEquals(20.0, value(out, "exprOut"));
     }
 
-//    @Test
-//    public void multiFiPiplineyDiscipline_plDisc2() throws Exception {
-//
-//        Signature discSig = sig("getMultiFiPipelineDiscipline",
-//            MuiltidisciplinaryBuilder.class);
-//
-//        // first fidelity
-//        Context out = eval(discSig, fi("plDisc2"));
-//
-//        logger.info("pipeline plDisc1: " + out);
-//
-////        assertEquals(20.0, value(out, "x"));
-////        assertEquals(80.0, value(out, "y"));
-////        assertEquals(3300.0, value(out, "multiply"));
-////        assertEquals(110.0, value(out, "lambdaOut"));
-////        assertEquals(30.0, value(out, "exprOut"));
-//
-//    }
+    @Test
+    public void multiFiPipelineyDiscipline_plDisc2() throws Exception {
+
+        Signature discSig = sig("getMultiFiPipelineDiscipline",
+            MuiltidisciplinaryBuilder.class);
+
+        // first fidelity
+        Context out = eval(discSig, fi("plDisc2"));
+
+        logger.info(" pipeline cxtn2:dspt2:cxt2: " + out);
+
+        assertEquals(20.0, value(out, "x"));
+        assertEquals(80.0, value(out, "y"));
+        assertEquals(228800.0, value(out, "multiply"));
+        assertEquals(520.0, value(out, "lambdaOut"));
+        assertEquals(440.0, value(out, "exprOut"));
+    }
 }

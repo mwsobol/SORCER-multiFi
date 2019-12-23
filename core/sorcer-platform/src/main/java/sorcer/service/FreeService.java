@@ -19,5 +19,5 @@ package sorcer.service;
 
 public interface FreeService {
 
-	public void bind(Object object);
+	public void bind(Object object) throws ConfigurationException;
 }

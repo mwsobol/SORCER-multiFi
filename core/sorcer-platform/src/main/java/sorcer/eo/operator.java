@@ -1706,6 +1706,9 @@ operator extends Operator {
     public static Fidelity cxtnFi(String name, Object select) {
         Fidelity fi = new Fidelity(name);
         fi.setSelect(select);
+        if (select instanceof Signature) {
+            ((ServiceSignature)select).setName(name);
+        }
         fi.fiType = Fi.Type.CONTEXTION;
         return fi;
     }

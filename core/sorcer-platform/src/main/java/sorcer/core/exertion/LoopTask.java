@@ -146,7 +146,7 @@ public class LoopTask extends ConditionalTask {
 					Context cxt = condition.getConditionalContext();
 					condition.setConditionalContext(target.getContext());
 					if (cxt != null && cxt.size() > 0) {
-						((Context) target).append(cxt);
+						target.getContext().append(cxt);
 					}
 				}
 				while (condition.isTrue()) {

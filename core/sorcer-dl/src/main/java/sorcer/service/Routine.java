@@ -74,7 +74,7 @@ public interface Routine extends Dependency, Assembly, Dispatcher, Invocation<Ob
 	/**
 	 * Assigns a dispatch for this exertion.
 	 */
-	public void dispatch(Service service) throws DispatchException;
+	public void dispatch(Service service) throws DispatchException, ConfigurationException;
 
 	/**
 	 * Returns a deployment ID for this exertion.

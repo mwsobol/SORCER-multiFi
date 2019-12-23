@@ -45,12 +45,19 @@ public class FreeMogram extends ServiceMogram implements FreeService {
         this.type = type;
     }
 
-    public void bind(Signature signature) throws SignatureException, MogramException {
-        if (signature != null) {
-            mogram = (Mogram) ((ObjectSignature)signature).build();
-            builder = signature;
+    @Override
+    public void bind(Object object) throws ConfigurationException {
+        if (object instanceof Mogram) {
+            mogram = (Mogram) object;
+        } else if (object instanceof ObjectSignature) {
+            try {
+                mogram = (Mogram) ((ObjectSignature) object).build();
+                builder = (Signature) object;
+                mogram.setBuilder(builder);
+            } catch (SignatureException | MogramException e) {
+                throw new ConfigurationException(e);
+            }
         }
-        mogram.setBuilder(builder);
         if (mogram instanceof Model) {
             type = Functionality.Type.MODEL;
         } else if (mogram instanceof Routine) {
@@ -125,8 +132,4 @@ public class FreeMogram extends ServiceMogram implements FreeService {
         return null;
     }
 
-    @Override
-    public void bind(Object object) {
-        mogram = (Mogram)object;
-    }
 }

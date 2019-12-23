@@ -939,7 +939,7 @@ public class operator {
             for (int i = 1; i < discFis.length; i++) {
                 srvDisc.add(((DisciplineFidelity)discFis[i]).getContextionFi(),
                     ((DisciplineFidelity)discFis[i]).getDispatcherFi(),
-                    ((DisciplineFidelity)discFis[0]).getContextFi());
+                    ((DisciplineFidelity)discFis[i]).getContextFi());
                 srvDisc.getDisciplineFidelities().put(discFis[i].getName(), (DisciplineFidelity) discFis[i]);
             }
         } else {
