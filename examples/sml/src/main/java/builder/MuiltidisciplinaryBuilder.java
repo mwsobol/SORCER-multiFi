@@ -34,9 +34,9 @@ public class MuiltidisciplinaryBuilder {
 			loop(condition(cxt -> (double)
 				value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
-		Discipline morphDis = disc("morphModelDisc",
-			cxtnFi("cxtn1", sig("cxtn1", MuiltidisciplinaryBuilder.class, "getMorphingModel")),
-			dsptFi("dspt1", mdlDispatch));
+		Discipline morphDis = dsc("morphModelDisc",
+			ctxFi("cxtn1", sig("cxtn1", MuiltidisciplinaryBuilder.class, "getMorphingModel")),
+			dspFi("dspt1", mdlDispatch));
 
 		return morphDis;
 	}
@@ -150,16 +150,16 @@ public class MuiltidisciplinaryBuilder {
 			loop(condition(cxt -> (double)
 				value(cxt, "lambdaOut") < 500.0), pipeline("cxtn2")));
 
-		Discipline plDisc = disc("plDisc",
-			discFi("plDisc1",
-				cxtnFi("cxtn1", sig("getPipeline1",  MuiltidisciplinaryBuilder.class)),
+		Discipline plDisc = dsc("plDisc",
+			dscFi("plDisc1",
+				ctxFi("cxtn1", sig("getPipeline1",  MuiltidisciplinaryBuilder.class)),
 				cxtFi("cxt1", cxt1),
-				dsptFi("dspt1", evalTask)),
+				dspFi("dspt1", evalTask)),
 
-			discFi("plDisc2",
-				cxtnFi("cxtn2", sig("getPipeline2",  MuiltidisciplinaryBuilder.class)),
+			dscFi("plDisc2",
+				ctxFi("cxtn2", sig("getPipeline2",  MuiltidisciplinaryBuilder.class)),
 				cxtFi("cxt2", cxt2),
-				dsptFi("dspt2", blockDispatch)));
+				dspFi("dspt2", blockDispatch)));
 
 		return plDisc;
 	}
@@ -200,11 +200,41 @@ public class MuiltidisciplinaryBuilder {
 		return opspl;
 	}
 
-	static public Governance getMultidiscGovernance() throws Exception {
+	static public Governance getMultidiscGovernance1() throws Exception {
 
 		Governance mdisc = gov("multidisc",
 			instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1")),
 			instance(sig("getMultiFiPipelineDiscipline", MuiltidisciplinaryBuilder.class), fi("plDisc1")));
+
+		return mdisc;
+	}
+
+	static public Governance getMultidiscGovernance2() throws Exception {
+
+		Context govCxt = context(mdaFi("multidiscMdaFi",
+			mda("analyzer",
+				(Request gov, Context cxt) -> {
+					double x1, x2, x3;
+					String discName = dsc(cxt);
+					if (discName.equals("morphModelDisc")) {
+						setValue(gov, "m1", value(cxt, "morpher3"));
+					} else if (discName.equals("plDisc")) {
+						setValue(gov, "pl1", value(cxt, "lambdaOut"));
+						setValue(gov, "pl2", value(cxt, "exprOut"));
+					} else if (discName.equals(name(gov))) {
+						x1 = (double)value(gov, "pl1");
+						x2 = (double)value(gov, "pl2");
+						x3 = (double)value(gov, "m1");
+						setValue(gov, "g1", x3/(x1 * x1));
+						setValue(gov, "g2", x3/(x1 + x1));
+					}
+				}))
+		);
+
+		Governance mdisc = gov("multidisc",
+			instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1")),
+			instance(sig("getMultiFiPipelineDiscipline", MuiltidisciplinaryBuilder.class), fi("plDisc1")),
+			govCxt);
 
 		return mdisc;
 	}

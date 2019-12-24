@@ -59,11 +59,13 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 	protected Morpher morpher;
 
     // active disciplnes
-    protected Paths disciplnePaths;
+    protected Paths disciplnePaths = new Paths();
 
 	protected ServiceFidelity supervisorFi;
 
 	protected Fidelity<AnalyzerEntry> analyzerFi;
+
+	protected ServiceFidelity contextMultiFi;
 
 	protected Map<String, Discipline> disciplines = new HashMap<>();
 
@@ -99,6 +101,7 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
         this(name);
         for (Discipline disc : disciplines) {
                 this.disciplines.put(disc.getName(), disc);
+				disciplnePaths.add(new Path(disc.getName()));
         }
     }
 
@@ -106,16 +109,9 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 		this(name);
 		for (Discipline disc : disciplines) {
 			this.disciplines.put(disc.getName(), disc);
+			disciplnePaths.add(new Path(disc.getName()));
 		}
 	}
-
-    public Context getInput() {
-        return input;
-    }
-
-    public void setInput(Context input) {
-        this.input = input;
-    }
 
     public Context getOutput() {
         return output;
@@ -160,6 +156,34 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 	// default instance new Return(Context.RETURN);
 	protected Context.Return contextReturn;
 
+	public ServiceFidelity getContextMultiFi() {
+		return contextMultiFi;
+	}
+
+	public void setContextMultiFi(ServiceFidelity contextMultiFi) {
+		this.contextMultiFi = contextMultiFi;
+	}
+
+	public Context getInput() throws ContextException {
+		// if no contextMultiFi then return direct input
+		if (contextMultiFi == null || contextMultiFi.getSelect() == null) {
+			return input;
+		}
+		input = (Context) contextMultiFi.getSelect();
+		return input;
+	}
+
+	public Context setInput(Context input) throws ContextException {
+		if (contextMultiFi == null) {
+			contextMultiFi = new ServiceFidelity();
+		}
+		contextMultiFi.getSelects().add(input);
+		contextMultiFi.setSelect(input);
+
+		this.input = input;
+		return input;
+	}
+
 	@Override
 	public Context getContext() throws ContextException {
 		return input;
@@ -167,7 +191,7 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 
 	@Override
 	public void setContext(Context input) throws ContextException {
-		this.input = input;
+		setInput(input);
 	}
 
 	@Override
@@ -243,11 +267,11 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 			Object mdaComponent = context.get(Context.MDA_PATH);
 			if (mdaComponent != null) {
 				if (mdaComponent instanceof AnalyzerEntry) {
-					analyzerFi = new Fidelity(((AnalyzerEntry)mdaComponent).getName());
+					analyzerFi = new Fidelity(((AnalyzerEntry) mdaComponent).getName());
 					analyzerFi.addSelect((AnalyzerEntry) mdaComponent);
-					analyzerFi.setSelect((AnalyzerEntry)mdaComponent);
+					analyzerFi.setSelect((AnalyzerEntry) mdaComponent);
 				} else if (mdaComponent instanceof ServiceFidelity
-						&& ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
+					&& ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
 					analyzerFi = (Fidelity) mdaComponent;
 				}
 			}
@@ -302,12 +326,21 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 	@Override
 	public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
 		Context out = null;
+		Context cxt = context;
+			if (cxt == null) {
+				try {
+					cxt = getInput();
+				} catch (ContextException e) {
+					throw new EvaluationException(e);
+				}
+			}
+
 		// set mda if available
 		try {
 			if (analyzerFi == null) {
-				setAnalyzerFi(context);
+				setAnalyzerFi(cxt);
 			}
-			ModelStrategy strategy = ((ModelStrategy) context.getMogramStrategy());
+			ModelStrategy strategy = ((ModelStrategy) cxt.getMogramStrategy());
 			if (analyzerFi != null) {
 				strategy.setExecState(Exec.State.RUNNING);
 				// select mda Fi if provided
@@ -318,10 +351,10 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 					}
 				}
 				logger.info("*** analyzerFi: {}", analyzerFi.getSelect().getName());
-				out = ((Supervisor)supervisorFi.getSelect()).supervise(context, args);
+				out = ((Supervisor)supervisorFi.getSelect()).supervise(cxt, args);
 				strategy.setExecState(Exec.State.DONE);
 			} else {
-				out = ((Supervisor)supervisorFi.getSelect()).supervise(context, args);
+				out = ((Supervisor)supervisorFi.getSelect()).supervise(cxt, args);
 			}
 			((ModelStrategy)mogramStrategy).setOutcome(output);
 		} catch (SuperviseException | ConfigurationException e) {

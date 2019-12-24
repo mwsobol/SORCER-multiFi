@@ -903,22 +903,22 @@ public class operator {
         return servers;
     }
 
-    public static Discipline disc(Service server, Routine consumer) {
+    public static Discipline dsc(Service server, Routine consumer) {
         return new ServiceDiscipline(server, consumer);
     }
-    public static Discipline disc(Service[] servers, Routine[] clients) {
+    public static Discipline dsc(Service[] servers, Routine[] clients) {
         return new ServiceDiscipline(servers, clients);
     }
 
-    public static Discipline disc(List<Service> servers, List<Routine> clients) {
+    public static Discipline dsc(List<Service> servers, List<Routine> clients) {
         return new ServiceDiscipline(servers, clients);
     }
 
-    public static Discipline disc(Governance multidisc, String name) {
+    public static Discipline dsc(Governance multidisc, String name) {
         return multidisc.getDiscipline(name);
     }
 
-    public static String disc(Context context) {
+    public static String dsc(Context context) {
         return (String) context.get(Functionality.Type.DISCIPLINE.toString());
     }
 
@@ -926,11 +926,11 @@ public class operator {
         return (String) context.get(Functionality.Type.DOMAIN.toString());
     }
 
-    public static Discipline disc(Fidelity... discFis) {
-        return disc((String)null, discFis);
+    public static Discipline dsc(Fidelity... discFis) {
+        return dsc((String)null, discFis);
     }
 
-    public static Discipline disc(String name, Fidelity... discFis) {
+    public static Discipline dsc(String name, Fidelity... discFis) {
         ServiceDiscipline srvDisc = null;
         if (discFis[0] instanceof DisciplineFidelity) {
             srvDisc = new ServiceDiscipline(((DisciplineFidelity)discFis[0]).getContextionFi(),
@@ -979,6 +979,7 @@ public class operator {
         Dependency dependency = null;
         ExecDeps execDeps = null;
         Paths disciplinePaths = null;
+        Context govContext = null;
 
         List<Object> dataList = new ArrayList<>();
         for (Object o : data) {
@@ -990,6 +991,8 @@ public class operator {
                 name = (String) o;
             } else if (o instanceof Discipline) {
                 disciplines.add((Discipline)o);
+            } else if (o instanceof Context) {
+                govContext = (Context)o;
             } else if (o instanceof Dependency) {
                 dependency = (Dependency)o;
             } else if (o instanceof ExecDeps) {
@@ -1002,6 +1005,9 @@ public class operator {
         }
 
         Governance gov = new Governance(name, disciplines);
+        if (govContext != null) {
+            gov.setInput(govContext);
+        }
         Object[] names = new Object[disciplines.size()];
 
         for (int i = 0; i < disciplines.size(); i++) {

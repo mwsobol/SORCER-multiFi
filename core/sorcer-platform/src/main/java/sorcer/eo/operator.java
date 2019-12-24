@@ -343,6 +343,9 @@ operator extends Operator {
         Context.Out outPaths = null;
         Context.In inPaths = null;
         Paths paths = null;
+        AnalyzerEntry mdaEntry = null;
+        ServiceFidelity mdaFi = null;
+        List<Path> responsePaths = null;
         boolean autoDeps = true;
         for (Object o : entries) {
             if (o instanceof Complement) {
@@ -397,6 +400,15 @@ operator extends Operator {
                 paths = (Paths)o;
             } else if (o instanceof Context) {
                 cxts.add((ServiceContext) o);
+            } else if (o instanceof Fidelity) {
+                if (((Fidelity)o).getFiType() == Fi.Type.RESPONSE){
+                    responsePaths = (List<Path>) ((Fidelity) o).getSelects();
+                } else if (o instanceof ServiceFidelity
+                    && ((ServiceFidelity)o).getFiType().equals(Fi.Type.MDA)) {
+                    mdaFi = (ServiceFidelity) o;
+                }
+            } else if (o instanceof AnalyzerEntry) {
+                mdaEntry = (AnalyzerEntry) o;
             }
         }
 
@@ -563,6 +575,16 @@ operator extends Operator {
             } else {
                 cxt.getContextReturn().inPaths = new Context.In(paths);
             }
+        }
+
+        if (responsePaths != null) {
+            cxt.getMogramStrategy().setResponsePaths(responsePaths);
+        }
+
+        if (mdaEntry != null) {
+            cxt.put(Context.MDA_PATH, mdaEntry);
+        } else if (mdaFi != null) {
+            cxt.put(Context.MDA_PATH, mdaFi);
         }
 
         if (accessType != null)
@@ -1660,12 +1682,12 @@ operator extends Operator {
         return fi;
     }
 
-    public static DisciplineFidelity discFi(Fidelity... fidelities) {
+    public static DisciplineFidelity dscFi(Fidelity... fidelities) {
         DisciplineFidelity fi = new DisciplineFidelity(fidelities);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;
     }
-    public static DisciplineFidelity discFi(String name, Fidelity... fidelities) {
+    public static DisciplineFidelity dscFi(String name, Fidelity... fidelities) {
         DisciplineFidelity fi = new DisciplineFidelity(name, fidelities);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;
@@ -1684,26 +1706,26 @@ operator extends Operator {
         return fi;
     }
 
-    public static Fidelity dsptFi(String name) {
+    public static Fidelity dspFi(String name) {
         Fidelity fi = new Fidelity(name);
         fi.fiType = Fi.Type.DISPATCHER;
         return fi;
     }
 
-    public static Fidelity dsptFi(String name, Object select) {
+    public static Fidelity dspFi(String name, Object select) {
         Fidelity fi = new Fidelity(name);
         fi.setSelect(select);
         fi.fiType = Fi.Type.DISPATCHER;
         return fi;
     }
 
-    public static Fidelity cxtnFi(String name) {
+    public static Fidelity ctxFi(String name) {
         Fidelity fi = new Fidelity(name);
         fi.fiType = Fi.Type.CONTEXTION;
         return fi;
     }
 
-    public static Fidelity cxtnFi(String name, Object select) {
+    public static Fidelity ctxFi(String name, Object select) {
         Fidelity fi = new Fidelity(name);
         fi.setSelect(select);
         if (select instanceof Signature) {
@@ -3592,7 +3614,7 @@ operator extends Operator {
         return signature;
     }
 
-    public static Signature discSig(Signature signature) {
+    public static Signature dscSig(Signature signature) {
         ((ServiceSignature)signature).addRank(new Kind[]{Kind.DISCIPLINE, Kind.TASKER});
         return signature;
     }

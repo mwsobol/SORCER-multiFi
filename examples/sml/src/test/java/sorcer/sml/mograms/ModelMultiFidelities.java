@@ -727,9 +727,9 @@ public class ModelMultiFidelities {
             loop(condition(cxt -> (double)
                 value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
-        Discipline morphDis = disc(
-            cxtnFi("cxtn1", sig("cxtn1", ModelMultiFidelities.class, "getMorphingModel")),
-            dsptFi("dspt1", mdlDispatch));
+        Discipline morphDis = dsc(
+            ctxFi("cxtn1", sig("cxtn1", ModelMultiFidelities.class, "getMorphingModel")),
+            dspFi("dspt1", mdlDispatch));
 
         // out is the discipline output
         Context out  = eval(morphDis, fi("cxtn1", "dspt1"));

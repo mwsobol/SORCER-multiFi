@@ -29,6 +29,7 @@ import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
+import sorcer.core.service.Governance;
 import sorcer.service.Exertion;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.ObjectSignature;
@@ -165,7 +166,11 @@ public class operator extends Operator {
                 rc = ((Contextion) request).evaluate(context);
             } else {
                 try {
-                    rc = (Context) request.execute(new Arg[] { context });
+                    if (context == null) {
+                        rc = (Context) request.execute(new Arg[0]);
+                    } else {
+                        rc = (Context) request.execute(new Arg[]{context});
+                    }
                 } catch (ServiceException e) {
                     throw new ContextException(e);
                 }
@@ -207,19 +212,23 @@ public class operator extends Operator {
         }
     }
 
-    public static Service out(Discipline discipline) {
-        return discipline.getout();
+    public static Context dscOut(Discipline discipline) throws ContextException {
+        return discipline.getOutput();
     }
 
-    public static Service outGov(Discipline discipline) {
-        return discipline.getout();
+    public static Context dspOut(Discipline discipline) throws ContextException {
+        return ((ServiceDiscipline)discipline).getOutDispatcher().getContext();
     }
 
-    public static Dispatcher result(Discipline discipline) {
-        return discipline.getOutDispatcher();
+    public static Context out(Governance governance) {
+        return governance.getOutput();
     }
 
-    public static Dispatcher outDisp(Discipline discipline) {
+    public static Context result(Discipline discipline) throws ContextException {
+        return ((Routine)discipline.getOutDispatcher()).getContext();
+    }
+
+    public static Dispatcher dispatcher(Discipline discipline) {
         return discipline.getOutDispatcher();
     }
 
@@ -315,27 +324,17 @@ public class operator extends Operator {
         }
     }
 
-    public static ServiceContext eval(Mogram mogram, Object... items) throws ContextException {
-        return response(mogram, items);
+    public static ServiceContext eval(Request request, Object... items) throws ContextException {
+        Context out = null;
+        if (request instanceof Mogram) {
+            out = response((Mogram)request, items);
+        } else if(items.length == 1 && items[0] instanceof Context) {
+            out = eval(request, (Context)items[0]);
+        } else if(items.length == 0) {
+            out = eval(request, (Context)null);
+        }
+        return (ServiceContext)out;
     }
-
-    //TODO reconcile with the eval above
-//    public static Context eval(Contextion contextion, Arg... args) throws ContextException {
-//        try {
-//            Context cxt = Arg.selectContext(args);
-//            return contextion.evaluate(cxt, args);
-//        } catch (RemoteException e) {
-//            throw new ContextException(e);
-//        }
-//    }
-//
-//    public static Context eval(Contextion contextion, Context context, Arg... args) throws ContextException {
-//        try {
-//            return contextion.evaluate(context, args);
-//        } catch (RemoteException e) {
-//            throw new ContextException(e);
-//        }
-//    }
 
     public static ServiceContext modelResponse(ContextDomain model, Object... items) throws ContextException {
         try {

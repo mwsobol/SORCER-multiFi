@@ -75,7 +75,7 @@ public class ContextFidelity extends ArrayList<Function> {
 	
 	@Override
 	public String toString() {
-		return "cxtnFi: " + name + " " + super.toString();
+		return "ctxFi: " + name + " " + super.toString();
 	}
 	
 }

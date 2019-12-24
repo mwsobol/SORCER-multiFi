@@ -42,7 +42,7 @@ public interface Discipline extends Contextion, CombinedRequest, Dependency {
      *
      * @throws ServiceException
      */
-    public Service getout();
+    public Service getOutContextion();
 
     /**
      * Returns a dispatcher multifidelity

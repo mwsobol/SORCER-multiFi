@@ -7,27 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.arithmetic.provider.*;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.context.model.EntModel;
-import sorcer.core.context.model.ent.AnalyzerEntry;
-import sorcer.core.context.model.ent.Entry;
-import sorcer.core.invoker.Observable;
 import sorcer.core.invoker.Pipeline;
-import sorcer.core.plexus.FidelityManager;
-import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.service.Governance;
 import sorcer.service.*;
-import sorcer.service.Strategy.FidelityManagement;
-import sorcer.service.modeling.*;
-import sorcer.service.modeling.cxt;
-import sorcer.service.modeling.fi;
-import sorcer.service.modeling.mog;
-import sorcer.service.modeling.sig;
-import sorcer.sml.mograms.ModelMultiFidelities;
-
-import java.rmi.RemoteException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -105,9 +88,9 @@ public class Disciplines {
             loop(condition(cxt -> (double)
                 value(cxt, "lambdaOut") < 500.0), pipeline("cxtn1")));
 
-        Discipline plDis = disc(
-            cxtnFi("cxtn1", opspl),
-            dsptFi("dspt1", plDispatch));
+        Discipline plDis = dsc(
+            ctxFi("cxtn1", opspl),
+            dspFi("dspt1", plDispatch));
 
         setContext(opspl, context("mfprc",
             inVal("lambdaOut", 20.0),
@@ -128,6 +111,8 @@ public class Disciplines {
 
         // evaluate a discipline specified by a signature
         Context out  = eval(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1"));
+
+        logger.info("morphModelDiscipline cxt1:dspt1: " + out);
         assertTrue(value(out, "morpher3").equals(920.0));
     }
 
@@ -140,7 +125,7 @@ public class Disciplines {
         // first fidelity
         Context out = eval(discSig, fi("plDisc1"));
 
-        logger.info("pipeline c1:dspt1:cxt1: " + out);
+        logger.info("pipeline cxtn1:dspt1:cxt1: " + out);
 
         assertEquals(20.0, value(out, "x"));
         assertEquals(80.0, value(out, "y"));
@@ -168,39 +153,66 @@ public class Disciplines {
     }
 
     @Test
-    public void multidiscGovernance() throws Exception {
+    public void multidiscGovernance1() throws Exception {
+
+        // the explicit input context with MDA
 
         Context govCxt = context(mdaFi("multidiscMdaFi",
             mda("analyzer",
                 (Request gov, Context cxt) -> {
-                    double x1, x2, z1;
-                    String discName = disc(cxt);
-                    if (discName.equals("sellar")) {
-                        setValue(gov, "z1", value(cxt, "z1"));
-                    } else if (discName.equals("geometry")) {
-                        setValue(gov, "x1", value(cxt, "x1"));
-                        setValue(gov, "x2", value(cxt, "x2"));
+                    double x1, x2, x3;
+                    String discName = dsc(cxt);
+                    if (discName.equals("morphModelDisc")) {
+                        setValue(gov, "m1", value(cxt, "morpher3"));
+                    } else if (discName.equals("plDisc")) {
+                        setValue(gov, "pl1", value(cxt, "lambdaOut"));
+                        setValue(gov, "pl2", value(cxt, "exprOut"));
                     } else if (discName.equals(name(gov))) {
-                        x1 = (double)value(gov, "x1");
-                        x2 = (double)value(gov, "x2");
-                        z1 = (double)value(gov, "z1");
-                        setValue(gov, "y", z1/(x1 * x1));
+                        x1 = (double)value(gov, "pl1");
+                        x2 = (double)value(gov, "pl2");
+                        x3 = (double)value(gov, "m1");
+                        setValue(gov, "g1", x3/(x1 * x1));
+                        setValue(gov, "g2", x3/(x1 + x1));
                     }
                 }))
         );
 
         Governance gov = (Governance) instance(
-            sig("getMultidiscGovernance", MuiltidisciplinaryBuilder.class));
+            sig("getMultidiscGovernance1", MuiltidisciplinaryBuilder.class));
 
-        logger.info("discipline morphModelDisc name: " + disc(gov, "morphModelDisc").getName());
-        logger.info("discipline plDisc name: " + disc(gov, "plDisc").getName());
-        assertEquals(disc(gov, "morphModelDisc").getName(), "morphModelDisc");
-        assertEquals(disc(gov, "plDisc").getName(), "plDisc");
+        logger.info("discipline morphModelDisc name: " + dsc(gov, "morphModelDisc").getName());
+        logger.info("discipline plDisc name: " + dsc(gov, "plDisc").getName());
+        assertEquals(dsc(gov, "morphModelDisc").getName(), "morphModelDisc");
+        assertEquals(dsc(gov, "plDisc").getName(), "plDisc");
 
-//        Context out = eval(gov, govCxt);
-//        logger.info("gov out: " + out);
-//        logger.info("gov geometry out: " + out(disc(gov, "morphModelDisc")));
-//        logger.info("gov sellar out: " + out(disc(gov, "plDisc")));
-////        assertEquals(17.779571821546163, value(out(gov), "y"));
+        Context out = eval(gov, govCxt);
+        logger.info("gov morphModelDisc out: " + out(dsc(gov, "morphModelDisc")));
+        logger.info("gov plDisc out: " + out(dsc(gov, "plDisc")));
+        logger.info("gov out: " + out);
+
+        assertEquals(0.092, value(out(gov), "g1"));
+        assertEquals(4.6, value(out(gov), "g2"));
     }
+
+    @Test
+    public void multidiscGovernance2() throws Exception {
+        // the default input context with MDA is defined with the governance
+
+        Governance gov = (Governance) instance(
+            sig("getMultidiscGovernance2", MuiltidisciplinaryBuilder.class));
+
+        logger.info("discipline morphModelDisc name: " + dsc(gov, "morphModelDisc").getName());
+        logger.info("discipline plDisc name: " + dsc(gov, "plDisc").getName());
+        assertEquals(dsc(gov, "morphModelDisc").getName(), "morphModelDisc");
+        assertEquals(dsc(gov, "plDisc").getName(), "plDisc");
+
+        Context out = eval(gov);
+        logger.info("gov morphModelDisc out: " + out(dsc(gov, "morphModelDisc")));
+        logger.info("gov plDisc out: " + out(dsc(gov, "plDisc")));
+        logger.info("gov out: " + out);
+
+        assertEquals(0.092, value(out(gov), "g1"));
+        assertEquals(4.6, value(out(gov), "g2"));
+    }
+
 }

@@ -214,8 +214,12 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         return contextionMultiFi;
     }
 
-    public Service getout() {
+    public Service getOutContextion() {
         return out;
+    }
+
+    public Context getContextionConext() throws ContextException {
+        return ((Contextion)out).getContext();
     }
 
     @Override
@@ -229,7 +233,14 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     public Context setInput(Context input) throws ContextException {
-        return this.input = input;
+        if (contextMultiFi == null) {
+            contextMultiFi = new ServiceFidelity();
+        }
+        contextMultiFi.getSelects().add(input);
+        contextMultiFi.setSelect(input);
+
+        this.input = input;
+        return input;
     }
 
     @Override
@@ -366,6 +377,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             }
         }
     }
+
     @Override
     public Context.Return getContextReturn() {
         return contextReturn;
@@ -466,12 +478,12 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Context getContext() throws ContextException {
-        return output;
+        return input;
     }
 
     @Override
     public void setContext(Context input) throws ContextException {
-        this.input = input;
+        setInput(input);
     }
 
     public Map<String, DisciplineFidelity> getDisciplineFidelities() {
@@ -480,7 +492,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Context appendContext(Context context) throws ContextException, RemoteException {
-        return null;
+        return input.appendContext(context);
     }
 
     @Override
@@ -490,7 +502,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Context appendContext(Context context, String path) throws ContextException, RemoteException {
-        return null;
+        return input.appendContext(context, path);
     }
 
     @Override
