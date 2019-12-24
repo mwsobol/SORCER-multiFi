@@ -393,4 +393,9 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 		contextionList.add(this);
 		return contextionList;
 	}
+
+	@Override
+	public void selectFidelity(Fidelity fi) throws ConfigurationException {
+
+	}
 }

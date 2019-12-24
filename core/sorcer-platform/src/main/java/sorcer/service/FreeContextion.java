@@ -91,6 +91,11 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
+	public void selectFidelity(Fidelity fi) throws ConfigurationException {
+
+	}
+
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}

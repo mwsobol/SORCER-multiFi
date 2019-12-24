@@ -1878,13 +1878,6 @@ operator extends Operator {
         return fi;
     }
 
-    public static Fidelity mdaFi(String name, String path) {
-        Fidelity fi = new Fidelity(name, path);
-        fi.fiType = Fi.Type.MDA;
-        fi.setOption(Fi.Type.SELECT);
-        return fi;
-    }
-
     public static Fidelity ifFi(String name) {
         Fidelity fi = new Fidelity(name);
         fi.fiType = Fi.Type.SELECT;

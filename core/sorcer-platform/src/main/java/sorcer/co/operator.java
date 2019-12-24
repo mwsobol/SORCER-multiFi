@@ -1933,6 +1933,18 @@ public class operator extends Operator {
 			return ((ObjectSignature) signature).initInstance();
 	}
 
+	public static Object instance(Signature signature, Fidelity fidefity) throws SignatureException {
+		Object out = instance(signature);
+		if (out instanceof Contextion) {
+			try {
+				((Contextion)out).selectFidelity(fidefity);
+			} catch (ConfigurationException e) {
+				throw new SignatureException(e);
+			}
+		}
+		return out;
+	}
+
 	public static Object created(Signature signature) throws SignatureException {
 		return instance(signature);
 	}

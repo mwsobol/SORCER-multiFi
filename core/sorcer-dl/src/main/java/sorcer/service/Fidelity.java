@@ -163,6 +163,10 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
         }
     }
 
+	public T selectSelect(Fidelity fi) throws ConfigurationException {
+		return findSelect(fi.getName());
+	}
+
 	public T findSelect(String fiName) {
 		Object selected = null;
 		for (T item : selects) {

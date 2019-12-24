@@ -257,4 +257,9 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion {
     public List<Contextion> getContextions(List<Contextion> contextionList) {
         return contextionList;
     }
+
+    @Override
+    public void selectFidelity(Fidelity fi) throws ConfigurationException {
+
+    }
 }

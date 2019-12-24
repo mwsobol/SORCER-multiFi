@@ -10,12 +10,14 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.*;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.AnalyzerEntry;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.invoker.Pipeline;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiMogram;
+import sorcer.core.service.Governance;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.modeling.*;
@@ -39,6 +41,7 @@ import static sorcer.eo.operator.loop;
 import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.model;
+import static sorcer.mo.operator.out;
 import static sorcer.mo.operator.value;
 import static sorcer.so.operator.*;
 
@@ -123,18 +126,8 @@ public class Disciplines {
     @Test
     public void morphModelDiscipline() throws Exception {
 
-        // cxtn1 is a free contextion for a discipline dispatcher
-        Block mdlDispatch = block(
-            loop(condition(cxt -> (double)
-                value(cxt, "morpher3") < 900.0), model("cxtn1")));
-
-        Discipline morphDis = disc(
-            cxtnFi("cxtn1", sig("cxtn1", ModelMultiFidelities.class, "getMorphingModel")),
-            dsptFi("dspt1", mdlDispatch));
-
-        // out is the discipline output
-        Context out  = eval(morphDis, fi("cxtn1", "dspt1"));
-
+        // evaluate a discipline specified by a signature
+        Context out  = eval(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1"));
         assertTrue(value(out, "morpher3").equals(920.0));
     }
 
@@ -172,5 +165,42 @@ public class Disciplines {
         assertEquals(228800.0, value(out, "multiply"));
         assertEquals(520.0, value(out, "lambdaOut"));
         assertEquals(440.0, value(out, "exprOut"));
+    }
+
+    @Test
+    public void multidiscGovernance() throws Exception {
+
+        Context govCxt = context(mdaFi("multidiscMdaFi",
+            mda("analyzer",
+                (Request gov, Context cxt) -> {
+                    double x1, x2, z1;
+                    String discName = disc(cxt);
+                    if (discName.equals("sellar")) {
+                        setValue(gov, "z1", value(cxt, "z1"));
+                    } else if (discName.equals("geometry")) {
+                        setValue(gov, "x1", value(cxt, "x1"));
+                        setValue(gov, "x2", value(cxt, "x2"));
+                    } else if (discName.equals(name(gov))) {
+                        x1 = (double)value(gov, "x1");
+                        x2 = (double)value(gov, "x2");
+                        z1 = (double)value(gov, "z1");
+                        setValue(gov, "y", z1/(x1 * x1));
+                    }
+                }))
+        );
+
+        Governance gov = (Governance) instance(
+            sig("getMultidiscGovernance", MuiltidisciplinaryBuilder.class));
+
+        logger.info("discipline morphModelDisc name: " + disc(gov, "morphModelDisc").getName());
+        logger.info("discipline plDisc name: " + disc(gov, "plDisc").getName());
+        assertEquals(disc(gov, "morphModelDisc").getName(), "morphModelDisc");
+        assertEquals(disc(gov, "plDisc").getName(), "plDisc");
+
+//        Context out = eval(gov, govCxt);
+//        logger.info("gov out: " + out);
+//        logger.info("gov geometry out: " + out(disc(gov, "morphModelDisc")));
+//        logger.info("gov sellar out: " + out(disc(gov, "plDisc")));
+////        assertEquals(17.779571821546163, value(out(gov), "y"));
     }
 }

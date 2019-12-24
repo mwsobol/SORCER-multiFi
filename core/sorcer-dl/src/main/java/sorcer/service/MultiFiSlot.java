@@ -222,6 +222,10 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
         contextReturn = new Context.Return(path, direction);
     }
 
+    public void selectFidelity(Fidelity fi) throws ConfigurationException {
+        ((Fidelity)multiFi).selectSelect(fi);
+    }
+
     public boolean isAnnotated() {
         return annotation != null;
     }

@@ -25,6 +25,7 @@ import sorcer.core.context.Connector;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.Analyzer;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.srv.Srv;
@@ -1056,5 +1057,53 @@ public class operator {
 
         gov.setSuperviser(new Governor(gov));
         return gov;
+    }
+
+    public static Fidelity mdaFi(String name, String path) {
+        Fidelity fi = new Fidelity(name, path);
+        fi.fiType = Fi.Type.MDA;
+        fi.setOption(Fi.Type.SELECT);
+        return fi;
+    }
+
+    public static AnalyzerEntry mda(String name, Analyzer mda)
+        throws EvaluationException {
+        return new AnalyzerEntry(name, mda);
+    }
+
+    public static ServiceFidelity mdaFi(String name, Analyzer... mdaEntries) {
+        AnalyzerEntry[] entries = new AnalyzerEntry[mdaEntries.length];
+        for (int i = 0; i < mdaEntries.length; i++) {
+            entries[i] = (AnalyzerEntry) mdaEntries[i];
+        }
+        ServiceFidelity mdaFi =  new ServiceFidelity(entries);
+        mdaFi.setName(name);
+        mdaFi.setType(Fi.Type.MDA);
+        return mdaFi;
+    }
+
+    public static AnalyzerEntry mdaInstace(String name, Signature signature)
+        throws EvaluationException {
+        AnalyzerEntry mda = new AnalyzerEntry(name, signature);
+        mda.setType(Functionality.Type.MDA);
+        try {
+            mda.setValue(signature);
+            mda.setImpl(instance(signature));
+        } catch (SetterException | SignatureException | RemoteException e) {
+            throw new EvaluationException(e);
+        }
+        return mda;
+    }
+
+    public static AnalyzerEntry mda(String name, Signature signature)
+        throws EvaluationException {
+        AnalyzerEntry mda = new AnalyzerEntry(name, signature);
+        mda.setType(Functionality.Type.MDA);
+        try {
+            mda.setValue(signature);
+        } catch (SetterException | RemoteException e) {
+            throw new EvaluationException(e);
+        }
+        return mda;
     }
 }

@@ -119,4 +119,6 @@ public interface Contextion extends Request, Scopable {
 
 	public List<Contextion> getContextions(List<Contextion> contextionList);
 
+	public void selectFidelity(Fidelity fi) throws ConfigurationException;
+
 }

@@ -22,7 +22,6 @@ import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Config;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.modeling.Getter;
 
@@ -308,7 +307,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             List<Fidelity> fis = Arg.selectFidelities(args);
             if (fis != null && fis.size() > 0) {
                 try {
-                    selectFi(fis.get(0));
+                    selectFidelity(fis.get(0));
                 } catch (ConfigurationException e) {
                     throw new ServiceException(e);
                 }
@@ -340,7 +339,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         }
     }
 
-    protected void selectFi(Fidelity fi) throws ConfigurationException {
+    @Override
+    public void selectFidelity(Fidelity fi) throws ConfigurationException {
         if (fi.getPath().isEmpty()) {
             DisciplineFidelity discFi = disciplineFidelities.get(fi.getName());
             dispatchMultiFi.selectSelect(discFi.getDispatcherFi().getName());

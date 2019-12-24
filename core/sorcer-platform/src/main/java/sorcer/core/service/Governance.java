@@ -402,4 +402,9 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 		contextionList.add(this);
 		return contextionList;
 	}
+
+	@Override
+	public void selectFidelity(Fidelity fi) throws ConfigurationException {
+
+	}
 }
