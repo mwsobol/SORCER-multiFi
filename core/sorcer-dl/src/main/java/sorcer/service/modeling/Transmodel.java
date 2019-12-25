@@ -22,6 +22,6 @@ import java.rmi.RemoteException;
 /**
  * @author Mike Sobolewski
  */
-public interface Transmodel extends Model, Configurable {
+public interface Transmodel extends Model, Transdomain, Configurable {
 
 }

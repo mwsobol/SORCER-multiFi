@@ -51,4 +51,14 @@ public class SvrTransmodel extends SrvModel implements Transmodel {
     public boolean configure(Object... configs) throws ConfigurationException, RemoteException {
         return false;
     }
+
+    @Override
+    public Map<String, Domain> getChildren() {
+        return children;
+    }
+
+    @Override
+    public Mogram getChild(String name) {
+        return children.get(name);
+    }
 }

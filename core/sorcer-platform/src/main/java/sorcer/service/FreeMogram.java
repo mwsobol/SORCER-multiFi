@@ -112,24 +112,4 @@ public class FreeMogram extends ServiceMogram implements FreeService {
         return null;
     }
 
-    @Override
-    public Object asis(String path) throws ContextException {
-        return null;
-    }
-
-    @Override
-    public Object getValue(String path, Arg... args) throws ContextException, RemoteException {
-        return null;
-    }
-
-    @Override
-    public void addDependers(Evaluation... dependers) {
-
-    }
-
-    @Override
-    public List<Evaluation> getDependers() {
-        return null;
-    }
-
 }
