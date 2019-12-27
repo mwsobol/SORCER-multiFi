@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
+import sorcer.service.modeling.Exploration;
 import sorcer.util.SorcerUtil;
 import sorcer.eo.operator.Args;
 
@@ -379,7 +380,10 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 //		 logger.info("paramTypes: " + SorcerUtil.arrayToString(paramTypes));
 //		 logger.info("context: " + context);
 		if (context != null) {
-			if (paramTypes != null && paramTypes.length == 2) {
+			if (target instanceof Exploration) {
+				paramTypes = new Class[]{Context.class};
+				params = new Object[]{context};
+			} else if (paramTypes != null && paramTypes.length == 2) {
 				params = new Object[] { context, pars};
 			} else {
                 paramTypes = new Class[]{Context.class};
