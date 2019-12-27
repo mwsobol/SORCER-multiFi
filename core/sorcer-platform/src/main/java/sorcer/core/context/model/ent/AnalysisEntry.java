@@ -73,7 +73,11 @@ public class AnalysisEntry extends Entry<Analysis> implements Analysis {
     public void analyze(Request request, Context context) throws EvaluationException {
         try {
             if (impl != null && impl instanceof Analysis) {
-                ((Analysis)impl).analyze(contextion, context);
+                if (contextion == null) {
+                    ((Analysis) impl).analyze(request, context);
+                } else {
+                    ((Analysis) impl).analyze(contextion, context);
+                }
             } else if (signature != null) {
                 impl = ((ObjectSignature)signature).initInstance();
                 ((Analysis)impl).analyze(request, context);

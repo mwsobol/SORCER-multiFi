@@ -79,7 +79,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
     public void setStatus(int value);
 
     /**
-     * Returns a execute of the component at the key
+     * Returns an execute of the component at the key
      *
      * @param key
      *            the component name
