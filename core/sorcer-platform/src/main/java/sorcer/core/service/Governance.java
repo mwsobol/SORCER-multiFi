@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.AnalyzerEntry;
+import sorcer.core.context.model.ent.AnalysisEntry;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
 import sorcer.service.Discipline;
@@ -63,7 +63,7 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 
 	protected ServiceFidelity supervisorFi;
 
-	protected Fidelity<AnalyzerEntry> analyzerFi;
+	protected Fidelity<AnalysisEntry> analyzerFi;
 
 	protected ServiceFidelity contextMultiFi;
 
@@ -113,7 +113,7 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 		}
 	}
 
-    public Context getOutput() {
+    public Context getOutput(Arg... args) {
         return output;
     }
 
@@ -244,11 +244,11 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 		return name;
 	}
 
-	public Fidelity<AnalyzerEntry> getAnalyzerFi() {
+	public Fidelity<AnalysisEntry> getAnalyzerFi() {
 		return analyzerFi;
 	}
 
-	public void setAnalyzerFi(Fidelity<AnalyzerEntry> analyzerFi) {
+	public void setAnalyzerFi(Fidelity<AnalysisEntry> analyzerFi) {
 		this.analyzerFi = analyzerFi;
 	}
 
@@ -262,14 +262,14 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 		return discList;
 	}
 
-	public Fidelity<AnalyzerEntry> setAnalyzerFi(Context context) throws ConfigurationException {
+	public Fidelity<AnalysisEntry> setAnalyzerFi(Context context) throws ConfigurationException {
 		if(analyzerFi == null) {
 			Object mdaComponent = context.get(Context.MDA_PATH);
 			if (mdaComponent != null) {
-				if (mdaComponent instanceof AnalyzerEntry) {
-					analyzerFi = new Fidelity(((AnalyzerEntry) mdaComponent).getName());
-					analyzerFi.addSelect((AnalyzerEntry) mdaComponent);
-					analyzerFi.setSelect((AnalyzerEntry) mdaComponent);
+				if (mdaComponent instanceof AnalysisEntry) {
+					analyzerFi = new Fidelity(((AnalysisEntry) mdaComponent).getName());
+					analyzerFi.addSelect((AnalysisEntry) mdaComponent);
+					analyzerFi.setSelect((AnalysisEntry) mdaComponent);
 				} else if (mdaComponent instanceof ServiceFidelity
 					&& ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
 					analyzerFi = (Fidelity) mdaComponent;
@@ -327,13 +327,13 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 	public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
 		Context out = null;
 		Context cxt = context;
-			if (cxt == null) {
-				try {
-					cxt = getInput();
-				} catch (ContextException e) {
-					throw new EvaluationException(e);
-				}
+		if (cxt == null) {
+			try {
+				cxt = getInput();
+			} catch (ContextException e) {
+				throw new EvaluationException(e);
 			}
+		}
 
 		// set mda if available
 		try {

@@ -3,7 +3,7 @@ package sorcer.service;
 import sorcer.co.tuple.ExecDependency;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.Analyzer;
+import sorcer.core.context.model.Analysis;
 import sorcer.core.service.Governance;
 import sorcer.service.modeling.*;
 
@@ -32,7 +32,7 @@ public class Governor implements Service, Supervisor {
             if (fis != null && fis.size() > 0) {
                 ((ServiceFidelity)governance.getMultiFi()).selectSelect(fis.get(0).getName());
             }
-            Analyzer analyzer = null;
+            Analysis analyzer = null;
             if (governance.getAnalyzerFi() != null) {
                 analyzer = governance.getAnalyzerFi().getSelect();
             }
@@ -54,7 +54,6 @@ public class Governor implements Service, Supervisor {
         Map<String, List<ExecDependency>> dpm = ((ModelStrategy) governance.getMogramStrategy()).getDependentDomains();
         if (dpm != null && dpm.get(path) != null) {
             List<ExecDependency> del = dpm.get(path);
-            Discipline dis = governance.getDiscipline(path);
             if (del != null && del.size() > 0) {
                 for (ExecDependency de : del) {
                     List<Path> dpl = (List<Path>) de.getImpl();

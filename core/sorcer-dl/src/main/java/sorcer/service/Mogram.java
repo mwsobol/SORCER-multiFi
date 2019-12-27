@@ -62,7 +62,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
 
     public void setIndex(int i);
 
-    public Mogram getParent();
+    public Contextion getParent();
 
     public void setParentId(Uuid parentId);
 

@@ -27,7 +27,7 @@ import sorcer.service.modeling.Model;
  * Created by Mike Sobolewski on 6/3/17.
  */
 @FunctionalInterface
-public interface Analyzer {
+public interface Analysis {
 
     public void analyze(Request request, Context context) throws ContextException;
 

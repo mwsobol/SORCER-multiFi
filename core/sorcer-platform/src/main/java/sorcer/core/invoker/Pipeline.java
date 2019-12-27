@@ -197,6 +197,11 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion {
     }
 
     @Override
+    public Context getOutput(Arg... args) throws ContextException {
+        return getResult();
+    }
+
+    @Override
     public void setContext(Context input) throws ContextException {
         invokeContext = input;
     }

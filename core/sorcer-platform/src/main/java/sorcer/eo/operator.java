@@ -343,8 +343,10 @@ operator extends Operator {
         Context.Out outPaths = null;
         Context.In inPaths = null;
         Paths paths = null;
-        AnalyzerEntry mdaEntry = null;
+        AnalysisEntry mdaEntry = null;
         ServiceFidelity mdaFi = null;
+        ExplorationEntry explEntry = null;
+        ServiceFidelity explFi = null;
         List<Path> responsePaths = null;
         boolean autoDeps = true;
         for (Object o : entries) {
@@ -352,7 +354,7 @@ operator extends Operator {
                 subject = (Complement) o;
             } else if (o instanceof Args) {
                 cxtArgs = (Args) o;
-            } else if (o instanceof ParameterTypes)  {
+            } else if (o instanceof ParameterTypes) {
                 parTypes = (ParameterTypes) o;
             } else if (o instanceof PathResponse) {
                 response = (PathResponse) o;
@@ -381,34 +383,39 @@ operator extends Operator {
             } else if (o instanceof Class) {
                 customContextClass = (Class) o;
             } else if (o instanceof Strategy.Access) {
-                accessType = (Strategy.Access)o;
+                accessType = (Strategy.Access) o;
             } else if (o instanceof Strategy.Flow) {
-                flowType = (Strategy.Flow)o;
+                flowType = (Strategy.Flow) o;
             } else if (o instanceof Strategy.FidelityManagement) {
-                fm = (Strategy.FidelityManagement)o;
+                fm = (Strategy.FidelityManagement) o;
             } else if (o instanceof FidelityManager) {
-                fiManager = ((FidelityManager)o);
+                fiManager = ((FidelityManager) o);
             } else if (o instanceof Projection) {
-                projection = ((Projection)o);
+                projection = ((Projection) o);
             } else if (Strategy.Flow.EXPLICIT.equals(o)) {
                 autoDeps = false;
             } else if (o instanceof Context.Out) {
-                outPaths = (Context.Out)o;
+                outPaths = (Context.Out) o;
             } else if (o instanceof Context.In) {
-                inPaths = (Context.In)o;
+                inPaths = (Context.In) o;
             } else if (o instanceof Paths) {
-                paths = (Paths)o;
+                paths = (Paths) o;
             } else if (o instanceof Context) {
                 cxts.add((ServiceContext) o);
             } else if (o instanceof Fidelity) {
-                if (((Fidelity)o).getFiType() == Fi.Type.RESPONSE){
+                if (((Fidelity) o).getFiType() == Fi.Type.RESPONSE) {
                     responsePaths = (List<Path>) ((Fidelity) o).getSelects();
-                } else if (o instanceof ServiceFidelity
-                    && ((ServiceFidelity)o).getFiType().equals(Fi.Type.MDA)) {
-                    mdaFi = (ServiceFidelity) o;
+                } else if (o instanceof ServiceFidelity) {
+                    if (((ServiceFidelity) o).getFiType().equals(Fi.Type.MDA)) {
+                        mdaFi = (ServiceFidelity) o;
+                    } else if (((ServiceFidelity) o).getFiType().equals(Fi.Type.EXPLORER)) {
+                        explFi = (ServiceFidelity) o;
+                    }
+                } else if (o instanceof AnalysisEntry) {
+                    mdaEntry = (AnalysisEntry) o;
+                } else if (o instanceof ExplorationEntry) {
+                    explEntry = (ExplorationEntry) o;
                 }
-            } else if (o instanceof AnalyzerEntry) {
-                mdaEntry = (AnalyzerEntry) o;
             }
         }
 
@@ -585,6 +592,12 @@ operator extends Operator {
             cxt.put(Context.MDA_PATH, mdaEntry);
         } else if (mdaFi != null) {
             cxt.put(Context.MDA_PATH, mdaFi);
+        }
+
+        if (explEntry != null) {
+            cxt.put(Context.EXPLORER_PATH, explEntry);
+        } else if (explFi != null) {
+            cxt.put(Context.EXPLORER_PATH, explFi);
         }
 
         if (accessType != null)

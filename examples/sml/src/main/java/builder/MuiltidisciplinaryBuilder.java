@@ -22,6 +22,9 @@ import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.*;
 import static sorcer.so.operator.response;
 
+/**
+ * @author Mike Sobolewski
+ */
 public class MuiltidisciplinaryBuilder {
 
 	private final static Logger logger = LoggerFactory.getLogger(MuiltidisciplinaryBuilder.class);

@@ -17,7 +17,7 @@
 
 package sorcer.core.context.model.ent;
 
-import sorcer.core.context.model.Analyzer;
+import sorcer.core.context.model.Analysis;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
@@ -26,35 +26,43 @@ import sorcer.service.modeling.Functionality;
 /**
  * Created by Mike Soblewski on 06/03/16.
  */
-public class AnalyzerEntry extends Entry<Analyzer> implements Analyzer {
+public class AnalysisEntry extends Entry<Analysis> implements Analysis {
 
     private static final long serialVersionUID = 1L;
 
-    private ContextDomain model;
+    private Contextion contextion;
 
     private Signature signature;
 
-    public AnalyzerEntry(String name, Analyzer mda)  {
+    public AnalysisEntry(String name, Analysis mda)  {
         this.key = name;
         this.impl = mda;
         this.type = Functionality.Type.MDA;
     }
 
-    public AnalyzerEntry(String name, Signature signature) {
+    public AnalysisEntry(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
         this.type = Functionality.Type.MDA;
     }
 
-    public AnalyzerEntry(String name, Analyzer mda, Context context) {
+    public AnalysisEntry(String name, Analysis mda, Context context) {
         this.key = name;
         scope = context;
         this.impl = mda;
         this.type = Functionality.Type.MDA;
     }
 
-    public Analyzer getMda() {
+    public Analysis getMda() {
         return out;
+    }
+
+    public Contextion getContextion() {
+        return contextion;
+    }
+
+    public void setContextion(Contextion contextion) {
+        this.contextion = contextion;
     }
 
     public Signature getSignature() {
@@ -62,18 +70,18 @@ public class AnalyzerEntry extends Entry<Analyzer> implements Analyzer {
     }
 
     @Override
-    public void analyze(Request model, Context context) throws EvaluationException {
+    public void analyze(Request request, Context context) throws EvaluationException {
         try {
-            if (impl != null && impl instanceof Analyzer) {
-                ((Analyzer)impl).analyze(model, context);
+            if (impl != null && impl instanceof Analysis) {
+                ((Analysis)impl).analyze(contextion, context);
             } else if (signature != null) {
                 impl = ((ObjectSignature)signature).initInstance();
-                ((Analyzer)impl).analyze(model, context);
+                ((Analysis)impl).analyze(request, context);
             } else if (impl == null) {
                 throw new InvocationException("No MDA analysis available!");
             }
         } catch (ContextException | SignatureException e) {
-            throw new EvaluationException();
+            throw new EvaluationException(e);
         }
     }
 }

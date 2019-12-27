@@ -24,11 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.AnalyzerEntry;
+import sorcer.core.context.model.ent.AnalysisEntry;
+import sorcer.core.context.model.ent.ExplorationEntry;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
 import sorcer.service.Discipline;
-import sorcer.service.modeling.SuperviseException;
+import sorcer.service.modeling.ExploreException;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -48,10 +49,12 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 
 	protected  String name;
 
-    // the input of this governance
+    // the input of this collaboration
     protected Context input;
 
-    // the output of this governance
+	protected ServiceFidelity contextMultiFi;
+
+    // the output of this collaboration
     protected Context output;
 
     protected Fi multiFi;
@@ -59,15 +62,15 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 	protected Morpher morpher;
 
     // active disciplnes
-    protected Paths disciplnePaths;
+    protected Paths domainPaths;
 
-    protected Governor governor;
+	protected Fidelity<AnalysisEntry> analyzerFi;
 
-	protected Fidelity<AnalyzerEntry> analyzerFi;
+	protected Fidelity<ExplorationEntry> explorerFi;
 
 	protected Map<String, Domain> domains = new HashMap<>();
 
-	// dependency management for this governance
+	// dependency management for this collaboration
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
 
@@ -80,6 +83,8 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 
 	// context output connector
 	protected Context outConnector;
+
+	protected Context scope;
 
     public Collaboration() {
         this(null);
@@ -108,15 +113,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 		}
 	}
 
-    public Context getInput() {
-        return input;
-    }
-
-    public void setInput(Context input) {
-        this.input = input;
-    }
-
-    public Context getOutput() {
+    public Context getOutput(Arg... args) {
         return output;
     }
 
@@ -124,29 +121,29 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
         this.output = output;
     }
 
-    public Paths getDisciplnePaths() {
-        return disciplnePaths;
+    public Paths getDomainPaths() {
+        return domainPaths;
     }
 
-    public void setDisciplnePaths(Paths disciplnePaths) {
-        this.disciplnePaths = disciplnePaths;
+    public void setDomainPaths(Paths domainPaths) {
+        this.domainPaths = domainPaths;
     }
 
     public Map<String, Domain> getDomains() {
 		return domains;
 	}
 
-	public Domain getDiscipline(String name) {
+	public Domain getDomain(String name) {
 		return domains.get(name);
 	}
 
-    public Governor getGovernor() {
-        return governor;
-    }
+	public Fidelity<ExplorationEntry> getExplorerFi() {
+		return explorerFi;
+	}
 
-    public void setGovernor(Governor governor) {
-        this.governor = governor;
-    }
+	public void setExplorerFi(Fidelity<ExplorationEntry> explorerFi) {
+		this.explorerFi = explorerFi;
+	}
 
 	// default instance new Return(Context.RETURN);
 	protected Context.Return contextReturn;
@@ -211,11 +208,11 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 		return name;
 	}
 
-	public Fidelity<AnalyzerEntry> getAnalyzerFi() {
+	public Fidelity<AnalysisEntry> getAnalyzerFi() {
 		return analyzerFi;
 	}
 
-	public void setAnalyzerFi(Fidelity<AnalyzerEntry> analyzerFi) {
+	public void setAnalyzerFi(Fidelity<AnalysisEntry> analyzerFi) {
 		this.analyzerFi = analyzerFi;
 	}
 
@@ -229,17 +226,43 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 		return domainList;
 	}
 
-	public Fidelity<AnalyzerEntry> setAnalyzerFi(Context context) throws ConfigurationException {
+	public Fidelity<ExplorationEntry> setExplorerFi(Context context) throws ConfigurationException {
+		if(explorerFi == null) {
+			Object exploreComponent = context.get(Context.EXPLORER_PATH);
+			if (exploreComponent != null) {
+				if (exploreComponent instanceof ExplorationEntry) {
+					explorerFi = new Fidelity(((ExplorationEntry)exploreComponent).getName());
+					explorerFi.addSelect((ExplorationEntry) exploreComponent);
+					explorerFi.setSelect((ExplorationEntry)exploreComponent);
+					((AnalysisEntry)exploreComponent).setContextion(this);
+				} else if (exploreComponent instanceof ServiceFidelity
+					&& ((ServiceFidelity) exploreComponent).getFiType().equals(Fi.Type.EXPLORER)) {
+					explorerFi = (Fidelity) exploreComponent;
+					explorerFi.getSelect().setContextion(this);
+				}
+
+			}
+		}
+		((ServiceContext)context).getMogramStrategy().setExecState(Exec.State.INITIAL);
+		if (output == null) {
+			output = new ServiceContext(name);
+		}
+		return explorerFi;
+	}
+
+	public Fidelity<AnalysisEntry> setAnalyzerFi(Context context) throws ConfigurationException {
 		if(analyzerFi == null) {
 			Object mdaComponent = context.get(Context.MDA_PATH);
 			if (mdaComponent != null) {
-				if (mdaComponent instanceof AnalyzerEntry) {
-					analyzerFi = new Fidelity(((AnalyzerEntry)mdaComponent).getName());
-					analyzerFi.addSelect((AnalyzerEntry) mdaComponent);
-					analyzerFi.setSelect((AnalyzerEntry)mdaComponent);
+				if (mdaComponent instanceof AnalysisEntry) {
+					analyzerFi = new Fidelity(((AnalysisEntry)mdaComponent).getName());
+					analyzerFi.addSelect((AnalysisEntry) mdaComponent);
+					analyzerFi.setSelect((AnalysisEntry)mdaComponent);
+					((AnalysisEntry)mdaComponent).setContextion(this);
 				} else if (mdaComponent instanceof ServiceFidelity
 						&& ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
 					analyzerFi = (Fidelity) mdaComponent;
+					analyzerFi.getSelect().setContextion(this);
 				}
 			}
 		}
@@ -293,32 +316,76 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 	@Override
 	public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
 		Context out = null;
-		// set mda if available
+		Context cxt = context;
 		try {
-			if (analyzerFi == null) {
-				setAnalyzerFi(context);
+			if (cxt == null) {
+				cxt = getInput();
 			}
-			ModelStrategy strategy = ((ModelStrategy) context.getMogramStrategy());
+			ModelStrategy strategy = ((ModelStrategy) cxt.getMogramStrategy());
+			List<Fidelity> fis = Arg.selectFidelities(args);
 			if (analyzerFi != null) {
 				strategy.setExecState(Exec.State.RUNNING);
 				// select mda Fi if provided
-				List<Fidelity> fis = Arg.selectFidelities(args);
 				for (Fi fi : fis) {
 					if (analyzerFi.getName().equalsIgnoreCase(fi.getPath())) {
 						analyzerFi.selectSelect(fi.getName());
 					}
 				}
+				analyzerFi.getSelect().setContextion(this);
 				logger.info("*** analyzerFi: {}", analyzerFi.getSelect().getName());
-				out = governor.supervise(context, args);
-				strategy.setExecState(Exec.State.DONE);
-			} else {
-				out = governor.supervise(context, args);
 			}
+			if (explorerFi != null) {
+				for (Fi fi : fis) {
+					if (analyzerFi.getName().equalsIgnoreCase(fi.getPath())) {
+						analyzerFi.selectSelect(fi.getName());
+					}
+				}
+				explorerFi.getSelect().setContextion(this);
+				logger.info("*** explorerFi: {}", explorerFi.getSelect().getName());
+			}
+
+			if (analyzerFi == null) {
+				setAnalyzerFi(cxt);
+			}
+			if (explorerFi == null) {
+				setExplorerFi(cxt);
+			}
+
+			out = explorerFi.getSelect().explore(cxt);
 			((ModelStrategy)mogramStrategy).setOutcome(output);
-		} catch (SuperviseException | ConfigurationException e) {
+			strategy.setExecState(Exec.State.DONE);
+		} catch (ConfigurationException | ContextException e) {
 			throw new EvaluationException(e);
 		}
 		return out;
+	}
+
+	public ServiceFidelity getContextMultiFi() {
+		return contextMultiFi;
+	}
+
+	public void setContextMultiFi(ServiceFidelity contextMultiFi) {
+		this.contextMultiFi = contextMultiFi;
+	}
+
+	public Context getInput() throws ContextException {
+		// if no contextMultiFi then return direct input
+		if (contextMultiFi == null || contextMultiFi.getSelect() == null) {
+			return input;
+		}
+		input = (Context) contextMultiFi.getSelect();
+		return input;
+	}
+
+	public Context setInput(Context input) throws ContextException {
+		if (contextMultiFi == null) {
+			contextMultiFi = new ServiceFidelity();
+		}
+		contextMultiFi.getSelects().add(input);
+		contextMultiFi.setSelect(input);
+
+		this.input = input;
+		return input;
 	}
 
 	@Override
@@ -372,17 +439,17 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 
 	@Override
 	public Mogram getChild(String name) {
-		return null;
+		return domains.get(name);
 	}
 
 	@Override
 	public Context getScope() {
-		return null;
+		return scope;
 	}
 
 	@Override
 	public void setScope(Context scope) {
-
+		this.scope = scope;;
 	}
 
 	@Override

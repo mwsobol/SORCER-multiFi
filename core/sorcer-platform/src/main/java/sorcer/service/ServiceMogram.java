@@ -13,7 +13,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Coupling;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.AnalyzerEntry;
+import sorcer.core.context.model.ent.AnalysisEntry;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
@@ -47,7 +47,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     protected Uuid mogramId;
     protected Uuid parentId;
-    protected Mogram parent;
+    protected Contextion parent;
     protected String parentPath = "";
     protected ExecPath execPath;
     protected Uuid sessionId;
@@ -71,7 +71,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected Differentiator differentiator;
     protected Differentiator fdDifferentiator;
     protected Differentiator globalDifferentiator;
-    protected Fidelity<AnalyzerEntry> mdaFi;
+    protected Fidelity<AnalysisEntry> mdaFi;
     protected List<Coupling> couplings;
     protected ContextSelector contextSelector;
 
@@ -271,6 +271,11 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
+    public Context getOutput(Arg... args) throws ContextException {
+        return dataContext;
+    }
+
+    @Override
     public void setContext(Context context) throws ContextException {
         dataContext = (ServiceContext) context;
     }
@@ -355,11 +360,11 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.sessionId = sessionId;
     }
 
-    public Mogram getParent() {
+    public Contextion getParent() {
         return parent;
     }
 
-    public void setParent(Mogram parent) {
+    public void setParent(Contextion parent) {
         this.parent = parent;
     }
 
@@ -987,14 +992,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.couplings = couplings;
     }
 
-    public Fidelity<AnalyzerEntry> setMdaFi(Context context) throws ConfigurationException {
+    public Fidelity<AnalysisEntry> setMdaFi(Context context) throws ConfigurationException {
        if(mdaFi == null) {
            Object mdaComponent = context.get(Context.MDA_PATH);
            if (mdaComponent != null) {
-               if (mdaComponent instanceof AnalyzerEntry) {
-                   mdaFi = new Fidelity(((AnalyzerEntry)mdaComponent).getName());
-                   mdaFi.addSelect((AnalyzerEntry) mdaComponent);
-                   mdaFi.setSelect((AnalyzerEntry)mdaComponent);
+               if (mdaComponent instanceof AnalysisEntry) {
+                   mdaFi = new Fidelity(((AnalysisEntry)mdaComponent).getName());
+                   mdaFi.addSelect((AnalysisEntry) mdaComponent);
+                   mdaFi.setSelect((AnalysisEntry)mdaComponent);
                } else if (mdaComponent instanceof ServiceFidelity
                        && ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
                    mdaFi = (Fidelity) mdaComponent;
@@ -1004,7 +1009,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
        return mdaFi;
     }
 
-    public Fidelity<AnalyzerEntry> getMdaFi() {
+    public Fidelity<AnalysisEntry> getMdaFi() {
         return mdaFi;
     }
 

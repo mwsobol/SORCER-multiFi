@@ -72,6 +72,10 @@ public interface Domain extends Contextion, CombinedRequest, Dependency, mog {
 	 */
 	public Object getValue(String path, Arg... args) throws ContextException, RemoteException;
 
+	public void setParent(Contextion parent);
+
+	public Contextion getParent();
+
 	public void execDependencies(String path, Arg... args) throws ContextException;
 
 	public boolean isChanged();

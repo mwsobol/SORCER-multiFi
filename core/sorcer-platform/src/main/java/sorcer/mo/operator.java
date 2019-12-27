@@ -25,7 +25,8 @@ import sorcer.core.context.Connector;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.Analyzer;
+import sorcer.core.context.model.Analysis;
+import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.srv.Srv;
@@ -36,6 +37,7 @@ import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
+import sorcer.core.service.Collaboration;
 import sorcer.core.service.Governance;
 import sorcer.service.Morpher;
 import sorcer.service.*;
@@ -922,6 +924,18 @@ public class operator {
         return (String) context.get(Functionality.Type.DISCIPLINE.toString());
     }
 
+    public static Domain dmn(Collaboration collab, String name) {
+        return collab.getDomain(name);
+    }
+
+    public static String dmn(Context context) {
+        return (String) context.get(Functionality.Type.DOMAIN.toString());
+    }
+
+    public static String clb(Context context) {
+        return (String) context.get(Functionality.Type.COLLABORATION.toString());
+    }
+
     public static String domain(Context context) {
         return (String) context.get(Functionality.Type.DOMAIN.toString());
     }
@@ -972,6 +986,99 @@ public class operator {
         return disciplne;
     }
 
+    public static Collaboration clb(Object... data) throws ContextException {
+        String name = getUnknown();
+        List<Domain> domains = new ArrayList<>();
+        List<ServiceFidelity> discFis = new ArrayList<>();
+        Dependency dependency = null;
+        ExecDeps execDeps = null;
+        Paths disciplinePaths = null;
+        Context collabContext = null;
+
+        List<Object> dataList = new ArrayList<>();
+        for (Object o : data) {
+            dataList.add(o);
+        }
+        for (int i = 0; i < dataList.size(); i++) {
+            Object o = dataList.get(i);
+            if (o instanceof String) {
+                name = (String) o;
+            } else if (o instanceof DataContext) {
+                collabContext = (Context)o;
+            } else if (o instanceof Domain) {
+                domains.add((Domain)o);
+            }  else if (o instanceof Dependency) {
+                dependency = (Dependency)o;
+            } else if (o instanceof ExecDeps) {
+                execDeps = (ExecDeps)o;
+            } else if (o instanceof ServiceFidelity) {
+                discFis.add((ServiceFidelity)o);
+            } else if (o instanceof Paths && ((Paths)o).type.equals(Functionality.Type.DOMAIN)) {
+                disciplinePaths = (Paths)o;
+            }
+        }
+
+        Collaboration collab = new Collaboration(name, domains);
+        if (collabContext != null) {
+            collab.setInput(collabContext);
+        }
+        Object[] names = new Object[domains.size()];
+
+        for (int i = 0; i < domains.size(); i++) {
+            domains.get(i).setParent(collab);
+            names[i] = domains.get(i).getName();
+        }
+
+        if (discFis.size() > 0) {
+            FidelityManager fiManager = new FidelityManager();
+            Map<String, ServiceFidelity> fis = new HashMap<>();
+            for (ServiceFidelity discFi : discFis) {
+                fis.put(discFi.getName(), discFi);
+                collab.getDomains().put(discFi.getName(), (Domain) discFi.getSelect());
+            }
+            fiManager.setFidelities(fis);
+            collab.setFiManager(fiManager);
+        }
+
+        if (disciplinePaths != null) {
+            disciplinePaths.name = collab.getName();
+            collab.setDomainPaths(disciplinePaths);
+        }
+
+        if (dependency == null && names.length > 0) {
+            if (disciplinePaths != null) {
+                sorcer.co.operator.dependsOn(collab, ent(collab.getName(), disciplinePaths));
+            } else {
+                sorcer.co.operator.dependsOn(collab, ent(collab.getName(), paths(names)));
+            }
+        } else {
+            List<Evaluation> entries = dependency.getDependers();
+            for (Evaluation e : entries) {
+                if (e instanceof Entry && ((Entry) e).getName().equals("self")) {
+                    e.setName(collab.getName());
+                }
+            }
+        }
+
+        if (execDeps != null && names.length > 0) {
+            ExecDependency[] entries = execDeps.deps;
+            for (Evaluation e : entries) {
+                if (e instanceof Entry && ((Entry) e).getName().equals("self")) {
+                    e.setName(collab.getName());
+                }
+            }
+
+            if (execDeps.getType().equals(Functionality.Type.FUNCTION)) {
+                sorcer.co.operator.dependsOn(collab, execDeps.deps);
+            } else if (execDeps.getType().equals(Functionality.Type.DOMAIN)) {
+                sorcer.co.operator.dependsOn(collab, execDeps.deps);
+            }
+        }
+
+//        collab.setExplorer(new Explorer(collab));
+        return collab;
+    }
+
     public static Governance gov(Object... data) throws ContextException {
         String name = getUnknown();
         List<Discipline> disciplines = new ArrayList<>();
@@ -991,7 +1098,7 @@ public class operator {
                 name = (String) o;
             } else if (o instanceof Discipline) {
                 disciplines.add((Discipline)o);
-            } else if (o instanceof Context) {
+            } else if (o instanceof DataContext) {
                 govContext = (Context)o;
             } else if (o instanceof Dependency) {
                 dependency = (Dependency)o;
@@ -1056,7 +1163,7 @@ public class operator {
 
             if (execDeps.getType().equals(Functionality.Type.FUNCTION)) {
                 sorcer.co.operator.dependsOn(gov, execDeps.deps);
-            } else if (execDeps.getType().equals(Functionality.Type.DOMAIN)) {
+            } else if (execDeps.getType().equals(Functionality.Type.DISCIPLINE)) {
                 sorcer.co.operator.dependsOn(gov, execDeps.deps);
             }
         }
@@ -1072,15 +1179,15 @@ public class operator {
         return fi;
     }
 
-    public static AnalyzerEntry mda(String name, Analyzer mda)
+    public static AnalysisEntry mda(String name, Analysis mda)
         throws EvaluationException {
-        return new AnalyzerEntry(name, mda);
+        return new AnalysisEntry(name, mda);
     }
 
-    public static ServiceFidelity mdaFi(String name, Analyzer... mdaEntries) {
-        AnalyzerEntry[] entries = new AnalyzerEntry[mdaEntries.length];
+    public static ServiceFidelity mdaFi(String name, Analysis... mdaEntries) {
+        AnalysisEntry[] entries = new AnalysisEntry[mdaEntries.length];
         for (int i = 0; i < mdaEntries.length; i++) {
-            entries[i] = (AnalyzerEntry) mdaEntries[i];
+            entries[i] = (AnalysisEntry) mdaEntries[i];
         }
         ServiceFidelity mdaFi =  new ServiceFidelity(entries);
         mdaFi.setName(name);
@@ -1088,9 +1195,25 @@ public class operator {
         return mdaFi;
     }
 
-    public static AnalyzerEntry mdaInstace(String name, Signature signature)
+    public static ServiceFidelity explFi(String name, Exploration... explEntries) {
+        ExplorationEntry[] entries = new ExplorationEntry[explEntries.length];
+        for (int i = 0; i < explEntries.length; i++) {
+            entries[i] = (ExplorationEntry) explEntries[i];
+        }
+        ServiceFidelity mdaFi =  new ServiceFidelity(entries);
+        mdaFi.setName(name);
+        mdaFi.setType(Fi.Type.EXPLORER);
+        return mdaFi;
+    }
+
+    public static ExplorationEntry expl(String name, Exploration explorer)
         throws EvaluationException {
-        AnalyzerEntry mda = new AnalyzerEntry(name, signature);
+        return new ExplorationEntry(name, explorer);
+    }
+
+    public static AnalysisEntry mdaInstace(String name, Signature signature)
+        throws EvaluationException {
+        AnalysisEntry mda = new AnalysisEntry(name, signature);
         mda.setType(Functionality.Type.MDA);
         try {
             mda.setValue(signature);
@@ -1101,9 +1224,9 @@ public class operator {
         return mda;
     }
 
-    public static AnalyzerEntry mda(String name, Signature signature)
+    public static AnalysisEntry mda(String name, Signature signature)
         throws EvaluationException {
-        AnalyzerEntry mda = new AnalyzerEntry(name, signature);
+        AnalysisEntry mda = new AnalysisEntry(name, signature);
         mda.setType(Functionality.Type.MDA);
         try {
             mda.setValue(signature);

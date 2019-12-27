@@ -43,13 +43,13 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 		MULTIVAL, PRED, DOMAIN_PRED, FILTER, PERSISTER, EVALUATOR, EVALUATION, PRODUCT, WATCHABLE, ENT, PROC, DUAL,
 		NEURON, VAR, SRV, LAMBDA, VAL, THRESHOLD, BIAS, FUNCTION, DATA, CONTEXT, ARRAY, LIST, PIPELINE, ROUTINE, MODEL,
 		DOMAIN, DISCIPLINE, EXERTION, MOGRAM, SELF, CONDITION, FIDELITY, LOCATOR, ARG, PATH, CONFIG, PROXY,
-		OBJECTIVE_GRADIENT, CONSTRAINT_GRADIENT, COUPLED, MADO, CONTEXTION,
+		OBJECTIVE_GRADIENT, CONSTRAINT_GRADIENT, COUPLED, MADO, CONTEXTION, COLLABORATION, GOVVERNANCE,
         // in ResponsModel transTypes
         // All-at-Once (AAO),
 		// Simultaneous Analysis and Design (SAND),
 		// Individual Discipline Feasible (IDF),
 		// Multidiscipline Feasible (MDF)
-		 AAO, SAND, IDF, MDF, MDA, NONE,
+		 AAO, SAND, IDF, MDF, MDA, EXPLORER, NONE,
 
 		// Finite Difference Functionality
 		VGD,	// var GradientDifferentiator

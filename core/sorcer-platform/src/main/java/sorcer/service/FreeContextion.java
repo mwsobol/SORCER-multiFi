@@ -47,6 +47,15 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
+	public Context getOutput(Arg... args) throws ContextException {
+		 if (contextion != null) {
+			 return contextion.getOutput(args);
+		} else {
+		 	return null;
+		 }
+	}
+
+	@Override
 	public void setContext(Context input) throws ContextException {
 
 	}

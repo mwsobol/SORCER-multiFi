@@ -30,6 +30,7 @@ import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.provider.DatabaseStorer;
+import sorcer.core.service.Collaboration;
 import sorcer.core.service.Governance;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
@@ -1232,8 +1233,8 @@ public class operator extends Operator {
     }
 
 	public static Request setValue(Request request, String path, Object value) throws ContextException {
-		if (request instanceof Governance) {
-			((Governance)request).getOutput().putValue(path, value);
+		if (request instanceof Contextion) {
+			((Contextion)request).getOutput().putValue(path, value);
 		}
 		return request;
 	}
@@ -1593,7 +1594,7 @@ public class operator extends Operator {
 
 		ExecDependency[] edArray;
 		if (vals.size() > 0 && (dependee instanceof Governance ||
-				((ServiceContext)dependee).getType().equals(Functionality.Type.MADO))) {
+			(dependee instanceof Context && ((ServiceContext)dependee).getType().equals(Functionality.Type.MADO)))) {
 			edArray = new ExecDependency[vals.size()];
 			return domainDependency(dependee, vals.toArray(edArray));
 		} else if (domain.size() > 0) {
@@ -1742,38 +1743,6 @@ public class operator extends Operator {
 
 		return dependee;
 	}
-
-//	public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
-//        String contextReturn = null;
-//		for (Evaluation d : dependers) {
-//            contextReturn = ((Identifiable)d).getName();
-//            if (contextReturn != null && contextReturn.equals("self")) {
-//                ((Entry)d).setKey(((ContextDomain) dependee).getName());
-//            }
-//            if (d instanceof ExecDependency && ((ExecDependency)d).getFiType().equals(Type.CONDITION)) {
-//                ((ExecDependency)d).getCondition().setConditionalContext((Context)dependee);
-//                }
-//			if (!dependee.getDependers().contains(d)) {
-//                dependee.getDependers().add(d);
-//            }
-//		}
-//		if (dependee instanceof ContextDomain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
-//			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((ContextDomain) dependee).getMogramStrategy()).getDependentPaths();
-//			for (Evaluation e : dependers) {
-//				contextReturn = ((Identifiable)e).getName();
-//				if (dm.getValue(contextReturn) != null) {
-//                    if (!dm.getValue(contextReturn).contains(e)) {
-//                        ((List) dm.getValue(contextReturn)).add(e);
-//                    }
-//				} else {
-//					List<ExecDependency> del = new ArrayList();
-//					del.add((ExecDependency)e);
-//					dm.put(contextReturn, del);
-//				}
-//			}
-//		}
-//		return dependee;
-//	}
 
 	public static Dependency dependsOn(Dependency dependee, Context scope, Evaluation... dependers)
 			throws ContextException {

@@ -63,6 +63,8 @@ public interface Contextion extends Request, Scopable {
 	*/
 	public Context getContext() throws ContextException;
 
+	public Context getOutput(Arg... args) throws ContextException;
+
 	/**
 	 * Sets the data context of this contextion.
 	 *

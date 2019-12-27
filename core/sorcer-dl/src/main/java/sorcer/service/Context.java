@@ -179,10 +179,14 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 	final static String JOB_FEEDBACK = "job" + SorcerConstants.CPS + "feedback";
 
 	// ContextDomain Predictio Data Path
-	final static String PRED_PATH = "model" + SorcerConstants.CPS + "prediction"
+	final static String PRED_PATH = "domain" + SorcerConstants.CPS + "prediction"
 			+ SorcerConstants.CPS + "data";
-	final static String MDA_PATH = "model" + SorcerConstants.CPS + "mda"
+
+	final static String MDA_PATH = "domain" + SorcerConstants.CPS + "mda"
 			+ SorcerConstants.CPS + "component";
+
+	final static String EXPLORER_PATH = "domain" + SorcerConstants.CPS + "explorer"
+		+ SorcerConstants.CPS + "component";
 
 	// ContextDomain Specific Data Path
 	final static String DSD_PATH = "domain" + SorcerConstants.CPS + "specific"
