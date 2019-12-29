@@ -1865,6 +1865,18 @@ public class operator extends Operator {
 		return signature.build();
 	}
 
+	public static Contextion instance(String domainName, Signature signature)
+		throws SignatureException {
+		if (signature instanceof ObjectSignature) {
+			Object obj = ((ObjectSignature) signature).build();
+			if (obj instanceof Contextion) {
+				((Contextion) obj).setName(domainName);
+				return (Contextion) obj;
+			}
+		}
+		throw new SignatureException("not Contextion build signature");
+	}
+
 	public static <T> T build(ServiceMogram mogram) throws SignatureException {
 		return mogram.getInstance();
 	}

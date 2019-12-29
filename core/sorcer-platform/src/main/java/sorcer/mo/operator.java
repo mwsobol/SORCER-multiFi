@@ -31,6 +31,7 @@ import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
+import sorcer.core.context.model.srv.SrvTransmodel;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
@@ -681,6 +682,108 @@ public class operator {
             return mo;
         }
         throw new ModelException("do not know what model to create");
+    }
+
+    public static Transmodel tModel(Object... data) throws ContextException {
+        String name = getUnknown();
+        Transmodel varModel = null;
+        List<Domain> domains = new ArrayList<>();
+        List<ServiceFidelity> modelFis = new ArrayList<>();
+        Dependency dependency = null;
+        ExecDeps execDeps = null;
+        Paths madoDisciplinePaths = null;
+
+        List<Object> dataList = new ArrayList<>();
+        for (Object o : data) {
+            dataList.add(o);
+        }
+        for (int i = 0; i < dataList.size(); i++) {
+            Object o = dataList.get(i);
+            if (o instanceof String) {
+                name = (String) o;
+            } else if (o instanceof Domain) {
+                domains.add((Domain)o);
+            } else if (o instanceof ServiceFidelity) {
+                modelFis.add((ServiceFidelity)o);
+            } else if (o instanceof Dependency) {
+                dependency = (Dependency)o;
+            } else if (o instanceof ExecDeps) {
+                execDeps = (ExecDeps)o;
+            } else if (o instanceof Paths && ((Paths)o).type.equals(Functionality.Type.MADO)) {
+                madoDisciplinePaths = (Paths)o;
+            }
+        }
+        dataList.remove(name);
+        for (Object mod : domains) {
+            dataList.remove(mod);
+        }
+        for (Object fi : modelFis) {
+            dataList.remove(fi);
+        }
+
+        SrvTransmodel transModel = new SrvTransmodel(name);
+        transModel.addDomains(domains);
+        Object[] names = new Object[domains.size()];
+        for (int i = 0; i < domains.size(); i++) {
+            ((ServiceMogram)domains.get(i)).setParent(transModel);
+            names[i] = domains.get(i).getName();
+        }
+
+        if (modelFis.size() > 0) {
+            FidelityManager fiManager = new FidelityManager(transModel);
+            Map<String, ServiceFidelity> fis = new HashMap<>();
+            for (ServiceFidelity mdlFi : modelFis) {
+                fis.put(mdlFi.getName(), mdlFi);
+                transModel.getChildren().put(mdlFi.getName(), (SrvModel) mdlFi.getSelect());
+            }
+            fiManager.setFidelities(fis);
+            transModel.setFidelityManager(fiManager);
+        }
+        if (madoDisciplinePaths != null) {
+            madoDisciplinePaths.name = transModel.getName();
+            transModel.setChildrenPaths(madoDisciplinePaths);
+        }
+        try {
+            if (dependency == null && names.length > 0) {
+                if (madoDisciplinePaths != null) {
+                    sorcer.co.operator.dependsOn(transModel, ent(transModel.getName(), madoDisciplinePaths));
+                } else {
+                    sorcer.co.operator.dependsOn(transModel, ent(transModel.getName(), paths(names)));
+                }
+            } else {
+                List<Evaluation> entries = dependency.getDependers();
+                for (Evaluation e : entries) {
+                    if (e instanceof Entry && ((Entry)e).getName().equals("self")) {
+                        e.setName(transModel.getName());
+                    }
+                }
+            }
+
+            if (execDeps != null && names.length > 0) {
+                ExecDependency[] entries = execDeps.deps;
+                for (Evaluation e : entries) {
+                    if (e instanceof Entry && ((Entry)e).getName().equals("self")) {
+                        e.setName(transModel.getName());
+                    }
+                }
+
+                if (execDeps.getType().equals(Functionality.Type.FUNCTION)) {
+                    sorcer.co.operator.dependsOn(transModel, execDeps.deps);
+                } else if (execDeps.getType().equals(Functionality.Type.DOMAIN)) {
+                    sorcer.co.operator.dependsOn(transModel, execDeps.deps);
+                }
+            }
+
+            Object[] dest = new Object[dataList.size()+1];
+            dest[0] = transModel;
+            for (int i = 0;  i < dataList.size(); i++) {
+                dest[i+1] = dataList.get(i);
+            }
+            srvModel(dest);
+        } catch (ContextException e) {
+            throw new EvaluationException(e);
+        }
+        return transModel;
     }
 
     public static Context add(ContextDomain model, Identifiable... objects)
