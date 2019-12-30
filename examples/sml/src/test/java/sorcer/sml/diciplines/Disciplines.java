@@ -156,7 +156,6 @@ public class Disciplines {
     public void multidiscGovernance1() throws Exception {
 
         // the explicit input context with MDA
-
         Context govCxt = context(mdaFi("multidiscMdaFi",
             mda("analyzer",
                 (Request gov, Context cxt) -> {

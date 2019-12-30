@@ -993,6 +993,22 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.couplings = couplings;
     }
 
+    public Fidelity<AnalysisEntry> getAnalysisFi(Context context) throws ConfigurationException {
+        Fidelity<AnalysisEntry> analysisFi = null;
+            Object mdaComponent = context.get(Context.MDA_PATH);
+            if (mdaComponent != null) {
+                if (mdaComponent instanceof AnalysisEntry) {
+                    analysisFi = new Fidelity(((AnalysisEntry)mdaComponent).getName());
+                    analysisFi.addSelect((AnalysisEntry) mdaComponent);
+                    analysisFi.setSelect((AnalysisEntry)mdaComponent);
+                } else if (mdaComponent instanceof ServiceFidelity
+                    && ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
+                    analysisFi = (Fidelity) mdaComponent;
+                }
+            }
+        return analysisFi;
+    }
+
     public Fidelity<AnalysisEntry> setMdaFi(Context context) throws ConfigurationException {
        if(mdaFi == null) {
            Object mdaComponent = context.get(Context.MDA_PATH);

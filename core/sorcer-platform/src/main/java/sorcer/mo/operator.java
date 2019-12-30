@@ -184,11 +184,16 @@ public class operator {
                 String domain = null;
                 int ind = path.indexOf("$");
                 // allow $ at te end
-                if (path.indexOf("$") > 0 && path.length() > ind+1) {
+                if (ind > 0 && path.length() > ind+1) {
                     domainPath = path.substring(0, ind);
                     domain = path.substring(ind + 1);
                     if (context.get(domain) != null) {
-                        return (T) ((ServiceContext) context.get(domain)).get(domainPath);
+                        Object val = ((ServiceContext) context.get(domain)).get(domainPath);
+                        if (val instanceof Value) {
+                            return (T)((Value)val).getOut();
+                        } else {
+                            return (T) val;
+                        }
                     }
                 }
 

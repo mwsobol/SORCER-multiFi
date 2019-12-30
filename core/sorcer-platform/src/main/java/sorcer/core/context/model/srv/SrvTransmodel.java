@@ -7,6 +7,7 @@ import sorcer.co.tuple.ExecDependency;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.AnalysisEntry;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
@@ -15,6 +16,8 @@ import sorcer.service.modeling.Transmodel;
 
 import java.rmi.RemoteException;
 import java.util.*;
+
+import static sorcer.mo.operator.result;
 
 /**
  * Created by Mike Sobolewski on 12/28/2019.
@@ -28,6 +31,8 @@ public class SrvTransmodel extends SrvModel implements Transmodel {
     protected Paths childrenPaths;
 
     protected FidelityManager collabFiManager;
+
+    protected Fidelity<AnalysisEntry> analyzerFi;
 
     public SrvTransmodel() {
         super();
@@ -110,84 +115,47 @@ public class SrvTransmodel extends SrvModel implements Transmodel {
         return children.get(name);
     }
 
-    public Context analyze(Context modelContext, Arg... args) throws EvaluationException {
-        try {
-            setMdaFi(modelContext);
-            if (mdaFi == null || mdaFi.getSelect() == null) {
-                throw new EvaluationException("No MDA specified in the context");
-            }
-        } catch (ContextException | ConfigurationException e) {
-            throw new EvaluationException(e);
-        }
-        ((ServiceContext)modelContext).getMogramStrategy().setExecState(Exec.State.NULL);
-        Context out = evaluate(modelContext, args);
-        return out;
-    }
-
     @Override
     synchronized public Context evaluate(Context inContext, Arg... args) throws EvaluationException {
         if (inContext == null) {
             inContext = new ServiceContext(key);
         }
         ServiceContext context = (ServiceContext) inContext;
-        ServiceContext out = (ServiceContext) mogramStrategy.getOutcome();
+        if (dataContext == null) {
+            dataContext = new ServiceContext(key);
+        }
+        getMogramStrategy().setOutcome(dataContext);
+        context.setScope(dataContext);
         try {
-            if (context.get(Context.MDA_PATH) != null) {
-                return analyze(context, args);
-            }
-
-            Exec.State state = context.getMogramStrategy().getExecState();
             // set mda if available
-            if (mdaFi == null) {
-                setMdaFi(context);
-            }
+            analyzerFi = getAnalysisFi(context);
 
-            if (mdaFi != null && state.equals(State.INITIAL)) {
-                context.remove(Context.PRED_PATH);
-//                    modelContext.remove(Context.MDA_PATH);
-                context.getMogramStrategy().setExecState(State.RUNNING);
-                // select mda Fi if provided
-                List<Fidelity> fis = Arg.selectFidelities(args);
-                for (Fi fi : fis) {
-                    if (mdaFi.getName().equalsIgnoreCase(fi.getPath())) {
-                        mdaFi.selectSelect(fi.getName());
-                    }
-                }
-                logger.info("*** mdaFi: {}", mdaFi.getSelect().getName());
-                mdaFi.getSelect().analyze(this, context);
-                logger.info("=======> MDA DONE: " + context.getOutputs());
-                context.getMogramStrategy().setExecState(State.DONE);
+            execDependencies(key, context, args);
+            // TODO why scope is not set?
+            //setScope(dataContext);
+            append(dataContext);
+            Context evalOut = super.evaluate(inContext, args);
+            dataContext.append(evalOut);
+            // put results of component domains
+            for (String mn : children.keySet()) {
+                dataContext.put(mn, result(children.get(mn)));
             }
-            state = context.getMogramStrategy().getExecState();
-
-            if (mdaFi == null || state.equals(State.DONE)) {
-                if (mdaFi == null) {
-                    execDependencies(key, context, args);
-                }
-                out = (ServiceContext) super.evaluate(context, args);
-                out.setType(Functionality.Type.TRANS);
-                if (mdaFi == null) {
-                    // collect all domain results
-//                    out.put(key, context);
-                    for (String mn : children.keySet()) {
-                        out.put(mn, children.get(mn).getOutput());
-                    }
-                }
-            } else {
-                execDependencies(key, context, args);
-                super.evaluate(context, args);
-                // collect all domain snapshots
-                out = new ServiceContext(key);
-                // remove predicted values
-                out.put(key, context);
-                for (String mn : children.keySet()) {
-                    out.put(mn, ((ServiceContext) children.get(mn)).getResult());
-                }
+            if (analyzerFi != null && analyzerFi.getSelect() != null) {
+                dataContext.putValue(Functionality.Type.DOMAIN.toString(), key);
+                analyzerFi.getSelect().analyze(this, dataContext);
             }
         } catch (ServiceException | TransactionException | ConfigurationException | RemoteException e) {
             throw new EvaluationException(e);
         }
-        return out;
+        return dataContext;
+    }
+
+    public Fidelity<AnalysisEntry> getAnalyzerFi() {
+        return analyzerFi;
+    }
+
+    public void setAnalyzerFi(Fidelity<AnalysisEntry> analyzerFi) {
+        this.analyzerFi = analyzerFi;
     }
 
     @Override
@@ -217,69 +185,47 @@ public class SrvTransmodel extends SrvModel implements Transmodel {
                     if (de.getName().equals(key)) {
                         dpl = de.getData();
                         for (Path p : dpl) {
+                            Domain domain = children.get(p.getName());
                             execDependencies(p.getName(), inContext, args);
-                            ServiceContext snapshot = null;
-                            if (mdaFi != null) {
-                                snapshot = (ServiceContext) inContext;
-                            } else {
-                                snapshot = new ServiceContext(key + ":" + p.path);
-                            }
                             Context cxt = null;
                             if (children.get(p.path) instanceof EntModel) {
                                 EntModel mdl = (EntModel) children.get(p.path);
-                                mdl.evaluate(snapshot, args);
+                                mdl.evaluate(inContext, args);
                                 cxt = mdl.getMogramStrategy().getOutcome();
-                                append(cxt);
+                                dataContext.append(cxt);
                             } else {
-                                Mogram xrt = children.get(p.getName());
-                                xrt.setScope(this);
-                                Mogram out = xrt.exert(args);
-                                if (xrt instanceof Job) {
-                                    cxt = ((Job)out).getJobContext();
-                                } else if (xrt instanceof Routine) {
-                                    cxt = out.getDataContext();
+                                domain.setScope(dataContext);
+                                Domain child = domain.exert(args);
+                                if (domain instanceof Job) {
+                                    cxt = ((Job) child).getJobContext();
+                                } else if (domain instanceof Routine) {
+                                    cxt = child.getDataContext();
                                 }
                                 logger.info("exertion domain context: " + cxt);
-                                Context.Return rp = out.getProcessSignature().getContextReturn();
+                                Context.Return rp = child.getProcessSignature().getContextReturn();
                                 if (rp != null && rp.outPaths != null && rp.outPaths.size() > 0) {
                                     cxt = cxt.getDirectionalSubcontext(rp.outPaths);
                                     if (rp.outPaths.getName().equals(rp.outPaths.get(0).getName())) {
-                                        append(cxt);
+                                        ((ServiceContext)child).append(cxt);
                                     } else {
                                         put(rp.outPaths.getName(), cxt);
                                     }
                                 } else {
-                                    append(cxt);
+                                    dataContext.append(cxt);
                                 }
+                            }
+                            if (analyzerFi != null && analyzerFi.getSelect() != null) {
+                                cxt.getContext().putValue(Functionality.Type.DOMAIN.toString(), domain.getName());
+                                analyzerFi.getSelect().analyze(domain, cxt);
                             }
                         }
-                        if (de.getType().equals(Functionality.Type.FIDELITY)
-                            && ((Fidelity) entry.getMultiFi().getSelect()).getName().equals(((Fidelity) de.annotation()).getName())) {
-                            dpl = de.getData();
-                            if (dpl != null && dpl.size() > 0) {
-                                for (Path p : dpl) {
-                                    getValue(p.path, args);
-                                }
-                            }
-                        } else {
-                            // other dependencies
-                            dpl = de.getData();
-                            if (dpl != null && dpl.size() > 0) {
-                                for (Path p : dpl) {
-                                    Domain domain = this;
-                                    if (p.info != null) {
-                                        if (children.get(p.info.toString()) instanceof Domain) {
-                                            Domain dmn = children.get(p.info.toString());
-                                            if (dmn != null) {
-                                                domain = dmn;
-                                            }
-                                        }
-                                    }
-                                    Entry v = (Entry) domain.get(p.getName());
-                                    if (v!= null) {
-                                        v.getValue(args);
-                                    }
-                                }
+                    }
+                    if (de.getType().equals(Functionality.Type.FIDELITY)
+                        && ((Fidelity) entry.getMultiFi().getSelect()).getName().equals(((Fidelity) de.annotation()).getName())) {
+                        dpl = de.getData();
+                        if (dpl != null && dpl.size() > 0) {
+                            for (Path p : dpl) {
+                                getValue(p.path, args);
                             }
                         }
                     }
