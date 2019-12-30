@@ -29,7 +29,7 @@ import sorcer.core.context.model.ent.ExplorationEntry;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
 import sorcer.service.Discipline;
-import sorcer.service.modeling.ExploreException;
+import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -453,6 +453,21 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 	}
 
 	@Override
+	public Object get(String path$domain) {
+		String path = null;
+		String domain = null;
+		if (path$domain.indexOf("$") > 0) {
+			int ind = path$domain.indexOf("$");
+			path = path$domain.substring(0, ind);
+			domain = path$domain.substring(ind + 1);
+			return getChild(domain).get(path);
+		} else if (path$domain != null) {
+			return getChild(path$domain);
+		}
+		return null;
+	}
+
+	@Override
 	public List<Contextion> getContextions(List<Contextion> contextionList) {
 		for (Contextion e : getChildren().values()) {
 			e.getContextions(contextionList);
@@ -461,6 +476,9 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 		return contextionList;
 	}
 
+	public Functionality.Type getDependencyType() {
+		return Functionality.Type.COLLABORATION;
+	}
 	@Override
 	public void selectFidelity(Fidelity fi) throws ConfigurationException {
 

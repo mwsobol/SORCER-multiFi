@@ -23,6 +23,7 @@ import net.jini.id.UuidFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.signature.ServiceSignature;
+import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Getter;
 
 import java.rmi.RemoteException;
@@ -540,6 +541,10 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             this.dependers = new ArrayList<Evaluation>();
         for (Evaluation depender : dependers)
             this.dependers.add(depender);
+    }
+
+    public Functionality.Type getDependencyType() {
+        return Functionality.Type.DISCIPLINE;
     }
 
     @Override

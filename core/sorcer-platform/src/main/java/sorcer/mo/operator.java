@@ -179,6 +179,19 @@ public class operator {
                     out = (T) context.getValue(path, args);
                 }
             } else {
+//                if (((ServiceContext) context).getType().equals(Functionality.Type.TRANS)) {
+                String domainPath = null;
+                String domain = null;
+                int ind = path.indexOf("$");
+                // allow $ at te end
+                if (path.indexOf("$") > 0 && path.length() > ind+1) {
+                    domainPath = path.substring(0, ind);
+                    domain = path.substring(ind + 1);
+                    if (context.get(domain) != null) {
+                        return (T) ((ServiceContext) context.get(domain)).get(domainPath);
+                    }
+                }
+
                 if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
                     out = (T) context.getEvaluatedValue(path);
                 } else if (context instanceof Model && context.getMogramStrategy().getOutcome() != null) {
@@ -684,14 +697,13 @@ public class operator {
         throw new ModelException("do not know what model to create");
     }
 
-    public static Transmodel tModel(Object... data) throws ContextException {
+    public static Transmodel transModel(Object... data) throws ContextException {
         String name = getUnknown();
-        Transmodel varModel = null;
         List<Domain> domains = new ArrayList<>();
         List<ServiceFidelity> modelFis = new ArrayList<>();
         Dependency dependency = null;
         ExecDeps execDeps = null;
-        Paths madoDisciplinePaths = null;
+        Paths domainPaths = null;
 
         List<Object> dataList = new ArrayList<>();
         for (Object o : data) {
@@ -705,12 +717,13 @@ public class operator {
                 domains.add((Domain)o);
             } else if (o instanceof ServiceFidelity) {
                 modelFis.add((ServiceFidelity)o);
-            } else if (o instanceof Dependency) {
-                dependency = (Dependency)o;
-            } else if (o instanceof ExecDeps) {
+            }  else if (o instanceof ExecDeps) {
                 execDeps = (ExecDeps)o;
-            } else if (o instanceof Paths && ((Paths)o).type.equals(Functionality.Type.MADO)) {
-                madoDisciplinePaths = (Paths)o;
+            } else if (o instanceof Paths) {
+//                && ((Paths)o).type.equals(Functionality.Type.TRANS)) {
+                domainPaths = (Paths)o;
+            } else if (o instanceof Dependency && ((Dependency)o).getDependencyType() == Function.Type.TRANS) {
+                dependency = (Dependency)o;
             }
         }
         dataList.remove(name);
@@ -739,14 +752,14 @@ public class operator {
             fiManager.setFidelities(fis);
             transModel.setFidelityManager(fiManager);
         }
-        if (madoDisciplinePaths != null) {
-            madoDisciplinePaths.name = transModel.getName();
-            transModel.setChildrenPaths(madoDisciplinePaths);
+        if (domainPaths != null) {
+            domainPaths.name = transModel.getName();
+            transModel.setChildrenPaths(domainPaths);
         }
         try {
             if (dependency == null && names.length > 0) {
-                if (madoDisciplinePaths != null) {
-                    sorcer.co.operator.dependsOn(transModel, ent(transModel.getName(), madoDisciplinePaths));
+                if (domainPaths != null) {
+                    sorcer.co.operator.dependsOn(transModel, ent(transModel.getName(), domainPaths));
                 } else {
                     sorcer.co.operator.dependsOn(transModel, ent(transModel.getName(), paths(names)));
                 }
@@ -937,8 +950,12 @@ public class operator {
                 fis.add(fi);
             }
         }
-        if (model == null)
+
+        boolean newModel = false;
+        if (model == null) {
             model = new SrvModel();
+            newModel = true;
+        }
 
         if (morphFiEnts != null || metaFis != null || fis != null) {
            if (fiManager == null)
@@ -973,10 +990,13 @@ public class operator {
             model.setSubject(complement.getName(), complement.getId());
         }
 
-        Object[] dest = new Object[items.length+1];
-        System.arraycopy(items,  0, dest,  1, items.length);
-        dest[0] = model;
-        return (Model)context(dest);
+        if (newModel) {
+            Object[] dest = new Object[items.length + 1];
+            System.arraycopy(items, 0, dest, 1, items.length);
+            dest[0] = model;
+            return (Model)context(dest);
+        }
+        return (Model)context(items);
     }
 
     public static void update(Mogram mogram, Setup... entries) throws ContextException {

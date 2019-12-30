@@ -156,6 +156,11 @@ public class MultiFiSignature extends MultiFiSlot<String, Signature> implements 
     }
 
     @Override
+    public Functionality.Type getDependencyType() {
+        return Functionality.Type.SIGNATURE;
+    }
+
+    @Override
     public Object execute(Arg... args) throws MogramException {
         if (multiFi != null) {
             try {
@@ -176,6 +181,7 @@ public class MultiFiSignature extends MultiFiSlot<String, Signature> implements 
             throw new MogramException("misconfigured MultiFiSignature with multiFi: " + multiFi);
         }
     }
+
 
     @Override
     public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {

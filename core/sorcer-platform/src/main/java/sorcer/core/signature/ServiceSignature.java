@@ -706,6 +706,11 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	@Override
+	public Functionality.Type getDependencyType() {
+		return Functionality.Type.SIGNATURE;
+	}
+
+	@Override
 	public Object execute(Arg... args) throws MogramException {
 		throw new MogramException("Signature service exec should be implemented in subclasses");
 	}

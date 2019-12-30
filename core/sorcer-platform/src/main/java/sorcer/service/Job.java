@@ -27,6 +27,7 @@ import sorcer.core.context.FidelityContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.ObjectJob;
 import sorcer.core.provider.Jobber;
@@ -37,6 +38,7 @@ import sorcer.core.signature.ObjectSignature;
 import sorcer.security.util.Auth;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Strategy.Access;
+import sorcer.service.modeling.Functionality;
 import sorcer.util.SorcerUtil;
 
 import javax.security.auth.Subject;
@@ -615,5 +617,4 @@ public class Job extends Transroutine {
 			throw new SetterException(ex);
 		}
 	}
-
 }

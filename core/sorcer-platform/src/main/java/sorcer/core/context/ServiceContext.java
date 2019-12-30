@@ -2873,11 +2873,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public T get(String path) {
-		if (path != null) {
-            return data.get(path);
-        } else {
-            return (T) Context.none;
-        }
+		if (path != null){
+			return data.get(path);
+		} else {
+			return (T) Context.none;
+		}
 	}
 
 	public Context setOutValues(Context<T> context) throws ContextException,
@@ -3074,7 +3074,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Context evaluate(Context inputContext,  Arg... args) throws EvaluationException, RemoteException {
+	public Context evaluate(Context inputContext, Arg... args) throws EvaluationException, RemoteException {
 		try {
 			if (args != null) {
 				substitute((Arg[]) args);

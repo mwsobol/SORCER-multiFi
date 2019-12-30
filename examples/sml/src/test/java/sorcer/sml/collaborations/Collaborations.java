@@ -71,7 +71,7 @@ public class Collaborations {
                             y3 = (double)value(cxt, "arg/t5");
                             setValue(collab, "z1", (y3 * y2) / y1);
                         } else if (dmnName.equals("entModel")) {
-                            y4 = (double)value(cxt, "block/result");
+                            y4 = (double)value(cxt, "result");
                             setValue(collab, "z2", y4 * 2.4);
                         }
                     }))));

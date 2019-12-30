@@ -19,6 +19,7 @@ package sorcer.service;
 
 import net.jini.id.Uuid;
 import sorcer.core.context.ControlContext;
+import sorcer.core.context.ServiceContext;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -182,7 +183,8 @@ abstract public class Transroutine extends Subroutine implements Transdomain {
 
 	@Override
 	public Object get(String component) {
-		for (Mogram mog : mograms) {
+		List<Mogram> allMograms = getAllMograms();
+		for (Mogram mog : allMograms) {
 			if (mog.getName().equals(component)) {
 				return mog;
 			}

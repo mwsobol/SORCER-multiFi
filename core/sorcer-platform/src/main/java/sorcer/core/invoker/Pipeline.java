@@ -4,6 +4,7 @@ import net.jini.core.transaction.Transaction;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
+import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -231,6 +232,10 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion {
         }
 
         return out;
+    }
+
+    public Functionality.Type getDependencyType() {
+        return Functionality.Type.PIPELINE;
     }
 
     @Override

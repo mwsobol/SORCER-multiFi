@@ -17,6 +17,7 @@
 package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.modeling.Functionality;
@@ -95,7 +96,7 @@ public class FreeMogram extends ServiceMogram implements FreeService {
 
 
     @Override
-    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
+    public ServiceContext evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
         return null;
     }
 

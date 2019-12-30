@@ -28,7 +28,6 @@ import sorcer.core.context.model.ent.Prc;
 import sorcer.core.deploy.DeploymentIdFactory;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.invoker.ExertInvoker;
-import sorcer.core.invoker.Pipeline;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;

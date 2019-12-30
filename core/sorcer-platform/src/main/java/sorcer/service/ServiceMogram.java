@@ -14,6 +14,7 @@ import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Coupling;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.AnalysisEntry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
@@ -1187,6 +1188,10 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         isChanged = true;
         clearScope();
         return this;
+    }
+
+    public Functionality.Type getDependencyType() {
+        return Function.Type.MOGRAM;
     }
 
     @Override

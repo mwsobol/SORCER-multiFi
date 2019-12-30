@@ -28,6 +28,7 @@ import sorcer.core.context.model.ent.AnalysisEntry;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
 import sorcer.service.Discipline;
+import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.SuperviseException;
 
 import java.rmi.RemoteException;
@@ -434,6 +435,10 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 		}
 		contextionList.add(this);
 		return contextionList;
+	}
+
+	public Functionality.Type getDependencyType() {
+		return Functionality.Type.GOVVERNANCE;
 	}
 
 	@Override

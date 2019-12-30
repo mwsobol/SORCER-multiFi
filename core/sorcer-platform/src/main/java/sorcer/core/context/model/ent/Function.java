@@ -253,6 +253,11 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 		return dependers;
 	}
 
+	@Override
+	public Type getDependencyType() {
+		return Type.FUNCTION;
+	}
+
 	public ContextSelection getContextSelector() {
 		return contextSelector;
 	}

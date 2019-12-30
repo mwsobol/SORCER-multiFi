@@ -2,6 +2,7 @@ package sorcer.service;
 
 import sorcer.core.Tag;
 import sorcer.service.modeling.Data;
+import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.fi;
 
 import java.rmi.RemoteException;
@@ -313,6 +314,11 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 	@Override
 	public List<Evaluation> getDependers() {
 		return dependers;
+	}
+
+	@Override
+	public Functionality.Type getDependencyType() {
+		return Functionality.Type.FIDELITY;
 	}
 
 	@Override

@@ -474,8 +474,16 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         }
     }
 
+//    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
+//        try {
+//            return exert(null, args);
+//        } catch (ContextException e) {
+//            throw new EvaluationException(e);
+//        }
+//    }
+
     @Override
-    public Context exert(Transaction txn, Arg... entries) throws ContextException, RemoteException {
+    public Context exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
         Signature signature = null;
         ServiceFidelity sFi = (ServiceFidelity)multiFi.getSelect();
         try {
@@ -485,12 +493,12 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                 signature = (Signature)subjectValue;
             }
             if (signature != null) {
-                Routine out = operator.xrt(key, subjectValue, this).exert(txn, entries);
+                Routine out = operator.xrt(key, subjectValue, this).exert(txn, args);
                 Routine xrt = out.exert();
                 return xrt.getDataContext();
             } else {
                 // compute model response
-                getResponse(entries);
+                getResponse(args);
                 return this;
             }
         } catch (Exception e) {
@@ -523,7 +531,6 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         }
         return subcntxt;
     }
-
 
     public Object getItem(String path) {
         Object obj = get(path);

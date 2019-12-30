@@ -19,6 +19,7 @@ package sorcer.service;
 
 
 import net.jini.core.transaction.Transaction;
+import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
 import java.util.List;

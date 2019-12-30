@@ -319,6 +319,21 @@ public class operator extends Operator {
             } else {
                 return (ServiceContext) ((ServiceContext) ((ServiceContext) mogram).getDomain((String) items[0])).getValue((String) items[1]);
             }
+        } else if (mogram instanceof Transmodel &&
+            ((Transmodel)mogram).getChildren() != null &&
+            ((Transmodel)mogram).getChildren().size() > 0) {
+            Context cxt = null;
+            for (Object item : items) {
+                if (item instanceof Context) {
+                    cxt = (Context)item;
+                    break;
+                }
+            }
+            try {
+                return (ServiceContext) mogram.evaluate(cxt);
+            } catch (RemoteException e) {
+                throw new ContextException(e);
+            }
         } else {
             return modelResponse((ContextDomain) mogram, items);
         }

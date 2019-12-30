@@ -43,7 +43,7 @@ public class CollabBuilder {
 
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
 			context("subtract", inVal("arg/t4"), inVal("arg/t5"),
-				result("block/result", Signature.Direction.OUT)));
+				result("result", Signature.Direction.OUT)));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
 			context("multiply", inVal("arg/x1"), inVal("arg/x2"),
@@ -153,7 +153,7 @@ public class CollabBuilder {
 							y3 = (double)value(cxt, "arg/t5");
 							setValue(collab, "z1", (y3 * y2) / y1);
 						} else if (dmnName.equals("entModel")) {
-							y4 = (double)value(cxt, "block/result");
+							y4 = (double)value(cxt, "result");
 							setValue(collab, "z2", y4 * 2.4);
 						}
 					}))));

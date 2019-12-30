@@ -1593,8 +1593,7 @@ public class operator extends Operator {
 		}
 
 		ExecDependency[] edArray;
-		if (vals.size() > 0 && (dependee instanceof Governance ||
-			(dependee instanceof Context && ((ServiceContext)dependee).getType().equals(Functionality.Type.MADO)))) {
+		if (vals.size() > 0) {
 			edArray = new ExecDependency[vals.size()];
 			return domainDependency(dependee, vals.toArray(edArray));
 		} else if (domain.size() > 0) {
