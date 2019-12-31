@@ -62,7 +62,7 @@ public class NetBlock extends Block implements Invocation<Object> {
 		setPrincipal(principal);
 	}
 
-	public static ServiceRoutine getTemplate() {
+	public static Subroutine getTemplate() {
 		NetBlock temp = null;
 		try {
 			temp = new NetBlock();
@@ -78,8 +78,4 @@ public class NetBlock extends Block implements Invocation<Object> {
 		return (Block)se.exert(txn, null, args);
 	}
 
-	@Override
-	public Map<String, Mogram> getChildren() {
-		return null;
-	}
 }

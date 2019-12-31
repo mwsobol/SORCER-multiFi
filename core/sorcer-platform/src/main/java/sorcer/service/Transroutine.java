@@ -19,6 +19,7 @@ package sorcer.service;
 
 import net.jini.id.Uuid;
 import sorcer.core.context.ControlContext;
+import sorcer.core.context.ServiceContext;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -30,9 +31,9 @@ import java.util.Map;
 /**
  * @author Mike Sobolewski
  */
-abstract public class Transroutine extends ServiceRoutine implements Collaboration {
+abstract public class Transroutine extends Subroutine implements Transdomain {
 	/**
-	 * Component disciplines of this job (the Composite Design pattern)
+	 * Component domains of this job (the Composite Design pattern)
 	 */
 	protected List<Mogram> mograms = new ArrayList<Mogram>();
 
@@ -55,7 +56,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 
 	public void reset(int state) {
 		for(Mogram e : mograms)
-			((ServiceRoutine)e).reset(state);
+			((Subroutine)e).reset(state);
 
 		this.setStatus(state);
 	}
@@ -68,7 +69,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 		mograms.set(i, ex);
 	}
 
-	public Subroutine getMasterExertion() {
+	public Routine getMasterExertion() {
 		Uuid uuid = null;
 		try {
 			uuid = (Uuid) controlContext.getValue(ControlContext.MASTER_EXERTION);
@@ -79,9 +80,9 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 				&& controlContext.getFlowType().equals(ControlContext.SEQUENTIAL)) {
 			return (size() > 0) ? get(size() - 1) : null;
 		} else {
-			Subroutine master = null;
+			Routine master = null;
 			for (int i = 0; i < size(); i++) {
-				if (((ServiceRoutine) get(i)).getId().equals(
+				if (((Subroutine) get(i)).getId().equals(
 						uuid)) {
 					master = get(i);
 					break;
@@ -105,8 +106,8 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 	/**
 	 * Returns the exertion at the specified index.
 	 */
-	public Subroutine get(int index) {
-		return (Subroutine) mograms.get(index);
+	public Routine get(int index) {
+		return (Routine) mograms.get(index);
 	}
 
 	public void setMograms(List<Mogram> mograms) {
@@ -114,7 +115,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 
 	}
 
-	public Mogram addExertion(Subroutine exertion, int priority) throws RoutineException {
+	public Mogram addExertion(Routine exertion, int priority) throws RoutineException {
 		addMogram(exertion);
 		controlContext.setPriority(exertion, priority);
 		return this;
@@ -123,10 +124,36 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 	/**
 	 * Returns all component <code>Mograms</code>s of this composite exertion.
 	 *
-	 * @return all component disciplines
+	 * @return all component domains
 	 */
 	public List<Mogram> getMograms() {
 		return mograms;
+	}
+
+	public List<Mogram> getAllMograms() {
+		List<Mogram> allMograms = new ArrayList<>();
+		return getMograms(allMograms);
+	}
+
+	public List<Contextion> getAllContextions() {
+		List<Contextion> allContextions = new ArrayList<>();
+		return getContextions(allContextions);
+	}
+
+	public List<Mogram> getMograms(List<Mogram> mogramList) {
+		for (Mogram e : mograms) {
+			e.getMograms(mogramList);
+		}
+		mogramList.add(this);
+		return mogramList;
+	}
+
+	public List<Contextion> getContextions(List<Contextion> contextionList) {
+		for (Mogram e : mograms) {
+			e.getContextions(contextionList);
+		}
+		contextionList.add(this);
+		return contextionList;
 	}
 
 	public boolean hasChild(String childName) {
@@ -145,7 +172,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 		return null;
 	}
 
-	public int compareByIndex(Subroutine e) {
+	public int compareByIndex(Routine e) {
 		if (this.getIndex() > ((Transroutine) e).getIndex())
 			return 1;
 		else if (this.getIndex() < ((Transroutine) e).getIndex())
@@ -156,7 +183,8 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 
 	@Override
 	public Object get(String component) {
-		for (Mogram mog : mograms) {
+		List<Mogram> allMograms = getAllMograms();
+		for (Mogram mog : allMograms) {
 			if (mog.getName().equals(component)) {
 				return mog;
 			}
@@ -172,7 +200,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 	public Context evaluate(Context context, Arg... args) throws EvaluationException {
 		try {
 		    getContext().substitute(context);
-			Subroutine out = exert(args);
+			Routine out = exert(args);
 			return out.getContext();
 		} catch (MogramException | RemoteException e) {
 			throw new EvaluationException(e);
@@ -180,10 +208,10 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 	}
 
 	@Override
-	public Map<String, Mogram> getChildren() {
-		Map<String, Mogram> children = new HashMap<>();
-		for (Mogram child : mograms) {
-			children.put(child.getName(), child);
+	public Map<String, Domain> getChildren() {
+		Map<String, Domain> children = new HashMap<>();
+		for (Mogram mog : mograms) {
+			children.put(mog.getName(), (Domain) mog);
 		}
 		return children;
 	}

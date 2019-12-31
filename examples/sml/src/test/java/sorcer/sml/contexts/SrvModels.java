@@ -11,6 +11,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.core.context.Connector;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.ent.operator;
 import sorcer.service.*;
@@ -318,7 +319,7 @@ public class SrvModels {
                         outVal("add/result/y")));
 
         // in connector from exertion to model
-        Context taskOutConnector = outConn(inVal("add/x1", "j2/t4/multiply/result/y"),
+        Connector taskOutConnector = outConn(inVal("add/x1", "j2/t4/multiply/result/y"),
                 inVal("multiply/x1", "j2/t5/add/result/y"));
 
         Job j2 = job("j2", sig("exert", ServiceJobber.class),
@@ -326,7 +327,7 @@ public class SrvModels {
                 taskOutConnector);
 
         // out connector from model
-        Context modelOutConnector = outConn(inVal("y1", "add"), inVal("y2", "multiply"), inVal("y3", "subtract"));
+        Connector modelOutConnector = outConn(inVal("y1", "add"), inVal("y2", "multiply"), inVal("y3", "subtract"));
 
         Model model = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),

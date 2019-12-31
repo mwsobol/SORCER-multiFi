@@ -20,11 +20,8 @@ package sorcer.core.dispatch;
 import net.jini.config.ConfigurationException;
 import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
-import sorcer.service.Exerter;
+import sorcer.service.*;
 import sorcer.core.provider.ServiceExerter;
-import sorcer.service.Arg;
-import sorcer.service.Block;
-import sorcer.service.ContextException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +44,7 @@ public class BlockThread extends Thread {
 	}
 
 	public void run() {
-		logger.debug("*** Subroutine explorer started with control context ***\n"
+		logger.debug("*** Subroutine governor started with control context ***\n"
 				+ block.getControlContext());
 		Dispatcher dispatcher = null;
 		try {
@@ -73,13 +70,13 @@ public class BlockThread extends Thread {
 
 			/*int COUNT = 1000;
 			int count = COUNT;
-			while (explorer.getState() != Exec.DONE
-					&& explorer.getState() != Exec.FAILED
-					&& explorer.getState() != Exec.SUSPENDED) {
+			while (governor.getState() != Exec.DONE
+					&& governor.getState() != Exec.FAILED
+					&& governor.getState() != Exec.SUSPENDED) {
 				count--;
 				if (count < 0) {
 					logger.debug("*** Concatenator's Subroutine Dispatcher waiting in state: "
-							+ explorer.getState());
+							+ governor.getState());
 					count = COUNT;
 				}
 				Thread.sleep(SLEEP_TIME);
@@ -88,10 +85,10 @@ public class BlockThread extends Thread {
 			logger.debug("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + result.state
 					+ " for block***\n" + block.getControlContext());
             this.result = (Block) result.exertion;
-        } catch (DispatcherException de) {
+        } catch (DispatchException de) {
 			de.printStackTrace();
 		}
-		//result = (Block) explorer.getMogram();
+		//result = (Block) governor.getMogram();
 	}
 
 	public Block getBlock() {

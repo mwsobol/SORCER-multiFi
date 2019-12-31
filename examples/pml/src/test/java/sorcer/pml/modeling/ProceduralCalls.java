@@ -31,7 +31,7 @@ public class ProceduralCalls {
 	private final static Logger logger = LoggerFactory.getLogger(ProceduralCalls.class.getName());
 
 	@Test
-	public void proScope() throws Exception {
+	public void prcScope() throws Exception {
 		// a prc is a variable (entry) evaluated with its own scope (context)
 		Context<Double> cxt = context(val("x", 20.0), val("y", 30.0));
 
@@ -58,7 +58,7 @@ public class ProceduralCalls {
 	}
 
 	@Test
-	public void closingProcWihEntries() throws Exception {
+	public void closingPrcWihEntries() throws Exception {
 		Prc y = prc("y",
 			invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
 		Object val = exec(y, val("x1", 10.0), val("x2", 50.0), val("x3", 20.0), val("x4", 80.0));
@@ -67,7 +67,7 @@ public class ProceduralCalls {
 	}
 
 	@Test
-	public void closingProcWitScope() throws Exception {
+	public void closingPrcWitScope() throws Exception {
 
 		// invokers use contextual scope of args
 		Prc add = prc("add", invoker("x + y", args("x", "y")));
@@ -80,7 +80,7 @@ public class ProceduralCalls {
 	}
 
 	@Test
-	public void dbProcOperator() throws Exception {
+	public void dbPrcOperator() throws Exception {
 
 		Prc<Double> dbp1 = persistent(prc("design/in", 25.0));
 		Prc<String> dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
@@ -136,7 +136,7 @@ public class ProceduralCalls {
 	}
 
 	@Test
-	public void procModelOperator() throws Exception {
+	public void prcModelOperator() throws Exception {
 
 		Model mdl = entModel("prc-model", val("v1", 1.0), val("v2", 2.0));
 		add(mdl, val("x", 10.0), val("y", 20.0));

@@ -276,8 +276,8 @@ public class operator extends Operator {
 
 	public static Prc add(Prc callEntry, Object to)
 			throws ContextException {
-		if (to instanceof Subroutine) {
-			((ServiceRoutine)to).addPersister(callEntry);
+		if (to instanceof Routine) {
+			((Subroutine)to).addPersister(callEntry);
 			return callEntry;
 		}
 		return callEntry;
@@ -301,29 +301,29 @@ public class operator extends Operator {
 		return new Prc(gi.getName(), gi);
 	}
 
-    public static Evaluator pl(String name, Context context, Opservice... pservices) {
+    public static Pipeline pl(String name, Context context, Opservice... pservices) {
         Pipeline pl =  new Pipeline(pservices);
         pl.setInvokeContext(context);
         pl.setName(name);
         return pl;
     }
 
-    public static Evaluator pl(Context context, Opservice... pservices) {
+    public static Pipeline pl(Context context, Opservice... pservices) {
         Pipeline pl =  new Pipeline(pservices);
         pl.setInvokeContext(context);
         return pl;
     }
 
-    public static Evaluator pl(String name, Opservice... pservices) {
+    public static Pipeline pl(String name, Opservice... pservices) {
         Pipeline pl =  new Pipeline(pservices);
         return pl;
     }
 
-    public static Evaluator pl(Opservice... pservices) {
+    public static Pipeline pl(Opservice... pservices) {
         return new Pipeline(pservices);
     }
 
-	public static Evaluator n2(String name, Context data, Opservice... pservices) {
+	public static Pipeline n2(String name, Context data, Opservice... pservices) {
 		return new Pipeline(name, data, pservices);
 	}
 
@@ -572,7 +572,7 @@ public class operator extends Operator {
 		return new GroovyInvoker(expression);
 	}
 
-	public static ServiceInvoker invoker(Subroutine exertion) {
+	public static ServiceInvoker invoker(Routine exertion) {
         return new ExertInvoker(exertion);
     }
 
@@ -652,15 +652,15 @@ public class operator extends Operator {
 		return mi;
 	}
 
-	public static ExertInvoker exertInvoker(String name, Subroutine exertion, String path, Prc... callEntries) {
+	public static ExertInvoker exertInvoker(String name, Routine exertion, String path, Prc... callEntries) {
 		return new ExertInvoker(name, exertion, path, callEntries);
 	}
 
-	public static ExertInvoker exertInvoker(Subroutine exertion, String path, Prc... callEntries) {
+	public static ExertInvoker exertInvoker(Routine exertion, String path, Prc... callEntries) {
 		return new ExertInvoker(exertion, path, callEntries);
 	}
 
-	public static ExertInvoker exertInvoker(Subroutine exertion, Prc... callEntries) {
+	public static ExertInvoker exertInvoker(Routine exertion, Prc... callEntries) {
 		return new ExertInvoker(exertion, callEntries);
 	}
 

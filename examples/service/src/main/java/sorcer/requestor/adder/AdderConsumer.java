@@ -1,6 +1,6 @@
 package sorcer.requestor.adder;
 
-import sorcer.core.requestor.ServiceConsumer;
+import sorcer.core.consumer.ServiceConsumer;
 import sorcer.provider.adder.Adder;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -17,23 +17,23 @@ public class AdderConsumer extends ServiceConsumer {
 
     public Mogram getMogram(String... args) throws MogramException {
 
-        String option = "exertion";
+        String option = "routine";
         if (args != null && args.length == 2) {
             option = args[1];
         } else if (this.args != null) {
             option = this.args[0];
         } else {
-            throw new MogramException("wrong arguments for: ExertRequestor fiType, mogram fiType");
+            throw new MogramException("wrong arguments for: Consumer fiType, mogram fiType");
         }
         try {
             if (option.equals("netlet")) {
-                return (Subroutine) evaluate(new File("src/main/netlets/adder.ntl"));
+                return (Routine) evaluate(new File("src/main/netlets/adder.ntl"));
             } else if (option.equals("dynamic")) {
-                return (Subroutine) evaluate(new File("src/main/netlets/adder-sbp.ntl"));
+                return (Routine) evaluate(new File("src/main/netlets/adder-sbp.ntl"));
             } else if (option.equals("model")) {
                 return createModel();
-            } else if (option.equals("exertion")) {
-                return createExertion();
+            } else if (option.equals("routine")) {
+                return createRoutine();
             }
         } catch (Throwable e) {
             throw new MogramException(e);
@@ -41,7 +41,7 @@ public class AdderConsumer extends ServiceConsumer {
         return null;
     }
 
-    private Subroutine createExertion() throws ContextException, SignatureException, RoutineException {
+    private Routine createRoutine() throws ContextException, SignatureException, RoutineException {
         Double v1 = new Double(getProperty("arg/x1"));
         Double v2 = new Double(getProperty("arg/x2"));
 

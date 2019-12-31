@@ -1,6 +1,5 @@
 package sorcer.sml.mograms;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -18,6 +17,7 @@ import sorcer.core.plexus.MultiFiMogram;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.modeling.*;
+import sorcer.service.Discipline;
 
 import java.rmi.RemoteException;
 
@@ -44,13 +44,13 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                ent("mFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
-                response("mphFi", "arg/x1", "arg/x2"));
+                response("mFi", "arg/x1", "arg/x2"));
 
-        Context out = eval(mod, fi("multiply", "mphFi"));
+        Context out = eval(mod, fi("multiply", "mFi"));
         logger.info("out: " + out);
-        assertTrue(get(out, "mphFi").equals(900.0));
+        assertTrue(get(out, "mFi").equals(900.0));
         assertTrue(get(mod, "result/y").equals(900.0));
     }
 
@@ -61,17 +61,17 @@ public class ModelMultiFidelities {
         Model mdl = model(
                 ent("arg/x1", entFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
                 ent("arg/x2", entFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
-                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                ent("mFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
-                response("mphFi", "arg/x1", "arg/x2"));
+                response("mFi", "arg/x1", "arg/x2"));
 
         logger.info("DEPS: " + printDeps(mdl));
 
-        Context out = response(mdl, fi("arg/x1/fi2", "arg/x1"), fis(fi("arg/x2/fi2", "arg/x2"), fi("multiply", "mphFi")));
+        Context out = response(mdl, fi("arg/x1/fi2", "arg/x1"), fis(fi("arg/x2/fi2", "arg/x2"), fi("multiply", "mFi")));
         logger.info("out: " + out);
         assertTrue(get(out, "arg/x1").equals(11.0));
         assertTrue(get(out, "arg/x2").equals(91.0));
-        assertTrue(get(out, "mphFi").equals(1001.0));
+        assertTrue(get(out, "mFi").equals(1001.0));
         assertTrue(get(mdl, "result/y").equals(1001.0));
     }
 
@@ -103,13 +103,13 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                ent("mFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
-                response("mphFi", "arg/x1", "arg/x2"));
+                response("mFi", "arg/x1", "arg/x2"));
 
-        Context out = response(mod, fi("add", "mphFi"));
+        Context out = response(mod, fi("add", "mFi"));
         logger.info("out: " + out);
-        assertTrue(get(out, "mphFi").equals(100.0));
+        assertTrue(get(out, "mFi").equals(100.0));
         assertTrue(get(mod, "result/y").equals(100.0));
     }
 
@@ -121,17 +121,17 @@ public class ModelMultiFidelities {
             val("sig1", sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
             val("sig2", sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
 
-            ent("mphFi", sigFi(ref("sig1"), ref("sig2"))),
-            response("mphFi", "arg/x1", "arg/x2"));
+            ent("mFi", sigFi(ref("sig1"), ref("sig2"))),
+            response("mFi", "arg/x1", "arg/x2"));
 
-        Context out = response(mod, fi("sig1", "mphFi"));
+        Context out = response(mod, fi("sig1", "mFi"));
         logger.info("out: " + out);
-//        assertTrue(getValue(out, "mphFi").equals(100.0));
+//        assertTrue(getValue(out, "mFi").equals(100.0));
         assertTrue(get(mod, "result/y").equals(100.0));
 
-        out = response(mod, fi("sig2", "mphFi"));
+        out = response(mod, fi("sig2", "mFi"));
         logger.info("out2: " + out);
-//        assertTrue(getValue(out, "mphFi").equals(900.0));
+//        assertTrue(getValue(out, "mFi").equals(900.0));
         assertTrue(get(mod, "result/y").equals(900.0));
     }
 
@@ -142,16 +142,16 @@ public class ModelMultiFidelities {
         Model mod = srvModel(inVal("x1", 10.0), inVal("x2", 90.0),
                 ent("eval1", invoker("add", "x1 + x2", args("x1", "x2"))),
                 ent("eval2", invoker("multiply", "x1 * x2", args("x1", "x2"))),
-                ent("mphFi", entFi(ref("eval1"), ref("eval2"))),
-                response("mphFi", "x1", "x2"));
+                ent("mFi", entFi(ref("eval1"), ref("eval2"))),
+                response("mFi", "x1", "x2"));
 
-        Context out = response(mod, fi("eval1", "mphFi"));
+        Context out = response(mod, fi("eval1", "mFi"));
         logger.info("out: " + out);
-        assertTrue(get(out, "mphFi").equals(100.0));
+        assertTrue(get(out, "mFi").equals(100.0));
 
-        out = response(mod, fi("eval2", "mphFi"));
+        out = response(mod, fi("eval2", "mFi"));
         logger.info("out2: " + out);
-        assertTrue(get(out, "mphFi").equals(900.0));
+        assertTrue(get(out, "mFi").equals(900.0));
     }
 
     @Test
@@ -556,7 +556,7 @@ public class ModelMultiFidelities {
         assertTrue(value(context(mog), "result/y").equals(500.0));
     }
 
-    public mog getMorphingModel() throws Exception {
+    public static mog getMorphingModel() throws Exception {
 
         sig add = sig("add", Adder.class,
             result("y1", inPaths("arg/x1", "arg/x2")));
@@ -717,5 +717,25 @@ public class ModelMultiFidelities {
 //        logger.info("result: " + getValue(context(mdlBlock), "mFi4"));
 
         assertTrue(value(context(mdlBlock), "morpher3").equals(920.0));
+    }
+
+    @Test
+    public void morphingDiscipline() throws Exception {
+
+        // cxtn1 is a free contextion for a discipline dispatcher
+        Block mdlDispatch = block(
+            loop(condition(cxt -> (double)
+                value(cxt, "morpher3") < 900.0), model("cxtn1")));
+
+        Discipline morphDis = dsc(
+            ctxFi("cxtn1", sig("cxtn1", ModelMultiFidelities.class, "getMorphingModel")),
+            dspFi("dspt1", mdlDispatch));
+
+        // out is the discipline output
+        Context out  = eval(morphDis, fi("cxtn1", "dspt1"));
+
+        assertTrue(value(out, "morpher3").equals(920.0));
+
+
     }
 }

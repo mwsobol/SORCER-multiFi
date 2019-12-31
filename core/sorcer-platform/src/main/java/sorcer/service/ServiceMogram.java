@@ -13,7 +13,8 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Coupling;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.MdaEntry;
+import sorcer.core.context.model.ent.AnalysisEntry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
@@ -46,55 +47,33 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     static final long serialVersionUID = 1L;
 
     protected Uuid mogramId;
-
     protected Uuid parentId;
-
-    protected Mogram parent;
-
+    protected Contextion parent;
     protected String parentPath = "";
-
     protected ExecPath execPath;
-
     protected Uuid sessionId;
-
     protected String subjectId;
-
     protected Subject subject;
-
     protected String ownerId;
-
     protected String runtimeId;
-
     protected Long lsbId;
-
     protected Long msbId;
-
     protected String domainId;
-
     protected String subdomainId;
-
     protected String domainName;
-
     protected String subdomainName;
-
     protected FidelityManagement fiManager;
-
     protected Projection projection;
-
     // the last morphed projection
     protected String[] metaFiNames;
-
     // list of fidelities of this mogram
     protected String[] profile;
-
     protected MogramStrategy mogramStrategy;
-
     protected Differentiator differentiator;
-
-    protected Fidelity<MdaEntry> mdaFi;
-
+    protected Differentiator fdDifferentiator;
+    protected Differentiator globalDifferentiator;
+    protected Fidelity<AnalysisEntry> mdaFi;
     protected List<Coupling> couplings;
-
     protected ContextSelector contextSelector;
 
     /**
@@ -130,7 +109,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     // for already existing names
     protected String serviceFidelitySelector;
 
-    // Date of creation of this Subroutine
+    // Date of creation of this Routine
     protected Date creationDate = new Date();
 
     protected Date lastUpdateDate;
@@ -190,6 +169,10 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         setSubject(principal);
     }
 
+    public void reset(int state) {
+        status = state;
+    }
+
     @Override
     public void setName(String name) {
         key = name;
@@ -223,7 +206,18 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return exs;
     }
 
+    public List<Contextion> getAllContextions() {
+        List<Contextion> exs = new ArrayList<Contextion>();
+        getContextions(exs);
+        return exs;
+    }
+
     public List<Mogram> getMograms(List<Mogram> exs) {
+        exs.add(this);
+        return exs;
+    }
+
+    public List<Contextion> getContextions(List<Contextion> exs) {
         exs.add(this);
         return exs;
     }
@@ -278,6 +272,11 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
+    public Context getOutput(Arg... args) throws ContextException {
+        return dataContext;
+    }
+
+    @Override
     public void setContext(Context context) throws ContextException {
         dataContext = (ServiceContext) context;
     }
@@ -313,12 +312,12 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public <T extends Mogram> T exert(Transaction txn, Arg... args) throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
         return null;
     }
 
     @Override
-    public <T extends Mogram> T exert(Arg... args) throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(Arg... args) throws ContextException, RemoteException {
         return null;
     }
 
@@ -362,11 +361,11 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.sessionId = sessionId;
     }
 
-    public Mogram getParent() {
+    public Contextion getParent() {
         return parent;
     }
 
-    public void setParent(Mogram parent) {
+    public void setParent(Contextion parent) {
         this.parent = parent;
     }
 
@@ -755,7 +754,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     /**
      * <p>
-     * Assigns a monitor session for this disciplines.
+     * Assigns a monitor session for this domains.
      * </p>
      *
      * @param monitorSession the monitorSession to set
@@ -994,14 +993,30 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.couplings = couplings;
     }
 
-    public Fidelity<MdaEntry> setMdaFi(Context context) throws ConfigurationException {
+    public Fidelity<AnalysisEntry> getAnalysisFi(Context context) throws ConfigurationException {
+        Fidelity<AnalysisEntry> analysisFi = null;
+            Object mdaComponent = context.get(Context.MDA_PATH);
+            if (mdaComponent != null) {
+                if (mdaComponent instanceof AnalysisEntry) {
+                    analysisFi = new Fidelity(((AnalysisEntry)mdaComponent).getName());
+                    analysisFi.addSelect((AnalysisEntry) mdaComponent);
+                    analysisFi.setSelect((AnalysisEntry)mdaComponent);
+                } else if (mdaComponent instanceof ServiceFidelity
+                    && ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
+                    analysisFi = (Fidelity) mdaComponent;
+                }
+            }
+        return analysisFi;
+    }
+
+    public Fidelity<AnalysisEntry> setMdaFi(Context context) throws ConfigurationException {
        if(mdaFi == null) {
            Object mdaComponent = context.get(Context.MDA_PATH);
            if (mdaComponent != null) {
-               if (mdaComponent instanceof MdaEntry) {
-                   mdaFi = new Fidelity(((MdaEntry)mdaComponent).getName());
-                   mdaFi.addSelect((MdaEntry) mdaComponent);
-                   mdaFi.setSelect((MdaEntry)mdaComponent);
+               if (mdaComponent instanceof AnalysisEntry) {
+                   mdaFi = new Fidelity(((AnalysisEntry)mdaComponent).getName());
+                   mdaFi.addSelect((AnalysisEntry) mdaComponent);
+                   mdaFi.setSelect((AnalysisEntry)mdaComponent);
                } else if (mdaComponent instanceof ServiceFidelity
                        && ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
                    mdaFi = (Fidelity) mdaComponent;
@@ -1011,13 +1026,21 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
        return mdaFi;
     }
 
-    public Fidelity<MdaEntry> getMdaFi() {
+    public Fidelity<AnalysisEntry> getMdaFi() {
         return mdaFi;
     }
 
     @Override
     public String getProjectionFi(String projectionName) throws ContextException, RemoteException {
         return ((FidelityManager)fiManager).getProjectionFi(projectionName);
+    }
+
+    public Differentiator getFdDifferentiator() {
+        return fdDifferentiator;
+    }
+
+    public void setFdDifferentiator(Differentiator fdDifferentiator) {
+        this.fdDifferentiator = fdDifferentiator;
     }
 
     public Differentiator getDifferentiator() {
@@ -1092,6 +1115,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     }
 
+    public Differentiator getGlobalDifferentiator() {
+        return globalDifferentiator;
+    }
+
+    public void setGlobalDifferentiator(Differentiator globalDifferentiator) {
+        this.globalDifferentiator = globalDifferentiator;
+    }
+
     @Override
     public List<ThrowableTrace> getAllExceptions() throws RemoteException {
         return null;
@@ -1127,8 +1158,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
                 } catch (RemoteException e) {
                     throw new ContextException(e);
                 }
-            } else if (this instanceof Subroutine) {
-                ((Subroutine) this).getValue(path);
+            } else if (this instanceof Routine) {
+                ((Routine) this).getValue(path);
             }
         }
         throw new ContextException(getName() + "mogram not evaluated yet");
@@ -1151,6 +1182,20 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.metaFiNames = metaFiNames;
     }
 
+    @Override
+    public List<Mogram> getMograms() {
+        List<Mogram> mograms = new ArrayList<>();
+        mograms.add(this);
+        return mograms;
+    }
+
+    @Override
+    public List<Contextion> getContextions() {
+        List<Contextion> contextiona = new ArrayList<>();
+        contextiona.add(this);
+        return contextiona;
+    }
+
     public Mogram clear() throws MogramException {
         if (mogramStrategy != null) {
             mogramStrategy.getOutcome().clear();
@@ -1161,8 +1206,38 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return this;
     }
 
+    public Functionality.Type getDependencyType() {
+        return Function.Type.MOGRAM;
+    }
+
     @Override
     public void substitute(Arg... args) throws SetterException, RemoteException {
             dataContext.substitute(args);
+    }
+
+    /**
+     * Returns true if this exertion is a branching or looping exertion.
+     */
+    public boolean isConditional() {
+        return false;
+    }
+
+    /**
+     * Returns true if this exertion is composed of other exertions.
+     */
+    public boolean isCompound() {
+        return false;
+    }
+
+    public Context getInConnector(Arg... args) throws ContextException, RemoteException {
+        return null;
+    }
+
+    public Context getOutConnector(Arg... args) throws ContextException, RemoteException {
+        return null;
+    }
+
+    public void execDependencies(String path, Arg... args) throws ContextException {
+        // implement in subclasses
     }
 }

@@ -2,7 +2,7 @@ package sorcer.service;
 
 public class DisciplineFidelity extends Fidelity<Fidelity> {
 
-    private Fidelity govFi;
+    private Fidelity cxtnFi;
 
     private Fidelity cxtFi;
 
@@ -25,12 +25,12 @@ public class DisciplineFidelity extends Fidelity<Fidelity> {
         this.cxtFi = contextMultiFi;
     }
 
-    public Fidelity getGovernanceFi() {
-        return govFi;
+    public Fidelity getContextionFi() {
+        return cxtnFi;
     }
 
-    public void setGovernanceFi(Fidelity govFi) {
-        this.govFi = govFi;
+    public void setContextionFi(Fidelity govFi) {
+        this.cxtnFi = govFi;
     }
 
     public Fidelity getDispatcherFi() {
@@ -44,8 +44,8 @@ public class DisciplineFidelity extends Fidelity<Fidelity> {
     private void assignFi(Fidelity fi) {
         if (fi.getFiType().equals(Type.DISPATCHER)) {
             this.select = fi;
-        } else if (fi.getFiType().equals(Fi.Type.GOVERNANCE)) {
-            this.govFi = fi;
+        } else if (fi.getFiType().equals(Fi.Type.CONTEXTION)) {
+            this.cxtnFi = fi;
         } else if (fi.getFiType().equals(Type.CONTEXT)) {
             this.cxtFi = fi;
         }

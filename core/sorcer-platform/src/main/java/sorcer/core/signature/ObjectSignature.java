@@ -378,23 +378,22 @@ public class ObjectSignature extends ServiceSignature implements sig {
 	}
 
 	@Override
-	public Context exert(Mogram mogram) throws MogramException, RemoteException {
+	public Context exert(Contextion mogram) throws ContextException, RemoteException {
 		return exert(mogram, null);
 	}
 
 	@Override
-	public Context exert(Mogram mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
+	public Context exert(Contextion mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
 		Context cxt = null;
 		ObjectTask task = null;
-		if (mogram instanceof Context)
-			cxt = (Context)mogram;
-		else
-			cxt = context(mogram.exert());
-
-		try {
+		if (mogram instanceof Context) {
+			cxt = (Context) mogram;
+		} else {
+			cxt = context(((Mogram) mogram).exert());
+		} try {
 			task = new ObjectTask(this, cxt);
 		} catch (SignatureException e) {
-			throw new MogramException(e);
+			throw new ContextException(e);
 		}
 		return task.exert(txn).getContext();
 	}

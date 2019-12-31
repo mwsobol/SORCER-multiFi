@@ -44,7 +44,7 @@ public class ModelThread extends Thread {
 	}
 
 	public void run() {
-		logger.debug("*** Subroutine explorer started with control context ***\n"
+		logger.debug("*** Subroutine governor started with control context ***\n"
 				+ task.getControlContext());
 		Dispatcher dispatcher = null;
 		try {
@@ -70,13 +70,13 @@ public class ModelThread extends Thread {
 
 			/*int COUNT = 1000;
 			int count = COUNT;
-			while (explorer.getState() != Exec.DONE
-					&& explorer.getState() != Exec.FAILED
-					&& explorer.getState() != Exec.SUSPENDED) {
+			while (governor.getState() != Exec.DONE
+					&& governor.getState() != Exec.FAILED
+					&& governor.getState() != Exec.SUSPENDED) {
 				count--;
 				if (count < 0) {
 					logger.debug("*** Concatenator's Subroutine Dispatcher waiting in state: "
-							+ explorer.getState());
+							+ governor.getState());
 					count = COUNT;
 				}
 				Thread.sleep(SLEEP_TIME);
@@ -85,10 +85,10 @@ public class ModelThread extends Thread {
 			logger.debug("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + result.state
 					+ " for block***\n" + task.getControlContext());
             this.result = (Task) result.exertion;
-        } catch (DispatcherException de) {
+        } catch (DispatchException de) {
 			de.printStackTrace();
 		}
-		//result = (Block) explorer.getMogram();
+		//result = (Block) governor.getMogram();
 	}
 
 	public Task getTask() {

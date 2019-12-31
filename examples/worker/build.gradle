@@ -73,7 +73,7 @@ test {
 	}
 //	dependsOn([install])
 	dependsOn([install, bootme])
-	finalizedBy(stopme)
+	finalizedBy(haltme)
 }
 test.onlyIf{ file("${sorcerDistHome}").exists() }
 

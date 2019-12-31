@@ -70,8 +70,8 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 		return true;
 	}
 	
-	protected void replaceNullExertionIDs(Subroutine ex) {
-		if (ex != null && ((ServiceRoutine) ex).getId() == null) {
+	protected void replaceNullExertionIDs(Routine ex) {
+		if (ex != null && ((Subroutine) ex).getId() == null) {
 			ex.setId(UuidFactory.generate());
 			if (ex.isJob()) {
 				for (int i = 0; i < ((Job) ex).size(); i++)
@@ -80,7 +80,7 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 		}
 	}
 
-	protected void notifyViaEmail(Subroutine ex) throws ContextException {
+	protected void notifyViaEmail(Routine ex) throws ContextException {
 		if (ex == null || ex.isTask())
 			return;
 		Job job = (Job) ex;
@@ -147,11 +147,13 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.core.provider.ServiceBean#service(sorcer.service.Subroutine, net.jini.core.transaction.Transaction)
+	 * @see sorcer.core.provider.ServiceBean#service(sorcer.service.Routine, net.jini.core.transaction.Transaction)
 	 */
-	public Mogram exert(Mogram mogram, Transaction transaction, Arg... args) throws RemoteException, RoutineException {
+	public Contextion exert(Contextion exertion, Transaction transaction, Arg... args) throws ContextException, RemoteException {
 		Mogram out = null;
+		Mogram mogram = (Mogram)exertion;
 		try {
+
 			setServiceID(mogram);
 			mogram.appendTrace("mogram: " + mogram.getName() + " rendezvous: " +
 					(provider != null ? provider.getProviderName() + " " : "")
@@ -165,23 +167,23 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 				out = getControlFlownManager(mogram).process();
 			}
 
-			if (mogram instanceof Subroutine)
+			if (mogram instanceof Routine)
 				mogram.getDataContext().setRoutine(null);
         }
 		catch (Exception e) {
 			logger.debug("exert failed for: " + mogram.getName(), e);
-			throw new RoutineException();
+			throw new ContextException(e);
 		}
 		return out;
 	}
 
 	protected ControlFlowManager getControlFlownManager(Mogram exertion) throws RoutineException {
         try {
-            if (exertion instanceof Subroutine) {
+            if (exertion instanceof Routine) {
                 if (exertion.isMonitorable())
-                    return new MonitoringControlFlowManager((Subroutine)exertion, delegate, this);
+                    return new MonitoringControlFlowManager((Routine)exertion, delegate, this);
                 else
-                    return new ControlFlowManager((Subroutine)exertion, delegate, this);
+                    return new ControlFlowManager((Routine)exertion, delegate, this);
             }
             else
                 return null;
@@ -192,16 +194,16 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
     }
 
 	abstract public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-			throws TransactionException, RoutineException, RemoteException;
+			throws TransactionException, ContextException, RemoteException;
 
 	@Override
-	public Object execute(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws ContextException, RemoteException {
 		Mogram mog = Arg.selectMogram(args);
 		if (mog != null)
 			try {
 				return exert(mog, null, args);
 			} catch (Exception e) {
-				throw new MogramException(e);
+				throw new ContextException(e);
 			}
 		else
 			return null;

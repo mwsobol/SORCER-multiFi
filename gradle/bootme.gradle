@@ -21,7 +21,7 @@ import javax.management.remote.JMXServiceURL
  * limitations under the License.
  */
 
-apply plugin: StopMePlugin
+apply plugin: HaltMePlugin
 
 task bootme(type: BootMe) {
     description = "Starts a provider from this project."
@@ -121,10 +121,10 @@ class BootMe extends DefaultTask {
     }
 }
 
-class StopMePlugin implements Plugin<Project> {
+class HaltMePlugin implements Plugin<Project> {
 
     void apply(Project project) {
-        project.task('stopme') {
+        project.task('haltme') {
             description = 'Stops a provider booted from this project.)'
             doLast {
                 def pids = getPids(project.name)

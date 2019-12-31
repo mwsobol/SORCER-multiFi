@@ -50,10 +50,10 @@ public interface Arg extends Serializable, Service {
 		return null;
 	}
 
-	public static Subroutine selectRoutine(Arg[] args) {
+	public static Routine selectRoutine(Arg[] args) {
 		for (Arg arg : args) {
-			if (arg instanceof Subroutine)
-				return (Subroutine) arg;
+			if (arg instanceof Routine)
+				return (Routine) arg;
 		}
 		return null;
 	}

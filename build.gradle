@@ -20,7 +20,7 @@ int ndx = ref.lastIndexOf("/")
 String branch = ref.substring(ndx+1).trim()
 String branchRef = branch.equals("master")?"":"-$branch"
 
-version = "8.7.55$branchRef"
+version = "8.7.10$branchRef"
 
 apply plugin: 'idea'
 idea {
@@ -36,7 +36,6 @@ task printVersion {
         logger.quiet "Version: $version"
     }
 }
-
 
 task printClasspath() {
     description = 'Prints the current Java classpath.'
@@ -133,7 +132,6 @@ subprojects {
     }
 
 }
-
 
 def isAnAggregateTest(graph) {
     return (graph.hasTask(":tests") || graph.hasTask(":allTests"))

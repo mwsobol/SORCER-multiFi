@@ -44,9 +44,9 @@ import static sorcer.service.Exec.*;
 abstract public class ExertDispatcher implements Dispatcher {
     private final Logger logger = LoggerFactory.getLogger(ExertDispatcher.class);
 
-    protected ServiceRoutine xrt;
+    protected Subroutine xrt;
 
-    protected ServiceRoutine masterXrt;
+    protected Subroutine masterXrt;
 
     protected List<Mogram> inputXrts;
 
@@ -59,9 +59,9 @@ abstract public class ExertDispatcher implements Dispatcher {
     // All dispatchers spawned by this one.
     protected List<Uuid> runningExertionIDs = Collections.synchronizedList(new LinkedList<Uuid>());
 
-    // subject for whom this explorer is running.
+    // subject for whom this governor is running.
     // make sure subject is set before and after any object goes out and comes
-    // in explorer.
+    // in governor.
     protected Subject subject;
 
     protected Exerter provider;
@@ -86,12 +86,12 @@ abstract public class ExertDispatcher implements Dispatcher {
 
     private LeaseRenewalManager lrm = null;
 
-	public ExertDispatcher(Subroutine exertion,
+	public ExertDispatcher(Routine exertion,
                            Set<Context> sharedContexts,
                            boolean isSpawned,
                            Exerter provider,
                            ProvisionManager provisionManager) {
-        ServiceRoutine sxrt = (ServiceRoutine)exertion;
+        Subroutine sxrt = (Subroutine)exertion;
 		this.xrt = sxrt;
         this.subject = sxrt.getSubject();
         this.sharedContexts = sharedContexts;
@@ -105,7 +105,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         state = Exec.RUNNING;
         xrt.setStatus(state);
         if (xrt instanceof Job) {
-            masterXrt = (ServiceRoutine) ((Job) xrt).getMasterExertion();
+            masterXrt = (Subroutine) ((Job) xrt).getMasterExertion();
         }
         try {
             beforeParent(xrt);
@@ -113,7 +113,7 @@ abstract public class ExertDispatcher implements Dispatcher {
             afterExec(xrt);
             xrt.finalizeOutDataContext();
         } catch (Exception e) {
-            logger.warn("Subroutine explorer thread killed by exception: ", e);
+            logger.warn("Routine governor thread killed by exception: ", e);
             xrt.setStatus(Exec.FAILED);
             state = Exec.FAILED;
             xrt.reportException(e);
@@ -131,7 +131,7 @@ abstract public class ExertDispatcher implements Dispatcher {
     abstract protected void doExec(Arg... args) throws SignatureException, RoutineException, RemoteException, MogramException;
     abstract protected List<Mogram> getInputExertions() throws ContextException;
 
-    protected void beforeParent(Subroutine exertion) throws ContextException, RoutineException {
+    protected void beforeParent(Routine exertion) throws ContextException, RoutineException {
         logger.debug("before parent {}", exertion);
         reconcileInputExertions(exertion);
         updateInputs(exertion);
@@ -139,7 +139,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         inputXrts = getInputExertions();
     }
 
-    protected void beforeExec(Subroutine exertion) throws RoutineException, SignatureException {
+    protected void beforeExec(Routine exertion) throws RoutineException, SignatureException {
         logger.debug("before exert {}", exertion);
         try {
             // Provider is expecting exertion to be in context
@@ -148,9 +148,9 @@ abstract public class ExertDispatcher implements Dispatcher {
         } catch (ContextException e) {
             throw new RoutineException(e);
         }
-        // If Job, new explorer will update inputs for it's Subroutine
-        // in catalog dispatchers, if it is a job, then new explorer is
-        // spawned and the shared contexts are passed. So the new explorer
+        // If Job, new governor will update inputs for it's Routine
+        // in catalog dispatchers, if it is a job, then new governor is
+        // spawned and the shared contexts are passed. So the new governor
         // will update inputs of tasks inside the jobExertion. But in space,
         // all inputs to a new job are to be updated before dropping.
         try {
@@ -160,12 +160,12 @@ abstract public class ExertDispatcher implements Dispatcher {
         } catch (RemoteException e) {
             logger.warn("Exception on local prc", e);
         }
-        ((ServiceRoutine) exertion).startExecTime();
+        ((Subroutine) exertion).startExecTime();
         exertion.setStatus(Exec.RUNNING);
 
     }
 
-    protected void afterExec(Subroutine result) throws ContextException, RoutineException {
+    protected void afterExec(Routine result) throws ContextException, RoutineException {
         logger.debug("After exert {}", result);
     }
 
@@ -189,22 +189,22 @@ abstract public class ExertDispatcher implements Dispatcher {
     }
 
     /**
-     * If the {@code Subroutine} is provisionable, deploy services.
+     * If the {@code Routine} is provisionable, deploy services.
      *
-     * @throws RoutineException if there are issues dispatching the {@code Subroutine}
+     * @throws RoutineException if there are issues dispatching the {@code Routine}
      */
     protected void checkProvision() throws RoutineException {
         if(xrt.isProvisionable() && xrt.getDeployments().size()>0) {
             try {
                 provisionManager.deployServices();
-            } catch (DispatcherException e) {
+            } catch (DispatchException e) {
             	logger.warn("Unable to deploy services", e);
                 throw new RoutineException("Unable to deploy services", e);
             }
         }
     }
 
-    public Subroutine getExertion() {
+    public Routine getExertion() {
         return xrt;
     }
 
@@ -241,8 +241,8 @@ abstract public class ExertDispatcher implements Dispatcher {
             logger.warn("Trying to update sharedContexts but it is null for exertion: " + mo);
             return;
         }
-        if (mo instanceof Subroutine) {
-            List<Context> contexts = Mograms.getTaskContexts((Subroutine) mo);
+        if (mo instanceof Routine) {
+            List<Context> contexts = Mograms.getTaskContexts((Routine) mo);
             logger.debug("Contexts to check if shared: " + contexts.toString());
             for (Context ctx : contexts) {
                 if (((ServiceContext) ctx).isShared()) {
@@ -267,7 +267,7 @@ abstract public class ExertDispatcher implements Dispatcher {
 //        }
     }
 
-    protected void updateInputs(Subroutine ex) throws RoutineException, ContextException {
+    protected void updateInputs(Routine ex) throws RoutineException, ContextException {
         logger.debug("updating inputs for {}", ex.getName());
         List<Context> inputContexts = Mograms.getTaskContexts(ex);
         for (Context inputContext : inputContexts)

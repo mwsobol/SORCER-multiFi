@@ -100,7 +100,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(Transaction txn, Arg... entries) throws ContextException, RemoteException {
         Mogram mogram = (Mogram) morphFidelity.getSelect();
         mogram.getContext().setScope(scope);
         T out = mogram.exert(txn, entries);
@@ -110,7 +110,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public <T extends Mogram> T exert(Arg... entries) throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(Arg... entries) throws ContextException, RemoteException {
         return exert(null, entries);
     }
 
@@ -137,7 +137,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     public void setDataContext(ServiceContext dataContext) {
-        ((ServiceRoutine) morphFidelity.getSelect()).setContext(dataContext);
+        ((Subroutine) morphFidelity.getSelect()).setContext(dataContext);
     }
 
     @Override
@@ -158,22 +158,22 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
 
     @Override
     public List<ThrowableTrace> getExceptions() throws RemoteException {
-        return fiManager.getMogram().getExceptions();
+        return ((Mogram)fiManager.getMogram()).getExceptions();
     }
 
     @Override
     public List<String> getTrace() throws RemoteException {
-        return fiManager.getMogram().getTrace();
+        return ((Mogram)fiManager.getMogram()).getTrace();
     }
 
     @Override
     public List<ThrowableTrace> getAllExceptions() throws RemoteException {
-        return fiManager.getMogram().getAllExceptions();
+        return ((Mogram)fiManager.getMogram()).getAllExceptions();
     }
 
     @Override
     public boolean isMonitorable() throws RemoteException {
-        return fiManager.getMogram().isMonitorable();
+        return ((Mogram)fiManager.getMogram()).isMonitorable();
     }
 
     @Override
@@ -201,7 +201,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
         return null;
     }
 
@@ -227,7 +227,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
 
     @Override
     public void appendTrace(String info) throws RemoteException {
-        fiManager.getMogram().appendTrace(info);
+        ((Mogram)fiManager.getMogram()).appendTrace(info);
     }
 
     @Override
@@ -332,4 +332,5 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     public List getSelects() {
         return  getMultifidelity().getSelects();
     }
+
 }

@@ -69,21 +69,21 @@ public class MogramDispatcherFactory implements DispatcherFactory {
     public Dispatcher createDispatcher(Mogram mogram,
                                        Set<Context> sharedContexts,
                                        boolean isSpawned,
-                                       Exerter provider) throws DispatcherException {
+                                       Exerter provider) throws DispatchException {
         Dispatcher dispatcher = null;
         ProvisionManager provisionManager = null;
-        if (mogram instanceof Subroutine) {
-            List<ServiceDeployment> deployments = ((ServiceRoutine) mogram).getDeployments();
+        if (mogram instanceof Routine) {
+            List<ServiceDeployment> deployments = ((Subroutine) mogram).getDeployments();
             if (deployments.size() > 0 && (((ServiceSignature) mogram.getProcessSignature()).isProvisionable()
-                    || ((Subroutine)mogram).isProvisionable()))
-                provisionManager = new ProvisionManager((Subroutine)mogram);
+                    || ((Routine)mogram).isProvisionable()))
+                provisionManager = new ProvisionManager((Routine)mogram);
         }
 
         try {
             if(mogram instanceof Job)
                 mogram = new ExertionSorter((Job)mogram).getSortedJob();
 
-            if ( mogram instanceof Block && Mograms.isCatalogBlock((Subroutine)mogram)) {
+            if ( mogram instanceof Block && Mograms.isCatalogBlock((Routine)mogram)) {
                 logger.info("Running Catalog Block Dispatcher...");
                 dispatcher = new CatalogBlockDispatcher((Block)mogram,
                                                         sharedContexts,
@@ -92,7 +92,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
                                                         provisionManager);
             } else if (isSpaceSequential(mogram)) {
                 logger.info("Running Space Sequential Dispatcher...");
-                dispatcher = new SpaceSequentialDispatcher((Subroutine)mogram,
+                dispatcher = new SpaceSequentialDispatcher((Routine)mogram,
                                                            sharedContexts,
                                                            isSpawned,
                                                            loki,
@@ -140,7 +140,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
                 lrm.renewUntil(monSession.getLease(), Lease.FOREVER, LEASE_RENEWAL_PERIOD, null);
                 dispatcher.setLrm(lrm);
 
-                logger.debug("Subroutine state: " + Exec.State.name(mogram.getStatus()));
+                logger.debug("Routine state: " + Exec.State.name(mogram.getStatus()));
                 logger.debug("Session for the mogram = " + monSession);
                 logger.debug("Lease to be renewed for duration = " +
                         (monSession.getLease().getExpiration() - System
@@ -148,11 +148,8 @@ public class MogramDispatcherFactory implements DispatcherFactory {
             }
 
             logger.info("*** tally of used dispatchers: " + ExertDispatcher.getDispatchers().size());
-        } catch (RuntimeException e) {
-            throw e;
         } catch (Exception e) {
-            throw new DispatcherException(
-                    "Failed to create the mogram explorer for job: "+ mogram.getName(), e);
+            throw new DispatchException("Failed to create the mogram governor for job: "+ mogram.getName(), e);
         }
         return dispatcher;
     }
@@ -176,15 +173,15 @@ public class MogramDispatcherFactory implements DispatcherFactory {
      *
      * @param mogram
      *            The SORCER job that will be used to perform a collection of
-     *            components disciplines
+     *            components domains
      */
     @Override
-    public Dispatcher createDispatcher(Mogram mogram, Exerter provider, String... config) throws DispatcherException {
+    public Dispatcher createDispatcher(Mogram mogram, Exerter provider, String... config) throws DispatchException {
         return createDispatcher(mogram, Collections.synchronizedSet(new HashSet<Context>()), false, provider);
     }
 
     @Override
-    public SpaceTaskDispatcher createDispatcher(Task task, Exerter provider, String... config) throws DispatcherException {
+    public SpaceTaskDispatcher createDispatcher(Task task, Exerter provider, String... config) throws DispatchException {
         ProvisionManager provisionManager = null;
         List<ServiceDeployment> deployments = task.getDeployments();
         if (deployments.size() > 0)
@@ -193,16 +190,12 @@ public class MogramDispatcherFactory implements DispatcherFactory {
         logger.info("Running Space Task Dispatcher...");
         try {
             return new SpaceTaskDispatcher(task,
-                    Collections.synchronizedSet(new HashSet<Context>()),
-                    false,
-                    loki,
-                    provisionManager);
-        } catch (ContextException e) {
-            throw new DispatcherException(
-                    "Failed to create the exertion explorer for job: "+ task.getName(), e);
-        } catch (RoutineException e) {
-            throw new DispatcherException(
-                    "Failed to create the exertion explorer for job: "+ task.getName(), e);
+				Collections.synchronizedSet(new HashSet<Context>()),
+				false,
+				loki,
+				provisionManager);
+        } catch (ContextException | RoutineException e) {
+            throw new DispatchException(e);
         }
     }
 }

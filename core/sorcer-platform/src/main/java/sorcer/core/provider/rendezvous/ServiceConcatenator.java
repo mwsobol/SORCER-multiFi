@@ -28,8 +28,8 @@ import java.rmi.RemoteException;
 
 /**
  * ServiceJobber - The SORCER rendezvous service provider that manages
- * coordination for executing disciplines using service providers that
- * form a dynamic service federation as specified signatures of component disciplines.
+ * coordination for executing domains using service providers that
+ * form a dynamic service federation as specified signatures of component domains.
  * 
  * @author Mike Sobolewski
  */
@@ -41,13 +41,13 @@ public class ServiceConcatenator extends SorcerExerterBean implements Concatenat
 	}
 
 	public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-			throws TransactionException, RoutineException, RemoteException {
-		Subroutine exertion = (Subroutine) mogram;
+			throws TransactionException, ContextException, RemoteException {
+		Routine exertion = (Routine) mogram;
 		setServiceID(exertion);
 		Block result;
 		try {
-			if (((ServiceRoutine)exertion).getControlContext().isMonitorable()
-					&& !(((ServiceRoutine)exertion).getControlContext()).isWaitable()) {
+			if (((Subroutine)exertion).getControlContext().isMonitorable()
+					&& !(((Subroutine)exertion).getControlContext()).isWaitable()) {
 				replaceNullExertionIDs(exertion);
 				new BlockThread((Block) exertion, provider).start();
 				return exertion;
@@ -59,9 +59,9 @@ public class ServiceConcatenator extends SorcerExerterBean implements Concatenat
 				Condition.cleanupScripts(result);
 				logger.trace("<==== Result: " + result);
 			}
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			logger.error("Failed exerting {}", mogram.getName(), e);
-			throw new RoutineException(e);
+			throw new ContextException(e);
 		}
 		return result;
 	}

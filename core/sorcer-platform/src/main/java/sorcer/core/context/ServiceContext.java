@@ -91,7 +91,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected Context initContext;
 
 	/** The exertion that uses this context */
-	protected ServiceRoutine exertion;
+	protected Subroutine exertion;
 	protected String currentPrefix;
 	protected boolean isFinalized = false;
 	protected Functionality.Type type = Functionality.Type.CONTEXT;
@@ -192,13 +192,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 		subdomainId = cxt.getSubdomainId();
 		domainName = cxt.getDomainName();
 		subdomainName = cxt.getSubdomainName();
-		exertion = (ServiceRoutine) cxt.getMogram();
+		exertion = (Subroutine) cxt.getMogram();
 		principal = cxt.getPrincipal();
 		isPersistantTaskAssociated = cxt.isPersistantTaskAssociated;
 	}
 
 	public ServiceContext(List<Identifiable> objects) throws ContextException {
-        this("generated from Identifiable object list");
+        this(defaultName + count++);
         for (Identifiable obj : objects) {
 			putValue(obj.getName(), (T)obj);
 		}
@@ -215,7 +215,7 @@ public class ServiceContext<T> extends ServiceMogram implements
     }
 
     public ServiceContext(Object[] objects) throws ContextException {
-		this("generated from object array");
+		this(defaultName + count++);
         if (objects.length > 0 && objects[0] instanceof Entry) {
             for (int i = 0; i < objects.length; i++) {
                 putValue(((Entry)objects[i]).getName(), (T)((Entry)objects[i]).getValue());
@@ -306,7 +306,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public List<ThrowableTrace> getExceptions() {
 		if (exertion != null)
-			// compatibility for contexts with disciplines
+			// compatibility for contexts with domains
 			return exertion.getExceptions();
 		else
 			return ((ModelStrategy)mogramStrategy).getAllExceptions();
@@ -346,13 +346,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this.initContext = initContext;
 	}
 
-	public Subroutine getMogram() {
+	public Routine getMogram() {
 		return exertion;
 	}
 
-	public void setRoutine(Subroutine exertion) {
-		if (exertion == null || exertion instanceof Subroutine)
-			this.exertion = (ServiceRoutine) exertion;
+	public void setRoutine(Routine exertion) {
+		if (exertion == null || exertion instanceof Routine)
+			this.exertion = (Subroutine) exertion;
 	}
 
 	public T getReturnValue(Arg... entries) throws RemoteException,
@@ -1716,8 +1716,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	// TODO in/out/inout marking as defined in the connector
 	public Context updateContextWith(Context context) throws ContextException {
 		boolean isRedundant = false;
-		if (context instanceof MapContext) {
-			isRedundant = ((MapContext) context).isRedundant;
+		if (context instanceof Connector) {
+			isRedundant = ((Connector) context).isRedundant;
 		}
 		if (context != null) {
 			Iterator it = ((ServiceContext)context).entryIterator();
@@ -2726,7 +2726,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see sorcer.service.Context#getGovernance()
+	 * @see sorcer.service.Context#getContextion()
 	 */
 	@Override
 	public Exerter getProvider() throws SignatureException {
@@ -2873,11 +2873,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public T get(String path) {
-		if (path != null) {
-            return data.get(path);
-        } else {
-            return (T) Context.none;
-        }
+		if (path != null){
+			return data.get(path);
+		} else {
+			return (T) Context.none;
+		}
 	}
 
 	public Context setOutValues(Context<T> context) throws ContextException,
@@ -3074,7 +3074,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Context evaluate(Context inputContext,  Arg... args) throws EvaluationException, RemoteException {
+	public Context evaluate(Context inputContext, Arg... args) throws EvaluationException, RemoteException {
 		try {
 			if (args != null) {
 				substitute((Arg[]) args);
@@ -3369,7 +3369,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws RoutineException, RemoteException {
+	public <T extends Contextion> T exert(Transaction txn, Arg... entries) throws ContextException, RemoteException {
 		Signature signature = null;
 		try {
 			if (subjectValue instanceof Class) {
@@ -3381,19 +3381,19 @@ public class ServiceContext<T> extends ServiceMogram implements
 				return (T) this;
 			}
 		} catch (Exception e) {
-			throw new RoutineException(e);
+			throw new ContextException(e);
 		}
 	}
 
 	@Override
-	public <T extends Mogram> T exert(Arg... entries) throws RoutineException, RemoteException {
+	public <T extends Contextion> T exert(Arg... entries) throws ContextException, RemoteException {
 		return exert(null, entries);
 	}
 
 	/* (non-Javadoc)
-     * @see sorcer.service.Service#exert(sorcer.service.Subroutine, net.jini.core.transaction.Transaction)
+     * @see sorcer.service.Service#exert(sorcer.service.Routine, net.jini.core.transaction.Transaction)
      */
-    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
         try {
             if (mogram instanceof NetTask) {
                 Task task = (NetTask)mogram;
@@ -3417,13 +3417,13 @@ public class ServiceContext<T> extends ServiceMogram implements
             return (T) exertion.exert(txn);
         } catch (Exception e) {
             e.printStackTrace();
-            mogram.getContext().reportException(e);
+			((Mogram)mogram).getContext().reportException(e);
             if (e instanceof Exception)
-                mogram.setStatus(FAILED);
+				((Mogram)mogram).setStatus(FAILED);
             else
-                mogram.setStatus(ERROR);
+				((Mogram)mogram).setStatus(ERROR);
 
-            throw new RoutineException(e);
+            throw new ContextException(e);
         }
     }
 

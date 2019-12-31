@@ -11,7 +11,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.SorcerConstants;
 import sorcer.service.Context;
-import sorcer.service.Subroutine;
+import sorcer.service.Routine;
 import sorcer.util.ModelTable;
 import sorcer.util.SorcerUtil;
 
@@ -128,7 +128,7 @@ public class SorcerDatabaseTest implements SorcerConstants {
 	
 	@Test
 	public void storedExertionSetTest() throws Exception {
-        // getValue from the database two disciplines persisted twice
+        // getValue from the database two domains persisted twice
 		List<String> names = runner.returnExertionNames();
         List<String> ln = list("f1", "f4");
 		Collections.sort(names);
@@ -139,14 +139,14 @@ public class SorcerDatabaseTest implements SorcerConstants {
 	
 	@Test
 	public void storedExertionMapTest() throws Exception {
-		StoredMap<UuidKey, Subroutine> sm = runner.getViews()
+		StoredMap<UuidKey, Routine> sm = runner.getViews()
 				.getRoutineMap();
 		
-		Iterator<Map.Entry<UuidKey, Subroutine>> it = sm
+		Iterator<Map.Entry<UuidKey, Routine>> it = sm
 				.entrySet().iterator();
 				
 		List<String> names = new ArrayList<String>();
-		Map.Entry<UuidKey, Subroutine> entry = null;
+		Map.Entry<UuidKey, Routine> entry = null;
 
 		while (it.hasNext()) {
 			entry = it.next();

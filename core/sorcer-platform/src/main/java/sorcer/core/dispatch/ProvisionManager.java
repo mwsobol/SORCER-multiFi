@@ -28,8 +28,9 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.deploy.OperationalStringFactory;
 import sorcer.core.deploy.ProvisionMonitorCache;
 import sorcer.core.deploy.ServiceDeployment;
+import sorcer.service.DispatchException;
+import sorcer.service.Routine;
 import sorcer.service.Subroutine;
-import sorcer.service.ServiceRoutine;
 import sorcer.service.Signature;
 
 import java.rmi.RemoteException;
@@ -41,27 +42,27 @@ import java.util.concurrent.*;
 
 /**
  * The {@code ProvisionManager} handles the dynamic creation of {@link OperationalString}s created
- * from {@link Subroutine}s.
+ * from {@link Routine}s.
  *
  * @author Dennis Reedy
  * @author Mike Sobolewski
  */
 public class ProvisionManager {
 	private static final Logger logger = LoggerFactory.getLogger(ProvisionManager.class.getName());
-	private final Subroutine exertion;
+	private final Routine exertion;
     final List<Signature> signatures;
     private final List<String> deploymentNames = new ArrayList<>();
     private final ProvisionMonitorCache provisionMonitorCache;
 	private volatile DeployAdmin deployAdmin;
     private Map<ServiceDeployment.Unique, List<OperationalString>> deployments;
 
-	public ProvisionManager(final Subroutine exertion) throws DispatcherException {
+	public ProvisionManager(final Routine exertion) throws DispatchException {
 		this.exertion = exertion;
 		this.signatures = null;
         provisionMonitorCache = ProvisionMonitorCache.getInstance();
 	}
 
-    public ProvisionManager(final List<Signature> signatures) throws DispatcherException {
+    public ProvisionManager(final List<Signature> signatures) throws DispatchException {
         this.exertion = null;
         this.signatures = signatures;
         provisionMonitorCache = ProvisionMonitorCache.getInstance();
@@ -85,7 +86,7 @@ public class ProvisionManager {
         return names;
     }
 
-    public synchronized boolean deployServicesSync() throws DispatcherException {
+    public synchronized boolean deployServicesSync() throws DispatchException {
         if(!deployServices()) {
             return false;
         }
@@ -113,7 +114,7 @@ public class ProvisionManager {
         return deployed;
     }
 
-    public boolean deployServices() throws DispatcherException {
+    public boolean deployServices() throws DispatchException {
         deployments = createDeployments();
         if(deployments.isEmpty()) {
             return false;
@@ -179,11 +180,11 @@ public class ProvisionManager {
                             getDiscoveryInfo());
                 }
                 logger.warn(message);
-                throw new DispatcherException(message);
+                throw new DispatchException(message);
             }
         } catch (Exception e) {
-            if(e instanceof DispatcherException)
-                throw (DispatcherException)e;
+            if(e instanceof DispatchException)
+                throw (DispatchException)e;
 
             if (exertion != null) {
                 java.io.OptionalDataException ode = null;
@@ -204,10 +205,10 @@ public class ProvisionManager {
                     logger.warn("Unable to compute exertion deployment for {}, {}: {}, cause: {}", exertion.getName(),
                                 e.getClass().getName(), e.getMessage(), e.getCause(), e);
                 }
-                throw new DispatcherException(String.format("While trying to provision exertion %s", exertion.getName()), e);
+                throw new DispatchException(String.format("While trying to provision exertion %s", exertion.getName()), e);
             } else {
                 logger.warn("Unable to compute deployment for {}", signatures, e);
-                throw new DispatcherException(String.format("While trying to provision signatures %s", signatures.toString()), e);
+                throw new DispatchException(String.format("While trying to provision signatures %s", signatures.toString()), e);
             }
         }
         return true;
@@ -234,7 +235,7 @@ public class ProvisionManager {
             deploymentNames.remove(remove);
         }
     }
-    private Map<ServiceDeployment.Unique, List<OperationalString>> createDeployments() throws DispatcherException {
+    private Map<ServiceDeployment.Unique, List<OperationalString>> createDeployments() throws DispatchException {
         Map<ServiceDeployment.Unique, List<OperationalString>> deployments = null;
         try {
             if (exertion != null) {
@@ -243,7 +244,7 @@ public class ProvisionManager {
                 deployments = OperationalStringFactory.create(signatures);
             }
         } catch (Exception e) {
-            throw new DispatcherException(String.format("While trying to create deployment for exertion %s",
+            throw new DispatchException(String.format("While trying to create deployment for exertion %s",
                                                         exertion.getName()),
                                           e);
         }
@@ -277,8 +278,8 @@ public class ProvisionManager {
 
     private Iterable<Signature> getNetSignatures() {
         List<Signature> signatures = new ArrayList<>();
-        if(exertion instanceof ServiceRoutine) {
-            ServiceRoutine serviceExertion = (ServiceRoutine)exertion;
+        if(exertion instanceof Subroutine) {
+            Subroutine serviceExertion = (Subroutine)exertion;
             signatures.addAll(serviceExertion.getAllNetTaskSignatures());
         }
         return signatures;

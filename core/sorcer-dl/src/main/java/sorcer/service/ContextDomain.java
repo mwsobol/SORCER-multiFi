@@ -17,8 +17,6 @@
 
 package sorcer.service;
 
-import sorcer.service.modeling.mog;
-
 import java.rmi.RemoteException;
 
 /**
@@ -26,18 +24,7 @@ import java.rmi.RemoteException;
  *
  * Created by Mike Sobolewski on 7/26/16.
  */
-public interface ContextDomain extends Mogram, Dependency, mog {
-
-    /**
-     * Returns a execute of the object at the returnPath as is
-     * (no evaluation or invocation on this object).
-     *
-     * @param path
-     *            the variable name
-     * @return this model execute at the returnPath
-     * @throws ModelException
-     */
-    public Object asis(String path);
+public interface ContextDomain extends Domain {
 
     /**
 	 * Returns the context of all responses of this domain a given configuration.
@@ -48,7 +35,6 @@ public interface ContextDomain extends Mogram, Dependency, mog {
 	 * @throws RemoteException
 	 */
 	public Object getResponse(Arg... args) throws ContextException, RemoteException;
-
 
 	/**
 	 * Returns the input context of this domain.
@@ -78,43 +64,6 @@ public interface ContextDomain extends Mogram, Dependency, mog {
 	public Context getOutputs() throws ContextException, RemoteException;
 
 	/**
-	 * Returns a input connector as a map of input paths of this domain mapped to output paths of the sender.
-	 * An input connector specifies a map of an input context of this model.
-	 *
-	 * @param args optional configuration arguments
-	 * @return
-	 * @throws ContextException
-	 * @throws RemoteException
-	 */
-	public Context getInConnector(Arg... args) throws ContextException, RemoteException;
-
-	/**
-	 * Returns a output connector as a map of output paths of tis domain mapped to input paths of the receiver.
-	 * An output connector specifies a map of an output context of this domain.
-	 *
-	 * @param args optional configuration arguments
-	 * @return
-	 * @throws ContextException
-	 * @throws RemoteException
-	 */
-	public Context getOutConnector(Arg... args) throws ContextException, RemoteException;
-
-	/**
-	 * Returns a execute of the object at the returnPath od this domain
-	 * (evaluation or invocation on this object if needed).
-	 *
-	 * @param path
-	 *            the variable name
-	 * @return this domain execute at the returnPath
-	 * @throws ContextException, RemoteException
-	 */
-	public Object getValue(String path, Arg... args) throws ContextException, RemoteException;
-
-	public Object getValue(Path path, Arg... args) throws ContextException, RemoteException;
-
-	public Path getPath(String path) throws ContextException;
-
-	/**
 	 * Returns a execute of the object at the returnPath od this domain
 	 * (evaluation or invocation on this object if needed).
 	 *
@@ -126,7 +75,7 @@ public interface ContextDomain extends Mogram, Dependency, mog {
 	public ContextDomain add(Identifiable... objects) throws ContextException,
 			RemoteException;
 
-    public void execDependencies(String path, Arg... args) throws ContextException;
+	public Path getPath(String path) throws ContextException;
 
-	public boolean isChanged();
+	public Object getValue(Path path, Arg... args) throws ContextException, RemoteException;
 }

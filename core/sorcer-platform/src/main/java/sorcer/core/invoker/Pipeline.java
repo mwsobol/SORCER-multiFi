@@ -1,8 +1,10 @@
 package sorcer.core.invoker;
 
+import net.jini.core.transaction.Transaction;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
+import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -134,8 +136,10 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion {
 
                 if (opout instanceof Context) {
                     out.append((Context)opout);
+                    invokeContext.putValue(((Identifiable) opsrv).getName(), opout);
                 } else {
                     ((ServiceContext) out).put(((Identifiable) opsrv).getName(), opout);
+                    invokeContext.putValue(((Identifiable) opsrv).getName(), opout);
                 }
             } catch (ServiceException e) {
                 throw new InvocationException(e);
@@ -155,23 +159,88 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion {
 
     @Override
     public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
-        newInvokeContext = context;
+        invokeContext = context;
         return evaluate(args);
     }
 
     @Override
+    public Context invoke(Context context, Arg... args) throws EvaluationException, RemoteException {
+        invokeContext = context;
+        return evaluate(args);
+    }
+
+    @Override
+    public Pipeline exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
+        Context cxt = Arg.selectContext(args);
+        if (cxt != null) {
+            evaluate(cxt, args);
+        } else {
+            evaluate(args);
+        }
+         return this;
+    }
+
+    @Override
     public Context getContext() throws ContextException {
-        return null;
+        Context rpc = null;
+        if (contextReturn != null) {
+            rpc = contextReturn.getDataContext();
+            if (rpc != null && rpc.size() > 0) {
+                try {
+                    invokeContext.appendContext(rpc);
+                    contextReturn.setDataContext(null);
+                } catch (RemoteException e) {
+                    throw new ContextException(e);
+                }
+            }
+        }
+        return invokeContext;
+    }
+
+    @Override
+    public Context getOutput(Arg... args) throws ContextException {
+        return getResult();
     }
 
     @Override
     public void setContext(Context input) throws ContextException {
+        invokeContext = input;
+    }
 
+    public Context getResult() throws ContextException {
+        Context.Return rp = invokeContext.getContextReturn();
+        if (rp == null) {
+            rp = contextReturn;
+        }
+        Context out = null;
+        if (rp != null) {
+            if (rp.outPaths != null && rp.outPaths.size() > 0) {
+                out = invokeContext.getDirectionalSubcontext(rp.outPaths);
+                if (rp.outPaths.size() == 1) {
+                    out.setReturnValue(invokeContext.get(rp.outPaths.get(0).getName()));
+                } else {
+                    out.setReturnValue(invokeContext);
+                }
+                ((ServiceContext)out).setFinalized(true);
+            } else {
+                out = invokeContext;
+            }
+        } else if (out != null && out.getScope() != null) {
+            out.getScope().append(invokeContext);
+        } else {
+            out = invokeContext;
+        }
+
+        return out;
+    }
+
+    public Functionality.Type getDependencyType() {
+        return Functionality.Type.PIPELINE;
     }
 
     @Override
     public Context appendContext(Context context) throws ContextException, RemoteException {
-        return null;
+        return invokeContext.appendContext(context);
     }
 
     @Override
@@ -187,5 +256,20 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion {
     @Override
     public Context getContext(String path) throws ContextException, RemoteException {
         return null;
+    }
+
+    @Override
+    public MogramStrategy getMogramStrategy() {
+        return null;
+    }
+
+    @Override
+    public List<Contextion> getContextions(List<Contextion> contextionList) {
+        return contextionList;
+    }
+
+    @Override
+    public void selectFidelity(Fidelity fi) throws ConfigurationException {
+
     }
 }

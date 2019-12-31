@@ -43,7 +43,7 @@ import java.util.concurrent.*;
 public class MonitorAgent {
     private static final LookupDiscoveryManager discoveryManager;
     private static final Logger logger = LoggerFactory.getLogger(MonitorAgent.class);
-    private static boolean monitoringEnabled = Boolean.parseBoolean(System.getProperty("monitoring.enabled", "true"));
+    private static boolean monitoringEnabled = Boolean.parseBoolean(System.getProperty("monitoring.enabled", "false"));
     private static MonitorListener monitorListener;
     private final static ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private final static BlockingQueue<Request> requests = new LinkedBlockingQueue<>();

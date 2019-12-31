@@ -23,7 +23,7 @@ import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ControlContext;
-import sorcer.core.context.StrategyContext;
+import sorcer.core.context.RoutineStrategy;
 import sorcer.core.exertion.AltTask;
 import sorcer.core.monitor.MonitorEvent;
 import sorcer.core.monitor.MonitorableSession;
@@ -68,8 +68,8 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 	static transient final int EVENT_TASK_POOL_MAX = 5;
 	static transient final long INITIAL_TIMEOUT = Long.MAX_VALUE;
 	private Uuid cookie;
-	private ServiceRoutine initialExertion;
-	private ServiceRoutine runtimeExertion;
+	private Subroutine initialExertion;
+	private Subroutine runtimeExertion;
 	private Monitorable provider;
 	private MonitorSession parentResource;
 	private RemoteEventListener listener;
@@ -89,15 +89,15 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 
 	private Lease lease;
 
-    public MonitorSession(Subroutine ex,
+    public MonitorSession(Routine ex,
                           RemoteEventListener listener,
                           long duration) throws MonitorException {
         super();
 		if (ex == null)
 			throw new NullPointerException("Assertion Failed: initialExertion cannot be NULL");
 
-		this.initialExertion = (ServiceRoutine) ex;
-		runtimeExertion = (ServiceRoutine) ObjectCloner.cloneAnnotated(ex);
+		this.initialExertion = (Subroutine) ex;
+		runtimeExertion = (Subroutine) ObjectCloner.cloneAnnotated(ex);
 		this.listener = listener;
 		init();
 		runtimeExertion.setStatus(Exec.INITIAL);
@@ -113,13 +113,13 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
         setMonitorSession(runtimeExertion, new MonitorableSession(sessionManager, cookie, lease));
 	}
 
-	private MonitorSession(Subroutine xrt, Subroutine runtimeXrt, MonitorSession parentSession) throws MonitorException {
+	private MonitorSession(Routine xrt, Routine runtimeXrt, MonitorSession parentSession) throws MonitorException {
 		super();
 		if (xrt == null || runtimeXrt == null)
 			throw new NullPointerException("Assertion Failed: initialExertion cannot be NULL");
 
-		this.initialExertion = (ServiceRoutine) xrt;
-		this.runtimeExertion = (ServiceRoutine) runtimeXrt;
+		this.initialExertion = (Subroutine) xrt;
+		this.runtimeExertion = (Subroutine) runtimeXrt;
 		this.parentResource = parentSession;
 		this.listener = parentSession.getListener();
 		init();
@@ -139,9 +139,9 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		for (int i = 0; i < initial.size(); i++) {
             try {
                 if (!runtime.get(i).isMonitorable())
-                    ((ServiceRoutine)runtime.get(i)).setMonitored(true);
+                    ((Subroutine)runtime.get(i)).setMonitored(true);
             } catch (RemoteException e) {
-                throw new MonitorException("Could not determine whether Subroutine is monitorable", e);
+                throw new MonitorException("Could not determine whether Routine is monitorable", e);
             }
             add(new MonitorSession(initial.get(i), runtime.get(i), parent));
         }
@@ -151,12 +151,12 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
         throws MonitorException {
         for (int i = 0; i<initial.getTargets().size(); i++) {
             try {
-                if (!runtime.getTargets().get(i).isMonitorable())
-                    ((ServiceRoutine)runtime.getTargets().get(i)).setMonitored(true);
+                if (!((Mogram)runtime.getTargets().get(i)).isMonitorable())
+                    ((Subroutine)runtime.getTargets().get(i)).setMonitored(true);
             } catch (RemoteException e) {
-                throw new MonitorException("Could not determine whether Subroutine is monitorable", e);
+                throw new MonitorException("Could not determine whether Routine is monitorable", e);
             }
-            add(new MonitorSession((Subroutine)initial.getTargets().get(i), (Subroutine)runtime.getTargets().get(i), parent));
+            add(new MonitorSession((Routine)initial.getTargets().get(i), (Routine)runtime.getTargets().get(i), parent));
         }
     }
 
@@ -238,11 +238,11 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		return lease;
 	}
 
-	public void update(Context<?> ctx, StrategyContext controlContext, int aspect) {
+	public void update(Context<?> ctx, RoutineStrategy controlContext, int aspect) {
 		if (ctx == null)
 			throw new NullPointerException("Assertion Failed: ctx cannot be NULL");
 		logger.info("Updating state of exertion: " + runtimeExertion.getName() + ": " + Exec.State.name(aspect));
-        if (runtimeExertion instanceof ServiceRoutine) {
+        if (runtimeExertion instanceof Subroutine) {
 			if (aspect!=runtimeExertion.getStatus())
 				runtimeExertion.setStatus(aspect);
             runtimeExertion.setContext(ctx);
@@ -251,7 +251,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		persist();
 	}
 
-	public void done(Context<?> ctx, StrategyContext controlContext) throws MonitorException {
+	public void done(Context<?> ctx, RoutineStrategy controlContext) throws MonitorException {
         logger.info("Done exertion: {}", runtimeExertion.getName());
 		if (ctx == null)
 			throw new NullPointerException("Assertion Failed: ctx cannot be null");
@@ -259,14 +259,14 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		if (!isRunning() && !isUpdated()) {
 		//if (!isRunning()) {
 			logger.error("Trying to prc done on a non running resource" + this + " state: " + Exec.State.name(getState()));
-			throw new MonitorException("Subroutine " + runtimeExertion.getName() + " not running, state = "
+			throw new MonitorException("Routine " + runtimeExertion.getName() + " not running, state = "
 					+ Exec.State.name(getState()));
 		}
 
 		logger.info("This exertion is completed " + runtimeExertion.getName());
 
 		runtimeExertion.setStatus(Exec.DONE);
-        if (runtimeExertion instanceof ServiceRoutine) {
+        if (runtimeExertion instanceof Subroutine) {
             runtimeExertion.setContext(ctx);
             runtimeExertion.setControlContext((ControlContext)controlContext);
         }
@@ -277,14 +277,14 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		mLandlord.remove(this);
 	}
 
-	public void failed(Context<?> ctx, StrategyContext controlContext) throws MonitorException {
+	public void failed(Context<?> ctx, RoutineStrategy controlContext) throws MonitorException {
 		if (ctx == null)
 			throw new NullPointerException("Assertion Failed: ctx cannot be NULL");
 
 		if (!isRunning() && !isInSpace()  && !isProvision()) {
 			logger.error(
 					"Trying to prc failed on a non running resource" + this);
-			throw new MonitorException("Subroutine " + runtimeExertion.getName() + " not running. state = "
+			throw new MonitorException("Routine " + runtimeExertion.getName() + " not running. state = "
 					+ Exec.State.name(getState()));
 		}
 
@@ -522,11 +522,11 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		return cookie;
 	}
 
-	public ServiceRoutine getInitialExertion() {
+	public Subroutine getInitialExertion() {
 		return initialExertion;
 	}
 
-	public Subroutine getRuntimeExertion() {
+	public Routine getRuntimeExertion() {
 		return runtimeExertion;
 	}
 

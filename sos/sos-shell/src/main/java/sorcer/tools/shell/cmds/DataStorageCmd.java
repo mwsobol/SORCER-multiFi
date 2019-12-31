@@ -157,7 +157,7 @@ public class DataStorageCmd extends ShellCmd {
 	}
 
 	private void printRecord(Uuid id, Store type) throws RemoteException, MonitorException {
-		Subroutine xrt = null;
+		Routine xrt = null;
 		if (selectedDataStorer >= 0) {
 			xrt = ((MonitorUIManagement) dataStorers[selectedDataStorer].service)
 					.getMonitorableExertion(id, NetworkShell.getPrincipal());
@@ -167,7 +167,7 @@ public class DataStorageCmd extends ShellCmd {
 		}
 
 		out.println("--------- STORAGE RECORD # " + selectedRecord + " ---------");
-		out.println(((ServiceRoutine) xrt).describe());
+		out.println(((Subroutine) xrt).describe());
 	}
 
 	private void printRecords(Store type) throws  ServiceException {
@@ -229,7 +229,7 @@ public class DataStorageCmd extends ShellCmd {
 			throw new MogramException(e);
 		}
 //		if (all.size() == 0) {
-//			out.println("No monitored disciplines at this time.");
+//			out.println("No monitored domains at this time.");
 //			return;
 //		}
 //		recordInfos = new RecordInfo[all.size()];

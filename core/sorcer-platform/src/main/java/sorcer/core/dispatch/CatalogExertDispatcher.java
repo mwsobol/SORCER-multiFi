@@ -39,7 +39,7 @@ import static sorcer.service.Exec.*;
 abstract public class CatalogExertDispatcher extends ExertDispatcher {
     private final Logger logger = LoggerFactory.getLogger(CatalogExertDispatcher.class);
 
-    public CatalogExertDispatcher(Subroutine job,
+    public CatalogExertDispatcher(Routine job,
                                   Set<Context> sharedContext,
                                   boolean isSpawned,
                                   Exerter provider,
@@ -47,12 +47,12 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         super(job, sharedContext, isSpawned, provider, provisionManager);
     }
 
-    protected Subroutine execExertion(Subroutine ex, Arg... args) throws SignatureException,
+    protected Routine execExertion(Routine ex, Arg... args) throws SignatureException,
             RoutineException {
         beforeExec(ex);
         // setValue subject before task goes out.
         // ex.setSubject(subject);
-        ServiceRoutine result = null;
+        Subroutine result = null;
         try {
             if (ex.isTask()) {
                 result = execTask((Task) ex, args);
@@ -61,7 +61,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
             } else if (ex.isBlock()) {
                 result = execBlock((Block) ex, args);
             } else {
-                logger.warn("Unknown ServiceRoutine: {}", ex);
+                logger.warn("Unknown Subroutine: {}", ex);
             }
             afterExec(ex, result);
             // setValue subject after result is received
@@ -70,7 +70,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         } catch (Exception e) {
             logger.warn("Error while executing exertion: ", e);
             // return original exertion with exception
-            result = (ServiceRoutine) ex;
+            result = (Subroutine) ex;
             result.reportException(e);
             result.setStatus(FAILED);
             setState(Exec.FAILED);
@@ -79,14 +79,14 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         return result;
     }
 
-    protected void afterExec(Subroutine ex, Subroutine result)
+    protected void afterExec(Routine ex, Routine result)
             throws SignatureException, RoutineException, ContextException {
-        ServiceRoutine ser = (ServiceRoutine) result;
+        Subroutine ser = (Subroutine) result;
 		((Transroutine)xrt).setMogramAt(result, ex.getIndex());
         if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
             ser.setStatus(DONE);
             // update all outputs from sharedcontext only for tasks. For jobs,
-            // spawned explorer does it.
+            // spawned governor does it.
 			try {
 				if (result.isTask()) {
 					collectOutputs(result);
@@ -124,7 +124,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                                 task, null);
                         result.getControlContext().appendTrace(
                                 (provider.getProviderName() != null ? provider.getProviderName() + " " : "")
-                                        + "executed task: " + task.getName() + " explorer: " + getClass().getName());
+                                        + "executed task: " + task.getName() + " governor: " + getClass().getName());
                         return result;
                     }
                 } catch (RemoteException re) {
@@ -219,7 +219,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                 }
                 if (result!=null)
                     result.getControlContext().appendTrace(
-                            (provider != null ? provider.getProviderName() + " " : "") + "explorer: "
+                            (provider != null ? provider.getProviderName() + " " : "") + "governor: "
                                         + getClass().getName());
             }
             logger.debug("got result: {}", result);
@@ -246,22 +246,22 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
     }
 
     protected Job execJob(Job job, Arg ... args)
-            throws DispatcherException, InterruptedException,
+            throws DispatchException, InterruptedException,
             RemoteException {
 
         runningExertionIDs.add(job.getId());
 
-        // create a new instance of a explorer
+        // create a new instance of a governor
         Dispatcher dispatcher = MogramDispatcherFactory.getFactory()
                 .createDispatcher(job, sharedContexts, true, provider);
         dispatcher.exec(args);
-        // wait until serviceJob is done by explorer
+        // wait until serviceJob is done by governor
         Job out = (Job) dispatcher.getResult().exertion;
         // Not sure if good place
         out.stopExecTime();
         out.getControlContext().appendTrace((provider.getProviderName() != null ?
                 provider.getProviderName() + " " : "")  + "executed job: " + job.getName()
-                + " explorer: " + getClass().getName());
+                + " governor: " + getClass().getName());
         return out;
     }
 
@@ -290,13 +290,13 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
             }
 
 			/*
-			 * Create a new explorer thread for the inner job, if no available
+			 * Create a new governor thread for the inner job, if no available
 			 * Jobber is found in the network
 			 */
 			Dispatcher dispatcher;
 			runningExertionIDs.add(block.getId());
 
-			// create a new instance of a explorer
+			// create a new instance of a governor
 			dispatcher = MogramDispatcherFactory.getFactory()
 					.createDispatcher(block, sharedContexts, true, provider);
 
@@ -308,13 +308,13 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                 }
             }
             dispatcher.exec(args);
-			// wait until a block is done by explorer
+			// wait until a block is done by governor
 			Block out = (Block) dispatcher.getResult().exertion;
             out.getControlContext().appendTrace((provider.getProviderName() != null
                     ? provider.getProviderName() + " " : "")
-                    + "executed block: " +  block.getName() + " explorer: " + getClass().getName());
+                    + "executed block: " +  block.getName() + " governor: " + getClass().getName());
 			return out;
-		} catch (RemoteException | RoutineException | DispatcherException ex) {
+		} catch (RemoteException | DispatchException ex) {
 			throw new MogramException(ex);
 		}
 	}

@@ -47,43 +47,40 @@ public class MogramThread implements Runnable {
 	}
 
 	public void run() {
-		logger.debug("*** Subroutine explorer started with control context ***\n"
-				+ ((Subroutine)job).getControlContext());
+		logger.debug("*** Routine governor started with control context ***\n"
+			+ ((Routine)job).getControlContext());
+		Dispatcher dispatcher = null;
 		try {
-            Dispatcher dispatcher = null;
-            if (job instanceof Job)
-                dispatcher = dispatcherFactory.createDispatcher((Job)job, provider);
-            else
-                dispatcher = dispatcherFactory.createDispatcher((Task)job, provider);
-			try {
-				((Subroutine)job).getControlContext().appendTrace((
-						provider.getProviderName() != null ? provider.getProviderName() + " " : "") +
-						"run: " + job.getName() + " explorer: " + dispatcher.getClass().getName());
-			} catch (RemoteException e) {
-                logger.error("exception in explorer: " + e);
-				// ignore it, locall prc
-			}
+		if (job instanceof Job)
+			dispatcher = dispatcherFactory.createDispatcher((Job)job, provider);
+		else
+			dispatcher = dispatcherFactory.createDispatcher((Task)job, provider);
+
+			((Routine)job).getControlContext().appendTrace((
+				provider.getProviderName() != null ? provider.getProviderName() + " " : "") +
+				"run: " + job.getName() + " governor: " + dispatcher.getClass().getName());
+		} catch (DispatchException | RemoteException e) {
+			logger.error("exception in governor: " + e);
+			// ignore it, locall prc
+		}
 /*			 int COUNT = 1000;
 			 int count = COUNT;
-			while (explorer.getState() != Exec.DONE
-					&& explorer.getState() != Exec.FAILED
-					&& explorer.getState() != Exec.SUSPENDED) {
+			while (governor.getState() != Exec.DONE
+					&& governor.getState() != Exec.FAILED
+					&& governor.getState() != Exec.SUSPENDED) {
 				 count--;
 				 if (count < 0) {
-				 logger.debug("*** Mogramber's Subroutine Dispatcher waiting in state: "
-				 + explorer.getState());
+				 logger.debug("*** Mogramber's Routine Dispatcher waiting in state: "
+				 + governor.getState());
 				 count = COUNT;
 				 }
 				Thread.sleep(SLEEP_TIME);
 			}*/
-            dispatcher.exec();
-            DispatchResult dispatchResult = dispatcher.getResult();
-            logger.debug("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + dispatchResult.state
-                    + " for job***\n" + ((Subroutine)job).getControlContext());
-            result = (Mogram) dispatchResult.exertion;
-		} catch (DispatcherException de) {
-			de.printStackTrace();
-		}
+		dispatcher.exec();
+		DispatchResult dispatchResult = dispatcher.getResult();
+		logger.debug("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + dispatchResult.state
+			+ " for job***\n" + ((Routine)job).getControlContext());
+		result = (Mogram) dispatchResult.exertion;
 	}
 
 	public Mogram getMogram() {

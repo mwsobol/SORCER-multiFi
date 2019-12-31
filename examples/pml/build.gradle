@@ -70,5 +70,5 @@ test {
 	}
 //	dependsOn([install])
 	dependsOn([install, bootme])
-	finalizedBy(stopme)
+	finalizedBy(haltme)
 }

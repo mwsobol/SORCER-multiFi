@@ -34,8 +34,8 @@ import static sorcer.util.StringUtils.tName;
 
 /**
  * ServiceSpacer - The SORCER rendezvous service provider that provides
- * coordination for executing disciplines using JavaSpace from which provides PULL
- * disciplines to be executed.
+ * coordination for executing domains using JavaSpace from which provides PULL
+ * domains to be executed.
  * 
  * @author Mike Sobolewski
  */
@@ -55,22 +55,22 @@ public class ServiceSpacer extends SorcerExerterBean implements Spacer {
 
     @Override
     public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-            throws TransactionException, RoutineException, RemoteException {
-         if (mogram instanceof Subroutine && ((Subroutine)mogram).isCompound())
+            throws TransactionException, ContextException, RemoteException {
+         if (mogram instanceof Routine && mogram.isCompound())
             return doCompound(mogram, txn);
         else
             return doTask((Task)mogram);
     }
 
     public Mogram doCompound(Mogram mogram, Transaction txn, Arg... args)
-            throws TransactionException, RoutineException, RemoteException {
+            throws TransactionException, ContextException, RemoteException {
         setServiceID(mogram);
         try {
-            MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Subroutine)mogram));
-            if (((Subroutine)mogram).getControlContext().isMonitorable()
-                    && !((Subroutine)mogram).getControlContext().isWaitable()) {
-                replaceNullExertionIDs((Subroutine)mogram);
-                notifyViaEmail((Subroutine)mogram);
+            MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Routine)mogram));
+            if (((Routine)mogram).getControlContext().isMonitorable()
+                    && !((Routine)mogram).getControlContext().isWaitable()) {
+                replaceNullExertionIDs((Routine)mogram);
+                notifyViaEmail((Routine)mogram);
                 new Thread(mogramThread, ((Job)mogram).getContextName()).start();
                 return mogram;
             } else {
@@ -80,7 +80,7 @@ public class ServiceSpacer extends SorcerExerterBean implements Spacer {
                 return result;
             }
         } catch (Exception e) {
-            ((ServiceRoutine)mogram).reportException(e);
+            ((Subroutine)mogram).reportException(e);
             logger.warn("Error: " + e.getMessage());
             return mogram;
         }
@@ -105,20 +105,17 @@ public class ServiceSpacer extends SorcerExerterBean implements Spacer {
             logger.trace("*** TaskThread Started ***");
             try {
                 SpaceTaskDispatcher dispatcher = getDispatcherFactory(task).createDispatcher(task, provider);
-                try {
-                    task.getControlContext().appendTrace("spacer: "
-                            +(provider != null ? provider.getProviderName() + " " : "")
-                            + dispatcher.getClass().getName());
-                } catch (RemoteException e) {
-                    //ignore it, local prc
-                }
+                task.getControlContext().appendTrace("spacer: "
+                    +(provider != null ? provider.getProviderName() + " " : "")
+                    + dispatcher.getClass().getName());
+
                 dispatcher.exec();
                 DispatchResult dispatchResult = dispatcher.getResult();
                 logger.debug("Dispatcher State: " + dispatchResult.state);
-				result = (NetTask) dispatchResult.exertion;
-            } catch (DispatcherException e) {
-                logger.warn("Error while executing space task {}", task.getName(), e);
-                task.reportException(e);
+
+                result = (NetTask) dispatchResult.exertion;
+            } catch (DispatchException | RemoteException e) {
+                logger.warn("TaskThread failed for: " + task);
             }
         }
 
@@ -127,7 +124,7 @@ public class ServiceSpacer extends SorcerExerterBean implements Spacer {
         }
     }
 
-    public Subroutine doTask(Subroutine task) throws RemoteException {
+    public Routine doTask(Routine task) throws RemoteException {
         setServiceID(task);
         try {
             if (task.isMonitorable()
@@ -150,7 +147,7 @@ public class ServiceSpacer extends SorcerExerterBean implements Spacer {
         }
     }
 
-    protected DispatcherFactory getDispatcherFactory(Subroutine exertion) {
+    protected DispatcherFactory getDispatcherFactory(Routine exertion) {
         if (exertion.isSpacable())
             return MogramDispatcherFactory.getFactory(myMemberUtil);
         else

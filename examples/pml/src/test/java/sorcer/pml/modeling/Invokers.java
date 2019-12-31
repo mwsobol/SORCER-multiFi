@@ -13,10 +13,7 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.Prc;
-import sorcer.core.invoker.AltInvoker;
-import sorcer.core.invoker.Updater;
-import sorcer.core.invoker.OptInvoker;
-import sorcer.core.invoker.ServiceInvoker;
+import sorcer.core.invoker.*;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -179,7 +176,7 @@ public class Invokers {
     }
 
     @Test
-    public void execProc() throws Exception {
+    public void execPrc() throws Exception {
 
 	    // constant entry
         ent x1 = ent("x1", 1.0);
@@ -221,6 +218,14 @@ public class Invokers {
 	}
 
 	@Test
+	public void invokeContext() throws Exception {
+		y = ent("y", invoker("x1 + x2", args("x1", "x2")));
+		Object val = exec(y, context(val("x1", 10.0), val("x2", 20.0)));
+		logger.info("y: " + val);
+		assertTrue(val.equals(30.0));
+	}
+
+	@Test
 	public void substituteInvokeArgs() throws Exception {
 		ent x1, x2, y;
 
@@ -236,75 +241,13 @@ public class Invokers {
 		assertTrue(val.equals(30.0));
 	}
 
-    @Test
-    public void opservicePipeline() throws Exception {
-
-        Opservice lambdaOut = invoker("lambdaOut",
-                (Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
-                args("x", "y"));
-
-        Opservice exprOut = invoker("exprOut", "lambdaOut - y", args("lambdaOut", "y"));
-
-        Opservice sigOut = sig("multiply", MultiplierImpl.class,
-                result("z", inPaths("lambdaOut", "exprOut")));
-
-        Evaluator opspl = pl(
-                lambdaOut,
-                exprOut,
-                sigOut);
-
-        setContext(opspl, context("mfprc",
-                inVal("x", 20.0),
-                inVal("y", 80.0)));
-
-        Context out = (Context) exec(opspl);
-
-        logger.info("pipeline: " + out);
-        assertEquals(130.0, value(out, "lambdaOut"));
-        assertEquals(50.0, value(out, "exprOut"));
-        assertEquals(6500.0, value(out, "z"));
-    }
-
-	@Test
-	public void n2Pipeline() throws Exception {
-
-		Context data = context("mfprc",
-				inVal("x", 20.0),
-				inVal("y", 80.0));
-
-		Opservice lambdaOut = invoker("lambdaOut",
-				(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
-				args("x", "y"));
-
-		Opservice exprOut = invoker("exprOut", "lambdaOut - y", args("lambdaOut", "y"));
-
-		Opservice sigOut = sig("multiply", MultiplierImpl.class,
-				result("z", inPaths("lambdaOut", "exprOut")));
-
-		Evaluator pp = n2("n-squared", data,
-				lambdaOut,
-				exprOut,
-				sigOut,
-                appendInput(context(inVal("x", 40.0), inVal("y", 160.0))),
-                lambdaOut);
-//                exert(sig("getMogram", Invokers.class)));
-
-		Context out = (Context) exec(pp);
-
-		logger.info("pipeline: " + out);
-//		assertEquals(130.0, value(out, "lambdaOut"));
-        assertEquals(230.0, value(out, "lambdaOut"));
-		assertEquals(50.0, value(out, "exprOut"));
-		assertEquals(6500.0, value(out, "z"));
-	}
-
 	static public Mogram getMogram() throws Exception {
 		Context c4 = context("multiply", inVal("arg/x1", 50.0),
 			inVal("arg/x2", 10.0), result("result/y"));
 		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 			result("result/y"));
 
-		// disciplines
+		// domains
 		Task t3 = task(
 			"t3",
 			sig("subtract", SubtractorImpl.class),

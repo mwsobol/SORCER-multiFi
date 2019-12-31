@@ -68,9 +68,9 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
 	// Must initialize to ANY to have correct JavaSpace workers behavior
-	// to have disciplines with providerName/serviceInfo specified going to
+	// to have domains with providerName/serviceInfo specified going to
 	// providers
-	// named "providerName". Otherwise, disciplines with providerName/serviceInfo
+	// named "providerName". Otherwise, domains with providerName/serviceInfo
 	// can
 	// be picked up by workers with template null/serviceInfo that are not named
 	// "providerName"
@@ -87,7 +87,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	protected Multitype multitype = new Multitype();
 
 	// associated exertion only if needed
-	protected Subroutine exertion;
+	protected Routine exertion;
 
 	/** preprocess, compute, postprocess, append context */
 	protected Type execType = Type.PROC;
@@ -98,7 +98,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	/** indicates whether this method is being processed by the exert method */
 	protected boolean isActive = true;
 
-	// shell can be used to exert disciplines locally or remotely (as ServiceExerter)
+	// shell can be used to exert domains locally or remotely (as ServiceExerter)
 	protected boolean isShellRemote = false;
 
 	// context input connector
@@ -158,11 +158,11 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
         execType = Type.PROC;
     }
 
-	public void setExertion(Subroutine exertion) throws RoutineException {
+	public void setExertion(Routine exertion) throws RoutineException {
 		this.exertion = exertion;
 	}
 
-	public Subroutine getExertion() {
+	public Routine getExertion() {
 		return exertion;
 	}
 
@@ -622,8 +622,8 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	@Override
-	public Context exert(Mogram mogram, Transaction txn, Arg... args)
-		throws MogramException, RemoteException {
+	public Context exert(Contextion mogram, Transaction txn, Arg... args)
+		throws ContextException, RemoteException {
 		Context cxt = null;
 		if (mogram instanceof Context) {
 			cxt = (Context)mogram;
@@ -641,7 +641,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		}
 	}
 
-	public Context exert(Mogram mogram) throws MogramException, RemoteException {
+	public Context exert(Contextion mogram) throws ContextException, RemoteException {
 		return exert(mogram, null);
 	}
 
@@ -703,6 +703,11 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	@Override
 	public List<Evaluation> getDependers() {
 		return dependers;
+	}
+
+	@Override
+	public Functionality.Type getDependencyType() {
+		return Functionality.Type.SIGNATURE;
 	}
 
 	@Override

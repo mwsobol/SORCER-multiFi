@@ -51,17 +51,17 @@ public class EmxCmd extends ShellCmd {
 			+ "\n\t\t\t  | [ -a | -d | -f | -r | -y | <exertion index>] "
 			+ "\n\t\t\t  | (-e | -c | -cc | -ccc) [<exertion index>] [-s <filename>]";
 
-		COMMAND_HELP = "Support for monitoring runtime disciplines;"
+		COMMAND_HELP = "Support for monitoring runtime domains;"
 				+ "\n  -mode   show current mode"
 				+ "\n  ('emx' mode) show EMX services or ('xrt' mode) print the selected exertion"
 				+ "\n  <EMX index>   select the EMX given <EMX index>"
 				+ "\n  -v   print the selected EMX service/exertion"
 				+ "\n  -x   clearSessions the selection of MX service/exertion"
-				+ "\n  -a   show all monitored disciplines"
-				+ "\n  -d   show done monitored disciplines"
-				+ "\n  -f   show failed monitored disciplines"
-				+ "\n  -r   show running monitored disciplines"
-				+ "\n  -y   show asynchronous monitored disciplines"
+				+ "\n  -a   show all monitored domains"
+				+ "\n  -d   show done monitored domains"
+				+ "\n  -f   show failed monitored domains"
+				+ "\n  -r   show running monitored domains"
+				+ "\n  -y   show asynchronous monitored domains"
 				+ "\n  -e   print the selected exertion"
 				+ "\n  <exertion index>   select the exertion given <exertion index>"
 				+ "\n  -c   print the data context of selected exertion"
@@ -176,7 +176,7 @@ public class EmxCmd extends ShellCmd {
 					}
 					if (selectedExertion < 0
 							|| selectedExertion >= exertionInfos.length)
-						out.println("No such Subroutine for: " + next);
+						out.println("No such Routine for: " + next);
 					else
 						out.println(exertionInfos[selectedExertion]);
 				}
@@ -203,7 +203,7 @@ public class EmxCmd extends ShellCmd {
 				} catch (NumberFormatException e) {
 					selectedExertion = selectExertionByName(next);
 					if (selectedExertion < 0)
-						out.println("No such Subroutine for: " + next);
+						out.println("No such Routine for: " + next);
 				}
 				if (selectedExertion >= 0
 						&& selectedExertion < exertionInfos.length) {
@@ -211,7 +211,7 @@ public class EmxCmd extends ShellCmd {
 					printExertion(xrtInfo.getStoreId(), isContext,
 							isControlContext);
 				} else
-					out.println("No such Subroutine for: " + selectedExertion);
+					out.println("No such Routine for: " + selectedExertion);
 			}
 		} else {
 			out.println(COMMAND_USAGE);
@@ -220,7 +220,7 @@ public class EmxCmd extends ShellCmd {
 
 	private void printExertion(Uuid id, boolean isContext,
 			boolean isControlContext) throws RemoteException, MonitorException, ContextException {
-        Subroutine xrt = null;
+        Routine xrt = null;
         if (emxMonitors == null || emxMonitors.length == 0) {
             findMonitors();
         }
@@ -239,7 +239,7 @@ public class EmxCmd extends ShellCmd {
 
         out.println(ansi().render("@|blue ---------"
                 + "|@ @|bold,blue EXERTION # " + selectedExertion + "|@ @|blue ---------|@"));
-		out.println(ansi().render("@|bold " + ((ServiceRoutine) xrt).describe() + "|@"));
+		out.println(ansi().render("@|bold " + ((Subroutine) xrt).describe() + "|@"));
         if (isContext) {
 			out.println(ansi().render("@|yellow " + "\nData Context:" + "|@"));
 			out.println(ansi().render("@|bold,yellow " + xrt.getContext() + "|@"));
@@ -296,7 +296,7 @@ public class EmxCmd extends ShellCmd {
 			}
 		}
 		if (all.size() == 0) {
-			out.println("No monitored disciplines at this time.");
+			out.println("No monitored domains at this time.");
 			return;
 		}
 

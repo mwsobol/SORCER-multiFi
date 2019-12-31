@@ -4,7 +4,7 @@ import edu.pjatk.inn.coffeemaker.CoffeeService;
 import edu.pjatk.inn.coffeemaker.Delivery;
 import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
 import edu.pjatk.inn.coffeemaker.impl.DeliveryImpl;
-import sorcer.core.requestor.ServiceConsumer;
+import sorcer.core.consumer.ServiceConsumer;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
 

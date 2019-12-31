@@ -25,8 +25,9 @@ import sorcer.service.modeling.SupportComponent;
 import java.rmi.RemoteException;
 
 /**
- * In service-based modeling, a reference (for short a ref) is a special kind of
- * entry, used to refer to a execute of its contextReturn in the context model.
+ * In service mogrogramming, a reference (for short a ref) is a special kind of
+ * entry, used as a handle to its referenced value. While the referenced value is not
+ * defined it has to be bound the its referenced value at runtime.
  * 
  * @author Mike Sobolewski
  */

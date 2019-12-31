@@ -27,7 +27,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * An top-level common interface for all mograms in SORCER.
+ * A top-level interface for mograms - models of the {@link sorcer.service.modeling.Model} type
+ * and routines of the {@link sorcer.service.Routine} type, or both.
  *
  * @author Mike Sobolewski
  */
@@ -48,20 +49,20 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
      * @param txn
      *            The transaction (if any) under which to exert.
      * @return a resulting exertion
-     * @throws net.jini.core.transaction.TransactionException
-     *             if a transaction error occurs
-     * @throws RoutineException
-     *             if processing this exertion causes an error
+     * @throws MogramException
+     *             if a mogram error occurs
+     * @throws RemoteException
+     *             if remote call causes an error
      */
-    public <T extends Mogram> T exert(Transaction txn, Arg... args) throws MogramException, RemoteException;
+    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException;
 
-    public <T extends Mogram> T exert(Arg... args) throws MogramException, RemoteException;
+    public <T extends Contextion> T exert(Arg... args) throws ContextException, RemoteException;
 
     public int getIndex();
 
     public void setIndex(int i);
 
-    public Mogram getParent();
+    public Contextion getParent();
 
     public void setParentId(Uuid parentId);
 
@@ -78,7 +79,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
     public void setStatus(int value);
 
     /**
-     * Returns a execute of the component at the key
+     * Returns an execute of the component at the key
      *
      * @param key
      *            the component name
@@ -345,7 +346,28 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
      */
     public boolean isExportControlled();
 
-    /**
+	List<Mogram> getMograms(List<Mogram> allMograms);
+
+	List<Contextion> getContextions(List<Contextion> allContextions);
+
+	/**
+	 * Returns the list of direct component exertions.
+	 * @return Routine list
+	 */
+	public List<Mogram> getMograms();
+
+	public List<Contextion> getContextions();
+
+
+	/**
+	 * Returns the list of all nested component exertions/
+	 * @return Routine list
+	 */
+	public List<Mogram> getAllMograms();
+
+	public List<Contextion> getAllContextions();
+
+	/**
      *  Returns a signature builder that returns instances of this model.
      *  A inConnector specifies a map of an input context as needed by another collaborating service.
      *
@@ -358,8 +380,16 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
 
     public void applyFidelity(String name);
 
-    public MogramStrategy getMogramStrategy();
-
     public void setBuilder(Signature builder) throws MogramException;
+
+	/**
+	 * Returns true if this exertion is a branching or looping exertion.
+	 */
+	public boolean isConditional();
+
+	/**
+	 * Returns true if this exertion is composed of other exertions.
+	 */
+	public boolean isCompound();
 
 }

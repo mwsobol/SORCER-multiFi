@@ -15,8 +15,7 @@ package sorcer.service.modeling;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import sorcer.service.Arg;
-import sorcer.service.Context;
+import sorcer.service.*;
 
 import java.rmi.RemoteException;
 
@@ -29,7 +28,7 @@ import sorcer.service.Context;
 public interface Exploration {
 
     @SuppressWarnings("rawtypes")
-    public Context explore(Context searchContext, Arg... args) throws ExploreException,
+    public Context explore(Context context) throws ContextException,
             RemoteException;
 
 }

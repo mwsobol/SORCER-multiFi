@@ -28,9 +28,11 @@ import sorcer.core.exertion.AltTask;
 import sorcer.core.exertion.EvaluationTask;
 import sorcer.core.exertion.LoopTask;
 import sorcer.core.exertion.OptTask;
+import sorcer.core.invoker.Pipeline;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
+import sorcer.eo.operator;
 import sorcer.service.Exerter;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.service.*;
@@ -50,7 +52,7 @@ import java.util.Set;
 public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
     private final Logger logger = LoggerFactory.getLogger(CatalogBlockDispatcher.class);
 
-	public CatalogBlockDispatcher(Subroutine block, Set<Context> sharedContext,
+	public CatalogBlockDispatcher(Routine block, Set<Context> sharedContext,
 								  boolean isSpawned, Exerter provider,
 								  ProvisionManager provisionManager) throws ContextException, RemoteException {
 		super(block, sharedContext, isSpawned, provider, provisionManager);
@@ -69,7 +71,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 	}
 
     @Override
-    protected void beforeExec(Subroutine exertion) throws RoutineException, SignatureException {
+    protected void beforeExec(Routine exertion) throws RoutineException, SignatureException {
         super.beforeExec(exertion);
         try {
             preUpdate(exertion);
@@ -88,22 +90,24 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
     }
 
     @Override
-    protected void afterExec(Subroutine result) throws ContextException, RoutineException {
+    protected void afterExec(Routine result) throws ContextException, RoutineException {
         super.afterExec(result);
         try {
             postUpdate(result);
             Condition.cleanupScripts(result);
             if (result instanceof ConditionalTask) {
-                Mogram target = ((ConditionalTask)result).getTarget();
+                Contextion target = ((ConditionalTask)result).getTarget();
                 if (target instanceof Model) {
-                    xrt.getContext().append((Context)((Model)target).getResult());
-                }
+					xrt.getContext().append((Context)((Model)target).getResult());
+				} else if (target instanceof Pipeline) {
+					xrt.getContext().append(((Pipeline)target).getResult());
+				}
             }
             //TODO Not very nice
             /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(result);
             if (result.isBlock() && result.isMonitorable() && monSession!=null) {
                 boolean isFailed = false;
-                for (Subroutine xrt : result.getAllMograms()) {
+                for (Routine xrt : result.getAllMograms()) {
                     if (xrt.getStatus()==Exec.FAILED || xrt.getStatus()==Exec.ERROR) {
                         isFailed = true;
                         break;
@@ -118,7 +122,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         }
     }
 
-    private void preUpdate(Subroutine exertion) throws ContextException, RemoteException {
+    private void preUpdate(Routine exertion) throws ContextException, RemoteException {
 		if (exertion instanceof AltTask) {
 			for (OptTask oe : ((AltTask)exertion).getOptExertions()) {
                 oe.getCondition().getConditionalContext().append(xrt.getContext());
@@ -172,7 +176,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         }
 	}
 	
-	private void postUpdate(Subroutine exertion) throws ContextException {
+	private void postUpdate(Routine exertion) throws ContextException {
         if (exertion instanceof Job) {
             xrt.getDataContext().append(exertion.getDataContext());
         } else if (exertion instanceof AltTask) {

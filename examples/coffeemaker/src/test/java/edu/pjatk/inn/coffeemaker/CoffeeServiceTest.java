@@ -69,7 +69,7 @@ public class CoffeeServiceTest {
 
 	@After
 	public void cleanUp() throws Exception {
-		Subroutine cmt =
+		Routine cmt =
 			task(sig("deleteRecipes", CoffeeMaking.class),
 				context(types(), args()));
 
@@ -90,12 +90,12 @@ public class CoffeeServiceTest {
 	@Test
 	public void addRecipes() throws Exception {
 
-		Subroutine cmt = task(sig("addRecipe", CoffeeService.class), espresso);
+		Routine cmt = task(sig("addRecipe", CoffeeService.class), espresso);
 		Context out = context(exert(cmt));
 		logger.info("job context: " + out);
 		assertEquals(value(out, "recipe/added"), true);
 
-		Subroutine cmj = job("recipes",
+		Routine cmj = job("recipes",
 			task("mocha", sig("addRecipe", CoffeeService.class), mocha),
 			task("macchiato", sig("addRecipe", CoffeeService.class), macchiato),
 			task("americano", sig("addRecipe", CoffeeService.class), americano));
@@ -109,14 +109,14 @@ public class CoffeeServiceTest {
 
 	@Test
 	public void getRecepies() throws Exception {
-		Subroutine cmt = task(sig("getRecipes", CoffeeService.class));
+		Routine cmt = task(sig("getRecipes", CoffeeService.class));
 		cmt = exert(cmt);
 		logger.info("getRecipes: " + context(cmt));
 	}
 
 	@Test
 	public void getDelivery() throws Exception {
-		Subroutine cmt = task(sig("deliver", Delivery.class));
+		Routine cmt = task(sig("deliver", Delivery.class));
 		cmt = exert(cmt);
 		logger.info("getRecipes: " + context(cmt));
 		assertEquals(value(context(cmt), "delivery/cost"), 60);
@@ -125,7 +125,7 @@ public class CoffeeServiceTest {
 	@Test
 	public void deliverCoffee() throws Exception {
 		// make sure that the CoffeMaker knows the recipe
-		Subroutine cmt = task(sig("addRecipe", CoffeeService.class), espresso);
+		Routine cmt = task(sig("addRecipe", CoffeeService.class), espresso);
 		exert(cmt);
 
 		// order espresso with delivery

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * User: Pawel Rubach
  * Date: 23.10.13
  *
- * Sort a list of disciplines taking into account the dependencies in pipes and
+ * Sort a list of domains taking into account the dependencies in pipes and
  * the tasks and jobs hierarchy. The sorter also determines the Flow for jobs
  * that have the Flow setValue to AUTO.
  *
@@ -28,12 +28,12 @@ public class ExertionSorter {
     private final Map<String, String> contextIdsMap;
     private final Map<String, String> revContextIdsMap;
     private List<Mogram> sortedProjects = null;
-    private Subroutine topLevelJob;
+    private Routine topLevelJob;
 
     /**
      * Construct the ExertionSorter
      */
-    public ExertionSorter(Subroutine topLevelJob) throws ContextException, SortingException {
+    public ExertionSorter(Routine topLevelJob) throws ContextException, SortingException {
 
         dag = new DAG();
         projectMap = new HashMap();
@@ -65,7 +65,7 @@ public class ExertionSorter {
      *
      * @return
      */
-    public Subroutine getSortedJob() {
+    public Routine getSortedJob() {
         return topLevelJob;
     }
 
@@ -87,13 +87,13 @@ public class ExertionSorter {
 
 
     /**
-     * Determine the Flow (PAR or SEQ) for disciplines that have the Flow setValue to AUTO
+     * Determine the Flow (PAR or SEQ) for domains that have the Flow setValue to AUTO
      *
      * @param topXrt
      * @param sortedSubXrt
      * @return
      */
-    private Strategy.Flow setFlow(Subroutine topXrt, List<Mogram> sortedSubXrt) {
+    private Strategy.Flow setFlow(Routine topXrt, List<Mogram> sortedSubXrt) {
         List<String> sortedSubsetIds = addSubExertions(sortedSubXrt);
 
         int edges = 0;
@@ -118,19 +118,19 @@ public class ExertionSorter {
     }
 
     /**
-     * Actually rearrange the disciplines in the job according to the sorting
+     * Actually rearrange the domains in the job according to the sorting
      *
      * @param topXrt
      * @param sortedExertions
      * @throws CycleDetectedException
      * @throws ContextException
      */
-    private void reorderJob(Subroutine topXrt, List<Mogram> sortedExertions) {
+    private void reorderJob(Routine topXrt, List<Mogram> sortedExertions) {
         List<Mogram> sortedSubset = new ArrayList(sortedExertions);
         sortedSubset.retainAll(topXrt.getMograms());
 
         if (topXrt.getFlowType()!=null && topXrt.getFlowType().equals(Strategy.Flow.AUTO)) {
-            ((ServiceRoutine) topXrt).setFlowType(setFlow(topXrt, sortedSubset));
+            ((Subroutine) topXrt).setFlowType(setFlow(topXrt, sortedSubset));
             logger.info("FLOW for exertion: " + topXrt.getName() + " set to: " + topXrt.getFlowType());
         }
         List<String> exertionsBefore = new ArrayList<String>();
@@ -141,7 +141,7 @@ public class ExertionSorter {
         for (Mogram xrt : sortedExertions)
             exertionsAfter.add(xrt.getName());
         if (!topXrt.getMograms().equals(sortedSubset)) {
-            logger.info("Order of disciplines for " + topXrt.getName() + " will be changed: ");
+            logger.info("Order of domains for " + topXrt.getName() + " will be changed: ");
             logger.info("From: " + exertionsBefore);
             logger.info("To: " + exertionsAfter);
             topXrt.getMograms().removeAll(sortedSubset);
@@ -150,7 +150,7 @@ public class ExertionSorter {
 
 
         for (Iterator i = topXrt.getMograms().iterator(); i.hasNext(); ) {
-            Subroutine xrt = (Subroutine) i.next();
+            Routine xrt = (Routine) i.next();
             if (xrt instanceof Job) {
                 reorderJob(xrt, sortedExertions);
             }
@@ -158,12 +158,12 @@ public class ExertionSorter {
     }
 
     /**
-     * Add the job and all inner disciplines as vertexes
+     * Add the job and all inner domains as vertexes
      *
      * @param topXrt
      * @throws SortingException
      */
-    private void addVertex(Subroutine topXrt) throws ContextException, SortingException {
+    private void addVertex(Routine topXrt) throws ContextException, SortingException {
 
         String id = topXrt.getId().toString();
         dag.addVertex(id);
@@ -172,12 +172,12 @@ public class ExertionSorter {
         revContextIdsMap.put(topXrt.getDataContext().getId().toString(), id);
 
         for (Iterator i = topXrt.getMograms().iterator(); i.hasNext(); ) {
-            Subroutine project = (Subroutine) i.next();
+            Routine project = (Routine) i.next();
 
             id = project.getId().toString();
 
             if (dag.getVertex(id) != null) {
-                throw new SortingException("Subroutine '" + project.getName() +
+                throw new SortingException("Routine '" + project.getName() +
                         "'(" + id + ") is duplicated in the job: '" + topXrt.getName() + "' (" + topXrt.getId() + ")");
             }
 
@@ -199,9 +199,9 @@ public class ExertionSorter {
      * @throws CycleDetectedException
      * @throws SortingException
      */
-    private void getMapping(Subroutine topXrt) throws CycleDetectedException, ContextException, SortingException {
+    private void getMapping(Routine topXrt) throws CycleDetectedException, ContextException, SortingException {
         for (Iterator i = topXrt.getMograms().iterator(); i.hasNext(); ) {
-            Subroutine project = (Subroutine) i.next();
+            Routine project = (Routine) i.next();
             String id = project.getId().toString();
             String topId = topXrt.getId().toString();
             dag.addEdge(id, topId);
@@ -232,7 +232,7 @@ public class ExertionSorter {
      * @throws CycleDetectedException
      * @throws SortingException
      */
-    private void checkParentCycle(Subroutine topXrt) throws CycleDetectedException, ContextException, SortingException {
+    private void checkParentCycle(Routine topXrt) throws CycleDetectedException, ContextException, SortingException {
         if (topXrt.getDataContext().getParentId() != null) {
             String parentId = topXrt.getDataContext().getParentId().toString();
             if (dag.getVertex(parentId) != null) {

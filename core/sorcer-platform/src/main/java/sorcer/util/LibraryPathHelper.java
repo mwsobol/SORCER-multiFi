@@ -30,7 +30,8 @@ import static java.io.File.pathSeparator;
 import static sorcer.util.JavaSystemProperties.LIBRARY_PATH;
 
 /**
- * LibraryPathHelper implements a Set&lt;String> synchronized with system property java.library.contextReturn. each change is immediately reflected in the Java runtime. All Set operations are synchronized.
+ * LibraryPathHelper implements a Set&lt;String> synchronized with system property java.library.contextReturn.
+ * each change is immediately reflected in the Java runtime. All Set operations are synchronized.
  *
  * @author Rafał Krupiński
  */

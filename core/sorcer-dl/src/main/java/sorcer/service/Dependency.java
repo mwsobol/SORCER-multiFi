@@ -17,6 +17,8 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.Functionality;
+
 import java.util.List;
 
 /**
@@ -39,6 +41,13 @@ public interface Dependency {
      * @return
      */
     public List<Evaluation> getDependers();
+
+
+    /**
+     * Return a functionality type
+     * @return
+     */
+    Functionality.Type getDependencyType();
 
 }
 

@@ -1084,7 +1084,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 	 *
 	 * @return true if the provider is redy to exert the exertion
 	 */
-	public boolean isReady(Subroutine exertion) {
+	public boolean isReady(Routine exertion) {
 		return true;
 	}
 
@@ -1415,7 +1415,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 	 * A provider responsibility is to check a task completeness in paricular
 	 * the relevance of the task's context.
 	 */
-	public boolean isValidTask(Subroutine task) throws RoutineException {
+	public boolean isValidTask(Routine task) throws RoutineException {
 		return true;
 	}
 
@@ -1432,7 +1432,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 		return delegate.invokeMethod(method, context);
 	}
 
-	public Subroutine invokeMethod(String methodName, Subroutine ex)
+	public Routine invokeMethod(String methodName, Routine ex)
 			throws RoutineException {
 		return delegate.invokeMethod(methodName, ex);
 	}
@@ -1442,20 +1442,20 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 	 * accordingly to its compositional multitype.
 	 *
 	 * @param exertion
-	 *            Subroutine
-	 * @return Subroutine
+	 *            Routine
+	 * @return Routine
 	 * @throws sorcer.service.RoutineException
-	 * @see Subroutine
+	 * @see Routine
 	 * @see sorcer.service.Conditional
 	 * @see sorcer.core.provider.ControlFlowManager
 	 * @throws java.rmi.RemoteException
 	 * @throws sorcer.service.RoutineException
 	 */
-    public Subroutine doExertion(final Subroutine exertion, Transaction txn) throws RoutineException {
+    public Routine doExertion(final Routine exertion, Transaction txn) throws RoutineException {
         logger.debug("service: {}", exertion.getName());
         // create an instance of the ControlFlowManager and prc on the
-        // compute method, returns an Subroutine
-        Subroutine out;
+        // compute method, returns an Routine
+        Routine out;
         try {
 			if(delegate.isRemoteLogging()) {
 				MDC.put(MDC_SORCER_REMOTE_CALL, MDC_SORCER_REMOTE_CALL);
@@ -1465,7 +1465,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
             if (exertion.getId() != null)
                 MDC.put(MDC_MOGRAM_ID, exertion.getId().toString());
 
-            out = (Subroutine) getControlFlownManager(exertion).process();
+            out = (Routine) getControlFlownManager(exertion).process();
 
         } finally  {
             MDC.remove(MDC_PROVIDER_NAME);
@@ -1476,7 +1476,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
         return out;
     }
 
-    protected ControlFlowManager getControlFlownManager(Subroutine exertion) throws RoutineException {
+    protected ControlFlowManager getControlFlownManager(Routine exertion) throws RoutineException {
         List<Class> publishedIfaces = Arrays.asList(this.delegate.getPublishedServiceTypes());
         if (!(exertion instanceof Task) && (!publishedIfaces.contains(Spacer.class))
             && (!publishedIfaces.contains(Jobber.class)) && (!publishedIfaces.contains(Concatenator.class)))
@@ -1492,7 +1492,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 		}
 	}
 
-	public Subroutine serviceContextOnly(Context mogram) throws RoutineException, RemoteException {
+	public Mogram serviceContextOnly(Context mogram) throws ContextException, RemoteException {
 		Task task = null;
 		try {
 			Object subject = mogram.getSubjectValue();
@@ -1500,27 +1500,27 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 				task = new NetTask((Signature)mogram.getSubjectValue(), mogram);
 				task = delegate.doTask(task, null);
 			} else {
-				throw new RoutineException("no signature in the service context");
+				throw new ContextException("no signature in the service context");
 			}
 		} catch (Exception e) {
-			throw new RoutineException(e);
+			throw new ContextException(e);
 		}
 		return task;
 	}
 
-	public Subroutine service(Mogram exertion) throws RemoteException,
+	public Routine service(Mogram exertion) throws RemoteException,
 			RoutineException {
-		return doExertion((Subroutine)exertion, null);
+		return doExertion((Routine)exertion, null);
 	}
 
 	@Override
-	public Mogram exert(Mogram mogram, Transaction txn, Arg... args)
-			throws MogramException, RemoteException {
+	public Mogram exert(Contextion mogram, Transaction txn, Arg... args)
+			throws ContextException, RemoteException {
 		if (mogram instanceof Task) {
 			ServiceContext cxt;
 			try {
-				cxt = (ServiceContext) mogram.getDataContext();
-				cxt.updateContextWith(mogram.getProcessSignature().getInConnector());
+				cxt = (ServiceContext) ((Mogram)mogram).getDataContext();
+				cxt.updateContextWith(((Mogram)mogram).getProcessSignature().getInConnector());
 				Uuid id = cxt.getId();
 				// a created session to be used in the implementation class of the bean itself
 				ProviderSession ps = (ProviderSession) sessions.get(id);
@@ -1539,12 +1539,12 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 		}
 
 		// TODO transaction handling to be implemented when needed
-		// TO DO HANDLING SUSSPENDED disciplines
-		// if (((ServiceRoutine) exertion).monitorSession != null) {
+		// TO DO HANDLING SUSSPENDED domains
+		// if (((Subroutine) exertion).monitorSession != null) {
 		// new Thread(new ServiceThread(exertion, this)).start();
 		// return exertion;
 		// }
-		Subroutine exertion = (Subroutine)mogram;
+		Routine exertion = (Routine)mogram;
 		// when service Locker is used
 		if (delegate.mutualExlusion()) {
 			Object mutexId = ((ControlContext)exertion.getControlContext()).getMutexId();
@@ -1566,7 +1566,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 		// + getProviderName() + ":" + getProviderID()
 		// : "in: " + getProviderName() + ":"
 		// + getProviderID());
-		Subroutine out = exertion;
+		Routine out = exertion;
 		try {
 			out = doExertion(exertion, txn);
 		} catch (Exception e) {
@@ -1695,31 +1695,31 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 		return delegate.getProviderProperties();
 	}
 
-	public void notifyInformation(Subroutine task, String message) {
+	public void notifyInformation(Routine task, String message) {
 		delegate.notifyInformation(task, message);
 	}
 
-	public void notifyException(Subroutine task, String message, Exception e) {
+	public void notifyException(Routine task, String message, Exception e) {
 		delegate.notifyException(task, message, e);
 	}
 
-	public void notifyExceptionWithStackTrace(Subroutine task, Exception e){
+	public void notifyExceptionWithStackTrace(Routine task, Exception e){
 		delegate.notifyExceptionWithStackTrace(task, e);
 	}
 
-	public void notifyException(Subroutine task, Exception e) {
+	public void notifyException(Routine task, Exception e) {
 		delegate.notifyException(task, e);
 	}
 
-	public void notifyWarning(Subroutine task, String message) {
+	public void notifyWarning(Routine task, String message) {
 		delegate.notifyWarning(task, message);
 	}
 
-	public void notifyFailure(Subroutine task, Exception e) {
+	public void notifyFailure(Routine task, Exception e) {
 		delegate.notifyFailure(task, e);
 	}
 
-	public void notifyFailure(Subroutine task, String message) {
+	public void notifyFailure(Routine task, String message) {
 		delegate.notifyFailure(task, message);
 	}
 
@@ -1756,7 +1756,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 	 *             if there is a communication error
 	 *
 	 */
-	public void resume(Subroutine ex) throws RemoteException, RoutineException {
+	public void resume(Routine ex) throws RemoteException, RoutineException {
 		service((Mogram) ex);
 	}
 
@@ -1771,7 +1771,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 	 *             if there is a communication error
 	 *
 	 */
-	public void step(Subroutine ex) throws RemoteException, RoutineException {
+	public void step(Routine ex) throws RemoteException, RoutineException {
 		service(ex);
 	}
 /*

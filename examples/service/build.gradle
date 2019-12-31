@@ -115,7 +115,7 @@ task runRequestor(type:JavaExec, dependsOn:[install]) {
 //  args = ["sorcer.requestor.adder.AdderConsumer", "model"]
 //  args = ["sorcer.requestor.adder.AdderConsumer", "exertion"]
     args = ["sorcer.requestor.adder.AdderConsumer", "netlet"]
-    finalizedBy (stopme)
+    finalizedBy (haltme)
 }
 
 test {
@@ -129,7 +129,7 @@ test {
     }
 //    dependsOn([install])
     dependsOn([install, bootme])
-    finalizedBy(stopme)
+    finalizedBy(haltme)
 }
 
 

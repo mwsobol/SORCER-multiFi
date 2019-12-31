@@ -98,7 +98,7 @@ task runRequestor(type:JavaExec, dependsOn:[install]) {
 //    args = ["sorcer.requestor.adder.AdderRequestor", "sorcer.netlet"]
 //  Requires service provisioning support - bootSorcerRio
     args = ["sorcer.requestor.exchange.ExchangeConsumer", "dynamic"]
-	finalizedBy (":stopme")
+	finalizedBy (":haltme")
 }
 
 test {
@@ -111,7 +111,7 @@ test {
     }
     dependsOn([install])
 //    dependsOn([install, bootme])
-//    finalizedBy(stopme)
+//    finalizedBy(haltme)
 }
 test.enabled = false
 

@@ -124,7 +124,7 @@ public class MultiFiEvaluator<T> extends MultiFiSlot<String, T> implements Evalu
 	}
 
 	@Override
-	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
+	public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
 		Context cxt = Arg.selectContext(args);
 		if (cxt == null) {
 			cxt = new ServiceContext();

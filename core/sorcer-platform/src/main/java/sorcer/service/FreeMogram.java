@@ -17,8 +17,11 @@
 package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.signature.ObjectSignature;
+import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -30,12 +33,37 @@ import java.util.List;
  *
  * @author Mike Sobolewski
  */
-public class FreeMogram extends ServiceMogram {
+public class FreeMogram extends ServiceMogram implements FreeService {
 
-    Mogram mogram;
+    private Mogram mogram;
 
     public FreeMogram(String name) {
         this.key = name;
+    }
+
+    public FreeMogram(String name, Functionality.Type type) {
+        this.key = name;
+        this.type = type;
+    }
+
+    @Override
+    public void bind(Object object) throws ConfigurationException {
+        if (object instanceof Mogram) {
+            mogram = (Mogram) object;
+        } else if (object instanceof ObjectSignature) {
+            try {
+                mogram = (Mogram) ((ObjectSignature) object).build();
+                builder = (Signature) object;
+                mogram.setBuilder(builder);
+            } catch (SignatureException | MogramException e) {
+                throw new ConfigurationException(e);
+            }
+        }
+        if (mogram instanceof Model) {
+            type = Functionality.Type.MODEL;
+        } else if (mogram instanceof Routine) {
+            type = Functionality.Type.ROUTINE;
+        }
     }
 
     @Override
@@ -68,12 +96,21 @@ public class FreeMogram extends ServiceMogram {
 
 
     @Override
-    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
+    public ServiceContext evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
         return null;
     }
 
+    public boolean isModel() {
+        return type == Functionality.Type.MODEL;
+    }
+
+    public boolean isRoutine() {
+        return type == Functionality.Type.ROUTINE;
+    }
+
     @Override
-    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... entries) throws MogramException, RemoteException {
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... entries) throws ContextException, RemoteException {
         return null;
     }
+
 }

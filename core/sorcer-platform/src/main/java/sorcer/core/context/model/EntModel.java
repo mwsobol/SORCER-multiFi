@@ -569,6 +569,15 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 
 	}
 
+	@Override
+	public Context getOutput(Arg... args) throws ContextException {
+		try {
+			return (Context)getResult();
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
+	}
+
 	public static Functionality[] getMarkedVariables(Context sc,
                                                      String association) throws ContextException {
 		String[] paths = Contexts.getMarkedPaths(sc, association);

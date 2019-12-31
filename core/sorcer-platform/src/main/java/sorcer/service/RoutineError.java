@@ -32,12 +32,12 @@ public class RoutineError extends Error {
 	/**
 	 * The exertion relevant to this exception.
 	 */
-	private Subroutine exertion;
+	private Routine exertion;
 
 	public RoutineError() {
 	}
 
-	public RoutineError(Subroutine exertion) {
+	public RoutineError(Routine exertion) {
 		this.exertion = exertion;
 	}
 
@@ -58,7 +58,7 @@ public class RoutineError extends Error {
 	 * @param exertion
 	 *            the embedded exertion
 	 */
-	public RoutineError(String message, Subroutine exertion) {
+	public RoutineError(String message, Routine exertion) {
 		super(message);
 		this.exertion = exertion;
 	}
@@ -76,7 +76,7 @@ public class RoutineError extends Error {
 	 * @param cause
 	 *            the nested throwable cause
 	 */
-	public RoutineError(String message, Subroutine exertion, Throwable cause) {
+	public RoutineError(String message, Routine exertion, Throwable cause) {
 		super(message, cause);
 		this.exertion = exertion;
 	}
@@ -86,7 +86,7 @@ public class RoutineError extends Error {
 	 * 
 	 * @return embedded exertion
 	 */
-	public Subroutine getExertion() {
+	public Routine getExertion() {
 		return exertion;
 	}
 	

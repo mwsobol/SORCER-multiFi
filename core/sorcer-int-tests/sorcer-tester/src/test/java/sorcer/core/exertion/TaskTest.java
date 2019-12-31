@@ -32,8 +32,8 @@ public class TaskTest {
 
 	@Test
 	public void freeArithmeticTaskTest() throws Exception {
-		//to test tracing of execution enable ServiceRoutine.debug
-		Subroutine task = task("add",
+		//to test tracing of execution enable Subroutine.debug
+		Routine task = task("add",
 				sig("add"),
 				context(inVal("arg/x1"), inVal("arg/x2"),
 						result("result/y")));
@@ -50,8 +50,8 @@ public class TaskTest {
 	
 	@Test
 	public void arithmeticTaskTest() throws Exception {
-		//to test tracing of execution enable ServiceRoutine.debug
-		ServiceRoutine.debug = true;
+		//to test tracing of execution enable Subroutine.debug
+		Subroutine.debug = true;
 		
 		Task task = task("add",
 				sig("add", AdderImpl.class),
@@ -77,8 +77,8 @@ public class TaskTest {
 
 	@Test
 	public void arithmeticCustomContextTest() throws Exception {
-		//to test tracing of execution enable ServiceRoutine.debug
-		ServiceRoutine.debug = true;
+		//to test tracing of execution enable Subroutine.debug
+		Subroutine.debug = true;
 
 		Task task = task("add",
 				sig("add", AdderImpl.class),
@@ -108,7 +108,7 @@ public class TaskTest {
 
 	@Test
 	public void arithmeticMultiFiObjectTaskTest() throws Exception {
-		ServiceRoutine.debug = true;
+		Subroutine.debug = true;
 
 		Task task = task("add",
 				sigFi("net", sig("add", Adder.class)),
@@ -129,7 +129,7 @@ public class TaskTest {
 
 	@Test
 	public void arithmeticMultiFiNetTaskTest() throws Exception {
-		ServiceRoutine.debug = true;
+		Subroutine.debug = true;
 
 		Task task = task("add",
 				sigFi("net", sig("add", Adder.class)),
@@ -152,10 +152,11 @@ public class TaskTest {
 	public void deployTest() throws Exception {
 		Task t5 = task("f5",
 			sig("add", Adder.class,
-					deploy(configuration("bin/sorcer/test/arithmetic/configs/AdderProviderConfig.groovy"))),
+				deploy(configuration("bin/sorcer/test/arithmetic/configs/AdderProviderConfig.groovy")),
+				Provision.YES),
 				context("add", inVal("arg/x3", 20.0d), inVal("arg/x4", 80.0d),
-							outVal("result/y")),
-				strategy(Provision.YES));
+							outVal("result/y")));
+
 		logger.info("t5 is provisionable: " + t5.isProvisionable());
 		assertTrue(t5.isProvisionable());
 	}

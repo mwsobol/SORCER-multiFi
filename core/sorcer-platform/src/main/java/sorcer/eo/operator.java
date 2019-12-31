@@ -44,7 +44,7 @@ import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceModeler;
-import sorcer.core.requestor.ServiceConsumer;
+import sorcer.core.consumer.ServiceConsumer;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.*;
 import sorcer.netlet.ServiceScripter;
@@ -84,8 +84,8 @@ operator extends Operator {
 
     protected static final Logger logger = LoggerFactory.getLogger(operator.class.getName());
 
-    public static void requestTime(Subroutine exertion) {
-        ((ServiceRoutine) exertion).setExecTimeRequested(true);
+    public static void requestTime(Routine exertion) {
+        ((Subroutine) exertion).setExecTimeRequested(true);
     }
 
     public static ServiceConsumer consumer(Class consumerType, String... args) {
@@ -166,17 +166,17 @@ operator extends Operator {
         return new Complement<T>(path, value);
     }
 
-    public static void add(Subroutine exertion, Identifiable... entries)
+    public static void add(Routine exertion, Identifiable... entries)
         throws ContextException, RemoteException {
         sorcer.mo.operator.add(exertion.getContext(), entries);
     }
 
-    public static void put(Subroutine exertion, Identifiable... entries)
+    public static void put(Routine exertion, Identifiable... entries)
         throws ContextException, RemoteException {
         put(exertion.getContext(), entries);
     }
 
-    public static Subroutine setContext(Subroutine exertion, Context context) {
+    public static Routine setContext(Routine exertion, Context context) {
         exertion.setContext(context);
         return exertion;
     }
@@ -202,21 +202,21 @@ operator extends Operator {
         return signature;
     }
 
-    public static ControlContext control(Subroutine exertion)
+    public static ControlContext control(Routine exertion)
         throws ContextException {
-        return ((ServiceRoutine) exertion).getControlContext();
+        return ((Subroutine) exertion).getControlContext();
     }
 
-    public static ControlContext control(Subroutine exertion, String childName)
+    public static ControlContext control(Routine exertion, String childName)
         throws ContextException {
-        return (ControlContext) ((Subroutine) exertion.getMogram(childName)).getControlContext();
+        return (ControlContext) ((Routine) exertion.getMogram(childName)).getControlContext();
     }
 
-    public static Context ccxt(Subroutine exertion) throws ContextException {
-        return ((ServiceRoutine) exertion).getControlContext();
+    public static Context ccxt(Routine exertion) throws ContextException {
+        return ((Subroutine) exertion).getControlContext();
     }
 
-    public static Context upcxt(Subroutine mogram) throws ContextException {
+    public static Context upcxt(Routine mogram) throws ContextException {
         return snapshot(mogram);
     }
 
@@ -235,12 +235,12 @@ operator extends Operator {
             return  mogram.getDataContext();
     }
 
-    public static Context snapshot(Subroutine mogram) throws ContextException {
+    public static Context snapshot(Routine mogram) throws ContextException {
         return upcontext(mogram);
     }
 
-    public static Context taskContext(String path, Subroutine service) throws ContextException {
-        if (service instanceof ServiceRoutine) {
+    public static Context taskContext(String path, Routine service) throws ContextException {
+        if (service instanceof Transroutine) {
             return ((Transroutine) service).getComponentContext(path);
         } else
             throw new ContextException("Service not an exertion: " + service);
@@ -291,23 +291,23 @@ operator extends Operator {
 
         ServiceContext cxt = null;
         List<ServiceContext> cxts = new ArrayList<ServiceContext>();;
-        List<MapContext> connList = new ArrayList<MapContext>();
+        List<Connector> connList = new ArrayList<Connector>();
         Strategy.Access accessType = null;
         Strategy.Flow flowType = null;
         Strategy.FidelityManagement fm = null;
         FidelityManager fiManager = null;
         Projection projection = null;
-        if (entries[0] instanceof Subroutine) {
-            Subroutine xrt = (Subroutine) entries[0];
+        if (entries[0] instanceof Routine) {
+            Routine xrt = (Routine) entries[0];
             if (entries.length >= 2 && entries[1] instanceof String)
-                xrt = (Subroutine) (xrt).getComponentMogram((String) entries[1]);
+                xrt = (Routine) (xrt).getComponentMogram((String) entries[1]);
             return (ServiceContext) xrt.getDataContext();
         } else if (entries[0] instanceof Link) {
             return (ServiceContext) ((Link) entries[0]).getContext();
         } else if (entries.length == 1 && entries[0] instanceof String) {
             return new PositionalContext((String) entries[0]);
         } else if (entries.length == 2 && entries[0] instanceof String
-            && entries[1] instanceof Subroutine) {
+            && entries[1] instanceof Routine) {
             return (ServiceContext) ((Transroutine) entries[1]).getComponentMogram(
                 (String) entries[0]).getContext();
         } else if (entries[0] instanceof Context && entries[1] instanceof List) {
@@ -343,13 +343,18 @@ operator extends Operator {
         Context.Out outPaths = null;
         Context.In inPaths = null;
         Paths paths = null;
+        AnalysisEntry mdaEntry = null;
+        ServiceFidelity mdaFi = null;
+        ExplorationEntry explEntry = null;
+        ServiceFidelity explFi = null;
+        List<Path> responsePaths = null;
         boolean autoDeps = true;
         for (Object o : entries) {
             if (o instanceof Complement) {
                 subject = (Complement) o;
             } else if (o instanceof Args) {
                 cxtArgs = (Args) o;
-            } else if (o instanceof ParameterTypes)  {
+            } else if (o instanceof ParameterTypes) {
                 parTypes = (ParameterTypes) o;
             } else if (o instanceof PathResponse) {
                 response = (PathResponse) o;
@@ -369,8 +374,8 @@ operator extends Operator {
                 name = (String) o;
             } else if (o instanceof EntryList) {
                 entryLists.add((EntryList) o);
-            } else if (o instanceof MapContext) {
-                connList.add((MapContext) o);
+            } else if (o instanceof Connector) {
+                connList.add((Connector) o);
             } else if (o instanceof ExecDependency) {
                 depList.add((ExecDependency) o);
             } else if (o instanceof Signature) {
@@ -378,25 +383,39 @@ operator extends Operator {
             } else if (o instanceof Class) {
                 customContextClass = (Class) o;
             } else if (o instanceof Strategy.Access) {
-                accessType = (Strategy.Access)o;
+                accessType = (Strategy.Access) o;
             } else if (o instanceof Strategy.Flow) {
-                flowType = (Strategy.Flow)o;
+                flowType = (Strategy.Flow) o;
             } else if (o instanceof Strategy.FidelityManagement) {
-                fm = (Strategy.FidelityManagement)o;
+                fm = (Strategy.FidelityManagement) o;
             } else if (o instanceof FidelityManager) {
-                fiManager = ((FidelityManager)o);
+                fiManager = ((FidelityManager) o);
             } else if (o instanceof Projection) {
-                projection = ((Projection)o);
+                projection = ((Projection) o);
             } else if (Strategy.Flow.EXPLICIT.equals(o)) {
                 autoDeps = false;
             } else if (o instanceof Context.Out) {
-                outPaths = (Context.Out)o;
+                outPaths = (Context.Out) o;
             } else if (o instanceof Context.In) {
-                inPaths = (Context.In)o;
+                inPaths = (Context.In) o;
             } else if (o instanceof Paths) {
-                paths = (Paths)o;
+                paths = (Paths) o;
             } else if (o instanceof Context) {
                 cxts.add((ServiceContext) o);
+            } else if (o instanceof Fidelity) {
+                if (((Fidelity) o).getFiType() == Fi.Type.RESPONSE) {
+                    responsePaths = (List<Path>) ((Fidelity) o).getSelects();
+                } else if (o instanceof ServiceFidelity) {
+                    if (((ServiceFidelity) o).getFiType().equals(Fi.Type.MDA)) {
+                        mdaFi = (ServiceFidelity) o;
+                    } else if (((ServiceFidelity) o).getFiType().equals(Fi.Type.EXPLORER)) {
+                        explFi = (ServiceFidelity) o;
+                    }
+                } else if (o instanceof AnalysisEntry) {
+                    mdaEntry = (AnalysisEntry) o;
+                } else if (o instanceof ExplorationEntry) {
+                    explEntry = (ExplorationEntry) o;
+                }
             }
         }
 
@@ -519,8 +538,8 @@ operator extends Operator {
             cxt.setEntryLists(entryLists);
         }
         if (connList.size() > 0) {
-            for (MapContext conn : connList) {
-                if (conn.direction == MapContext.Direction.IN) {
+            for (Connector conn : connList) {
+                if (conn.direction == Connector.Direction.IN) {
                     cxt.getMogramStrategy().setInConnector(conn);
                 } else {
                     cxt.getMogramStrategy().setOutConnector(conn);
@@ -563,6 +582,22 @@ operator extends Operator {
             } else {
                 cxt.getContextReturn().inPaths = new Context.In(paths);
             }
+        }
+
+        if (responsePaths != null) {
+            cxt.getMogramStrategy().setResponsePaths(responsePaths);
+        }
+
+        if (mdaEntry != null) {
+            cxt.put(Context.MDA_PATH, mdaEntry);
+        } else if (mdaFi != null) {
+            cxt.put(Context.MDA_PATH, mdaFi);
+        }
+
+        if (explEntry != null) {
+            cxt.put(Context.EXPLORER_PATH, explEntry);
+        } else if (explFi != null) {
+            cxt.put(Context.EXPLORER_PATH, explFi);
         }
 
         if (accessType != null)
@@ -1156,7 +1191,7 @@ operator extends Operator {
         // if context is provided for created signature
         if (context instanceof ServiceContext
             // not applied to connectors in Signatures
-            && context.getClass() != MapContext.class) {
+            && context.getClass() != Connector.class) {
             if (signature.getContextReturn() == null) {
                 signature.setContextReturn(new Context.Return());
             }
@@ -1233,7 +1268,7 @@ operator extends Operator {
         // if context is provided for created signature
         if (context instanceof ServiceContext
             // not applied to connectors in Signatures
-            && context.getClass() != MapContext.class) {
+            && context.getClass() != Connector.class) {
             if (newSig.getContextReturn() == null) {
                 newSig.setContextReturn(new Context.Return());
             }
@@ -1280,7 +1315,7 @@ operator extends Operator {
     public static ServiceSignature sig(String operation, Class serviceType, Object... items) throws SignatureException {
         ProviderName providerName = null;
         Provision p = null;
-        List<MapContext> connList = new ArrayList<MapContext>();
+        List<Connector> connList = new ArrayList<Connector>();
         Multitype srvType = null;
         List<Class> sigTypes = new ArrayList<>();
         Args args = null;
@@ -1293,8 +1328,8 @@ operator extends Operator {
                         providerName.setName(Sorcer.getActualName(providerName.getName()));
                 } else if (o instanceof Provision) {
                     p = (Provision) o;
-                } else if (o instanceof MapContext) {
-                    connList.add(((MapContext) o));
+                } else if (o instanceof Connector) {
+                    connList.add(((Connector) o));
                 } else if (o instanceof Multitype) {
                     srvType = (Multitype) o;
                 } else if (o instanceof Exerter) {
@@ -1338,8 +1373,8 @@ operator extends Operator {
         ((ServiceSignature) sig).setName(operation);
 
         if (connList != null) {
-            for (MapContext conn : connList) {
-                if (conn.direction == MapContext.Direction.IN)
+            for (Connector conn : connList) {
+                if (conn.direction == Connector.Direction.IN)
                     ((ServiceSignature) sig).setInConnector(conn);
                 else
                     ((ServiceSignature) sig).setOutConnector(conn);
@@ -1383,7 +1418,7 @@ operator extends Operator {
                     ((ObjectSignature) sig).setTargetSignature(((ServiceSignature) o));
                 } else if (o instanceof ServiceContext
                     // not applied to connectors in Signatures
-                    && o.getClass() != MapContext.class) {
+                    && o.getClass() != Connector.class) {
                     if (sig.getContextReturn() == null) {
                         sig.setContextReturn(new Context.Return());
                     }
@@ -1591,8 +1626,8 @@ operator extends Operator {
         return new EvaluationSignature(name, evaluator);
     }
 
-    public static Signature sig(Subroutine exertion, String componentExertionName) {
-        Subroutine component = (Subroutine) exertion.getMogram(componentExertionName);
+    public static Signature sig(Routine exertion, String componentExertionName) {
+        Routine component = (Routine) exertion.getMogram(componentExertionName);
         return component.getProcessSignature();
     }
 
@@ -1660,12 +1695,12 @@ operator extends Operator {
         return fi;
     }
 
-    public static DisciplineFidelity discFi(Fidelity... fidelities) {
+    public static DisciplineFidelity dscFi(Fidelity... fidelities) {
         DisciplineFidelity fi = new DisciplineFidelity(fidelities);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;
     }
-    public static DisciplineFidelity discFi(String name, Fidelity... fidelities) {
+    public static DisciplineFidelity dscFi(String name, Fidelity... fidelities) {
         DisciplineFidelity fi = new DisciplineFidelity(name, fidelities);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;
@@ -1684,29 +1719,32 @@ operator extends Operator {
         return fi;
     }
 
-    public static Fidelity dsptFi(String name) {
+    public static Fidelity dspFi(String name) {
         Fidelity fi = new Fidelity(name);
         fi.fiType = Fi.Type.DISPATCHER;
         return fi;
     }
 
-    public static Fidelity dsptFi(String name, Object select) {
+    public static Fidelity dspFi(String name, Object select) {
         Fidelity fi = new Fidelity(name);
         fi.setSelect(select);
         fi.fiType = Fi.Type.DISPATCHER;
         return fi;
     }
 
-    public static Fidelity procFi(String name) {
+    public static Fidelity ctxFi(String name) {
         Fidelity fi = new Fidelity(name);
-        fi.fiType = Fi.Type.GOVERNANCE;
+        fi.fiType = Fi.Type.CONTEXTION;
         return fi;
     }
 
-    public static Fidelity procFi(String name, Object select) {
+    public static Fidelity ctxFi(String name, Object select) {
         Fidelity fi = new Fidelity(name);
         fi.setSelect(select);
-        fi.fiType = Fi.Type.GOVERNANCE;
+        if (select instanceof Signature) {
+            ((ServiceSignature)select).setName(name);
+        }
+        fi.fiType = Fi.Type.CONTEXTION;
         return fi;
     }
 
@@ -1714,7 +1752,7 @@ operator extends Operator {
         return ((Identifiable) mogram.getMultiFi().getSelect()).getName();
     }
 
-    public static Fi srvFis(Subroutine exertion) {
+    public static Fi srvFis(Routine exertion) {
         return exertion.getMultiFi();
     }
 
@@ -1872,13 +1910,6 @@ operator extends Operator {
             fi = new Fidelity(name$path);
         }
         fi.fiType = Fi.Type.SELECT;
-        return fi;
-    }
-
-    public static Fidelity mdaFi(String name, String path) {
-        Fidelity fi = new Fidelity(name, path);
-        fi.fiType = Fi.Type.MDA;
-        fi.setOption(Fi.Type.SELECT);
         return fi;
     }
 
@@ -2187,6 +2218,10 @@ operator extends Operator {
         return task;
     }
 
+    public static FreeEvaluator evaluator(String name) {
+        return new FreeEvaluator(name);
+    }
+
     public static Task task(Object... items) throws EvaluationException {
         if (items.length == 1 &&  items[0] instanceof Evaluation) {
             // evaluation task for a single evalution
@@ -2395,12 +2430,12 @@ operator extends Operator {
         return task;
     }
 
-
     public static List<Mogram> mograms(Mogram mogram) {
-        if (mogram instanceof Subroutine)
-            return ((Subroutine)mogram).getAllMograms();
-        else
+        if (mogram instanceof Mogram) {
+            return mogram.getAllMograms();
+        } else {
             return new ArrayList();
+        }
     }
 
     public static Mogram mog(Object... items) throws MogramException {
@@ -2428,7 +2463,7 @@ operator extends Operator {
         for (Object i : items) {
             if (i instanceof String) {
                 name = (String) i;
-            } else if (i instanceof Subroutine) {
+            } else if (i instanceof Routine) {
                 hasExertion = true;
             } else if (i instanceof Context) {
                 hasContext = true;
@@ -2450,19 +2485,19 @@ operator extends Operator {
         }
     }
 
-    public static Subroutine xrt(String name, Object... items) throws RoutineException,
+    public static Routine xrt(String name, Object... items) throws RoutineException,
         ContextException, SignatureException {
         return exertion(name, items);
     }
 
-    public static <E extends Subroutine> E exertion(String name, Object... items) throws RoutineException,
+    public static <E extends Routine> E exertion(String name, Object... items) throws RoutineException,
         ContextException, SignatureException {
         List<Mogram> exertions = new ArrayList<Mogram>();
         Signature sig = null;
         Context cxt = null;
         boolean isBlock =false;
         for (int i = 0; i < items.length; i++) {
-            if (items[i] instanceof Subroutine || items[i] instanceof EntModel) {
+            if (items[i] instanceof Routine || items[i] instanceof EntModel) {
                 exertions.add((Mogram) items[i]);
                 if (items[i] instanceof ConditionalTask)
                     isBlock = true;
@@ -2492,14 +2527,14 @@ operator extends Operator {
         ControlContext controlStrategy = null;
         Context data = null;
         Context.Return rp = null;
-        List<Subroutine> exertions = new ArrayList();
+        List<Routine> exertions = new ArrayList();
         List<Pipe> pipes = new ArrayList();
         FidelityManager fiManager = null;
         Strategy.FidelityManagement fm = null;
         List<Service> fis = new ArrayList<>();
         List<Fidelity> metaFis = new ArrayList();
         MorphFidelity mFi = null;
-        List<MapContext> connList = new ArrayList();
+        List<Connector> connList = new ArrayList();
         Context.Out outPaths = null;
         Context.In inPaths = null;
 
@@ -2507,12 +2542,12 @@ operator extends Operator {
         for (int i = 0; i < elems.length; i++) {
             if (elems[i] instanceof String) {
                 name = (String) elems[i];
-            } else if (elems[i] instanceof Subroutine) {
-                exertions.add((Subroutine) elems[i]);
+            } else if (elems[i] instanceof Routine) {
+                exertions.add((Routine) elems[i]);
             } else if (elems[i] instanceof ControlContext) {
                 controlStrategy = (ControlContext) elems[i];
-            } else if (elems[i] instanceof MapContext) {
-                connList.add(((MapContext) elems[i]));
+            } else if (elems[i] instanceof Connector) {
+                connList.add(((Connector) elems[i]));
             } else if (elems[i] instanceof Context) {
                 data = (Context<?>) elems[i];
             } else if (elems[i] instanceof Pipe) {
@@ -2642,8 +2677,8 @@ operator extends Operator {
         }
 
         if (connList != null) {
-            for (MapContext conn : connList) {
-                if (conn.direction == MapContext.Direction.IN)
+            for (Connector conn : connList) {
+                if (conn.direction == Connector.Direction.IN)
                     ((ServiceContext)job.getDataContext()).getMogramStrategy().setInConnector(conn);
                 else
                     ((ServiceContext)job.getDataContext()).getMogramStrategy().setOutConnector(conn);
@@ -2651,23 +2686,23 @@ operator extends Operator {
         }
 
         if (exertions.size() > 0) {
-            for (Subroutine ex : exertions) {
+            for (Routine ex : exertions) {
                 job.addMogram(ex);
             }
             for (Pipe p : pipes) {
 //				logger.debug("from context: "
-//						+ ((Subroutine) p.in).getDataContext().getName()
+//						+ ((Routine) p.in).getDataContext().getName()
 //						+ " contextReturn: " + p.inPath);
 //				logger.debug("to context: "
-//						+ ((Subroutine) p.out).getDataContext().getName()
+//						+ ((Routine) p.out).getDataContext().getName()
 //						+ " contextReturn: " + p.outPath);
-                // find component disciplines for thir paths
+                // find component domains for thir paths
                 if (!p.isExertional()) {
-                    p.out = (Subroutine)job.getComponentMogram(p.outComponentPath);
-                    p.in = (Subroutine)job.getComponentMogram(p.inComponentPath);
+                    p.out = (Routine)job.getComponentMogram(p.outComponentPath);
+                    p.in = (Routine)job.getComponentMogram(p.inComponentPath);
                 }
-                ((Subroutine) p.out).getDataContext().connect(p.outPath,
-                    p.inPath, ((Subroutine) p.in).getContext());
+                ((Routine) p.out).getDataContext().connect(p.outPath,
+                    p.inPath, ((Routine) p.in).getContext());
             }
         } else
             throw new RoutineException("No component exertion defined.");
@@ -2739,7 +2774,7 @@ operator extends Operator {
         }
     }
 
-    public static Mogram sub(Subroutine mogram, String path) {
+    public static Mogram sub(Routine mogram, String path) {
         return mogram.getComponentMogram(path);
     }
 
@@ -2765,11 +2800,11 @@ operator extends Operator {
         return obj;
     }
 
-    public static Object get(Subroutine exertion, String component, String path)
+    public static Object get(Routine exertion, String component, String path)
         throws RoutineException {
-        Subroutine c = (Subroutine) exertion.getMogram(component);
+        Routine c = (Routine) exertion.getMogram(component);
         try {
-            return get((ServiceRoutine) c, path);
+            return get((Subroutine) c, path);
         } catch (Exception e) {
             throw new RoutineException(e);
         }
@@ -2855,17 +2890,17 @@ operator extends Operator {
         return values;
     }
 
-    public static Mogram exertion(Subroutine exertion, String componentExertionName) {
+    public static Mogram exertion(Routine exertion, String componentExertionName) {
         return exertion.getComponentMogram(componentExertionName);
     }
-    public static Mogram xrt(Subroutine exertion, String componentExertionName) {
+    public static Mogram xrt(Routine exertion, String componentExertionName) {
         return exertion.getComponentMogram(componentExertionName);
     }
 
     public static Mogram tracable(Mogram mogram) {
         List<Mogram> mograms = ((ServiceMogram) mogram).getAllMograms();
         for (Mogram m : mograms) {
-            ((Subroutine) m).getControlContext().setTracable(true);
+            ((Routine) m).getControlContext().setTracable(true);
         }
         return mogram;
     }
@@ -2874,7 +2909,7 @@ operator extends Operator {
         List<Mogram> mograms = ((ServiceMogram)mogram).getAllMograms();
         List<String> trace = new ArrayList<String>();
         for (Mogram m : mograms) {
-            trace.addAll(((Subroutine) m).getControlContext().getTrace());
+            trace.addAll(((Routine) m).getControlContext().getTrace());
         }
         return trace;
     }
@@ -3175,9 +3210,14 @@ operator extends Operator {
         Paths paths = null;
         List<Object> objs = new ArrayList();
         Paths ps = new Paths();
+        Paths dps = null;
         for (Object o : args) {
             if (o instanceof Paths) {
-                paths = (Paths) o;
+                if (((Paths)o).type == Functionality.Type.DUAL) {
+                    dps = (Paths)o;
+                } else {
+                    paths = (Paths) o;
+                }
             } else {
                 // a contextReturn in args is used as dependent entry
                 // and also as a  contextReturn in context
@@ -3197,6 +3237,10 @@ operator extends Operator {
             } else {
                 paths.addAll(ps);
             }
+        }
+        if (dps != null) {
+            paths.addAll(dps);
+            objs.addAll(dps);
         }
 
         return new Args(objs, paths);
@@ -3297,18 +3341,18 @@ operator extends Operator {
 
         Prc callEntry;
 
-        Pipe(Subroutine out, String outPath, Contextion in, String inPath) {
+        Pipe(Routine out, String outPath, Contextion in, String inPath) {
             this.out = out;
             this.outPath = outPath;
             this.in = in;
             this.inPath = inPath;
-            if ((in instanceof Subroutine) && (out instanceof Subroutine)) {
+            if ((in instanceof Routine) && (out instanceof Routine)) {
                 try {
                     callEntry = new Prc(outPath, inPath, in);
                 } catch (ContextException e) {
                     e.printStackTrace();
                 }
-                ((ServiceRoutine) out).addPersister(callEntry);
+                ((Subroutine) out).addPersister(callEntry);
             }
         }
 
@@ -3320,13 +3364,13 @@ operator extends Operator {
             this.inPath = inEndPoint.inPath;
             this.inComponentPath = inEndPoint.inComponentPath;
 
-            if ((in instanceof Subroutine) && (out instanceof Subroutine)) {
+            if ((in instanceof Routine) && (out instanceof Routine)) {
                 try {
                     callEntry = new Prc(outPath, inPath, in);
                 } catch (ContextException e) {
                     e.printStackTrace();
                 }
-                ((ServiceRoutine) out).addPersister(callEntry);
+                ((Subroutine) out).addPersister(callEntry);
             }
         }
 
@@ -3377,7 +3421,7 @@ operator extends Operator {
     }
 
     public static OutEndPoint outPoint(Mogram outExertion, String outPath) {
-        return new OutEndPoint((Subroutine)outExertion, outPath);
+        return new OutEndPoint((Routine)outExertion, outPath);
     }
 
     public static InEndPoint inPoint(String inComponent, String inPath) {
@@ -3385,7 +3429,7 @@ operator extends Operator {
     }
 
     public static InEndPoint inPoint(Mogram inExertion, String inPath) {
-        return new InEndPoint((Subroutine)inExertion, inPath);
+        return new InEndPoint((Routine)inExertion, inPath);
     }
 
     public static Pipe pipe(OutEndPoint outEndPoint, InEndPoint inEndPoint) {
@@ -3543,7 +3587,7 @@ operator extends Operator {
 
 
     public static LoopTask loop(Condition condition,
-                                Mogram target) {
+                                Contextion target) {
         return new LoopTask(null, condition, target);
     }
 
@@ -3557,11 +3601,11 @@ operator extends Operator {
     }
 
     public static LoopTask loop(String name, Condition condition,
-                                Subroutine target) {
+                                Routine target) {
         return new LoopTask(name, condition, target);
     }
 
-    public static Subroutine xrt(Contextion mappable, String path)
+    public static Routine xrt(Contextion mappable, String path)
         throws ContextException {
         Object obj = ((ServiceContext) mappable).asis(path);
         while (obj instanceof Contextion || obj instanceof Prc) {
@@ -3571,8 +3615,8 @@ operator extends Operator {
                 throw new ContextException(e);
             }
         }
-        if (obj instanceof Subroutine)
-            return (Subroutine) obj;
+        if (obj instanceof Routine)
+            return (Routine) obj;
         else
             throw new NoneException("No such exertion at: " + path + " in: "
                 + mappable.getName());
@@ -3583,7 +3627,7 @@ operator extends Operator {
         return signature;
     }
 
-    public static Signature discSig(Signature signature) {
+    public static Signature dscSig(Signature signature) {
         ((ServiceSignature)signature).addRank(new Kind[]{Kind.DISCIPLINE, Kind.TASKER});
         return signature;
     }
@@ -3593,7 +3637,7 @@ operator extends Operator {
         return signature;
     }
 
-    public static Signature modelManagerSig(Signature signature) {
+    public static Signature domainManagerSig(Signature signature) {
         ((ServiceSignature)signature).addRank(Kind.MODEL, Kind.MODEL_MANAGER);
         return signature;
     }
@@ -3623,7 +3667,7 @@ operator extends Operator {
         return signature;
     }
 
-    public static Block block(Object...  items) throws RoutineException {
+    public static Block block(Object...  items) throws ContextException {
         List<Mogram> mograms = new ArrayList<>();
         List<Evaluator> evaluators = new ArrayList<>();
         String name = null;
@@ -3631,7 +3675,7 @@ operator extends Operator {
         Context context = null;
         Evaluator evaluator = null;
         for (int i = 0; i < items.length; i++) {
-            if (items[i] instanceof Subroutine || items[i] instanceof EntModel) {
+            if (items[i] instanceof Routine || items[i] instanceof EntModel) {
                 mograms.add((Mogram) items[i]);
             } else if (items[i] instanceof Evaluation) {
                 evaluators.add((Evaluator)items[i]);
@@ -3674,7 +3718,7 @@ operator extends Operator {
                 block.addMogram(new EvaluationTask(e));
             }
         } catch (Exception se) {
-            throw new RoutineException(se);
+            throw new ContextException(se);
         }
         //make sure it has EntModel as the data context
         EntModel pm = null;
@@ -3707,7 +3751,7 @@ operator extends Operator {
                         ((LoopTask) e).getCondition().setConditionalContext(pm);
                     }
 
-                    Mogram target = ((LoopTask)e).getTarget();
+                    Contextion target = ((LoopTask)e).getTarget();
                     if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Entry) {
                         ServiceContext ltcxt = (ServiceContext) ((EvaluationTask)target).getDataContext();
                         if (ltcxt == null || ltcxt.size() == 0) {
@@ -3719,7 +3763,7 @@ operator extends Operator {
                         } else {
                             p.setScope(pm);
                         }
-                        if (target instanceof Subroutine && target.getContext().getContextReturn() == null)
+                        if (target instanceof Routine && target.getContext().getContextReturn() == null)
                             ((ServiceContext)target.getContext()).setContextReturn(p.getName());
                     }
                 } else if (e instanceof EvaluationTask) {
@@ -3728,13 +3772,20 @@ operator extends Operator {
                         Prc p = (Prc)((EvaluationTask)e).getEvaluation();
                         pm.getScope().addPrc(p);
                     }
-                } else if (e instanceof Subroutine) {
+                } else if (e instanceof Routine) {
                     e.getDataContext().setScope(pm.getScope());
                     e.getDataContext().updateEntries(pm.getScope());
                 }
             }
+            for (Contextion cxtn : block.getAllContextions()) {
+                if (cxtn instanceof FreeMogram) {
+                    block.getControlContext().getFreeServices().put(cxtn.getName(), cxtn);
+                } else  if (cxtn instanceof FreeContextion) {
+                    block.getControlContext().getFreeServices().put(cxtn.getName(), cxtn);
+                }
+            }
         } catch (Exception ex) {
-            throw new RoutineException(ex);
+            throw new ContextException(ex);
         }
         return block;
     }
@@ -3997,13 +4048,13 @@ operator extends Operator {
         return deployment;
     }
 
-    public static Subroutine add(Subroutine compound, Subroutine component)
+    public static Routine add(Routine compound, Routine component)
         throws RoutineException {
         compound.addMogram(component);
         return compound;
     }
 
-    public static Block block(Loop loop, Subroutine exertion)
+    public static Block block(Loop loop, Routine exertion)
         throws RoutineException, SignatureException {
         List<String> names = loop.getNames(exertion.getName());
         Block block;
@@ -4013,10 +4064,10 @@ operator extends Operator {
         } else {
             block = new ObjectBlock(exertion.getName() + "-block");
         }
-        Subroutine xrt = null;
+        Routine xrt = null;
         for (String name : names) {
-            xrt = (Subroutine) ObjectCloner.cloneAnnotatedWithNewIDs(exertion);
-            ((ServiceRoutine) xrt).setName(name);
+            xrt = (Routine) ObjectCloner.cloneAnnotatedWithNewIDs(exertion);
+            ((Subroutine) xrt).setName(name);
             block.addMogram(xrt);
         }
         return block;

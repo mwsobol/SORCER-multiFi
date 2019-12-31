@@ -36,7 +36,7 @@ public class ConditionalTaskTest {
 
 	@Test
 	public void arithmeticTaskTest() throws Exception {
-		// to test tracing of execution enable ServiceRoutine.debug
+		// to test tracing of execution enable Subroutine.debug
 		EntModel pm = new EntModel("prc-model");
 
 		Task task = task(

@@ -21,26 +21,30 @@ import sorcer.co.tuple.ExecDependency;
 import sorcer.co.tuple.InoutValue;
 import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
-import sorcer.core.context.MapContext;
+import sorcer.core.context.Connector;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.Analysis;
+import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
-import sorcer.core.dispatch.DispatcherException;
+import sorcer.core.context.model.srv.SrvTransmodel;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
+import sorcer.core.service.Collaboration;
 import sorcer.core.service.Governance;
 import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
 import sorcer.service.modeling.*;
+import sorcer.service.Discipline;
 import sorcer.util.DataTable;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -135,11 +139,19 @@ public class operator {
         return value(context, path, args);
     }
 
+    public static Object value(Request request, String path,
+                               Arg... args) throws ContextException {
+        if (request instanceof Governance) {
+            return ((Governance)request).getOutput().get(path);
+        }
+        return null;
+    }
+
     public static Object value(Response response, String path,
                               Arg... args) throws ContextException {
         if (response instanceof DataTable) {
             try {
-                return  response.getValue(path, args);
+                return  ((DataTable)response).getValue(path, args);
             } catch (RemoteException e) {
                 throw new ContextException(e);
             }
@@ -167,6 +179,24 @@ public class operator {
                     out = (T) context.getValue(path, args);
                 }
             } else {
+//                if (((ServiceContext) context).getType().equals(Functionality.Type.TRANS)) {
+                String domainPath = null;
+                String domain = null;
+                int ind = path.indexOf("$");
+                // allow $ at te end
+                if (ind > 0 && path.length() > ind+1) {
+                    domainPath = path.substring(0, ind);
+                    domain = path.substring(ind + 1);
+                    if (context.get(domain) != null) {
+                        Object val = ((ServiceContext) context.get(domain)).get(domainPath);
+                        if (val instanceof Value) {
+                            return (T)((Value)val).getOut();
+                        } else {
+                            return (T) val;
+                        }
+                    }
+                }
+
                 if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
                     out = (T) context.getEvaluatedValue(path);
                 } else if (context instanceof Model && context.getMogramStrategy().getOutcome() != null) {
@@ -318,15 +348,15 @@ public class operator {
 
     public static Model inConn(Model model, Context inConnector) {
         ((ServiceContext)model).getMogramStrategy().setInConnector(inConnector);
-        if (inConnector instanceof MapContext)
-            ((MapContext)inConnector).direction =  MapContext.Direction.IN;
+        if (inConnector instanceof Connector)
+            ((Connector)inConnector).direction =  Connector.Direction.IN;
         return model;
     }
 
     public static Model outConn(Model model, Context outConnector) {
         ((ServiceContext) model).getMogramStrategy().setOutConnector(outConnector);
-        if (outConnector instanceof MapContext)
-            ((MapContext)outConnector).direction = MapContext.Direction.OUT;
+        if (outConnector instanceof Connector)
+            ((Connector)outConnector).direction = Connector.Direction.OUT;
         return model;
     }
 
@@ -378,7 +408,7 @@ public class operator {
     public static ServiceContext result(Mogram mogram) throws ContextException {
         if (mogram instanceof ContextDomain) {
             return (ServiceContext)((ServiceContext) mogram).getMogramStrategy().getOutcome();
-        } else if (mogram instanceof Subroutine) {
+        } else if (mogram instanceof Routine) {
             return (ServiceContext)mogram.getContext();
         }
         return null;
@@ -391,7 +421,7 @@ public class operator {
     public static Object result(Mogram mogram, String path) throws ContextException {
         if (mogram instanceof ContextDomain) {
             return ((ServiceContext) mogram).getMogramStrategy().getOutcome().asis(path);
-        } else if (mogram instanceof Subroutine) {
+        } else if (mogram instanceof Routine) {
             try {
                 return mogram.getContext().getValue(path);
             } catch (RemoteException e) {
@@ -474,11 +504,13 @@ public class operator {
          return mogram;
     }
 
-    public static ServiceContext out(Mogram mogram) throws ServiceException {
-        if (mogram instanceof Discipline) {
-            return (ServiceContext) ((Discipline)mogram).getOutput();
+    public static ServiceContext out(Contextion contextion) throws ServiceException {
+        if (contextion instanceof Discipline) {
+            return (ServiceContext) ((Discipline)contextion).getOutput();
+        } if (contextion instanceof Governance) {
+            return (ServiceContext) ((Governance)contextion).getOutput();
         } else {
-            return (ServiceContext) mogram.getMogramStrategy().getOutcome();
+            return (ServiceContext) contextion.getMogramStrategy().getOutcome();
         }
     }
 
@@ -486,35 +518,35 @@ public class operator {
         ((FidelityManager)mogram.getFidelityManager()).setTraced(isTraced);
     }
 
-    public static Context inConn(List<Entry> entries) throws ContextException {
-        MapContext map = new MapContext();
-        map.direction = MapContext.Direction.IN;
+    public static Connector inConn(List<Entry> entries) throws ContextException {
+        Connector map = new Connector();
+        map.direction = Connector.Direction.IN;
         sorcer.eo.operator.populteContext(map, entries);
         return map;
     }
 
-    public static Context inConn(boolean isRedundant, Value... entries) throws ContextException {
-        MapContext map = new MapContext();
-        map.direction = MapContext.Direction.IN;
+    public static Connector inConn(boolean isRedundant, Value... entries) throws ContextException {
+        Connector map = new Connector();
+        map.direction = Connector.Direction.IN;
         map.isRedundant = isRedundant;
         List<Entry> items = Arrays.asList(entries);
         sorcer.eo.operator.populteContext(map, items);
         return map;
     }
-    public static Context inConn(Value... entries) throws ContextException {
+    public static Connector inConn(Value... entries) throws ContextException {
         return inConn(false, entries);
     }
 
-    public static Context outConn(List<Entry> entries) throws ContextException {
-        MapContext map = new MapContext();
-        map.direction = MapContext.Direction.OUT;
+    public static Connector outConn(List<Entry> entries) throws ContextException {
+        Connector map = new Connector();
+        map.direction = Connector.Direction.OUT;
         sorcer.eo.operator.populteContext(map, entries);
         return map;
     }
 
-    public static Context outConn(Entry... entries) throws ContextException {
-        MapContext map = new MapContext();
-        map.direction = MapContext.Direction.OUT;
+    public static Connector outConn(Entry... entries) throws ContextException {
+        Connector map = new Connector();
+        map.direction = Connector.Direction.OUT;
         List<Entry> items = Arrays.asList(entries);
         sorcer.eo.operator.populteContext(map, items);
         return map;
@@ -588,6 +620,18 @@ public class operator {
         return model;
     }
 
+    public static FreeMogram model(String name) {
+        return new FreeMogram(name, Functionality.Type.MODEL);
+    }
+
+    public static FreeMogram routine(String name) {
+        return new FreeMogram(name, Functionality.Type.ROUTINE);
+    }
+
+    public static FreeContextion pipeline(String name) {
+        return new FreeContextion(name, Functionality.Type.PIPELINE);
+    }
+
     public static Model model(Object... items) throws ContextException {
         String name = "unknown" + count++;
         boolean hasEntry = false;
@@ -602,7 +646,7 @@ public class operator {
         for (Object i : items) {
             if (i instanceof String) {
                 name = (String) i;
-            } else if (i instanceof Subroutine) {
+            } else if (i instanceof Routine) {
                 hasExertion = true;
             } else if (i instanceof Signature) {
                 hasSignature = true;
@@ -656,6 +700,108 @@ public class operator {
             return mo;
         }
         throw new ModelException("do not know what model to create");
+    }
+
+    public static Transmodel transModel(Object... data) throws ContextException {
+        String name = getUnknown();
+        List<Domain> domains = new ArrayList<>();
+        List<ServiceFidelity> modelFis = new ArrayList<>();
+        Dependency dependency = null;
+        ExecDeps execDeps = null;
+        Paths domainPaths = null;
+
+        List<Object> dataList = new ArrayList<>();
+        for (Object o : data) {
+            dataList.add(o);
+        }
+        for (int i = 0; i < dataList.size(); i++) {
+            Object o = dataList.get(i);
+            if (o instanceof String) {
+                name = (String) o;
+            } else if (o instanceof Domain) {
+                domains.add((Domain)o);
+            } else if (o instanceof ServiceFidelity) {
+                modelFis.add((ServiceFidelity)o);
+            }  else if (o instanceof ExecDeps) {
+                execDeps = (ExecDeps)o;
+            } else if (o instanceof Paths) {
+//                && ((Paths)o).type.equals(Functionality.Type.TRANS)) {
+                domainPaths = (Paths)o;
+            } else if (o instanceof Dependency && ((Dependency)o).getDependencyType() == Function.Type.TRANS) {
+                dependency = (Dependency)o;
+            }
+        }
+        dataList.remove(name);
+        for (Object mod : domains) {
+            dataList.remove(mod);
+        }
+        for (Object fi : modelFis) {
+            dataList.remove(fi);
+        }
+
+        SrvTransmodel transModel = new SrvTransmodel(name);
+        transModel.addDomains(domains);
+        Object[] names = new Object[domains.size()];
+        for (int i = 0; i < domains.size(); i++) {
+            ((ServiceMogram)domains.get(i)).setParent(transModel);
+            names[i] = domains.get(i).getName();
+        }
+
+        if (modelFis.size() > 0) {
+            FidelityManager fiManager = new FidelityManager(transModel);
+            Map<String, ServiceFidelity> fis = new HashMap<>();
+            for (ServiceFidelity mdlFi : modelFis) {
+                fis.put(mdlFi.getName(), mdlFi);
+                transModel.getChildren().put(mdlFi.getName(), (SrvModel) mdlFi.getSelect());
+            }
+            fiManager.setFidelities(fis);
+            transModel.setFidelityManager(fiManager);
+        }
+        if (domainPaths != null) {
+            domainPaths.name = transModel.getName();
+            transModel.setChildrenPaths(domainPaths);
+        }
+        try {
+            if (dependency == null && names.length > 0) {
+                if (domainPaths != null) {
+                    sorcer.co.operator.dependsOn(transModel, ent(transModel.getName(), domainPaths));
+                } else {
+                    sorcer.co.operator.dependsOn(transModel, ent(transModel.getName(), paths(names)));
+                }
+            } else {
+                List<Evaluation> entries = dependency.getDependers();
+                for (Evaluation e : entries) {
+                    if (e instanceof Entry && ((Entry)e).getName().equals("self")) {
+                        e.setName(transModel.getName());
+                    }
+                }
+            }
+
+            if (execDeps != null && names.length > 0) {
+                ExecDependency[] entries = execDeps.deps;
+                for (Evaluation e : entries) {
+                    if (e instanceof Entry && ((Entry)e).getName().equals("self")) {
+                        e.setName(transModel.getName());
+                    }
+                }
+
+                if (execDeps.getType().equals(Functionality.Type.FUNCTION)) {
+                    sorcer.co.operator.dependsOn(transModel, execDeps.deps);
+                } else if (execDeps.getType().equals(Functionality.Type.DOMAIN)) {
+                    sorcer.co.operator.dependsOn(transModel, execDeps.deps);
+                }
+            }
+
+            Object[] dest = new Object[dataList.size()+1];
+            dest[0] = transModel;
+            for (int i = 0;  i < dataList.size(); i++) {
+                dest[i+1] = dataList.get(i);
+            }
+            srvModel(dest);
+        } catch (ContextException e) {
+            throw new EvaluationException(e);
+        }
+        return transModel;
     }
 
     public static Context add(ContextDomain model, Identifiable... objects)
@@ -809,8 +955,12 @@ public class operator {
                 fis.add(fi);
             }
         }
-        if (model == null)
+
+        boolean newModel = false;
+        if (model == null) {
             model = new SrvModel();
+            newModel = true;
+        }
 
         if (morphFiEnts != null || metaFis != null || fis != null) {
            if (fiManager == null)
@@ -845,10 +995,13 @@ public class operator {
             model.setSubject(complement.getName(), complement.getId());
         }
 
-        Object[] dest = new Object[items.length+1];
-        System.arraycopy(items,  0, dest,  1, items.length);
-        dest[0] = model;
-        return (Model)context(dest);
+        if (newModel) {
+            Object[] dest = new Object[items.length + 1];
+            System.arraycopy(items, 0, dest, 1, items.length);
+            dest[0] = model;
+            return (Model)context(dest);
+        }
+        return (Model)context(items);
     }
 
     public static void update(Mogram mogram, Setup... entries) throws ContextException {
@@ -867,12 +1020,12 @@ public class operator {
         return new SrvModelAutoDeps((SrvModel)model).printDeps();
     }
 
-    public static boolean provision(Signature... signatures) throws  DispatcherException {
+    public static boolean provision(Signature... signatures) throws  DispatchException {
         ProvisionManager provisionManager = new ProvisionManager(Arrays.asList(signatures));
         return provisionManager.deployServices();
     }
 
-    public static Subroutine[] clients(Subroutine... consumers) {
+    public static Routine[] clients(Routine... consumers) {
         return consumers;
     }
 
@@ -880,22 +1033,68 @@ public class operator {
         return servers;
     }
 
-    public static Discipline disc(Service server, Subroutine consumer) {
+    public static Discipline dsc(Service server, Routine consumer) {
         return new ServiceDiscipline(server, consumer);
     }
-    public static Discipline disc(Service[] servers, Subroutine[] clients) {
+    public static Discipline dsc(Service[] servers, Routine[] clients) {
         return new ServiceDiscipline(servers, clients);
     }
 
-    public static Discipline disc(List<Service> servers, List<Subroutine> clients) {
+    public static Discipline dsc(List<Service> servers, List<Routine> clients) {
         return new ServiceDiscipline(servers, clients);
     }
 
-    public static Discipline disc(Governance multidisc, String name) {
+    public static Discipline dsc(Governance multidisc, String name) {
         return multidisc.getDiscipline(name);
     }
 
-    public static Discipline add(Discipline disciplne, Service server, Subroutine client) {
+    public static String dsc(Context context) {
+        return (String) context.get(Functionality.Type.DISCIPLINE.toString());
+    }
+
+    public static Domain dmn(Collaboration collab, String name) {
+        return collab.getDomain(name);
+    }
+
+    public static String dmn(Context context) {
+        return (String) context.get(Functionality.Type.DOMAIN.toString());
+    }
+
+    public static String clb(Context context) {
+        return (String) context.get(Functionality.Type.COLLABORATION.toString());
+    }
+
+    public static String domain(Context context) {
+        return (String) context.get(Functionality.Type.DOMAIN.toString());
+    }
+
+    public static Discipline dsc(Fidelity... discFis) {
+        return dsc((String)null, discFis);
+    }
+
+    public static Discipline dsc(String name, Fidelity... discFis) {
+        ServiceDiscipline srvDisc = null;
+        if (discFis[0] instanceof DisciplineFidelity) {
+            srvDisc = new ServiceDiscipline(((DisciplineFidelity)discFis[0]).getContextionFi(),
+                ((DisciplineFidelity)discFis[0]).getDispatcherFi(),
+                ((DisciplineFidelity)discFis[0]).getContextFi());
+            srvDisc.getDisciplineFidelities().put(discFis[0].getName(), (DisciplineFidelity) discFis[0]);
+            for (int i = 1; i < discFis.length; i++) {
+                srvDisc.add(((DisciplineFidelity)discFis[i]).getContextionFi(),
+                    ((DisciplineFidelity)discFis[i]).getDispatcherFi(),
+                    ((DisciplineFidelity)discFis[i]).getContextFi());
+                srvDisc.getDisciplineFidelities().put(discFis[i].getName(), (DisciplineFidelity) discFis[i]);
+            }
+        } else {
+            srvDisc = new ServiceDiscipline(discFis[0], discFis[1]);
+        }
+        if (name != null) {
+            srvDisc.setName(name);
+        }
+        return srvDisc;
+    }
+
+    public static Discipline add(Discipline disciplne, Service server, Routine client) {
         disciplne.add(server, client, null);
         return disciplne;
     }
@@ -905,7 +1104,7 @@ public class operator {
         return disciplne;
     }
 
-    public static Discipline add(Discipline disciplne, Service server, Subroutine client, Context context) {
+    public static Discipline add(Discipline disciplne, Service server, Routine client, Context context) {
         disciplne.add(server, client, context);
         return disciplne;
     }
@@ -915,16 +1114,253 @@ public class operator {
         return disciplne;
     }
 
-    public static Governance gov(Discipline... disciplines) {
-        return gov(null, disciplines);
+    public static Collaboration clb(Object... data) throws ContextException {
+        String name = getUnknown();
+        List<Domain> domains = new ArrayList<>();
+        List<ServiceFidelity> discFis = new ArrayList<>();
+        Dependency dependency = null;
+        ExecDeps execDeps = null;
+        Paths disciplinePaths = null;
+        Context collabContext = null;
+
+        List<Object> dataList = new ArrayList<>();
+        for (Object o : data) {
+            dataList.add(o);
+        }
+        for (int i = 0; i < dataList.size(); i++) {
+            Object o = dataList.get(i);
+            if (o instanceof String) {
+                name = (String) o;
+            } else if (o instanceof DataContext) {
+                collabContext = (Context)o;
+            } else if (o instanceof Domain) {
+                domains.add((Domain)o);
+            }  else if (o instanceof Dependency) {
+                dependency = (Dependency)o;
+            } else if (o instanceof ExecDeps) {
+                execDeps = (ExecDeps)o;
+            } else if (o instanceof ServiceFidelity) {
+                discFis.add((ServiceFidelity)o);
+            } else if (o instanceof Paths && ((Paths)o).type.equals(Functionality.Type.DOMAIN)) {
+                disciplinePaths = (Paths)o;
+            }
+        }
+
+        Collaboration collab = new Collaboration(name, domains);
+        if (collabContext != null) {
+            collab.setInput(collabContext);
+        }
+        Object[] names = new Object[domains.size()];
+
+        for (int i = 0; i < domains.size(); i++) {
+            domains.get(i).setParent(collab);
+            names[i] = domains.get(i).getName();
+        }
+
+        if (discFis.size() > 0) {
+            FidelityManager fiManager = new FidelityManager();
+            Map<String, ServiceFidelity> fis = new HashMap<>();
+            for (ServiceFidelity discFi : discFis) {
+                fis.put(discFi.getName(), discFi);
+                collab.getDomains().put(discFi.getName(), (Domain) discFi.getSelect());
+            }
+            fiManager.setFidelities(fis);
+            collab.setFiManager(fiManager);
+        }
+
+        if (disciplinePaths != null) {
+            disciplinePaths.name = collab.getName();
+            collab.setDomainPaths(disciplinePaths);
+        }
+
+        if (dependency == null && names.length > 0) {
+            if (disciplinePaths != null) {
+                sorcer.co.operator.dependsOn(collab, ent(collab.getName(), disciplinePaths));
+            } else {
+                sorcer.co.operator.dependsOn(collab, ent(collab.getName(), paths(names)));
+            }
+        } else {
+            List<Evaluation> entries = dependency.getDependers();
+            for (Evaluation e : entries) {
+                if (e instanceof Entry && ((Entry) e).getName().equals("self")) {
+                    e.setName(collab.getName());
+                }
+            }
+        }
+
+        if (execDeps != null && names.length > 0) {
+            ExecDependency[] entries = execDeps.deps;
+            for (Evaluation e : entries) {
+                if (e instanceof Entry && ((Entry) e).getName().equals("self")) {
+                    e.setName(collab.getName());
+                }
+            }
+
+            if (execDeps.getType().equals(Functionality.Type.FUNCTION)) {
+                sorcer.co.operator.dependsOn(collab, execDeps.deps);
+            } else if (execDeps.getType().equals(Functionality.Type.DOMAIN)) {
+                sorcer.co.operator.dependsOn(collab, execDeps.deps);
+            }
+        }
+
+//        collab.setExplorer(new Explorer(collab));
+        return collab;
     }
 
-    public static Governance gov(String name, Discipline... contextions) {
-        Governance md = new Governance(null, contextions);
-        if (name != null) {
-            md.setName(name);
+    public static Governance gov(Object... data) throws ContextException {
+        String name = getUnknown();
+        List<Discipline> disciplines = new ArrayList<>();
+        List<ServiceFidelity> discFis = new ArrayList<>();
+        Dependency dependency = null;
+        ExecDeps execDeps = null;
+        Paths disciplinePaths = null;
+        Context govContext = null;
+
+        List<Object> dataList = new ArrayList<>();
+        for (Object o : data) {
+            dataList.add(o);
         }
-        md.setExplorer(new GovernanceExplorer(md));
-        return md;
+        for (int i = 0; i < dataList.size(); i++) {
+            Object o = dataList.get(i);
+            if (o instanceof String) {
+                name = (String) o;
+            } else if (o instanceof Discipline) {
+                disciplines.add((Discipline)o);
+            } else if (o instanceof DataContext) {
+                govContext = (Context)o;
+            } else if (o instanceof Dependency) {
+                dependency = (Dependency)o;
+            } else if (o instanceof ExecDeps) {
+                execDeps = (ExecDeps)o;
+            } else if (o instanceof ServiceFidelity) {
+                discFis.add((ServiceFidelity)o);
+            } else if (o instanceof Paths && ((Paths)o).type.equals(Functionality.Type.DISCIPLINE)) {
+                disciplinePaths = (Paths)o;
+            }
+        }
+
+        Governance gov = new Governance(name, disciplines);
+        if (govContext != null) {
+            gov.setInput(govContext);
+        }
+        Object[] names = new Object[disciplines.size()];
+
+        for (int i = 0; i < disciplines.size(); i++) {
+            ((ServiceDiscipline)disciplines.get(i)).setParent(gov);
+            names[i] = disciplines.get(i).getName();
+        }
+
+        if (discFis.size() > 0) {
+            FidelityManager fiManager = new FidelityManager();
+            Map<String, ServiceFidelity> fis = new HashMap<>();
+            for (ServiceFidelity discFi : discFis) {
+                fis.put(discFi.getName(), discFi);
+                gov.getDisciplines().put(discFi.getName(), (Discipline) discFi.getSelect());
+            }
+            fiManager.setFidelities(fis);
+            gov.setFiManager(fiManager);
+        }
+
+        if (disciplinePaths != null) {
+            disciplinePaths.name = gov.getName();
+            gov.setDisciplnePaths(disciplinePaths);
+        }
+
+        if (dependency == null && names.length > 0) {
+            if (disciplinePaths != null) {
+                sorcer.co.operator.dependsOn(gov, ent(gov.getName(), disciplinePaths));
+            } else {
+                sorcer.co.operator.dependsOn(gov, ent(gov.getName(), paths(names)));
+            }
+        } else {
+            List<Evaluation> entries = dependency.getDependers();
+            for (Evaluation e : entries) {
+                if (e instanceof Entry && ((Entry) e).getName().equals("self")) {
+                    e.setName(gov.getName());
+                }
+            }
+        }
+
+        if (execDeps != null && names.length > 0) {
+            ExecDependency[] entries = execDeps.deps;
+            for (Evaluation e : entries) {
+                if (e instanceof Entry && ((Entry) e).getName().equals("self")) {
+                    e.setName(gov.getName());
+                }
+            }
+
+            if (execDeps.getType().equals(Functionality.Type.FUNCTION)) {
+                sorcer.co.operator.dependsOn(gov, execDeps.deps);
+            } else if (execDeps.getType().equals(Functionality.Type.DISCIPLINE)) {
+                sorcer.co.operator.dependsOn(gov, execDeps.deps);
+            }
+        }
+
+        gov.setSuperviser(new Governor(gov));
+        return gov;
+    }
+
+    public static Fidelity mdaFi(String name, String path) {
+        Fidelity fi = new Fidelity(name, path);
+        fi.fiType = Fi.Type.MDA;
+        fi.setOption(Fi.Type.SELECT);
+        return fi;
+    }
+
+    public static AnalysisEntry mda(String name, Analysis mda)
+        throws EvaluationException {
+        return new AnalysisEntry(name, mda);
+    }
+
+    public static ServiceFidelity mdaFi(String name, Analysis... mdaEntries) {
+        AnalysisEntry[] entries = new AnalysisEntry[mdaEntries.length];
+        for (int i = 0; i < mdaEntries.length; i++) {
+            entries[i] = (AnalysisEntry) mdaEntries[i];
+        }
+        ServiceFidelity mdaFi =  new ServiceFidelity(entries);
+        mdaFi.setName(name);
+        mdaFi.setType(Fi.Type.MDA);
+        return mdaFi;
+    }
+
+    public static ServiceFidelity explFi(String name, Exploration... explEntries) {
+        ExplorationEntry[] entries = new ExplorationEntry[explEntries.length];
+        for (int i = 0; i < explEntries.length; i++) {
+            entries[i] = (ExplorationEntry) explEntries[i];
+        }
+        ServiceFidelity mdaFi =  new ServiceFidelity(entries);
+        mdaFi.setName(name);
+        mdaFi.setType(Fi.Type.EXPLORER);
+        return mdaFi;
+    }
+
+    public static ExplorationEntry expl(String name, Exploration explorer)
+        throws EvaluationException {
+        return new ExplorationEntry(name, explorer);
+    }
+
+    public static AnalysisEntry mdaInstace(String name, Signature signature)
+        throws EvaluationException {
+        AnalysisEntry mda = new AnalysisEntry(name, signature);
+        mda.setType(Functionality.Type.MDA);
+        try {
+            mda.setValue(signature);
+            mda.setImpl(instance(signature));
+        } catch (SetterException | SignatureException | RemoteException e) {
+            throw new EvaluationException(e);
+        }
+        return mda;
+    }
+
+    public static AnalysisEntry mda(String name, Signature signature)
+        throws EvaluationException {
+        AnalysisEntry mda = new AnalysisEntry(name, signature);
+        mda.setType(Functionality.Type.MDA);
+        try {
+            mda.setValue(signature);
+        } catch (SetterException | RemoteException e) {
+            throw new EvaluationException(e);
+        }
+        return mda;
     }
 }

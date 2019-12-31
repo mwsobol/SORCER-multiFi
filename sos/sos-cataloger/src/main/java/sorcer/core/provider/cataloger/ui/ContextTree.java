@@ -63,7 +63,7 @@ public class ContextTree extends JPanel {
 	protected DefaultMutableTreeNode rootNode;
 
 	/**
-	 * Domain the tree is based off of
+	 * Domains the tree is based off of
 	 */
 	protected DefaultTreeModel treeModel;
 

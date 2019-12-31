@@ -34,20 +34,20 @@ import static sorcer.so.operator.exert;
 public class ServiceExertionTest {
 	private final static Logger logger = LoggerFactory.getLogger(ServiceExertionTest.class);
 
-	private Subroutine eTask, eJob;
+	private Routine eTask, eJob;
 	// to avoid spelling errors in test cases define instance variables
 	private String arg = "arg", result = "result";
 	private String x1 = "x1", x2 = "x2", y = "y";
 	
 	static {
-		ServiceRoutine.debug = true;
+		Subroutine.debug = true;
 		System.setProperty("java.security.policy", Sorcer.getHome() + "/configs/policy.all");
 		System.setSecurityManager(new SecurityManager());
 	}
 	
 	@Before
 	public void setUp() throws Exception {
-		// create an disciplines
+		// create an domains
 		eTask = createTask();	
 		eJob = createJob();
 	}
@@ -96,9 +96,8 @@ public class ServiceExertionTest {
 	}
 
 	@Test
-	public void accessingComponentExertionsTest() throws EvaluationException,
-			RemoteException, RoutineException {
-		//logger.info("eJob disciplines: " + names(disciplines(eJob)));
+	public void accessingComponentExertionsTest() throws MogramException {
+		logger.info("eJob mograms: " + names(mograms(eJob)));
 		assertTrue(names(mograms(eJob)).equals(list("t4", "t5", "j2", "t3", "j1")));
 
 		//logger.info("t4 exertion: " + exertion(eJob, "t4"));
@@ -107,12 +106,12 @@ public class ServiceExertionTest {
 		//logger.info("j2 exertion: " + exertion(eJob, "j2"));
 		assertTrue(name(xrt(eJob, "j1/j2")).equals("j2"));
 		
-		//logger.info("j2 exertion names: " + names(disciplines(exertion(eJob, "j2"))));
+		//logger.info("j2 exertion names: " + names(domains(exertion(eJob, "j2"))));
 		assertTrue(names(mograms(xrt(eJob, "j1/j2"))).equals(list("t4", "t5", "j2")));
 	}
 
 	// a simple task
-	private Subroutine createTask() throws Exception {
+	private Routine createTask() throws Exception {
 		
 //		Task task = task("t1", sig("add", Adder.class), 
 //		   context("add", in(path(arg, x1), 20.0), in(path(arg, x2), 80.0),
@@ -126,7 +125,7 @@ public class ServiceExertionTest {
 	}
 	
 	// two level job composition
-	private Subroutine createJob() throws Exception {
+	private Routine createJob() throws Exception {
 	
 //		Task t3 = task("t3", sig("subtract", Subtractor.class), 
 //		   context("subtract", in(path(arg, x1), null), in(path(arg, x2), null),

@@ -18,17 +18,20 @@
 package sorcer.service;
 
 
+import com.sun.tools.javac.util.Name;
 import sorcer.service.modeling.Functionality;
 import sorcer.util.DataTable;
 
 public interface Differentiator {
 
+	public Functionality.Type getType();
+
+	public void setWrt(Wrt wrt);
+
 	public DataTable differentiate(Arg... args) throws EvaluationException;
 
 	public double[] getGradient(String gradientName) throws EvaluationException;
 
-    public DataTable getTableGradients(String... gradientNames) throws EvaluationException;
-
-	public Functionality.Type getType();
+    public DataTable getGradientTable() throws EvaluationException;
 
 }

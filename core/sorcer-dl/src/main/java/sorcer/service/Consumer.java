@@ -17,6 +17,7 @@
 
 package sorcer.service;
 
+import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 
 import java.rmi.RemoteException;
@@ -27,10 +28,18 @@ import java.util.List;
  *
  * Execute provided list of services as a service pipe.
  */
-public interface Consumer extends Service {
+public interface Consumer extends Service, Client {
 
     Context consume(Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException;
 
     List<Service> getService(String... args) throws ServiceException;
+
+    Transaction getTransaction();
+
+    void preprocess(String... args) throws MogramException, ContextException;
+
+    void process(String... args) throws MogramException, ContextException;
+
+    void postprocess(String... args) throws MogramException, ContextException;
 
 }

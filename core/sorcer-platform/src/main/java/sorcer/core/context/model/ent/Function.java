@@ -253,6 +253,11 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 		return dependers;
 	}
 
+	@Override
+	public Type getDependencyType() {
+		return Type.FUNCTION;
+	}
+
 	public ContextSelection getContextSelector() {
 		return contextSelector;
 	}
@@ -307,7 +312,7 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 				}
 				out.putValue(key, ((ServiceContext) mogram).getValue(key));
 			}
-		} else if (mogram instanceof Subroutine) {
+		} else if (mogram instanceof Routine) {
 			if (impl != null && impl != Context.none)
 				mogram.getContext().putValue(key, impl);
 			cxt =  mogram.exert(txn).getContext();

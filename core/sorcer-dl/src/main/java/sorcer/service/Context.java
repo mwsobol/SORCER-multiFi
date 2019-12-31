@@ -30,35 +30,35 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 /**
- * Service context classes that implement this interface provide SORCER generic
+ * Service context classes that implement this interface provide generic
  * metacomputing data structures for storage, retrieval, and propagation of
- * heterogeneous information across all SORCER service providers. Two generic
+ * heterogeneous information across the service network. Two generic
  * implementations are provided: <code>ServiceContext</code> and
  * <code>sorcer.core.context.PositionalContext</code>. Usually the former is used by
  * service requestors and the latter with more functionality is used by service
- * providers. The ServiceContextImpl class implements the ProviderContext
- * interface that extends ServiceContext. An example of a specific service
- * context is illustrated by <code>ArrayContext</code>.
+ * providers. An example of a specific service context is illustrated by
+ * <code>ArrayContext</code>.
  * <p>
  * A service context is a tree-like structure with two types of nodes. Leaf
- * nodes are called data (execute) nodes and the remaining nodes are called
+ * nodes are called data nodes and the remaining nodes are called
  * context attribute nodes. Context attributes define a namespace for the data
- * in a uniform way for use by all related services. A path of context
+ * in a uniform way to be used by all cooperating services. A path of context
  * attributes leading from the root of the context to any leaf node along with
- * its data node is called a context element (path/data). Thus a path is a
- * hierarchical attribute of data contained in the leaf node. A data node can
+ * its data node is called a context entry (path-data). Thus a path is a
+ * semantic attribute of data contained in the leaf node. A data node can
  * contain any Java object; in particular a generic {@see ContextNode} is
  * available.
  * <p>
- * Context paths can be marked with attributes set by using the method
- * {@link #setAttribute(String)}, which allow for efficient search of related
- * data by service providers (service context clients). The search issue becomes
- * critical when a namespace in the context may change or when data nodes
- * contain remote references, for example a URL. It is usually assumed that
- * provider-enforced data associations are more stable than user-oriented paths.
- * Each direct service invocation requires data in the ServiceContext format.
+ * Context paths can be marked (annotated) with search attributes using the method
+ * {@link #setAttribute(String)}, which allow for search of related annotated
+ * data by service providers independently of used paths by service requestors.
+ * The search issue becomes critical when a namespace in the context may change
+ * or when data nodes contain remote references, for example a URL. It is usually
+ * assumed that provider-enforced data associations are more stable than
+ * user-oriented paths. Each direct invocation of a service provider requires
+ * data in the ServiceContext format.
  * <p>
- * Service contexts are defined by this common interface with efficient
+ * Service contexts are defined by this common interface with
  * service-oriented APIs. However, there are some similarities with XML
  * terminology. The root element in XML contains all other XML elements.
  * Similarly, in each service context, the root extends to all data nodes. A
@@ -68,9 +68,10 @@ import java.util.*;
  * data node has rich OO semantics. Finally, data attributes in service contexts
  * can be compared to element attributes in XML. However, data attributes have
  * more meta-attribute meaning than XML attributes. While context attributes
- * provide a name space for direct access to data nodes via
- * {@link Context#getValue}, data attributes specify the data node for indirect
- * efficient retrieval (search) by service providers.
+ * provide a name space (ontology) for direct access to data nodes via
+ * {@link Context#getValue}, annotated attributes specify the data node/nodes
+ * for indirect efficient retrieval with {@link Context#getMarkedValues },
+ * by service providers.
  *
  * @author Mike Sobolewski
  */
@@ -178,10 +179,17 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 	final static String JOB_FEEDBACK = "job" + SorcerConstants.CPS + "feedback";
 
 	// ContextDomain Predictio Data Path
-	final static String PRED_PATH = "model" + SorcerConstants.CPS + "prediction"
+	final static String PRED_PATH = "domain" + SorcerConstants.CPS + "prediction"
 			+ SorcerConstants.CPS + "data";
-	final static String MDA_PATH = "model" + SorcerConstants.CPS + "mda"
+
+	final static String ANALYZER_PATH = "domain" + SorcerConstants.CPS + "analysis"
+		+ SorcerConstants.CPS + "component";
+
+	final static String MDA_PATH = "domain" + SorcerConstants.CPS + "mda"
 			+ SorcerConstants.CPS + "component";
+
+	final static String EXPLORER_PATH = "domain" + SorcerConstants.CPS + "explorer"
+		+ SorcerConstants.CPS + "component";
 
 	// ContextDomain Specific Data Path
 	final static String DSD_PATH = "domain" + SorcerConstants.CPS + "specific"
@@ -251,9 +259,9 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 	/**
 	 * Returns the mogram associated with this context.
 	 *
-	 * @return Subroutine
+	 * @return Routine
 	 */
-	public Subroutine getMogram();
+	public Routine getMogram();
 
 	/**
 	 * Returns the service exerter associated with this context
@@ -276,7 +284,7 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 	 * @param task
 	 *            The task to set.
 	 */
-	public void setRoutine(Subroutine task);
+	public void setRoutine(Routine task);
 
 	/**
 	 * Returns the subject path in this context. A subject is a path/execute

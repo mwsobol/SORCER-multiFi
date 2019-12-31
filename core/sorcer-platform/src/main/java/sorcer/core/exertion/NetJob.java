@@ -59,7 +59,7 @@ public class NetJob extends Job implements Invocation<Object> {
 		setPrincipal(principal);
 	}
 
-	public static ServiceRoutine getTemplate() {
+	public static Subroutine getTemplate() {
 		NetJob temp = new NetJob();
 		return temp;
 	}

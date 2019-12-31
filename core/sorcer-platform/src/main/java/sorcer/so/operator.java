@@ -29,11 +29,13 @@ import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
+import sorcer.core.service.Governance;
 import sorcer.service.Exertion;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
+import sorcer.service.Discipline;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -91,8 +93,8 @@ public class operator extends Operator {
                     return (T) ((ServiceContext) ((Entry) entry).getOut()).getValue(entry.getName(), args);
                 } else if (entry instanceof Incrementor) {
                     return ((Incrementor<T>) entry).next();
-                } else if (entry instanceof Subroutine) {
-                    return (T) ((Subroutine) entry).exert(args).getContext();
+                } else if (entry instanceof Routine) {
+                    return (T) ((Routine) entry).exert(args).getContext();
                 } else if (entry instanceof Functionality) {
                     if (entry instanceof Srv && entry.getImpl() instanceof SignatureEntry) {
                         return  (T) entry.execute(args);
@@ -156,11 +158,23 @@ public class operator extends Operator {
         }
     }
 
-    public static Context eval(Model model, Context context)
+    public static Context eval(Request request, Context context)
             throws ContextException {
         Context rc = null;
         try {
-            rc = model.evaluate(context);
+            if (request instanceof Contextion) {
+                rc = ((Contextion) request).evaluate(context);
+            } else {
+                try {
+                    if (context == null) {
+                        rc = (Context) request.execute(new Arg[0]);
+                    } else {
+                        rc = (Context) request.execute(new Arg[]{context});
+                    }
+                } catch (ServiceException e) {
+                    throw new ContextException(e);
+                }
+            }
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
@@ -198,26 +212,30 @@ public class operator extends Operator {
         }
     }
 
-    public static Service out(Discipline discipline) {
-        return discipline.getout();
+    public static Context dscOut(Discipline discipline) throws ContextException {
+        return discipline.getOutput();
     }
 
-    public static Service outGov(Discipline discipline) {
-        return discipline.getout();
+    public static Context dspOut(Discipline discipline) throws ContextException {
+        return ((ServiceDiscipline)discipline).getOutDispatcher().getContext();
     }
 
-    public static Mogram result(Discipline discipline) {
-        return discipline.getOutDispatcher();
+    public static Context out(Governance governance) {
+        return governance.getOutput();
     }
 
-    public static Mogram outDisp(Discipline discipline) {
+    public static Context result(Discipline discipline) throws ContextException {
+        return ((Routine)discipline.getOutDispatcher()).getContext();
+    }
+
+    public static Dispatcher dispatcher(Discipline discipline) {
         return discipline.getOutDispatcher();
     }
 
     public static Response query(Mogram mogram, Arg... args) throws ContextException {
         try {
             synchronized (mogram) {
-                if (mogram instanceof Subroutine) {
+                if (mogram instanceof Routine) {
                     return mogram.exert(args).getContext();
                 } else {
                     return (Response) ((EntModel) mogram).getValue(args);
@@ -243,7 +261,7 @@ public class operator extends Operator {
         return response(model);
     }
 
-    public static Object response(Subroutine exertion, String path) throws ContextException {
+    public static Object response(Routine exertion, String path) throws ContextException {
         try {
             return ((ServiceContext)exertion.exert().getContext()).getResponseAt(path);
         } catch (RemoteException | MogramException e) {
@@ -251,11 +269,11 @@ public class operator extends Operator {
         }
     }
 
-    public static Object exec(ContextDomain model, String path$domain) throws ContextException {
-        if (model instanceof DataContext) {
-            return value((Context)model, path$domain);
+    public static Object exec(Request request, String path$domain) throws ContextException {
+        if (request instanceof DataContext) {
+            return value((Context)request, path$domain);
         } else {
-            return response(model, path$domain);
+            return response((Model)request, path$domain);
         }
     }
 
@@ -292,22 +310,45 @@ public class operator extends Operator {
         }
     }
 
-    public static ServiceContext eval(Mogram mogram, Object... items) throws ContextException {
-        return response(mogram, items);
-    }
-
     public static ServiceContext response(Mogram mogram, Object... items) throws ContextException {
-        if (mogram instanceof Subroutine) {
-            return exertionResponse((Subroutine) mogram, items);
+        if (mogram instanceof Routine) {
+            return exertionResponse((Routine) mogram, items);
         } else if (mogram instanceof ContextDomain &&  ((ServiceMogram)mogram).getType().equals(Functionality.Type.MADO)) {
             if (mogram.isEvaluated()) {
                 return (ServiceContext) ((ServiceContext) mogram).getDomain((String) items[0]).getEvaluatedValue((String) items[1]);
             } else {
                 return (ServiceContext) ((ServiceContext) ((ServiceContext) mogram).getDomain((String) items[0])).getValue((String) items[1]);
             }
+        } else if (mogram instanceof Transmodel &&
+            ((Transmodel)mogram).getChildren() != null &&
+            ((Transmodel)mogram).getChildren().size() > 0) {
+            Context cxt = null;
+            for (Object item : items) {
+                if (item instanceof Context) {
+                    cxt = (Context)item;
+                    break;
+                }
+            }
+            try {
+                return (ServiceContext) mogram.evaluate(cxt);
+            } catch (RemoteException e) {
+                throw new ContextException(e);
+            }
         } else {
             return modelResponse((ContextDomain) mogram, items);
         }
+    }
+
+    public static ServiceContext eval(Request request, Object... items) throws ContextException {
+        Context out = null;
+        if (request instanceof Mogram) {
+            out = response((Mogram)request, items);
+        } else if(items.length == 1 && items[0] instanceof Context) {
+            out = eval(request, (Context)items[0]);
+        } else if(items.length == 0) {
+            out = eval(request, (Context)null);
+        }
+        return (ServiceContext)out;
     }
 
     public static ServiceContext modelResponse(ContextDomain model, Object... items) throws ContextException {
@@ -348,7 +389,7 @@ public class operator extends Operator {
         }
     }
 
-    public static ServiceContext exertionResponse(Subroutine exertion, Object... items) throws ContextException {
+    public static ServiceContext exertionResponse(Routine exertion, Object... items) throws ContextException {
         try {
             List<Arg> argl = new ArrayList();
             List<Path> paths = new ArrayList();;
@@ -381,8 +422,8 @@ public class operator extends Operator {
         }
     }
 
-    public static Object eval(Subroutine exertion, String selector,
-                              Arg... args) throws EvaluationException {
+    public static Object eval(Routine exertion, String selector,
+							  Arg... args) throws EvaluationException {
         try {
             exertion.getDataContext().setContextReturn(new Context.Return(selector));
             return exec(exertion, args);
@@ -418,7 +459,7 @@ public class operator extends Operator {
         try {
             Object out = null;
             synchronized (mogram) {
-                if (mogram instanceof Subroutine) {
+                if (mogram instanceof Routine) {
                     out = new ServiceShell().evaluate(mogram, args);
                 } else {
                     out = ((ServiceContext) mogram).getValue(args);
@@ -462,7 +503,7 @@ public class operator extends Operator {
         }
     }
 
-    public static List<ThrowableTrace> exceptions(Subroutine exertion) throws RemoteException {
+    public static List<ThrowableTrace> exceptions(Routine exertion) throws RemoteException {
         return exertion.getExceptions();
     }
 
@@ -474,9 +515,9 @@ public class operator extends Operator {
         }
     }
 
-    public static <T extends Mogram> T exert(T input,
+    public static <T extends Contextion> T exert(T input,
                                              Transaction transaction,
-                                             Arg... entries) throws RoutineException {
+                                             Arg... entries) throws ContextException {
         return new sorcer.core.provider.exerter.ServiceShell().exert(input, transaction, entries);
     }
 

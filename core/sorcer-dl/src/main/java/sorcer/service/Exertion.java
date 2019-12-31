@@ -36,14 +36,14 @@ public interface Exertion {
 	/**
 	 * A generic federated execution.
 	 *
-	 * @param mogram an input mogram
+	 * @param exertion an input mogram
 	 * @param txn      The transaction (if any) under which to provide service.
 	 * @return a resulting mogram
 	 * @throws TransactionException if a transaction error occurs
 	 * @throws MogramException    if an exertion invocation failed for any reason
 	 * @throws RemoteException
 	 */
-	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args)
-			throws MogramException, RemoteException;
+	public <T extends Contextion> T exert(T exertion, Transaction txn, Arg... args)
+			throws ContextException, RemoteException;
 
 }

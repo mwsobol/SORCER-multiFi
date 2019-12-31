@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.container.jeri.AbstractExporterFactory;
 import sorcer.container.jeri.ExporterFactories;
 import sorcer.core.SorcerConstants;
-import sorcer.core.SorcerNotifierProtocol;
+import sorcer.core.SorcerNotifier;
 import sorcer.core.analytics.AnalyticsRecorder;
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ServiceContext;
@@ -249,7 +249,7 @@ public class ProviderDelegate {
 	 * A remote inner proxy implements Remote interface. Usually outer proxy
 	 * complements its functionality by invoking remote calls on the inner proxy
 	 * server. Thus, inner proxy can make remote calls on another service
-	 * provider, for example {@code Provider.service(Subroutine)), while the
+	 * provider, for example {@code Provider.service(Routine)), while the
 	 * outer proxy still can prc directly on the originating service provider.
 	 */
 	private Remote innerProxy = null;
@@ -265,7 +265,7 @@ public class ProviderDelegate {
 	 * provider can be invoked via the Service remote interface,
 	 * {@code Service.service(Mogram)} - the recommended access proxy approach.
 	 * The provider's direct invocation methods are embedded into service signatures
-	 * of serviced disciplines.
+	 * of serviced domains.
 	 */
 	private Remote outerProxy = null;
 
@@ -332,7 +332,7 @@ public class ProviderDelegate {
 			}
 		};
 
-		public static void add(ServiceRoutine ex) {
+		public static void add(Subroutine ex) {
 			ExertionSessionBundle esb = tl.get();
 			esb.exertionID = ex.getId();
 			esb.session = ex.getMonitorSession();
@@ -1073,7 +1073,7 @@ public class ProviderDelegate {
 //			Method m = null;
 //			try {
 //				// select the proper method for the bean type
-//				if (selector.equals("invoke") && (impl instanceof Subroutine || impl instanceof EntModel)) {
+//				if (selector.equals("invoke") && (impl instanceof Routine || impl instanceof EntModel)) {
 //					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
 //					isContextual = true;
 //				} else if (selector.equals("compute") && impl instanceof ContextDomain) {
@@ -1139,13 +1139,13 @@ public class ProviderDelegate {
 			try {
 				// select the proper method for the bean type
 				if (selector.equals("exert") && (bean instanceof ContextDomain
-					||  bean instanceof Subroutine)) {
-					m = bean.getClass().getMethod(selector, Mogram.class, Transaction.class, Arg[].class);
+					||  bean instanceof Contextion)) {
+					m = bean.getClass().getMethod(selector, Contextion.class, Transaction.class, Arg[].class);
 					isContextual = true;
 				} else if (selector.equals("evaluate") && bean instanceof ContextDomain) {
 					m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
 					isContextual = true;
-				} else if (selector.equals("invoke") && (bean instanceof Subroutine || bean instanceof Context)) {
+				} else if (selector.equals("invoke") && (bean instanceof Routine || bean instanceof Context)) {
 					m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
 					isContextual = true;
 				} else if (selector.equals("exert") && bean instanceof ServiceShell) {
@@ -1200,7 +1200,7 @@ public class ProviderDelegate {
 		String selector = task.getProcessSignature().getSelector();
 		Object[] pars = new Object[] { task.getContext() };
 		if (selector.equals("invoke")
-			&& (impl instanceof Subroutine || impl instanceof Context)) {
+			&& (impl instanceof Routine || impl instanceof Context)) {
 			Object obj = m.invoke(impl, new Object[] { pars[0], args });
 
 			if (obj instanceof Job)
@@ -1212,9 +1212,9 @@ public class ProviderDelegate {
 			else
 				result.setReturnValue(obj);
 
-			if (obj instanceof Subroutine) {
-				task.getControlContext().getExceptions().addAll(((Subroutine) obj).getExceptions());
-				task.getTrace().addAll(((Subroutine) obj).getTrace());
+			if (obj instanceof Routine) {
+				task.getControlContext().getExceptions().addAll(((Routine) obj).getExceptions());
+				task.getTrace().addAll(((Routine) obj).getTrace());
 			}
 		} else if (impl instanceof Mogram && selector.equals("exert")) {
 			result = ((Mogram)m.invoke(impl, new Object[] { pars[0], null, args })).getContext();
@@ -1240,11 +1240,11 @@ public class ProviderDelegate {
 		Object[] pars = ((ServiceContext)result).getArgs();
 		Object obj = null;
 		if (selector.equals("exert") && impl instanceof ServiceShell) {
-			Subroutine xrt = null;
+			Routine xrt = null;
 			if (pars.length == 1) {
-				xrt = (Subroutine) m.invoke(impl, new Object[] { pars[0], args });
+				xrt = (Routine) m.invoke(impl, new Object[] { pars[0], args });
 			} else {
-				xrt = (Subroutine) m.invoke(impl, pars);
+				xrt = (Routine) m.invoke(impl, pars);
 			}
 			if (xrt.isJob())
 				result = ((Job) xrt).getJobContext();
@@ -1270,8 +1270,8 @@ public class ProviderDelegate {
 		return result;
 	}
 
-	protected ServiceRoutine forwardTask(ServiceRoutine task,
-                                         Exerter requestor) throws MogramException,
+	protected Subroutine forwardTask(Subroutine task,
+									 Exerter requestor) throws MogramException,
 		RemoteException, SignatureException, ContextException {
 		// check if we do not look with the same exertion
 		Service recipient = null;
@@ -1336,7 +1336,7 @@ public class ProviderDelegate {
 		}
 	}
 
-	public ServiceRoutine dropTask(Subroutine entryTask)
+	public Subroutine dropTask(Routine entryTask)
 		throws RoutineException, SignatureException, RemoteException {
 		return null;
 	}
@@ -1424,7 +1424,7 @@ public class ProviderDelegate {
 		return task;
 	}
 
-	public Subroutine invokeMethod(String selector, Subroutine ex)
+	public Routine invokeMethod(String selector, Routine ex)
 		throws RoutineException {
 		Class[] argTypes = new Class[] { Mogram.class };
 		try {
@@ -1432,7 +1432,7 @@ public class ProviderDelegate {
 			logger.info("Executing method: " + m + " by: "
 				+ config.getProviderName());
 
-			Subroutine result = (Subroutine) m.invoke(provider, new Object[]{ex});
+			Routine result = (Routine) m.invoke(provider, new Object[]{ex});
 			return result;
 		} catch (Exception e) {
 			ex.getControlContext().addException(e);
@@ -1891,7 +1891,7 @@ public class ProviderDelegate {
 		provider.fireEvent();
 	}
 
-	public boolean isValidTask(Subroutine servicetask) throws RoutineException, ContextException {
+	public boolean isValidTask(Routine servicetask) throws RoutineException, ContextException {
 
 		if (servicetask.getContext() == null) {
 			servicetask.getContext().reportException(
@@ -1958,7 +1958,7 @@ public class ProviderDelegate {
 		return false;
 	}
 
-	protected void notify(Subroutine task, int notificationType, String message) {
+	protected void notify(Routine task, int notificationType, String message) {
 		if (!notifying)
 			return;
 		logger.info(getClass().getName() + "::notify() START message:"
@@ -1966,11 +1966,11 @@ public class ProviderDelegate {
 
 		try {
 			MsgRef mr;
-			SorcerNotifierProtocol notifier = Accessor.get().getService(null, SorcerNotifierProtocol.class);
+			SorcerNotifier notifier = Accessor.get().getService(null, SorcerNotifier.class);
 
 			mr = new MsgRef(task.getId(), notificationType,
 				config.getProviderName(), message,
-				((ServiceRoutine) task).getSessionId());
+				((Subroutine) task).getSessionId());
 			// Util.debug(this, "::notify() RUNTIME SESSION ID:" +
 			// task.getRuntimeSessionID());
 			RemoteEvent re = new RemoteEvent(mr, eventID++, seqNum++, null);
@@ -1981,7 +1981,7 @@ public class ProviderDelegate {
 		}
 	}
 
-	public void notifyException(Subroutine task, String message, Exception e,
+	public void notifyException(Routine task, String message, Exception e,
 								boolean fullStackTrace) {
 
 		if (message == null && e == null)
@@ -2001,19 +2001,19 @@ public class ProviderDelegate {
 		notify(task, NOTIFY_EXCEPTION, message);
 	}
 
-	public void notifyException(Subroutine task, String message, Exception e) {
+	public void notifyException(Routine task, String message, Exception e) {
 		notifyException(task, message, e, false);
 	}
 
-	public void notifyExceptionWithStackTrace(Subroutine task, Exception e) {
+	public void notifyExceptionWithStackTrace(Routine task, Exception e) {
 		notifyException(task, null, e, true);
 	}
 
-	public void notifyException(Subroutine task, Exception e) {
+	public void notifyException(Routine task, Exception e) {
 		notifyException(task, null, e, false);
 	}
 
-	public void notifyInformation(Subroutine task, String message) {
+	public void notifyInformation(Routine task, String message) {
 		notify(task, NOTIFY_INFORMATION, message);
 	}
 
@@ -2026,15 +2026,15 @@ public class ProviderDelegate {
 	 * notify(task, NOTIFY_WARNING, message); }
 	 */
 
-	public void notifyFailure(Subroutine task, Exception e) {
+	public void notifyFailure(Routine task, Exception e) {
 		notifyFailure(task, e.getMessage());
 	}
 
-	public void notifyFailure(Subroutine task, String message) {
+	public void notifyFailure(Routine task, String message) {
 		notify(task, NOTIFY_FAILURE, message);
 	}
 
-	public void notifyWarning(Subroutine task, String message) {
+	public void notifyWarning(Routine task, String message) {
 		notify(task, NOTIFY_WARNING, message);
 	}
 

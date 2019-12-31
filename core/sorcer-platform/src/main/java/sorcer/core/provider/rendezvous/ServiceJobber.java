@@ -30,7 +30,7 @@ import java.rmi.RemoteException;
 
 /**
  * ServiceJobber - The SORCER rendezvous service provider that provides
- * coordination for executing disciplines using directly (PUSH) service providers.
+ * coordination for executing domains using directly (PUSH) service providers.
  * 
  * @author Mike Sobolewski
  */
@@ -42,15 +42,15 @@ public class ServiceJobber extends SorcerExerterBean implements Jobber {
 	}
 
 	public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-			throws TransactionException, RoutineException, RemoteException {
+			throws TransactionException, ContextException, RemoteException {
 
             setServiceID(mogram);
             try {
-                MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Subroutine)mogram));
-                if (((Subroutine)mogram).getControlContext().isMonitorable()
-                        && !((Subroutine)mogram).getControlContext().isWaitable()) {
-                    replaceNullExertionIDs((Subroutine)mogram);
-                    notifyViaEmail((Subroutine)mogram);
+                MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Routine)mogram));
+                if (((Routine)mogram).getControlContext().isMonitorable()
+                        && !((Routine)mogram).getControlContext().isWaitable()) {
+                    replaceNullExertionIDs((Routine)mogram);
+                    notifyViaEmail((Routine)mogram);
                     new Thread(mogramThread, ((Job)mogram).getContextName()).start();
                     return mogram;
                 } else {
@@ -67,7 +67,7 @@ public class ServiceJobber extends SorcerExerterBean implements Jobber {
             }
 	}
 
-    protected DispatcherFactory getDispatcherFactory(Subroutine exertion) {
+    protected DispatcherFactory getDispatcherFactory(Routine exertion) {
         return MogramDispatcherFactory.getFactory();
     }
 

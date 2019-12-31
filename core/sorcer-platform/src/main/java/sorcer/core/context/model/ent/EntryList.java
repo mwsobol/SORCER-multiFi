@@ -75,6 +75,15 @@ public class EntryList extends ArrayList<Entry> {
 		}
 	}
 
+	public  EntryList(List<Entry> entryList) {
+		super();
+		if (entryList != null) {
+			for (Object t : entryList) {
+				add((Entry) t);
+			}
+		}
+	}
+
 	public EntryList(EntrySet entrySet) {
 		super();
 		for (Entry p : entrySet) {

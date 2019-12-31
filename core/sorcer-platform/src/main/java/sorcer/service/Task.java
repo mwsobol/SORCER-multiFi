@@ -35,7 +35,7 @@ import java.util.Set;
 
 /**
  * A <code>Task</code> is an elementary service-oriented message
- * {@link Subroutine} (with its own service {@link Context} and a collection of
+ * {@link Routine} (with its own service {@link Context} and a collection of
  * service {@link sorcer.service.Signature}s. Signatures of four
  * {@link Signature.Type}s can be associated with each task:
  * <code>SERVICE</code>, <code>PREPROCESS</code>, <code>POSTROCESS</code>, and
@@ -43,13 +43,13 @@ import java.util.Set;
  * can be associated with a task but multiple preprocessing, postprocessing, and
  * context appending methods can be added.
  * 
- * @see Subroutine
+ * @see Routine
  * @see sorcer.service.Job
  * 
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class Task extends ServiceRoutine implements ElementaryRequest {
+public class Task extends Subroutine implements ElementaryRequest {
 
 	private static final long serialVersionUID = 5179772214884L;
 
@@ -172,7 +172,7 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 		return sig;
 	}
 
-	public Task doTask(Subroutine xrt, Transaction txn) throws EvaluationException {
+	public Task doTask(Routine xrt, Transaction txn) throws EvaluationException {
 		// implemented for example by VarTask
 		return null;
 	}
@@ -236,7 +236,7 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 			return delegate.toString();
 		}
 		StringBuilder sb = new StringBuilder(
-				"\n=== START PRINTING TASK ===\nSubroutine Description: "
+				"\n=== START PRINTING TASK ===\nRoutine Description: "
 						+ getClass().getName() + ":" + key);
 		sb.append("\n\tstatus: ").append(getStatus());
 		sb.append(", task ID=");
@@ -300,12 +300,12 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 	}
 
 	/**
-	 * Returns true; elementary disciplines are always "trees."
+	 * Returns true; elementary domains are always "trees."
 	 * 
 	 * @param visited
 	 *            ignored
-	 * @return true; elementary disciplines are always "trees"
-	 * @see Subroutine#isTree()
+	 * @return true; elementary domains are always "trees"
+	 * @see Routine#isTree()
 	 */
 	public boolean isTree(Set visited) {
 		visited.add(this);
@@ -320,7 +320,7 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 	 *            the fiType of needed task format
 	 * @return
 	 */
-	public Subroutine getUpdatedExertion(int type) {
+	public Routine getUpdatedExertion(int type) {
 		// the previous implementation of ServiceTask (thin) and
 		// RemoteServiceTask (thick) abandoned for a while.
 		return this;
@@ -349,11 +349,11 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Subroutine#addMogram(sorcer.service.Subroutine)
+	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
 	 */
 	@Override
 	public Mogram addMogram(Mogram component) {
-		throw new RuntimeException("Tasks do not contain component disciplines!");
+		throw new RuntimeException("Tasks do not contain component domains!");
 	}
 
 	public Task getDelegate() {
@@ -418,9 +418,21 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 		return exs;
 	}
 
+	public List<Contextion> getContextions(List<Contextion> exs) {
+		exs.add(this);
+		return exs;
+	}
+
 	@Override
 	public List<Mogram> getMograms() {
 		List<Mogram> ml = new ArrayList<Mogram>();
+		ml.add(this);
+		return ml;
+	}
+
+	@Override
+	public List<Contextion> getContextions() {
+		List<Contextion> ml = new ArrayList<Contextion>();
 		ml.add(this);
 		return ml;
 	}
@@ -457,5 +469,4 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 	public Object get(String component) {
 		return ((ServiceFidelity)multiFi).getSelect(component);
 	}
-
 }

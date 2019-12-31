@@ -22,10 +22,8 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.co.tuple.ExecDependency;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
-import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
@@ -222,14 +220,14 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     ((MultiFiMogram) carrier).setScope(this);
                     Object out = ((MultiFiMogram)carrier).exert(args);
                     Context cxt = null;
-                    if (out instanceof Subroutine) {
-                        cxt = ((Subroutine) out).getContext();
-                        Context.Return rt = ((Subroutine) out).getProcessSignature().getContextReturn();
+                    if (out instanceof Routine) {
+                        cxt = ((Routine) out).getContext();
+                        Context.Return rt = ((Routine) out).getProcessSignature().getContextReturn();
                         if (rt != null && rt.getReturnPath() != null) {
                             Object obj = cxt.getReturnValue();
                             putInoutValue(rt.getReturnPath(), obj);
                             ((Srv) get(path)).setOut(obj);
-                            ((Subroutine) out).getContext().putValue(path, obj);
+                            ((Routine) out).getContext().putValue(path, obj);
                             out = obj;
                         } else {
                             ((Srv) get(path)).setOut(cxt);
@@ -395,7 +393,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         Mogram mogram = (Mogram) mogramEntry.getImpl();
 		mogram.setScope(this);
         Mogram out = mogram.exert(entries);
-        if (out instanceof Subroutine){
+        if (out instanceof Routine){
             Context outCxt = out.getContext();
             if (outCxt.getContextReturn() != null) {
                 Object obj = outCxt.getReturnValue();
@@ -476,8 +474,16 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         }
     }
 
+//    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
+//        try {
+//            return exert(null, args);
+//        } catch (ContextException e) {
+//            throw new EvaluationException(e);
+//        }
+//    }
+
     @Override
-    public Context exert(Transaction txn, Arg... entries) throws RoutineException, RemoteException {
+    public Context exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
         Signature signature = null;
         ServiceFidelity sFi = (ServiceFidelity)multiFi.getSelect();
         try {
@@ -487,16 +493,16 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                 signature = (Signature)subjectValue;
             }
             if (signature != null) {
-                Subroutine out = operator.xrt(key, subjectValue, this).exert(txn, entries);
-                Subroutine xrt = out.exert();
+                Routine out = operator.xrt(key, subjectValue, this).exert(txn, args);
+                Routine xrt = out.exert();
                 return xrt.getDataContext();
             } else {
                 // compute model response
-                getResponse(entries);
+                getResponse(args);
                 return this;
             }
         } catch (Exception e) {
-            throw new RoutineException(e);
+            throw new ContextException(e);
         }
     }
 
@@ -525,7 +531,6 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         }
         return subcntxt;
     }
-
 
     public Object getItem(String path) {
         Object obj = get(path);

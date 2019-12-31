@@ -30,6 +30,8 @@ import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.provider.DatabaseStorer;
+import sorcer.core.service.Collaboration;
+import sorcer.core.service.Governance;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
@@ -602,6 +604,16 @@ public class operator extends Operator {
 		} else {
 			return new Setup(aspect.toString(), null);
 		}
+	}
+
+	public static List<Setup> setups(Object aspect, List<String> entryName, String fiName, Entry... entries) throws ContextException {
+		List<Setup> setups   = new ArrayList<>();
+		Setup setup = null;
+		for (String entName : entryName) {
+			setup = setup(aspect, entName, fiName, entries);
+			setups.add(setup);
+		}
+		return setups;
 	}
 
     public static Uuid id(Mogram mogram) {
@@ -1220,6 +1232,13 @@ public class operator extends Operator {
         return setValue((Entry)entry, value);
     }
 
+	public static Request setValue(Request request, String path, Object value) throws ContextException {
+		if (request instanceof Contextion) {
+			((Contextion)request).getOutput().putValue(path, value);
+		}
+		return request;
+	}
+
     public static Entry setValue(Entry entry, Object value) throws ContextException {
         try {
             entry.setValue(value);
@@ -1507,6 +1526,12 @@ public class operator extends Operator {
         return list;
     }
 
+	public static Paths dualPaths(Object... paths) {
+		Paths list = createPaths(paths);
+		list.type = Type.DUAL;
+		return list;
+	}
+
     public static Paths paths(Object... paths) {
         Paths list = createPaths(paths);
         list.type = Type.PATH;
@@ -1568,22 +1593,22 @@ public class operator extends Operator {
 		}
 
 		ExecDependency[] edArray;
-        if (vals.size() > 0 && ((ServiceContext)dependee).getType().equals(Functionality.Type.MADO)) {
-            edArray = new ExecDependency[vals.size()];
-            return domainDependency(dependee, vals.toArray(edArray));
-        } else if (domain.size() > 0) {
+		if (vals.size() > 0) {
+			edArray = new ExecDependency[vals.size()];
+			return domainDependency(dependee, vals.toArray(edArray));
+		} else if (domain.size() > 0) {
 			edArray = new ExecDependency[domain.size()];
-            return domainDependency(dependee, domain.toArray(edArray));
-        } else if (functional.size() > 0) {
+			return domainDependency(dependee, domain.toArray(edArray));
+		} else if (functional.size() > 0) {
 			edArray = new ExecDependency[functional.size()];
 			return funcDependency(dependee, functional.toArray(edArray));
-        } else if (modelDeps.size() > 0) {
-            edArray = new ExecDependency[modelDeps.size()];
-            return funcDependency(dependee, modelDeps.toArray(edArray));
+		} else if (modelDeps.size() > 0) {
+			edArray = new ExecDependency[modelDeps.size()];
+			return funcDependency(dependee, modelDeps.toArray(edArray));
 		} else {
 			return funcDependency(dependee, dependers);
 		}
-    }
+	}
 
     public static Dependency domainDependency(Dependency dependee,  Evaluation... dependers) throws ContextException {
         String path = null;
@@ -1624,7 +1649,7 @@ public class operator extends Operator {
         }
 
         if (dependers.length > 0 && dependers[0] instanceof ExecDependency) {
-            Map<String, List<ExecDependency>> dm = ((ModelStrategy)((ContextDomain) dependee).getMogramStrategy()).getDependentDomains();
+            Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Contextion) dependee).getMogramStrategy()).getDependentDomains();
             for (Evaluation e : dependers) {
                 if (e != null) {
                     path = ((Identifiable) e).getName();
@@ -1717,38 +1742,6 @@ public class operator extends Operator {
 
 		return dependee;
 	}
-
-//	public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
-//        String contextReturn = null;
-//		for (Evaluation d : dependers) {
-//            contextReturn = ((Identifiable)d).getName();
-//            if (contextReturn != null && contextReturn.equals("self")) {
-//                ((Entry)d).setKey(((ContextDomain) dependee).getName());
-//            }
-//            if (d instanceof ExecDependency && ((ExecDependency)d).getFiType().equals(Type.CONDITION)) {
-//                ((ExecDependency)d).getCondition().setConditionalContext((Context)dependee);
-//                }
-//			if (!dependee.getDependers().contains(d)) {
-//                dependee.getDependers().add(d);
-//            }
-//		}
-//		if (dependee instanceof ContextDomain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
-//			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((ContextDomain) dependee).getMogramStrategy()).getDependentPaths();
-//			for (Evaluation e : dependers) {
-//				contextReturn = ((Identifiable)e).getName();
-//				if (dm.getValue(contextReturn) != null) {
-//                    if (!dm.getValue(contextReturn).contains(e)) {
-//                        ((List) dm.getValue(contextReturn)).add(e);
-//                    }
-//				} else {
-//					List<ExecDependency> del = new ArrayList();
-//					del.add((ExecDependency)e);
-//					dm.put(contextReturn, del);
-//				}
-//			}
-//		}
-//		return dependee;
-//	}
 
 	public static Dependency dependsOn(Dependency dependee, Context scope, Evaluation... dependers)
 			throws ContextException {
@@ -1871,6 +1864,18 @@ public class operator extends Operator {
 		return signature.build();
 	}
 
+	public static Contextion instance(String domainName, Signature signature)
+		throws SignatureException {
+		if (signature instanceof ObjectSignature) {
+			Object obj = ((ObjectSignature) signature).build();
+			if (obj instanceof Contextion) {
+				((Contextion) obj).setName(domainName);
+				return (Contextion) obj;
+			}
+		}
+		throw new SignatureException("not Contextion build signature");
+	}
+
 	public static <T> T build(ServiceMogram mogram) throws SignatureException {
 		return mogram.getInstance();
 	}
@@ -1906,6 +1911,18 @@ public class operator extends Operator {
 			return ((ObjectSignature) signature).newInstance();
 		else
 			return ((ObjectSignature) signature).initInstance();
+	}
+
+	public static Object instance(Signature signature, Fidelity fidefity) throws SignatureException {
+		Object out = instance(signature);
+		if (out instanceof Contextion) {
+			try {
+				((Contextion)out).selectFidelity(fidefity);
+			} catch (ConfigurationException e) {
+				throw new SignatureException(e);
+			}
+		}
+		return out;
 	}
 
 	public static Object created(Signature signature) throws SignatureException {
@@ -1980,7 +1997,7 @@ public class operator extends Operator {
 		evaluator.setName(name);
 		return evaluator;
 	}
-	
+
 	public static URL url(String urlName) throws MalformedURLException {
 		return new URL(urlName);
 	}

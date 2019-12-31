@@ -33,7 +33,7 @@ import java.io.StringWriter;
 import java.util.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class ControlContext extends ServiceContext<Object> implements StrategyContext {
+public class ControlContext extends ServiceContext<Object> implements RoutineStrategy {
 
 	private static final long serialVersionUID = 7280700425027799253L;
 
@@ -45,7 +45,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	/**
 	 * A flow multitype indicates if this exertion can be executed sequentially, in
-	 * parallel, or concurrently with other component disciplines within this
+	 * parallel, or concurrently with other component domains within this
 	 * exertion. The concurrent execution requires all mapped inputs in the
 	 * exertion context to be assigned before this exertion can be executed.
 	 */
@@ -106,7 +106,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	// .rerun is an attribute used as buffer by client to store information
 	// about what all
-	// disciplines are to be rerun. Stored as an attribute in control context of
+	// domains are to be rerun. Stored as an attribute in control context of
 	// job / jobExertions
 	// It is removed before the job is submitted for running.
 	public final static String RERUN = "RERUN";
@@ -158,6 +158,8 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	private List<Signature> signatures = new ArrayList<Signature>();
 
+	private  Map<String, Service> freeServices = new HashMap();
+
 	private List<String> traceList = new ArrayList<String>();
 
 	// reponse paths of this context startegu
@@ -202,12 +204,12 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		put(EXERTION_TRACABLE, false);
 	}
 
-	public ControlContext(Subroutine exertion) {
+	public ControlContext(Routine exertion) {
 		this();
 		subjectValue = exertion.getName();
 		// make it visible via the contextReturn EXERTION
 		try {
-			Subroutine erxt = (Subroutine) getValue(EXERTION);
+			Routine erxt = (Routine) getValue(EXERTION);
 			if (exertion != null) {
 				putValue(EXERTION, exertion);
                 //
@@ -220,8 +222,8 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		}
 	}
 
-	public void setMasterExertion(Subroutine e) {
-		put(MASTER_EXERTION, ((ServiceRoutine) e).getId());
+	public void setMasterExertion(Routine e) {
+		put(MASTER_EXERTION, ((Subroutine) e).getId());
 	}
 
 	public boolean isSequential() {
@@ -232,7 +234,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		return PARALLEL.equals(get(EXERTION_FLOW));
 	}
 
-	public boolean isExertionMaster(Subroutine exertion) throws ContextException {
+	public boolean isExertionMaster(Routine exertion) throws ContextException {
 		return (exertion != null && exertion.getContext().getName()
 				.equals(get(MASTER_EXERTION)));
 	}
@@ -419,21 +421,21 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		return (String) get(EXERTION_COMMENTS);
 	}
 
-	public void setExecTimeRequested(Subroutine exertion, boolean b) {
+	public void setExecTimeRequested(Routine exertion, boolean b) {
 		if (b)
 			addAttributeValue(exertion, GET_EXEC_TIME, TRUE);
 		else
 			addAttributeValue(exertion, GET_EXEC_TIME, FALSE);
 	}
 
-	public void setSkipped(Subroutine exertion, boolean b) {
+	public void setSkipped(Routine exertion, boolean b) {
 		if (b)
 			addAttributeValue(exertion, SKIPPED_, TRUE);
 		else
 			addAttributeValue(exertion, SKIPPED_, FALSE);
 	}
 
-	public boolean isSkipped(Subroutine exertion) throws ContextException {
+	public boolean isSkipped(Routine exertion) throws ContextException {
 		boolean result;
 		try {
 			String b = getAttributeValue(exertion, SKIPPED_);
@@ -465,20 +467,20 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 			return stopwatch.getTime();
 	}
 
-	public void setReview(Subroutine ex, boolean b) {
+	public void setReview(Routine ex, boolean b) {
         addAttributeValue(ex, EXERTION_REVIEW, Boolean.toString(b));
 	}
 
-	public boolean isReview(Subroutine exertion) {
+	public boolean isReview(Routine exertion) {
 		String b = getAttributeValue(exertion, EXERTION_REVIEW);
 		return TRUE.equals(b);
 	}
 
-	public void setPriority(Subroutine exertion, int priorityValue) {
+	public void setPriority(Routine exertion, int priorityValue) {
 		addAttributeValue(exertion, PRIORITY, Integer.toString(priorityValue));
 	}
 
-	public int getPriority(Subroutine exertion) {
+	public int getPriority(Routine exertion) {
 		int result;
 		try {
 			String i = getAttributeValue(exertion, PRIORITY);
@@ -490,34 +492,34 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		return result;
 	}
 
-	public void setNotifyList(Subroutine exertion, String list) {
+	public void setNotifyList(Routine exertion, String list) {
 		if (list == null || list.trim().length() == 0)
 			addAttributeValue(exertion, NOTIFY_EXEC, SorcerConstants.NULL);
 		addAttributeValue(exertion, NOTIFY_EXEC, list);
 	}
 
-	public String getNotifyList(Subroutine ex) {
+	public String getNotifyList(Routine ex) {
 		return getAttributeValue(ex, NOTIFY_EXEC);
 	}
 
 	public void registerExertion(Mogram mogram) throws ContextException {
 		if (mogram instanceof Job)
 			put(((Job)mogram).getControlContext().getName(), mogram.getId());
-		else if (mogram instanceof Subroutine) {
+		else if (mogram instanceof Routine) {
 			put(mogram.getContext().getName(), mogram.getId());
 		} else {
 			// TODO explain if registration is still needed
 			put(mogram.getName(), mogram.getId());
 			return;
 		}
-		setPriority((Subroutine) mogram, MAX_PRIORITY - mogram.getIndex());
-		setExecTimeRequested(((Subroutine)mogram), true);
+		setPriority((Routine) mogram, MAX_PRIORITY - mogram.getIndex());
+		setExecTimeRequested(((Routine)mogram), true);
 	}
 
 	public void deregisterExertion(Mogram mogram, Mogram componentMogram)
 			throws ContextException {
 		Transroutine parent = (Transroutine)mogram;
-		Subroutine component = (Subroutine)componentMogram;
+		Routine component = (Routine)componentMogram;
 		String path = component.getContext().getName();
 		remove(path);
 		for (int i = component.getIndex(); i < parent.size(); i++) {
@@ -543,7 +545,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		return addComponentAssociation(EXERTION, attributeName, attributeValue);
 	}
 
-	private Context addAttributeValue(Subroutine exertion, String attributeName,
+	private Context addAttributeValue(Routine exertion, String attributeName,
 									  String attributeValue) {
 		Context result = null;
 		try {
@@ -565,7 +567,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 				attributeValue);
 	}
 
-	public String getAttributeValue(Subroutine exertion, String attributeName) {
+	public String getAttributeValue(Routine exertion, String attributeName) {
 		try {
 			return getAttributeValue(exertion.getContext().getName(),
 					attributeName);
@@ -584,7 +586,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		}
 	}
 
-	public void updateExertionName(Subroutine exertion) throws ContextException {
+	public void updateExertionName(Routine exertion) throws ContextException {
 		String key, oldPath = null;
 		Iterator e = keyIterator();
 		while (e.hasNext()) {
@@ -649,6 +651,10 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		return sb.toString();
 	}
 
+	public Map<String, Service> getFreeServices() {
+		return freeServices;
+	}
+
 	public List<Signature> getSignatures() {
 		return signatures;
 	}
@@ -702,7 +708,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toString());
-		if (ServiceRoutine.debug) {
+		if (Subroutine.debug) {
 			sb.append("\nControl Context Exceptions: \n");
 			sb.append(describeExceptions());
 		}

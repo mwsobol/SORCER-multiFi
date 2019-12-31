@@ -26,21 +26,21 @@ import static sorcer.eo.operator.*;
  */
 public class ExertionSorterTest {
 
-    private static void printExertions(List<Subroutine> exertions) {
+    private static void printExertions(List<Routine> exertions) {
         int i = 0;
-        for (Subroutine xrt : exertions) {
+        for (Routine xrt : exertions) {
             System.out.println("Exertion: " + i + " " + xrt.getName());
             i++;
         }
     }
 
-    private static void printAllExertions(Subroutine topXrt) {
+    private static void printAllExertions(Routine topXrt) {
         if (topXrt.isTask())
             System.out.print("T " + topXrt.getName() + " ");
         else {
             System.out.println("J " + topXrt.getName() + " {");
             for (Mogram xrt : topXrt.getMograms()) {
-                printAllExertions((Subroutine)xrt);
+                printAllExertions((Routine)xrt);
             }
             System.out.println(" }");
         }
@@ -165,7 +165,7 @@ public class ExertionSorterTest {
         System.out.println("After sorting");
         printAllExertions(es.getSortedJob());
         Assert.assertEquals(Strategy.Flow.SEQ, es.getSortedJob().getFlowType());
-        Assert.assertEquals(Strategy.Flow.PAR, ((Subroutine)es.getSortedJob().getMogram("j2")).getFlowType());
+        Assert.assertEquals(Strategy.Flow.PAR, ((Routine)es.getSortedJob().getMogram("j2")).getFlowType());
 
     }
 
@@ -177,7 +177,7 @@ public class ExertionSorterTest {
         ExertionSorter es = new ExertionSorter(job);
         System.out.println("After sorting");
         printAllExertions(es.getSortedJob());
-        Assert.assertEquals(Strategy.Flow.PAR, ((Subroutine)es.getSortedJob().getMogram("j2")).getFlowType());
+        Assert.assertEquals(Strategy.Flow.PAR, ((Routine)es.getSortedJob().getMogram("j2")).getFlowType());
     }
 
     @Test

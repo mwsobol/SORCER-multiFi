@@ -25,10 +25,16 @@ import sorcer.core.context.model.ent.Entry;
  *
  * @author Mike Sobolewski
  */
-public class FreeEntry extends Entry {
+public class FreeEntry extends Entry implements FreeService {
+
+    private Entry entry;
 
     public FreeEntry(String name) {
         this.key = name;
     }
 
+    @Override
+    public void bind(Object object) {
+        this.entry = (Entry)object;
+    }
 }

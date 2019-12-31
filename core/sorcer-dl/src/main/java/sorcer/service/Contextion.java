@@ -18,21 +18,24 @@
 package sorcer.service;
 
 
+import net.jini.core.transaction.Transaction;
+import sorcer.service.modeling.Functionality;
+
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
- * An interface related to {@link sorcer.service.Context}
- * evaluation/invocation and accessing contextion services.
- * Service providers that federate in the network
- * exchange input/output data via Contextion.
+ * An instance of the Contextion type represents a functional mapping with a domain
+ * and a codomain of service contexts of {@link sorcer.service.Context} type.
  *
  * @author Mike Sobolewski
  */
-public interface Contextion extends Request {
+public interface Contextion extends Request, Scopable {
 
     /**
-     * Returns the current context of this evaluation. The current context can be
-     * exiting context with no need to evaluate it if it's still valid.
+     * Returns the context of evaluation of this contextion.
+	 * The current context can be the existing one with no need
+	 * to evaluate it if is still valid.
      *
      * @return the current execute of this evaluation
      * @throws EvaluationException
@@ -40,24 +43,49 @@ public interface Contextion extends Request {
      */
     public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException;
 
-    /**
-	 * Returns the output context.
+	/**
+	 * Generic federated execution called exertion by federated services.
 	 *
-	 * @return the output context
+	 * @param txn
+	 *            The transaction (if any) under which to exert.
+	 * @return a resulting exertion
+	 * @throws MogramException
+	 *             if a mogram error occurs
+	 * @throws RemoteException
+	 *             if remote call causes an error
+	 */
+	public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException;
+
+	/**
+	 * Returns the data context of this contextion.
+	 *
+	 * @return the data context
 	 * @throws ContextException
 	*/
 	public Context getContext() throws ContextException;
 
+	public Context getOutput(Arg... args) throws ContextException;
+
 	/**
-	 * Sets the input context.
+	 * Sets the data context of this contextion.
 	 *
 	 * @throws ContextException
 	 */
 	public void setContext(Context input) throws ContextException;
 
+	/**
+	 * Appends an argument context to the data context of this contextion.
+	 *
+	 * @throws ContextException
+	 */
 	public Context appendContext(Context context)
 		throws ContextException, RemoteException;
 
+	/**
+	 * Returns a subcontext specified by paths of contextTemplate.
+	 * @throws ContextException
+	 * @throws RemoteException
+	 */
 	public Context getContext(Context contextTemplate)
 		throws RemoteException, ContextException;
 
@@ -83,10 +111,17 @@ public interface Contextion extends Request {
 		RemoteException;
 
 	/**
-	 * Returns a Context.Return to the return execute by this signature.
+	 * Returns a Context.Return that specifies a returned context
+	 * of this contextion evaluation.
 	 *
 	 * @return Context.Return to the return execute
 	 */
 	public Context.Return getContextReturn();
+
+	public MogramStrategy getMogramStrategy();
+
+	public List<Contextion> getContextions(List<Contextion> contextionList);
+
+	public void selectFidelity(Fidelity fi) throws ConfigurationException;
 
 }

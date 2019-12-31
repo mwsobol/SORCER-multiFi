@@ -114,7 +114,7 @@ public class SorcerServiceInfo extends ServiceType {
 	public java.util.List<String> apps;
 
 	/**
-	 * Indicates if the service provider uses Subroutine Space.
+	 * Indicates if the service provider uses Routine Space.
 	 */
 	public Boolean puller;
 	

@@ -128,7 +128,7 @@ task runConsumer(type:JavaExec, dependsOn:[jar]) {
 //    args = ["edu.pjatk.inn.requestor.CoffeemakerConsumer", "model"]
 //    args = ["edu.pjatk.inn.requestor.CoffeemakerConsumer", "netlet"]
 
-    finalizedBy (stopme)
+    finalizedBy (haltme)
 }
 
 test {
@@ -141,7 +141,7 @@ test {
     }
 //    dependsOn([install])
     dependsOn([install, bootme])
-    finalizedBy(stopme)
+    finalizedBy(haltme)
 }
 //test.enabled = false
 

@@ -48,6 +48,9 @@ public class EvaluationTask extends Task {
 	public EvaluationTask(Evaluation evaluator) throws ContextException, RemoteException {
 		super(((Identifiable)evaluator).getName());
 		EvaluationSignature es = new EvaluationSignature(evaluator);
+		if (evaluator instanceof FreeEvaluator) {
+			controlContext.getFreeServices().put(((FreeEvaluator) evaluator).getName(), (Service) evaluator);
+		}
 		addSignature(es);
 		es.setEvaluator(evaluator);
 		dataContext.setRoutine(this);
@@ -137,8 +140,14 @@ public class EvaluationTask extends Task {
 //			}
 
 			Object result = null;
+			// used bound evaluator form FreeEvaluator
+			if (evaluator instanceof FreeEvaluator) {
+				evaluator = ((FreeEvaluator)evaluator).getEvaluator();
+			}
 			if (evaluator instanceof Srv) {
 				result = handleSrvEntry((Srv)evaluator, args);
+			} else if (evaluator instanceof Invocation) {
+				result = ((Invocation)evaluator).invoke(dataContext, args);
 			} else {
 				result = evaluator.evaluate(args);
 			}

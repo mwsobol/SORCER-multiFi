@@ -33,7 +33,7 @@ public class SessionProvider extends ServiceExerter implements SessionManagement
     }
 
     /** {@inheritDoc} */
-    public ServiceRoutine execute(Subroutine task) throws TransactionException,
+    public Subroutine execute(Routine task) throws TransactionException,
             RoutineException {
         return execute(task, null);
     }
@@ -41,10 +41,10 @@ public class SessionProvider extends ServiceExerter implements SessionManagement
     /** {@inheritDoc}
      * @throws ConfigurationException
      * @throws RemoteException */
-    public ServiceRoutine execute(Subroutine task, Transaction transaction)
+    public Subroutine execute(Routine task, Transaction transaction)
             throws RoutineException  {
         try {
-            return (Task) new ControlFlowManager((Subroutine) task, delegate)
+            return (Task) new ControlFlowManager((Routine) task, delegate)
                     .process();
         } catch (Exception e) {
             throw new RoutineException(e);
@@ -52,8 +52,9 @@ public class SessionProvider extends ServiceExerter implements SessionManagement
     }
 
     @Override
-    public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws RoutineException, RemoteException {
-        if (mogram instanceof Task) {
+    public Mogram exert(Contextion exertion, Transaction txn, Arg... args) throws ContextException, RemoteException {
+        if (exertion instanceof Task) {
+            Task mogram = (Task)exertion;
             ServiceContext cxt = null;
             try {
                 cxt = (ServiceContext) mogram.getDataContext();
@@ -75,7 +76,7 @@ public class SessionProvider extends ServiceExerter implements SessionManagement
                         ps.setAttribute(id.toString(), bean);
                         logger.info("created new bean: {} for: {}", bean, id);
                     } catch (Exception e) {
-                        throw new RoutineException(e);
+                        throw new ContextException(e);
                     }
                 } else {
                     bean = ps.getAttribute(id.toString());
@@ -124,12 +125,12 @@ public class SessionProvider extends ServiceExerter implements SessionManagement
                 mogram.setStatus(Exec.FAILED);
                 return mogram;
             }
-        } else if (mogram instanceof Context) {
-            return serviceContextOnly((Context) mogram);
+        } else if (exertion instanceof Context) {
+            return serviceContextOnly((Context) exertion);
         } else {
-            mogram.reportException(new RoutineException("Wrong mogram for: " +  this.getClass().getSimpleName()));
-            mogram.setStatus(Exec.ERROR);
-            return mogram;
+            ((Mogram)exertion).reportException(new RoutineException("Wrong mogram for: " +  this.getClass().getSimpleName()));
+            ((Mogram)exertion).setStatus(Exec.ERROR);
+            return (Mogram)exertion;
         }
     }
 

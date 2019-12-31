@@ -484,8 +484,8 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				createRemoteLoggerListener((Mogram) target);
 				result = scriptExerter.execute();
 			}
-			if (result instanceof Subroutine)
-				processMogram((Subroutine) result);
+			if (result instanceof Routine)
+				processMogram((Routine) result);
 			else if (result != null) {
 				logger.debug("<< executing scrip: " + script);
 				logger.debug(">> scrip result: " + script);
@@ -542,7 +542,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
             } else {
                 out = mogram.exert();
             }
-		} catch (RemoteException | SignatureException | RoutineException e) {
+		} catch (RemoteException | SignatureException | ContextException e) {
 			openOutPanel(SorcerUtil.stackTraceToString(e));
 			logger.warn("Error while processing mogram", e);
 			return;
@@ -555,8 +555,8 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			openOutPanel("Failed to compute the sorcer.netlet!");
 			return;
 		}
-		if (mogram instanceof Subroutine) {
-			Subroutine exertion = (Subroutine)mogram;
+		if (mogram instanceof Routine) {
+			Routine exertion = (Routine)mogram;
 			try {
 				if (exertion.getExceptions().size() > 0) {
                     openOutPanel(exertion.getExceptions().toString());
@@ -564,7 +564,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
                     StringBuilder sb = new StringBuilder(exertion.getContext().toString());
                     if (debug) {
                         sb.append("\n");
-                        sb.append(((ServiceRoutine) exertion).getControlInfo().toString());
+                        sb.append(((Subroutine) exertion).getControlInfo().toString());
                     }
                     openOutPanel(sb.toString());
                 }
