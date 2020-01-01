@@ -121,24 +121,24 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
 
     @Override
     public Object getValue(String path, Arg... args) throws ContextException {
-        return getSrvValue(path, args);
+        return getReqValue(path, args);
     }
 
     // calls from VarModels to prc Req args of Vars
-    public Object getSrvValue(String path, Req req, Arg... args) throws ContextException {
+    public Object getReqValue(String path, Req req, Arg... args) throws ContextException {
         try {
             putValue(path, req);
         } catch (ContextException e) {
             data.remove(path);
             throw e;
         }
-        Object out = getSrvValue(path, args);
+        Object out = getReqValue(path, args);
         data.remove(path);
         return out;
     }
 
     // used as execute but renamed to alter polymorphic chaining
-    public Object getSrvValue(String path, Arg... args) throws EvaluationException {
+    public Object getReqValue(String path, Arg... args) throws EvaluationException {
         Object val = null;
         try {
             append(args);
