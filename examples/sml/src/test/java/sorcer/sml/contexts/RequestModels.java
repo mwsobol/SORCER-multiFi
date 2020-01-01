@@ -227,7 +227,7 @@ public class RequestModels {
 
         // getValue response from a service model
 
-        Model mdl = rqeModel(
+        Model mdl = reqModel(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",

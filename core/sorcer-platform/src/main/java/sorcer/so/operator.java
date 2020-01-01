@@ -26,7 +26,7 @@ import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.core.context.model.rqe.RequestEntry;
+import sorcer.core.context.model.req.Req;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.service.Governance;
@@ -96,7 +96,7 @@ public class operator extends Operator {
                 } else if (entry instanceof Routine) {
                     return (T) ((Routine) entry).exert(args).getContext();
                 } else if (entry instanceof Functionality) {
-                    if (entry instanceof RequestEntry && entry.getImpl() instanceof SignatureEntry) {
+                    if (entry instanceof Req && entry.getImpl() instanceof SignatureEntry) {
                         return  (T) entry.execute(args);
                     } else {
                         return (T) ((Functionality) entry).getValue(args);

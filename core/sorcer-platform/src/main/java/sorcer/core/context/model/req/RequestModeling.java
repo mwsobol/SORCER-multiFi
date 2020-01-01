@@ -18,7 +18,7 @@
 /**
  * @author Mike Sobolewski
  */
-package sorcer.core.context.model.rqe;
+package sorcer.core.context.model.req;
 
 public interface RequestModeling {
 }

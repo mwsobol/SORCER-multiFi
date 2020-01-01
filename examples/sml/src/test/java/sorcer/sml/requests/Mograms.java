@@ -198,13 +198,13 @@ public class Mograms {
                         pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
                         pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-        logger.info("rqe job context: " + upcontext(job));
-        logger.info("rqe j1/t3 context: " + context(job, "j1/t3"));
-        logger.info("rqe j1/j2/t4 context: " + context(job, "j1/j2/t4"));
-        logger.info("rqe j1/j2/t5 context: " + context(job, "j1/j2/t5"));
+        logger.info("req job context: " + upcontext(job));
+        logger.info("req j1/t3 context: " + context(job, "j1/t3"));
+        logger.info("req j1/j2/t4 context: " + context(job, "j1/j2/t4"));
+        logger.info("req j1/j2/t5 context: " + context(job, "j1/j2/t5"));
 
         Mogram exertion = exert(job);
-        logger.info("rqe job context: " + upcontext(exertion));
+        logger.info("req job context: " + upcontext(exertion));
         logger.info("exertion eval @ j1/t3/arg/x2 = " + get(exertion, "j1/t3/arg/x2"));
         assertEquals(100.0, get(exertion, "j1/t3/arg/x2"));
 

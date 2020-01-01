@@ -173,7 +173,7 @@ public class ContextModels {
 	}
 
 	@Test
-	public void rqeEntryLocalService() throws Exception {
+	public void reqEntryLocalService() throws Exception {
 
 		ContextDomain sm = model(
 				inVal("y1", 20.0),
@@ -185,7 +185,7 @@ public class ContextModels {
 	}
 
 	@Test
-	public void rqeEntryRemoteService() throws Exception {
+	public void reqEntryRemoteService() throws Exception {
 
 		ContextDomain sm = model(
 				inVal("y1", 20.0),

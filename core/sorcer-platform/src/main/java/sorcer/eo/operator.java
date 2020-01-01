@@ -30,8 +30,8 @@ import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.QueueStrategy;
 import sorcer.core.context.model.ent.*;
-import sorcer.core.context.model.rqe.RequestModel;
-import sorcer.core.context.model.rqe.RequestEntry;
+import sorcer.core.context.model.req.RequestModel;
+import sorcer.core.context.model.req.Req;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
@@ -70,7 +70,7 @@ import java.util.Collections;
 import static sorcer.co.operator.path;
 import static sorcer.co.operator.*;
 import static sorcer.mo.operator.*;
-import static sorcer.ent.operator.rqe;
+import static sorcer.ent.operator.req;
 
 /**
  * Operators defined for the Service Modeling Language (SML).
@@ -651,8 +651,8 @@ operator extends Operator {
             while(i.hasNext()) {
                 e = i.next();
                 val = e.getValue();
-                if (val instanceof RequestEntry && ((RequestEntry)val).asis() instanceof ServiceFidelity) {
-                    fiMap.put(e.getKey(), (ServiceFidelity)((RequestEntry)val).asis());
+                if (val instanceof Req && ((Req)val).asis() instanceof ServiceFidelity) {
+                    fiMap.put(e.getKey(), (ServiceFidelity)((Req)val).asis());
                 }
             }
             if (((ServiceContext)cxt).getProjection() != null)
@@ -701,7 +701,7 @@ operator extends Operator {
                                                    List<Entry> entryList) throws ContextException {
         for (int i = 0; i < entryList.size(); i++) {
             Entry ent = entryList.get(i);
-            if (ent instanceof RequestEntry) {
+            if (ent instanceof Req) {
                 if (ent.asis() instanceof Scopable) {
                     if (((Scopable) ent.getImpl()).getScope() != null)
                         ((Scopable) ent.getImpl()).getScope().setScope(pcxt);

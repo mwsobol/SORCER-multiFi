@@ -164,12 +164,12 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-		Model sm = rqeModel(val("x", 10.0), val("y"),
+		Model sm = reqModel(val("x", 10.0), val("y"),
 				prc("multiply", invoker("x * y", args("x", "y"))),
 				prc("add", invoker("x + y", args("x", "y"))),
 				result("cylinder/volume"),
-				rqe("volume", sig("exec", SysCaller.class,
-//				rqe("volume", sig("exec", SysCallerProvider.class,
+				req("volume", sig("exec", SysCaller.class,
+//				req("volume", sig("exec", SysCallerProvider.class,
 						cxt(val("cmd", "java -cp  " + cp + Volume.class.getName()),
 								inVal("cylinder"),
 								outVal("cylinder/volume"), outVal("cylinder/radius"), outVal("cylinder/height")))));
@@ -204,12 +204,12 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-		Model sm = rqeModel(val("x", 10.0), val("y"),
+		Model sm = reqModel(val("x", 10.0), val("y"),
 				ent("multiply", invoker("x * y", args("x", "y"))),
 				ent("add", invoker("x + y", args("x", "y"))),
 				result("cylinder/volume"),
-				rqe("volume", sig("exec", SysCallerProvider.class,
-//				rqe("volume", sig("exec", SysCaller.class,
+				req("volume", sig("exec", SysCallerProvider.class,
+//				req("volume", sig("exec", SysCaller.class,
 						cxt(val("cmd", "java -cp  " + cp + Volume.class.getName()),
 								inVal("cylinder", Arg.class),
 								outVal("cylinder/volume", double.class),

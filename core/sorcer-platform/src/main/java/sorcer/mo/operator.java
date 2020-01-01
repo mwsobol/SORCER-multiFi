@@ -29,9 +29,9 @@ import sorcer.core.context.model.Analysis;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
-import sorcer.core.context.model.rqe.RequestEntry;
-import sorcer.core.context.model.rqe.RequestModel;
-import sorcer.core.context.model.rqe.RequestTransmodel;
+import sorcer.core.context.model.req.Req;
+import sorcer.core.context.model.req.RequestModel;
+import sorcer.core.context.model.req.RequestTransmodel;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
@@ -311,7 +311,7 @@ public class operator {
         return model;
     }
 
-    public static RequestModel rqeModel(String name, Signature builder) throws SignatureException {
+    public static RequestModel reqModel(String name, Signature builder) throws SignatureException {
         RequestModel model = (RequestModel) instance(builder);
         model.setBuilder(builder);
         return model;
@@ -655,7 +655,7 @@ public class operator {
                     hasEntry = true;
                     if (i instanceof Prc)
                         procType = true;
-                    else if (i instanceof RequestEntry || i instanceof Snr) {
+                    else if (i instanceof Req || i instanceof Snr) {
                         srvType = true;
                     }
                 } catch (Exception e) {
@@ -673,10 +673,10 @@ public class operator {
         if ((hasEntry || hasSignature && hasEntry) && !hasExertion) {
             Model mo = null;
             if (srvType) {
-                mo = rqeModel(items);
+                mo = reqModel(items);
             } else if (procType) {
                 if (isFidelity) {
-                    mo = rqeModel(entModel(items));
+                    mo = reqModel(entModel(items));
                 } else {
                     mo = entModel(items);
                 }
@@ -797,7 +797,7 @@ public class operator {
             for (int i = 0;  i < dataList.size(); i++) {
                 dest[i+1] = dataList.get(i);
             }
-            rqeModel(dest);
+            reqModel(dest);
         } catch (ContextException e) {
             throw new EvaluationException(e);
         }
@@ -821,7 +821,7 @@ public class operator {
             }
             if (i instanceof Mogram) {
                 ((Mogram) i).setScope(context);
-                i = rqe(i);
+                i = req(i);
             }
             if (context instanceof PositionalContext) {
                 PositionalContext pc = (PositionalContext) context;
@@ -902,7 +902,7 @@ public class operator {
 
     public static Model aneModel(String name, Object... objects)
             throws ContextException, RemoteException {
-        return rqeModel(name, objects);
+        return reqModel(name, objects);
     }
 
     public static EntryModel entModel(String name, Object... objects)
@@ -923,13 +923,13 @@ public class operator {
         return obj;
     }
 
-    public static Model rqeModel(Object... items) throws ContextException {
+    public static Model reqModel(Object... items) throws ContextException {
         sorcer.eo.operator.Complement complement = null;
         Fidelity<Path> responsePaths = null;
         RequestModel model = null;
         FidelityManager fiManager = null;
         List<Metafidelity> metaFis = new ArrayList<>();
-        List<RequestEntry> morphFiEnts = new ArrayList();
+        List<Req> morphFiEnts = new ArrayList();
         List<Fidelity> fis = new ArrayList<>();
         for (Object item : items) {
             if (item instanceof sorcer.eo.operator.Complement) {
@@ -938,8 +938,8 @@ public class operator {
                 model = ((RequestModel)item);
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
-            } else if (item instanceof RequestEntry && ((RequestEntry)item).getImpl() instanceof MorphFidelity) {
-                morphFiEnts.add((RequestEntry)item);
+            } else if (item instanceof Req && ((Req)item).getImpl() instanceof MorphFidelity) {
+                morphFiEnts.add((Req)item);
             } else if (item instanceof Fidelity) {
                 if (item instanceof Metafidelity) {
                     metaFis.add((Metafidelity) item);
@@ -973,7 +973,7 @@ public class operator {
             fiManager.add(fis);
             MorphFidelity mFi = null;
             if ((morphFiEnts.size() > 0)) {
-                for (RequestEntry morphFiEnt : morphFiEnts) {
+                for (Req morphFiEnt : morphFiEnts) {
                     mFi = (MorphFidelity) morphFiEnt.getImpl() ;
                     fiManager.addMorphedFidelity(morphFiEnt.getName(), mFi);
                     fiManager.addFidelity(morphFiEnt.getName(), mFi.getFidelity());

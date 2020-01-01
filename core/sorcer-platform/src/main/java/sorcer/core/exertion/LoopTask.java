@@ -20,7 +20,7 @@ package sorcer.core.exertion;
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
-import sorcer.core.context.model.rqe.RequestModel;
+import sorcer.core.context.model.req.RequestModel;
 import sorcer.core.invoker.Pipeline;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;

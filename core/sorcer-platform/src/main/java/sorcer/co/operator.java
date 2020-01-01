@@ -57,7 +57,7 @@ import java.util.Collections;
 import java.util.concurrent.Callable;
 
 import static sorcer.ent.operator.invoker;
-import static sorcer.ent.operator.rqe;
+import static sorcer.ent.operator.req;
 
 /**
  * Created by Mike Sobolewski

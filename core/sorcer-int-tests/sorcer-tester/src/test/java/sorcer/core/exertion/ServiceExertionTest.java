@@ -178,7 +178,7 @@ public class ServiceExertionTest {
 		logger.info("xrt eval @  t3/arg/x2 = " + get(xrt, "t3/arg/x2"));
 		logger.info("xrt eval @  t3/result/y = " + get(xrt, "t3/result/y"));
 
-		//assertTrue("Wrong xrt eval for " + Context.Value.NULL, getValue(rqe, "t3/arg/x2").equals(Context.Value.NULL));
+		//assertTrue("Wrong xrt eval for " + Context.Value.NULL, getValue(req, "t3/arg/x2").equals(Context.Value.NULL));
 	}
 	
 	// two level job composition

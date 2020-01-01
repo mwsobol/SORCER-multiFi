@@ -24,7 +24,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.ent.Prc;
-import sorcer.core.context.model.rqe.RequestEntry;
+import sorcer.core.context.model.req.Req;
 import sorcer.core.invoker.*;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
@@ -132,43 +132,43 @@ public class operator extends Operator {
 		return invoker;
 	}
 
-	public static RequestEntry rqe(ServiceFidelity fidelity) {
-		RequestEntry service = new RequestEntry(fidelity.getName(), fidelity);
+	public static Req req(ServiceFidelity fidelity) {
+		Req service = new Req(fidelity.getName(), fidelity);
 		return service;
 	}
 
-	public static RequestEntry rqe(String name, ServiceFidelity fidelity) {
-		RequestEntry service = new RequestEntry(name, fidelity);
+	public static Req req(String name, ServiceFidelity fidelity) {
+		Req service = new Req(name, fidelity);
 		return service;
 	}
 
-	public static RequestEntry rqe(String name, MorphFidelity fidelity) {
-		RequestEntry service = new RequestEntry(name, fidelity);
+	public static Req req(String name, MorphFidelity fidelity) {
+		Req service = new Req(name, fidelity);
 		return service;
 	}
 
-	public static RequestEntry rqe(String name, Identifiable item) {
-		return rqe(name,  item,  null);
+	public static Req req(String name, Identifiable item) {
+		return req(name,  item,  null);
 	}
 
-	public static RequestEntry rqe(Identifiable item, Context context) {
-		return rqe(null,  item,  context);
+	public static Req req(Identifiable item, Context context) {
+		return req(null,  item,  context);
 	}
 
-	public static RequestEntry rqe(String name, Identifiable item, Context context, Arg... args) {
+	public static Req req(String name, Identifiable item, Context context, Arg... args) {
 		String srvName = item.getName();
-		RequestEntry srv = null;
+		Req srv = null;
 		if (name != null) {
             srvName = name;
         }
 		if (item instanceof Signature) {
-			srv = new RequestEntry(srvName,
+			srv = new Req(srvName,
 					new SignatureEntry(item.getName(), (Signature) item, context));
 		} else if (item instanceof Mogram) {
-			srv = new RequestEntry(srvName,
+			srv = new Req(srvName,
 					new MogramEntry(item.getName(), (Mogram) item));
 		} else {
-			srv = new RequestEntry(srvName, item);
+			srv = new Req(srvName, item);
 		}
 		try {
 			srv.substitute(args);
@@ -178,24 +178,24 @@ public class operator extends Operator {
 		return srv;
 	}
 
-	public static RequestEntry rqe(Identifiable item) {
-		return rqe(null, item);
+	public static Req req(Identifiable item) {
+		return req(null, item);
 	}
 
-	public static RequestEntry rqe(String name, String path, Model model) {
-		return new RequestEntry(path, model, name);
+	public static Req req(String name, String path, Model model) {
+		return new Req(path, model, name);
 	}
 
-	public static RequestEntry rqe(String name, String path, Model model, Functionality.Type type) {
-		return new RequestEntry(path, model, name, type);
+	public static Req req(String name, String path, Model model, Functionality.Type type) {
+		return new Req(path, model, name, type);
 	}
 
-	public static RequestEntry aka(String name, String path) {
-		return new RequestEntry(name, null, path);
+	public static Req aka(String name, String path) {
+		return new Req(name, null, path);
 	}
 
-	public static RequestEntry alias(String name, String path) {
-		return new RequestEntry(path, null, name);
+	public static Req alias(String name, String path) {
+		return new Req(path, null, name);
 	}
 	public static Prc dPar(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
 		Prc p = new Prc(identifiable.getName(), identifiable);
@@ -749,7 +749,7 @@ public class operator extends Operator {
         return new Function(path, model.asis(path));
     }
 
-	public static <T extends Service> RequestEntry ent(String name, MorphFidelity fidelity) {
+	public static <T extends Service> Req ent(String name, MorphFidelity fidelity) {
         fidelity.setPath(name);
         fidelity.getFidelity().setPath(name);
 		fidelity.getFidelity().setName(name);
@@ -767,15 +767,15 @@ public class operator extends Operator {
 				}
 			}
 		}
-        return rqe(name, fidelity);
+        return req(name, fidelity);
     }
 
-	public static RequestEntry ent(String name, ServiceFidelity fidelity) {
-        return rqe(name, fidelity);
+	public static Req ent(String name, ServiceFidelity fidelity) {
+        return req(name, fidelity);
     }
 
-	public static RequestEntry ent(ServiceFidelity fidelity) {
-        return rqe(fidelity);
+	public static Req ent(ServiceFidelity fidelity) {
+        return req(fidelity);
     }
 
 	public static FreeEntry ent(String path) {
@@ -828,9 +828,9 @@ public class operator extends Operator {
 				cxt = (Context)mog;
 			}
 			if (cxt != null) {
-				entry = rqe(path, (Identifiable) value, cxt, args);
+				entry = req(path, (Identifiable) value, cxt, args);
 			} else {
-				entry = rqe(path, (Identifiable) value, null, args);
+				entry = req(path, (Identifiable) value, null, args);
 			}
 			entry.setType(Functionality.Type.SRV);
 		} else if (value instanceof Fidelity) {
@@ -842,7 +842,7 @@ public class operator extends Operator {
                 ((Fidelity)value).setName(path);
 				entry = new Entry(path, value);
 			} else if (((Fi)value).getFiType() == Fi.Type.SRV) {
-				entry = new RequestEntry(path, value);
+				entry = new Req(path, value);
 			}
 		} else if (value instanceof MultiFiMogram) {
 			try {
@@ -850,7 +850,7 @@ public class operator extends Operator {
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-			entry = new RequestEntry(path, value);
+			entry = new Req(path, value);
 		} else if (value instanceof ServiceMogram) {
 			entry = new MogramEntry(path, (Mogram) value);
 			entry.setType(Functionality.Type.MOGRAM);
@@ -890,8 +890,8 @@ public class operator extends Operator {
 		return entry;
 	}
 
-	public static RequestEntry ent(Signature sig) {
-		return rqe(sig);
+	public static Req ent(Signature sig) {
+		return req(sig);
 	}
 
 	public static Slot<Fidelity, Service> ent(Fidelity selectFi, Service service) throws ConfigurationException {
@@ -976,69 +976,69 @@ public class operator extends Operator {
 		return ie;
 	}
 
-    public static RequestEntry lmb(String path, Args args) {
-        RequestEntry srv = new RequestEntry(path, path);
+    public static Req lmb(String path, Args args) {
+        Req srv = new Req(path, path);
         srv.setType(Functionality.Type.LAMBDA);
         return srv;
     }
 
-    public static RequestEntry lmb(String path, Service service, Args args) {
-        RequestEntry srv = new RequestEntry(path, path, service, args.getNameArray());
+    public static Req lmb(String path, Service service, Args args) {
+        Req srv = new Req(path, path, service, args.getNameArray());
         srv.setType(Functionality.Type.LAMBDA);
         return srv;
     }
 
-    public static RequestEntry lambda(String path, Service service, Args args) {
-		RequestEntry srv = new RequestEntry(path, path, service, args.getNameArray());
+    public static Req lambda(String path, Service service, Args args) {
+		Req srv = new Req(path, path, service, args.getNameArray());
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static RequestEntry lambda(String path, Service service, String name, Args args) {
-		RequestEntry srv = new RequestEntry(name, path, service,  args.getNameArray());
+	public static Req lambda(String path, Service service, String name, Args args) {
+		Req srv = new Req(name, path, service,  args.getNameArray());
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static RequestEntry lambda(String name, String path, Client client) {
-		RequestEntry srv = new RequestEntry(name, path, client);
+	public static Req lambda(String name, String path, Client client) {
+		Req srv = new Req(name, path, client);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> RequestEntry lambda(String path, Callable<T> call) {
-		RequestEntry srv = new RequestEntry(path, call);
+	public static <T> Req lambda(String path, Callable<T> call) {
+		Req srv = new Req(path, call);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> RequestEntry lambda(String path, ValueCallable<T> call) {
-		RequestEntry srv = new RequestEntry(path, call);
+	public static <T> Req lambda(String path, ValueCallable<T> call) {
+		Req srv = new Req(path, call);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> RequestEntry lambda(String path, ValueCallable<T> call, Args args) {
-		RequestEntry srv = new RequestEntry(path, call, args.getNameArray());
+	public static <T> Req lambda(String path, ValueCallable<T> call, Args args) {
+		Req srv = new Req(path, call, args.getNameArray());
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> RequestEntry lambda(String path, ValueCallable<T> lambda, Context context, Args args)
+	public static <T> Req lambda(String path, ValueCallable<T> lambda, Context context, Args args)
 			throws InvocationException {
-		RequestEntry srv = new RequestEntry(path, invoker(lambda, context, args));
+		Req srv = new Req(path, invoker(lambda, context, args));
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> RequestEntry lambda(String path, EntryCollable call) {
-		RequestEntry srv = new RequestEntry(path, call);
+	public static <T> Req lambda(String path, EntryCollable call) {
+		Req srv = new Req(path, call);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> RequestEntry lambda(String path, ValueCallable<T> call, Context.Return returnPath) {
-		RequestEntry srv = new RequestEntry(path, call, returnPath);
+	public static <T> Req lambda(String path, ValueCallable<T> call, Context.Return returnPath) {
+		Req srv = new Req(path, call, returnPath);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model.rqe;
+package sorcer.core.context.model.req;
 
 import groovy.lang.Closure;
 import net.jini.core.transaction.Transaction;
@@ -50,7 +50,7 @@ import static sorcer.so.operator.execMogram;
  * phenomenon, or service, that accounts for its properties and is used to study its characteristics.
  * Properties of a service model are represented by contextReturn of Context with values that depend
  * on other properties and can be evaluated as specified by ths model. Evaluations of the service 
- * model args of the RequestEntry multitype results in exerting a dynamic federation of services as specified by
+ * model args of the Req multitype results in exerting a dynamic federation of services as specified by
  * these args. A rendezvous service provider orchestrating a choreography of the model
  * is a local or remote one specified by a service signature of the model.
  *   
@@ -124,10 +124,10 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
         return getSrvValue(path, args);
     }
 
-    // calls from VarModels to prc RequestEntry args of Vars
-    public Object getSrvValue(String path, RequestEntry rqe, Arg... args) throws ContextException {
+    // calls from VarModels to prc Req args of Vars
+    public Object getSrvValue(String path, Req req, Arg... args) throws ContextException {
         try {
-            putValue(path, rqe);
+            putValue(path, req);
         } catch (ContextException e) {
             data.remove(path);
             throw e;
@@ -160,19 +160,19 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
                 ((FidelityManager) fiManager).reconfigure(Arg.selectFidelities(args));
                 ((Entry) val).applyFidelity();
             }
-            if (val instanceof RequestEntry) {
-                if (((RequestEntry) val).isCached() && ((RequestEntry) val).isValid()) {
-                    return ((RequestEntry) val).getOut();
+            if (val instanceof Req) {
+                if (((Req) val).isCached() && ((Req) val).isValid()) {
+                    return ((Req) val).getOut();
                 } else if (isChanged()) {
-                    ((RequestEntry) val).setValid(false);
-                    ((RequestEntry) val).setChanged(true);
+                    ((Req) val).setValid(false);
+                    ((Req) val).setChanged(true);
                 }
-                Object carrier = ((RequestEntry) val).getImpl();
+                Object carrier = ((Req) val).getImpl();
                 if (carrier instanceof Signature) {
                         return evalSignature((Signature) carrier, path, args);
                 } else if (carrier instanceof SignatureEntry){
-                    if (((RequestEntry) val).getOut() != null && ((RequestEntry) val).isValueCurrent() && !isChanged())
-                        return ((RequestEntry) val).getOut();
+                    if (((Req) val).getOut() != null && ((Req) val).isValueCurrent() && !isChanged())
+                        return ((Req) val).getOut();
                     else {
                         Signature sig = (Signature) ((SignatureEntry)carrier).getImpl();
                         val = evalSignature(sig, path, args);
@@ -203,8 +203,8 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
                     val = out;
                 } else if (carrier instanceof MogramEntry) {
                     val = evalMogram((MogramEntry)carrier, path, args);
-                } else if (carrier instanceof ValueCallable && ((RequestEntry) val).getType() == Functionality.Type.LAMBDA) {
-                    Context.Return rp = ((RequestEntry) val).getReturnPath();
+                } else if (carrier instanceof ValueCallable && ((Req) val).getType() == Functionality.Type.LAMBDA) {
+                    Context.Return rp = ((Req) val).getReturnPath();
                     Object obj = null;
                     if (rp != null && rp.inPaths != null) {
                         Context cxt = getEvaluatedSubcontext(rp.inPaths, args);
@@ -212,9 +212,9 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
                     } else {
                         obj = ((ValueCallable) carrier).call(this);
                     }
-                    ((RequestEntry) get(path)).setOut(obj);
+                    ((Req) get(path)).setOut(obj);
                     if (rp != null && rp.returnPath != null)
-                        putValue(((RequestEntry) val).getReturnPath().returnPath, obj);
+                        putValue(((Req) val).getReturnPath().returnPath, obj);
                     val = obj;
                 }  else if (carrier instanceof MultiFiMogram) {
                     ((MultiFiMogram) carrier).setScope(this);
@@ -226,41 +226,41 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
                         if (rt != null && rt.getReturnPath() != null) {
                             Object obj = cxt.getReturnValue();
                             putInoutValue(rt.getReturnPath(), obj);
-                            ((RequestEntry) get(path)).setOut(obj);
+                            ((Req) get(path)).setOut(obj);
                             ((Routine) out).getContext().putValue(path, obj);
                             out = obj;
                         } else {
-                            ((RequestEntry) get(path)).setOut(cxt);
+                            ((Req) get(path)).setOut(cxt);
                             out = cxt;
                         }
                     }
                     val = out;
-                } else if (carrier instanceof Client && ((RequestEntry) val).getType() == Functionality.Type.LAMBDA) {
+                } else if (carrier instanceof Client && ((Req) val).getType() == Functionality.Type.LAMBDA) {
                     // getValue target entry for this cal
-                    String entryPath = ((RequestEntry)val).getPath();
+                    String entryPath = ((Req)val).getPath();
                     Object out = ((Client)carrier).exec((Service) get(entryPath), this, args);
-                    ((RequestEntry) get(path)).setOut(out);
+                    ((Req) get(path)).setOut(out);
                     val = out;
-                } else if (carrier instanceof EntryCollable && ((RequestEntry) val).getType() == Functionality.Type.LAMBDA) {
+                } else if (carrier instanceof EntryCollable && ((Req) val).getType() == Functionality.Type.LAMBDA) {
                     Entry entry = ((EntryCollable)carrier).call(this);
-                    ((RequestEntry) get(path)).setOut(entry.getValue());
+                    ((Req) get(path)).setOut(entry.getValue());
                     if (path != entry.getName())
                         putValue(entry.getName(), entry.getValue());
-                    else if (asis(entry.getName()) instanceof RequestEntry) {
-                        ((RequestEntry)asis(entry.getName())).setOut(entry.getValue());
+                    else if (asis(entry.getName()) instanceof Req) {
+                        ((Req)asis(entry.getName())).setOut(entry.getValue());
                     }
                     val = entry;
                 } else if (carrier instanceof Closure) {
                     Function entry = (Function) ((Closure)carrier).call(this);
-                    ((RequestEntry) get(path)).setOut(this.getValue());
+                    ((Req) get(path)).setOut(this.getValue());
                     putValue(path, this.getValue());
                     if (path != entry.getName())
                         putValue(entry.getName(), this.getValue());
                     val = entry;
                 } else if (carrier instanceof ServiceInvoker) {
                     val =  ((ServiceInvoker)carrier).evaluate(args);
-                } else if (carrier instanceof Service && ((RequestEntry) val).getType() == Functionality.Type.LAMBDA) {
-                    String[] paths = ((RequestEntry)val).getPaths();
+                } else if (carrier instanceof Service && ((Req) val).getType() == Functionality.Type.LAMBDA) {
+                    String[] paths = ((Req)val).getPaths();
                     Arg[] nargs = null;
                     if (paths == null || paths.length == 0) {
                         nargs = new Arg[]{this};
@@ -274,7 +274,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
                         }
                     }
                     Object out = ((Service)carrier).execute(nargs);
-                    ((RequestEntry) get(path)).setOut(out);
+                    ((Req) get(path)).setOut(out);
                     val = out;
                 } else if (((Entry)val).getImpl() instanceof Ref) {
                     // dereferencing Ref and executing
@@ -294,7 +294,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
                     }
                 } else {
                     if (carrier == Context.none) {
-                        val = getValue(((RequestEntry) val).getName());
+                        val = getValue(((Req) val).getName());
                     }
                 }
             } else if (val instanceof Entry) {
@@ -369,7 +369,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
                 if (obj == null)
                     obj = out.getValue(path);
                 if (obj != null) {
-                    ((RequestEntry)get(path)).setOut(obj);
+                    ((Req)get(path)).setOut(obj);
                     return obj;
                 } else {
                     logger.warn("no eval for return contextReturn: {} in: {}", sig.getContextReturn().returnPath, out);
@@ -397,13 +397,13 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
             Context outCxt = out.getContext();
             if (outCxt.getContextReturn() != null) {
                 Object obj = outCxt.getReturnValue();
-                ((RequestEntry)get(path)).setOut(obj);
+                ((Req)get(path)).setOut(obj);
                 return obj;
             } else if (outCxt.asis(Context.RETURN) != null) {
-				((RequestEntry)get(path)).setOut(outCxt.asis(Context.RETURN));
+				((Req)get(path)).setOut(outCxt.asis(Context.RETURN));
 				return outCxt.asis(Context.RETURN);
 			} else {
-                ((RequestEntry) get(path)).setOut(outCxt);
+                ((Req) get(path)).setOut(outCxt);
                 return outCxt;
             }
         } else if (out instanceof Model) {
@@ -429,8 +429,8 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
         List<Service> choices = fi.getSelects(this);
         for (Service s : choices) {
             if (selected == null && fi.getSelect() != null) {
-                Service rqe = fi.getSelect();
-                return rqe;
+                Service req = fi.getSelect();
+                return req;
             } else {
                 String selectPath = null;
                 if (selected != null) {

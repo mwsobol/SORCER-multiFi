@@ -1,4 +1,4 @@
-package sorcer.core.context.model.rqe;
+package sorcer.core.context.model.req;
 
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;

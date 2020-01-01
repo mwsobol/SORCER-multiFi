@@ -471,7 +471,7 @@ public class Signatures {
 		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
 
 		Service srv = (Service)provider(sig(filePath(netlet)));
-//		logger.info("job service: " + execEnt(rqe));
+//		logger.info("job service: " + execEnt(req));
 		assertTrue(exec(srv).equals(400.0));
 	}
 

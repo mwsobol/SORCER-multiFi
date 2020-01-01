@@ -1,4 +1,4 @@
-package sorcer.core.context.model.rqe;
+package sorcer.core.context.model.req;
 
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
@@ -26,10 +26,10 @@ import static sorcer.eo.operator.task;
 /**
  * Created by Mike Sobolewski on 4/14/15.
  */
-public class RequestEntry extends Function<Object> implements Serviceableness,
+public class Req extends Function<Object> implements Serviceableness,
         Comparable<Object>, Reactive<Object>, Serializable, func<Object> {
 
-    private static Logger logger = LoggerFactory.getLogger(RequestEntry.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(Req.class.getName());
 
     protected String name;
 
@@ -39,13 +39,13 @@ public class RequestEntry extends Function<Object> implements Serviceableness,
 
     protected Context.Return returnPath;
 
-    public RequestEntry(String name) {
+    public Req(String name) {
         super(name);
         this.name = name;
         type = Functionality.Type.SRV;
     }
 
-    public RequestEntry(String name, String path, Service service, String[] paths) {
+    public Req(String name, String path, Service service, String[] paths) {
         key = path;
         impl = service;
         this.name = name;
@@ -53,7 +53,7 @@ public class RequestEntry extends Function<Object> implements Serviceableness,
         type = Functionality.Type.SRV;
     }
 
-    public RequestEntry(String name, String path, Client service) {
+    public Req(String name, String path, Client service) {
         key = path;
         impl = service;
         this.name = name;
@@ -61,7 +61,7 @@ public class RequestEntry extends Function<Object> implements Serviceableness,
     }
 
 
-    public RequestEntry(String name, Object value) {
+    public Req(String name, Object value) {
         if(name == null)
             throw new IllegalArgumentException("key must not be null");
         this.key = name;
@@ -76,34 +76,34 @@ public class RequestEntry extends Function<Object> implements Serviceableness,
         type = Functionality.Type.SRV;
     }
 
-    public RequestEntry(String name, Object value, String[] paths) {
+    public Req(String name, Object value, String[] paths) {
         this(name, value);
         this.paths = paths;
         type = Functionality.Type.SRV;
     }
 
-    public RequestEntry(String name, Object value, Context.Return returnPath) {
+    public Req(String name, Object value, Context.Return returnPath) {
         this(name, value);
         this.returnPath = returnPath;
     }
 
-    public RequestEntry(String name, String path, Object value, Context.Return returnPath) {
+    public Req(String name, String path, Object value, Context.Return returnPath) {
         super(path, value);
         this.returnPath = returnPath;
         type = Functionality.Type.SRV;
     }
 
-    public RequestEntry(String name, Object value, String path) {
+    public Req(String name, Object value, String path) {
         super(path, value);
         this.name = name;
     }
 
-    public RequestEntry(String name, Object value, String path, Type type) {
+    public Req(String name, Object value, String path, Type type) {
         this(name, value, path);
         this.type = type;
     }
 
-    public RequestEntry(String name, Model model, String path) {
+    public Req(String name, Model model, String path) {
         super(path, model);
         this.name = name;
         type = Functionality.Type.SRV;
