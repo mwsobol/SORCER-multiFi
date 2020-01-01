@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model.srv;
+package sorcer.core.context.model.rqe;
 
 import groovy.lang.Closure;
 import net.jini.core.transaction.Transaction;
@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
@@ -50,48 +50,48 @@ import static sorcer.so.operator.execMogram;
  * phenomenon, or service, that accounts for its properties and is used to study its characteristics.
  * Properties of a service model are represented by contextReturn of Context with values that depend
  * on other properties and can be evaluated as specified by ths model. Evaluations of the service 
- * model args of the Srv multitype results in exerting a dynamic federation of services as specified by
+ * model args of the RequestEntry multitype results in exerting a dynamic federation of services as specified by
  * these args. A rendezvous service provider orchestrating a choreography of the model
  * is a local or remote one specified by a service signature of the model.
  *   
  * Created by Mike Sobolewski on 1/29/15.
  */
-public class SrvModel extends EntModel implements Invocation<Object> {
-    private static final Logger logger = LoggerFactory.getLogger(SrvModel.class);
+public class RequestModel extends EntryModel implements Invocation<Object> {
+    private static final Logger logger = LoggerFactory.getLogger(RequestModel.class);
 
-    public static SrvModel instance(Signature builder) throws SignatureException {
-        SrvModel model = (SrvModel) sorcer.co.operator.instance(builder);
+    public static RequestModel instance(Signature builder) throws SignatureException {
+        RequestModel model = (RequestModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         return model;
     }
 
-    public SrvModel() {
+    public RequestModel() {
         super();
         key = SRV_MODEL;
         setSignature();
-        setSubject("srv/model", new Date());
+        setSubject("req/model", new Date());
         isRevaluable = true;
     }
 
-    public SrvModel(String name) {
+    public RequestModel(String name) {
         super(name);
         setSignature();
-        setSubject("srv/model", new Date());
+        setSubject("requst/model", new Date());
         isRevaluable = true;
     }
 
-    public SrvModel(Signature signature) {
+    public RequestModel(Signature signature) {
         this();
         addSignature(signature);
     }
 
-    public SrvModel(String name, Signature signature) {
+    public RequestModel(String name, Signature signature) {
         this(name);
         addSignature(signature);
     }
 
     private void setSignature() {
-        subjectPath = "service/model";
+        subjectPath = "requst/model";
         try {
             subjectValue = sig("exert", ServiceModeler.class);
         } catch (SignatureException e) {
@@ -105,7 +105,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
 
     private void setSignature(String path, Signature signature) {
         if (path == null)
-            subjectPath = "service/model";
+            subjectPath = "requst/model";
         else
             subjectPath = path;
         subjectValue = signature;
@@ -124,10 +124,10 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         return getSrvValue(path, args);
     }
 
-    // calls from VarModels to prc Srv args of Vars
-    public Object getSrvValue(String path, Srv srv, Arg... args) throws ContextException {
+    // calls from VarModels to prc RequestEntry args of Vars
+    public Object getSrvValue(String path, RequestEntry rqe, Arg... args) throws ContextException {
         try {
-            putValue(path, srv);
+            putValue(path, rqe);
         } catch (ContextException e) {
             data.remove(path);
             throw e;
@@ -160,19 +160,19 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                 ((FidelityManager) fiManager).reconfigure(Arg.selectFidelities(args));
                 ((Entry) val).applyFidelity();
             }
-            if (val instanceof Srv) {
-                if (((Srv) val).isCached() && ((Srv) val).isValid()) {
-                    return ((Srv) val).getOut();
+            if (val instanceof RequestEntry) {
+                if (((RequestEntry) val).isCached() && ((RequestEntry) val).isValid()) {
+                    return ((RequestEntry) val).getOut();
                 } else if (isChanged()) {
-                    ((Srv) val).setValid(false);
-                    ((Srv) val).setChanged(true);
+                    ((RequestEntry) val).setValid(false);
+                    ((RequestEntry) val).setChanged(true);
                 }
-                Object carrier = ((Srv) val).getImpl();
+                Object carrier = ((RequestEntry) val).getImpl();
                 if (carrier instanceof Signature) {
                         return evalSignature((Signature) carrier, path, args);
                 } else if (carrier instanceof SignatureEntry){
-                    if (((Srv) val).getOut() != null && ((Srv) val).isValueCurrent() && !isChanged())
-                        return ((Srv) val).getOut();
+                    if (((RequestEntry) val).getOut() != null && ((RequestEntry) val).isValueCurrent() && !isChanged())
+                        return ((RequestEntry) val).getOut();
                     else {
                         Signature sig = (Signature) ((SignatureEntry)carrier).getImpl();
                         val = evalSignature(sig, path, args);
@@ -203,8 +203,8 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     val = out;
                 } else if (carrier instanceof MogramEntry) {
                     val = evalMogram((MogramEntry)carrier, path, args);
-                } else if (carrier instanceof ValueCallable && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
-                    Context.Return rp = ((Srv) val).getReturnPath();
+                } else if (carrier instanceof ValueCallable && ((RequestEntry) val).getType() == Functionality.Type.LAMBDA) {
+                    Context.Return rp = ((RequestEntry) val).getReturnPath();
                     Object obj = null;
                     if (rp != null && rp.inPaths != null) {
                         Context cxt = getEvaluatedSubcontext(rp.inPaths, args);
@@ -212,9 +212,9 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     } else {
                         obj = ((ValueCallable) carrier).call(this);
                     }
-                    ((Srv) get(path)).setOut(obj);
+                    ((RequestEntry) get(path)).setOut(obj);
                     if (rp != null && rp.returnPath != null)
-                        putValue(((Srv) val).getReturnPath().returnPath, obj);
+                        putValue(((RequestEntry) val).getReturnPath().returnPath, obj);
                     val = obj;
                 }  else if (carrier instanceof MultiFiMogram) {
                     ((MultiFiMogram) carrier).setScope(this);
@@ -226,41 +226,41 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                         if (rt != null && rt.getReturnPath() != null) {
                             Object obj = cxt.getReturnValue();
                             putInoutValue(rt.getReturnPath(), obj);
-                            ((Srv) get(path)).setOut(obj);
+                            ((RequestEntry) get(path)).setOut(obj);
                             ((Routine) out).getContext().putValue(path, obj);
                             out = obj;
                         } else {
-                            ((Srv) get(path)).setOut(cxt);
+                            ((RequestEntry) get(path)).setOut(cxt);
                             out = cxt;
                         }
                     }
                     val = out;
-                } else if (carrier instanceof Client && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
+                } else if (carrier instanceof Client && ((RequestEntry) val).getType() == Functionality.Type.LAMBDA) {
                     // getValue target entry for this cal
-                    String entryPath = ((Srv)val).getPath();
+                    String entryPath = ((RequestEntry)val).getPath();
                     Object out = ((Client)carrier).exec((Service) get(entryPath), this, args);
-                    ((Srv) get(path)).setOut(out);
+                    ((RequestEntry) get(path)).setOut(out);
                     val = out;
-                } else if (carrier instanceof EntryCollable && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
+                } else if (carrier instanceof EntryCollable && ((RequestEntry) val).getType() == Functionality.Type.LAMBDA) {
                     Entry entry = ((EntryCollable)carrier).call(this);
-                    ((Srv) get(path)).setOut(entry.getValue());
+                    ((RequestEntry) get(path)).setOut(entry.getValue());
                     if (path != entry.getName())
                         putValue(entry.getName(), entry.getValue());
-                    else if (asis(entry.getName()) instanceof Srv) {
-                        ((Srv)asis(entry.getName())).setOut(entry.getValue());
+                    else if (asis(entry.getName()) instanceof RequestEntry) {
+                        ((RequestEntry)asis(entry.getName())).setOut(entry.getValue());
                     }
                     val = entry;
                 } else if (carrier instanceof Closure) {
                     Function entry = (Function) ((Closure)carrier).call(this);
-                    ((Srv) get(path)).setOut(this.getValue());
+                    ((RequestEntry) get(path)).setOut(this.getValue());
                     putValue(path, this.getValue());
                     if (path != entry.getName())
                         putValue(entry.getName(), this.getValue());
                     val = entry;
                 } else if (carrier instanceof ServiceInvoker) {
                     val =  ((ServiceInvoker)carrier).evaluate(args);
-                } else if (carrier instanceof Service && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
-                    String[] paths = ((Srv)val).getPaths();
+                } else if (carrier instanceof Service && ((RequestEntry) val).getType() == Functionality.Type.LAMBDA) {
+                    String[] paths = ((RequestEntry)val).getPaths();
                     Arg[] nargs = null;
                     if (paths == null || paths.length == 0) {
                         nargs = new Arg[]{this};
@@ -274,7 +274,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                         }
                     }
                     Object out = ((Service)carrier).execute(nargs);
-                    ((Srv) get(path)).setOut(out);
+                    ((RequestEntry) get(path)).setOut(out);
                     val = out;
                 } else if (((Entry)val).getImpl() instanceof Ref) {
                     // dereferencing Ref and executing
@@ -294,7 +294,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     }
                 } else {
                     if (carrier == Context.none) {
-                        val = getValue(((Srv) val).getName());
+                        val = getValue(((RequestEntry) val).getName());
                     }
                 }
             } else if (val instanceof Entry) {
@@ -369,7 +369,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                 if (obj == null)
                     obj = out.getValue(path);
                 if (obj != null) {
-                    ((Srv)get(path)).setOut(obj);
+                    ((RequestEntry)get(path)).setOut(obj);
                     return obj;
                 } else {
                     logger.warn("no eval for return contextReturn: {} in: {}", sig.getContextReturn().returnPath, out);
@@ -397,13 +397,13 @@ public class SrvModel extends EntModel implements Invocation<Object> {
             Context outCxt = out.getContext();
             if (outCxt.getContextReturn() != null) {
                 Object obj = outCxt.getReturnValue();
-                ((Srv)get(path)).setOut(obj);
+                ((RequestEntry)get(path)).setOut(obj);
                 return obj;
             } else if (outCxt.asis(Context.RETURN) != null) {
-				((Srv)get(path)).setOut(outCxt.asis(Context.RETURN));
+				((RequestEntry)get(path)).setOut(outCxt.asis(Context.RETURN));
 				return outCxt.asis(Context.RETURN);
 			} else {
-                ((Srv) get(path)).setOut(outCxt);
+                ((RequestEntry) get(path)).setOut(outCxt);
                 return outCxt;
             }
         } else if (out instanceof Model) {
@@ -429,8 +429,8 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         List<Service> choices = fi.getSelects(this);
         for (Service s : choices) {
             if (selected == null && fi.getSelect() != null) {
-                Service srv = fi.getSelect();
-                return srv;
+                Service rqe = fi.getSelect();
+                return rqe;
             } else {
                 String selectPath = null;
                 if (selected != null) {
@@ -506,7 +506,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         }
     }
 
-    public SrvModel clearOutputs() throws EvaluationException, RemoteException {
+    public RequestModel clearOutputs() throws EvaluationException, RemoteException {
         Iterator<Map.Entry<String, Object>> i = entryIterator();
         while (i.hasNext()) {
             Map.Entry e = i.next();
@@ -518,9 +518,9 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         return this;
     }
 
-    public SrvModel getInoutSubcontext(String... paths) throws ContextException {
+    public RequestModel getInoutSubcontext(String... paths) throws ContextException {
         // bare-bones subcontext
-        SrvModel subcntxt = new SrvModel();
+        RequestModel subcntxt = new RequestModel();
         subcntxt.setSubject(subjectPath, subjectValue);
         subcntxt.setName(getName() + "-subcontext");
         subcntxt.setDomainId(getDomainId());

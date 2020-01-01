@@ -18,7 +18,6 @@
 package sorcer.core.context.model.ent;
 
 import sorcer.core.context.model.Analysis;
-import sorcer.core.context.model.srv.Srv;
 import sorcer.core.service.Collaboration;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;

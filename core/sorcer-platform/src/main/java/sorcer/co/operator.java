@@ -26,12 +26,10 @@ import sorcer.core.Index;
 import sorcer.core.Tag;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.provider.DatabaseStorer;
-import sorcer.core.service.Collaboration;
-import sorcer.core.service.Governance;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
@@ -59,7 +57,7 @@ import java.util.Collections;
 import java.util.concurrent.Callable;
 
 import static sorcer.ent.operator.invoker;
-import static sorcer.ent.operator.srv;
+import static sorcer.ent.operator.rqe;
 
 /**
  * Created by Mike Sobolewski
@@ -1709,7 +1707,7 @@ public class operator extends Operator {
 
 				if (!dependee.getDependers().contains(d)) {
 				    if (((Functionality)d).getType()== Type.MODEL) {
-                        ((EntModel)dependee).getModelDependers().add(d);
+                        ((EntryModel)dependee).getModelDependers().add(d);
                     } else {
                         dependee.getDependers().add(d);
                     }

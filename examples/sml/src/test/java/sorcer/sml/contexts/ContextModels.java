@@ -10,7 +10,7 @@ import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.Copier;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.Prc;
 import sorcer.service.Arg;
@@ -40,9 +40,9 @@ public class ContextModels {
 	@Test
 	public void entryModel() throws Exception {
 
-		// use entModel to create an EntModel the same way as a regular context
+		// use entModel to create an EntryModel the same way as a regular context
 		// or convert any context to entModel(<context>)
-		EntModel mdl = entModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
+		EntryModel mdl = entModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
 				val("arg/x3", 3.0), val("arg/x4", 4.0), val("arg/x5", 5.0));
 
 		setValues(mdl, val("arg/x6", 6.0));
@@ -173,7 +173,7 @@ public class ContextModels {
 	}
 
 	@Test
-	public void srvEntryLocalService() throws Exception {
+	public void rqeEntryLocalService() throws Exception {
 
 		ContextDomain sm = model(
 				inVal("y1", 20.0),
@@ -185,7 +185,7 @@ public class ContextModels {
 	}
 
 	@Test
-	public void srvEntryRemoteService() throws Exception {
+	public void rqeEntryRemoteService() throws Exception {
 
 		ContextDomain sm = model(
 				inVal("y1", 20.0),

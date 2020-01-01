@@ -26,7 +26,7 @@ import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.SorcerConstants;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.ent.Prc;
 import sorcer.core.context.node.ContextNode;
@@ -3305,7 +3305,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public Prc appendPrc(Prc p) throws ContextException {
 		put(p.getName(), (T)p);
 		if (p.getScope() == null)
-			p.setScope(new EntModel(p.getName()).append(this));
+			p.setScope(new EntryModel(p.getName()).append(this));
 		if (p.asis() instanceof ServiceInvoker) {
 			((ServiceInvoker) p.asis()).setInvokeContext(this);
 		}

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.pml.provider.impl.Volume;
@@ -35,11 +35,11 @@ import static sorcer.so.operator.*;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/cml")
-public class EntModels {
+public class EntryModels {
 
-	private final static Logger logger = LoggerFactory.getLogger(EntModels.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(EntryModels.class.getName());
 
-	private EntModel em;
+	private EntryModel em;
 	private Prc<Double> x;
 	private Prc<Double> y;
 
@@ -47,7 +47,7 @@ public class EntModels {
 	@Before
 	public void initEntModel() throws Exception {
 
-		em = new EntModel();
+		em = new EntryModel();
 		x = prc("x", 10.0);
 		y = prc("y", 20.0);
 
@@ -82,7 +82,7 @@ public class EntModels {
 	@Test
 	public void createEntModel() throws Exception {
 
-		EntModel model = entModel(
+		EntryModel model = entModel(
 				"Hello Arithmetic ContextDomain #1",
 				// inputs
 				val("x1"), val("x2"), val("x3", 20.0),
@@ -112,7 +112,7 @@ public class EntModels {
 	@Test
 	public void createEntModelWithTask() throws Exception {
 
-		EntModel vm = entModel(
+		EntryModel vm = entModel(
 			"Hello Arithmetic #2",
 			// inputs
 			val("x1"), val("x2"), val("x3", 20.0), val("x4"),
@@ -133,7 +133,7 @@ public class EntModels {
     @Test
 	public void callInvoker() throws Exception {
 
-		EntModel pm = new EntModel("prc-model");
+		EntryModel pm = new EntryModel("prc-model");
 		add(pm, prc("x", 10.0));
 		add(pm, prc("y", 20.0));
 		add(pm, prc("add", invoker("x + y", args("x", "y"))));
@@ -159,7 +159,7 @@ public class EntModels {
 
 	@Test
 	public void callModelTest() throws Exception {
-		EntModel pm = entModel(prc("x", 10.0), prc("y", 20.0),
+		EntryModel pm = entModel(prc("x", 10.0), prc("y", 20.0),
 				prc("add", invoker("x + y", args("x", "y"))));
 
 		assertTrue(exec(pm, "x").equals(10.0));
@@ -174,7 +174,7 @@ public class EntModels {
 
 	@Test
 	public void expendingCallModelTest() throws Exception {
-		EntModel pm = entModel(prc("x", 10.0), prc("y", 20.0),
+		EntryModel pm = entModel(prc("x", 10.0), prc("y", 20.0),
 				prc("add", invoker("x + y", args("x", "y"))));
 
 		Prc x = prc(pm, "x");
@@ -220,7 +220,7 @@ public class EntModels {
 		Prc y2 = prc("y2", invoker("x * y1", args("x", "y1")));
 		Prc y1 = prc("y1", invoker("x1 * 5", args("x1")));
 
-		EntModel pc = entModel(y1, y2, y3);
+		EntryModel pc = entModel(y1, y2, y3);
 		// any dependent values or args can be updated or added any time
 		put(pc, "x", 10.0);
 		put(pc, "x1", 20.0);
@@ -308,7 +308,7 @@ public class EntModels {
 	@Test
 	public void entModelConditions() throws Exception {
 
-		final EntModel pm = new EntModel("prc-model");
+		final EntryModel pm = new EntryModel("prc-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
 
@@ -330,7 +330,7 @@ public class EntModels {
 	@Test
 	public void closingConditions() throws Exception {
 
-		EntModel pm = new EntModel("prc-model");
+		EntryModel pm = new EntryModel("prc-model");
 		pm.putValue(Condition._closure_, new ServiceInvoker(pm));
 		// free variables, no args for the invoker
 		((ServiceInvoker) pm.get(Condition._closure_))
@@ -377,7 +377,7 @@ public class EntModels {
 	@Test
 	public void invokerLoopTest() throws Exception {
 
-		EntModel pm = entModel("prc-model");
+		EntryModel pm = entModel("prc-model");
 		add(pm, prc("x", 1));
 		add(pm, prc("y", invoker("x + 1", args("x"))));
 		add(pm, prc("z", inc(invoker(pm, "y"), 2)));
@@ -393,7 +393,7 @@ public class EntModels {
 	@Test
 	public void callableAttachment() throws Exception {
 
-		final EntModel pm = entModel();
+		final EntryModel pm = entModel();
 		final Prc<Double> x = prc("x", 10.0);
 		final Prc<Double> y = prc("y", 20.0);
 		Prc z = prc("z", invoker("x + y", x, y));
@@ -420,7 +420,7 @@ public class EntModels {
 	@Test
 	public void callableAttachmentWithArgs() throws Exception {
 
-		final EntModel pm = entModel();
+		final EntryModel pm = entModel();
 		final Prc<Double> x = prc("x", 10.0);
 		final Prc<Double> y = prc("y", 20.0);
 		Prc z = prc("z", invoker("x + y", x, y));

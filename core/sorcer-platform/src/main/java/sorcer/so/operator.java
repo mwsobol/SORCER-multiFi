@@ -25,8 +25,8 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.EntModel;
-import sorcer.core.context.model.srv.Srv;
+import sorcer.core.context.model.ent.EntryModel;
+import sorcer.core.context.model.rqe.RequestEntry;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.service.Governance;
@@ -96,7 +96,7 @@ public class operator extends Operator {
                 } else if (entry instanceof Routine) {
                     return (T) ((Routine) entry).exert(args).getContext();
                 } else if (entry instanceof Functionality) {
-                    if (entry instanceof Srv && entry.getImpl() instanceof SignatureEntry) {
+                    if (entry instanceof RequestEntry && entry.getImpl() instanceof SignatureEntry) {
                         return  (T) entry.execute(args);
                     } else {
                         return (T) ((Functionality) entry).getValue(args);
@@ -238,7 +238,7 @@ public class operator extends Operator {
                 if (mogram instanceof Routine) {
                     return mogram.exert(args).getContext();
                 } else {
-                    return (Response) ((EntModel) mogram).getValue(args);
+                    return (Response) ((EntryModel) mogram).getValue(args);
                 }
             }
         } catch (RemoteException | ServiceException e) {

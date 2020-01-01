@@ -26,7 +26,6 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Arrays;
 
-import sorcer.core.context.model.EntModel;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.service.Arg;
 import sorcer.service.Context;
@@ -103,7 +102,7 @@ public class Agent<T> extends Prc<T> implements Serializable {
 				Object obj = constructor
 						.newInstance(new Object[] { scope });
 				invoker = new MethodInvoker(name, obj, name, entries);
-				if (scope instanceof EntModel)
+				if (scope instanceof EntryModel)
 					invoker.setInvokeContext(scope);
 				invoker.setContext(scope);
 			} finally {

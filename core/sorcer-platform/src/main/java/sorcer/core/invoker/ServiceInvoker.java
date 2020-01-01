@@ -23,7 +23,7 @@ import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Prc;
 import sorcer.eo.operator;
@@ -128,7 +128,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 			this.name = defaultName + count++;
 		else
 			this.name = name;
-		invokeContext = new EntModel("model/prc");
+		invokeContext = new EntryModel("model/prc");
 	}
 
 	public ServiceInvoker(ValueCallable lambda) throws InvocationException {
@@ -158,18 +158,18 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 		this.lambda = lambda;
 	}
 
-	public ServiceInvoker(EntModel context) {
+	public ServiceInvoker(EntryModel context) {
 		this(context.getName());
 		invokeContext = context;
 	}
 	
-	public ServiceInvoker(EntModel context, Evaluator evaluator, Prc... callEntries) {
+	public ServiceInvoker(EntryModel context, Evaluator evaluator, Prc... callEntries) {
 		this(context);
 		this.evaluator = evaluator;
 		this.args = new ArgSet(callEntries);
 	}
 	
-	public ServiceInvoker(EntModel context, Evaluator evaluator, ArgSet args) {
+	public ServiceInvoker(EntryModel context, Evaluator evaluator, ArgSet args) {
 		this(context);
 		this.evaluator = evaluator;
 		this.args = args;
@@ -360,7 +360,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 					if (cxt != null) {
 						invokeContext = cxt;
 					} else {
-						invokeContext = new EntModel("model/prc");
+						invokeContext = new EntryModel("model/prc");
 					}
 				} else if (cxt != null) {
 					invokeContext.append(cxt);

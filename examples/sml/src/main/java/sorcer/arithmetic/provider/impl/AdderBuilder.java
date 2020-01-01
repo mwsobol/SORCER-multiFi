@@ -1,6 +1,6 @@
 package sorcer.arithmetic.provider.impl;
 
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
 
@@ -17,10 +17,10 @@ import static sorcer.mo.operator.*;
 public class AdderBuilder {
 
 	@SuppressWarnings("rawtypes")
-	public static EntModel getAdderModel() throws EvaluationException,
+	public static EntryModel getAdderModel() throws EvaluationException,
 			RemoteException, ContextException {
 
-		EntModel pm = entModel("prc-model");
+		EntryModel pm = entModel("prc-model");
 		add(pm, prc("x", 10.0), prc("y", 20.0));
 		add(pm, invoker("add", "x + y", args("x", "y")));
 		return pm;

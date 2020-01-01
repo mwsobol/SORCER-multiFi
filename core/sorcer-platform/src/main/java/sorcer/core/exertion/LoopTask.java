@@ -20,7 +20,7 @@ package sorcer.core.exertion;
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
-import sorcer.core.context.model.srv.SrvModel;
+import sorcer.core.context.model.rqe.RequestModel;
 import sorcer.core.invoker.Pipeline;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -159,12 +159,12 @@ public class LoopTask extends ConditionalTask {
 						if (sig != null && sig.getVariability() != null) {
 							((Task) target).updateConditionalContext(condition);
 						}
-					} else if (target instanceof SrvModel) {
-						((SrvModel) target).clearOutputs();
+					} else if (target instanceof RequestModel) {
+						((RequestModel) target).clearOutputs();
 						if (condition.getConditionalContext() == target) {
 							target = target.exert(txn, args);
 						} else {
-							Context response = ((SrvModel) target).getResponse(args);
+							Context response = ((RequestModel) target).getResponse(args);
 							condition.getConditionalContext().append(response);
 						}
 					} else {

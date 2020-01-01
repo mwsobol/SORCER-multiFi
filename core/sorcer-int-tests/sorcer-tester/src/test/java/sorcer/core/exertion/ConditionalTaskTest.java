@@ -10,7 +10,7 @@ import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.co.operator;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.service.*;
 import sorcer.service.modeling.mog;
 
@@ -37,7 +37,7 @@ public class ConditionalTaskTest {
 	@Test
 	public void arithmeticTaskTest() throws Exception {
 		// to test tracing of execution enable Subroutine.debug
-		EntModel pm = new EntModel("prc-model");
+		EntryModel pm = new EntryModel("prc-model");
 
 		Task task = task(
 				"add",
@@ -68,7 +68,7 @@ public class ConditionalTaskTest {
 
 	@Test
 	public void altExertionTest() throws Exception {
-		EntModel pm = entModel("prc-model");
+		EntryModel pm = entModel("prc-model");
 		pm.putValue("x1", 30.0);
 		pm.putValue("y1", 20.0);
 		pm.putValue("x2", 50.0);
@@ -123,7 +123,7 @@ public class ConditionalTaskTest {
 
 	@Test
 	public void loopExertionTest() throws RemoteException, ContextException {
-//		final EntModel pm = model("prc-model");
+//		final EntryModel pm = model("prc-model");
 //		final Var<Double> x = var("x", 1.0);
 //		Var y = var("y", groovy("x + 1", x));
 //		add(pm, x);

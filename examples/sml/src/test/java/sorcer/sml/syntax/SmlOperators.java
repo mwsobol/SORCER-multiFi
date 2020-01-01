@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.ent.operator;
 import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
@@ -24,7 +25,7 @@ import static sorcer.eo.operator.job;
 import static sorcer.so.operator.*;
 import static sorcer.mo.operator.*;
 import static sorcer.ent.operator.*;
-import static sorcer.ent.operator.srv;
+import static sorcer.ent.operator.rqe;
 import static sorcer.so.operator.exert;
 
 /**
@@ -50,7 +51,7 @@ public class SmlOperators {
 		// Entries
 		val v1 = val("x2", 10.6);
 		func p1 = prc("x3", ev1);
-		func s1 = srv(op1);
+		func s1 = operator.rqe(op1);
 		func f1 = lmb("s1", args("v1", "f1"));
 		func f2 = snr("x6", 1.0);
 

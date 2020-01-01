@@ -23,7 +23,7 @@ import net.jini.lease.LeaseRenewalManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.exertion.AltTask;
 import sorcer.core.exertion.EvaluationTask;
 import sorcer.core.exertion.LoopTask;
@@ -32,7 +32,6 @@ import sorcer.core.invoker.Pipeline;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
-import sorcer.eo.operator;
 import sorcer.service.Exerter;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.service.*;
@@ -80,7 +79,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
                     exertion.getDataContext().getScope().append(xrt.getDataContext());
                 else {
 //                  exertion.getDataContext().setScope(xrt.getContext());
-                    exertion.getDataContext().setScope(new EntModel());
+                    exertion.getDataContext().setScope(new EntryModel());
                     exertion.getDataContext().getScope().append(xrt.getContext());
                 }
             }
@@ -147,7 +146,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             Context pc = ((OptTask)exertion).getCondition().getConditionalContext();
             ((OptTask)exertion).getCondition().setStatus(null);
             if (pc == null) {
-				pc = new EntModel(exertion.getName());
+				pc = new EntryModel(exertion.getName());
 				((OptTask)exertion).getCondition().setConditionalContext(pc);
             }
             pc.append(xrt.getContext());
@@ -155,7 +154,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             ((LoopTask)exertion).getCondition().setStatus(null);
 			Context pc = ((LoopTask)exertion).getCondition().getConditionalContext();
 			if (pc == null) {
-				pc = new EntModel(exertion.getName());
+				pc = new EntryModel(exertion.getName());
 				((LoopTask)exertion).getCondition().setConditionalContext(pc);
 			}
 			pc.append(xrt.getContext());

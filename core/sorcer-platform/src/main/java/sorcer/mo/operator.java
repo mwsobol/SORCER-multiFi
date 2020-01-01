@@ -27,11 +27,11 @@ import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.Analysis;
 import sorcer.core.context.model.DataContext;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
-import sorcer.core.context.model.srv.Srv;
-import sorcer.core.context.model.srv.SrvModel;
-import sorcer.core.context.model.srv.SrvTransmodel;
+import sorcer.core.context.model.rqe.RequestEntry;
+import sorcer.core.context.model.rqe.RequestModel;
+import sorcer.core.context.model.rqe.RequestTransmodel;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
@@ -305,45 +305,45 @@ public class operator {
         return model;
     }
 
-    public static EntModel entModel(String name, Signature builder) throws SignatureException {
-        EntModel model = (EntModel) instance(builder);
+    public static EntryModel entModel(String name, Signature builder) throws SignatureException {
+        EntryModel model = (EntryModel) instance(builder);
         model.setBuilder(builder);
         return model;
     }
 
-    public static SrvModel srvModel(String name, Signature builder) throws SignatureException {
-        SrvModel model = (SrvModel) instance(builder);
+    public static RequestModel rqeModel(String name, Signature builder) throws SignatureException {
+        RequestModel model = (RequestModel) instance(builder);
         model.setBuilder(builder);
         return model;
     }
 
-    public static EntModel entModel(String name, Identifiable... objects)
+    public static EntryModel entModel(String name, Identifiable... objects)
             throws ContextException, RemoteException {
-        EntModel entModel = new EntModel(objects);
+        EntryModel entModel = new EntryModel(objects);
         entModel.setName(name);
         return entModel;
     }
 
-    public static EntModel entModel(Identifiable... objects)
+    public static EntryModel entModel(Identifiable... objects)
             throws ContextException, RemoteException {
-        return new EntModel(objects);
+        return new EntryModel(objects);
     }
 
-    public static EntModel entModel(Object... entries)
+    public static EntryModel entModel(Object... entries)
             throws ContextException {
         if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
             ((Context)entries[0]).setModeling(true);
             try {
-                return new EntModel((Context)entries[0]);
+                return new EntryModel((Context)entries[0]);
             } catch (RemoteException e) {
                 throw new ContextException(e);
             }
         }
-        EntModel model = new EntModel();
+        EntryModel model = new EntryModel();
         Object[] dest = new Object[entries.length+1];
         System.arraycopy(entries,  0, dest,  1, entries.length);
         dest[0] = model;
-        return (EntModel) context(dest);
+        return (EntryModel) context(dest);
     }
 
     public static Model inConn(Model model, Context inConnector) {
@@ -655,7 +655,7 @@ public class operator {
                     hasEntry = true;
                     if (i instanceof Prc)
                         procType = true;
-                    else if (i instanceof Srv || i instanceof Snr) {
+                    else if (i instanceof RequestEntry || i instanceof Snr) {
                         srvType = true;
                     }
                 } catch (Exception e) {
@@ -673,10 +673,10 @@ public class operator {
         if ((hasEntry || hasSignature && hasEntry) && !hasExertion) {
             Model mo = null;
             if (srvType) {
-                mo = srvModel(items);
+                mo = rqeModel(items);
             } else if (procType) {
                 if (isFidelity) {
-                    mo = srvModel(entModel(items));
+                    mo = rqeModel(entModel(items));
                 } else {
                     mo = entModel(items);
                 }
@@ -686,9 +686,9 @@ public class operator {
                 mo = entModel(items);
             }
             mo.setName(name);
-            if (mo instanceof SrvModel && autoDeps) {
+            if (mo instanceof RequestModel && autoDeps) {
                 try {
-                    mo = new SrvModelAutoDeps((SrvModel) mo).get();
+                    mo = new SrvModelAutoDeps((RequestModel) mo).get();
                 } catch (SortingException e) {
                     throw new ContextException(e);
                 }
@@ -739,7 +739,7 @@ public class operator {
             dataList.remove(fi);
         }
 
-        SrvTransmodel transModel = new SrvTransmodel(name);
+        RequestTransmodel transModel = new RequestTransmodel(name);
         transModel.addDomains(domains);
         Object[] names = new Object[domains.size()];
         for (int i = 0; i < domains.size(); i++) {
@@ -752,7 +752,7 @@ public class operator {
             Map<String, ServiceFidelity> fis = new HashMap<>();
             for (ServiceFidelity mdlFi : modelFis) {
                 fis.put(mdlFi.getName(), mdlFi);
-                transModel.getChildren().put(mdlFi.getName(), (SrvModel) mdlFi.getSelect());
+                transModel.getChildren().put(mdlFi.getName(), (RequestModel) mdlFi.getSelect());
             }
             fiManager.setFidelities(fis);
             transModel.setFidelityManager(fiManager);
@@ -797,7 +797,7 @@ public class operator {
             for (int i = 0;  i < dataList.size(); i++) {
                 dest[i+1] = dataList.get(i);
             }
-            srvModel(dest);
+            rqeModel(dest);
         } catch (ContextException e) {
             throw new EvaluationException(e);
         }
@@ -821,7 +821,7 @@ public class operator {
             }
             if (i instanceof Mogram) {
                 ((Mogram) i).setScope(context);
-                i = srv(i);
+                i = rqe(i);
             }
             if (context instanceof PositionalContext) {
                 PositionalContext pc = (PositionalContext) context;
@@ -847,7 +847,7 @@ public class operator {
                     if (i instanceof Value) {
                         pc.putValueAt(i.getName(), ((Entry) i).getOut(), pc.getTally() + 1);
                     } else {
-                        if (context instanceof EntModel || isReactive) {
+                        if (context instanceof EntryModel || isReactive) {
                             pc.putValueAt(i.getName(), i, pc.getTally() + 1);
                         } else {
                             pc.putValueAt(i.getName(), ((Entry) i).getImpl(), pc.getTally() + 1);
@@ -874,7 +874,7 @@ public class operator {
                         context.putInoutValue(i.getName(), ((Function) i).getImpl());
                     }
                 } else {
-                    if (context instanceof EntModel || isReactive) {
+                    if (context instanceof EntryModel || isReactive) {
                         context.putValue(i.getName(), i);
                     } else {
                         context.putValue(i.getName(), ((Entry) i).getImpl());
@@ -902,12 +902,12 @@ public class operator {
 
     public static Model aneModel(String name, Object... objects)
             throws ContextException, RemoteException {
-        return srvModel(name, objects);
+        return rqeModel(name, objects);
     }
 
-    public static EntModel entModel(String name, Object... objects)
+    public static EntryModel entModel(String name, Object... objects)
             throws RemoteException, ContextException {
-        EntModel pm = new EntModel(name);
+        EntryModel pm = new EntryModel(name);
         for (Object o : objects) {
             if (o instanceof Identifiable)
                 pm.add((Identifiable)o);
@@ -915,7 +915,7 @@ public class operator {
         return pm;
     }
 
-    public static Object get(EntModel pm, String parname, Arg... parametrs)
+    public static Object get(EntryModel pm, String parname, Arg... parametrs)
             throws ContextException, RemoteException {
         Object obj = pm.asis(parname);
         if (obj instanceof Prc)
@@ -923,23 +923,23 @@ public class operator {
         return obj;
     }
 
-    public static Model srvModel(Object... items) throws ContextException {
+    public static Model rqeModel(Object... items) throws ContextException {
         sorcer.eo.operator.Complement complement = null;
         Fidelity<Path> responsePaths = null;
-        SrvModel model = null;
+        RequestModel model = null;
         FidelityManager fiManager = null;
         List<Metafidelity> metaFis = new ArrayList<>();
-        List<Srv> morphFiEnts = new ArrayList();
+        List<RequestEntry> morphFiEnts = new ArrayList();
         List<Fidelity> fis = new ArrayList<>();
         for (Object item : items) {
             if (item instanceof sorcer.eo.operator.Complement) {
                 complement = (sorcer.eo.operator.Complement)item;
             } else if (item instanceof Model) {
-                model = ((SrvModel)item);
+                model = ((RequestModel)item);
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
-            } else if (item instanceof Srv && ((Srv)item).getImpl() instanceof MorphFidelity) {
-                morphFiEnts.add((Srv)item);
+            } else if (item instanceof RequestEntry && ((RequestEntry)item).getImpl() instanceof MorphFidelity) {
+                morphFiEnts.add((RequestEntry)item);
             } else if (item instanceof Fidelity) {
                 if (item instanceof Metafidelity) {
                     metaFis.add((Metafidelity) item);
@@ -958,7 +958,7 @@ public class operator {
 
         boolean newModel = false;
         if (model == null) {
-            model = new SrvModel();
+            model = new RequestModel();
             newModel = true;
         }
 
@@ -973,7 +973,7 @@ public class operator {
             fiManager.add(fis);
             MorphFidelity mFi = null;
             if ((morphFiEnts.size() > 0)) {
-                for (Srv morphFiEnt : morphFiEnts) {
+                for (RequestEntry morphFiEnt : morphFiEnts) {
                     mFi = (MorphFidelity) morphFiEnt.getImpl() ;
                     fiManager.addMorphedFidelity(morphFiEnt.getName(), mFi);
                     fiManager.addFidelity(morphFiEnt.getName(), mFi.getFidelity());
@@ -1017,7 +1017,7 @@ public class operator {
     }
 
     public static String printDeps(Mogram model) throws SortingException, ContextException {
-        return new SrvModelAutoDeps((SrvModel)model).printDeps();
+        return new SrvModelAutoDeps((RequestModel)model).printDeps();
     }
 
     public static boolean provision(Signature... signatures) throws  DispatchException {

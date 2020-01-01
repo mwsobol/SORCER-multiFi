@@ -114,15 +114,15 @@ public class CoffeemakerConsumer extends ServiceConsumer {
         exert(getRecipeTask());
 
         // order espresso with delivery
-        ContextDomain mdl = srvModel(
+        ContextDomain mdl = rqeModel(
             val("recipe/key", "espresso"),
             val("paid$", 120),
             val("location", "PJATK"),
             val("room", "101"),
 
-                srv(sig("makeCoffee", CoffeeService.class,
+                rqe(sig("makeCoffee", CoffeeService.class,
                         result("coffee$", inPaths("recipe/key")))),
-                srv(sig("deliver", Delivery.class,
+                rqe(sig("deliver", Delivery.class,
                         result("delivery$", inPaths("location", "room")))));
 //				prc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
 

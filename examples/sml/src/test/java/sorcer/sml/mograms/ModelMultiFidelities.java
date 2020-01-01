@@ -8,7 +8,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.*;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
@@ -31,7 +31,8 @@ import static sorcer.ent.operator.*;
 import static sorcer.so.operator.*;
 
 /**
- * Created by Mike Sobolewski on 10/26/15.
+ * Created b
+ * y Mike Sobolewski on 10/26/15.
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
@@ -117,7 +118,7 @@ public class ModelMultiFidelities {
     public void refSigMultiFidelityModel() throws Exception {
 
         // three entry model
-        Model mod = srvModel(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
+        Model mod = rqeModel(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
             val("sig1", sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
             val("sig2", sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
 
@@ -139,7 +140,7 @@ public class ModelMultiFidelities {
     public void refInvokerMultiFidelityModel() throws Exception {
 
         // three entry model
-        Model mod = srvModel(inVal("x1", 10.0), inVal("x2", 90.0),
+        Model mod = rqeModel(inVal("x1", 10.0), inVal("x2", 90.0),
                 ent("eval1", invoker("add", "x1 + x2", args("x1", "x2"))),
                 ent("eval2", invoker("multiply", "x1 * x2", args("x1", "x2"))),
                 ent("mFi", entFi(ref("eval1"), ref("eval2"))),
@@ -606,12 +607,12 @@ public class ModelMultiFidelities {
             Double val = (Double) value;
             if (fi.getSelectName().equals("t5")) {
                 if (val <= 200.0) {
-                    ((EntModel)mgr.getMogram()).putValue("morpher3", val + 10.0);
+                    ((EntryModel)mgr.getMogram()).putValue("morpher3", val + 10.0);
                     mgr.reconfigure(fi("t4", "mFi4"));
                 }
             } else if (fi.getSelectName().equals("t4")) {
                 // t4 is a mutiply task
-                ((EntModel)mgr.getMogram()).putValue("morpher3", val + 20.0);
+                ((EntryModel)mgr.getMogram()).putValue("morpher3", val + 20.0);
             }
         };
 

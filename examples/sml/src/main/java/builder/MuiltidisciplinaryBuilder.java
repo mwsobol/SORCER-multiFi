@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.arithmetic.provider.*;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.invoker.Pipeline;
 import sorcer.core.service.Governance;
 import sorcer.service.*;
@@ -94,12 +94,12 @@ public class MuiltidisciplinaryBuilder {
 			Double val = (Double) value;
 			if (fi.getSelectName().equals("t5")) {
 				if (val <= 200.0) {
-					((EntModel)mgr.getMogram()).putValue("morpher3", val + 10.0);
+					((EntryModel)mgr.getMogram()).putValue("morpher3", val + 10.0);
 					mgr.reconfigure(fi("t4", "mFi4"));
 				}
 			} else if (fi.getSelectName().equals("t4")) {
 				// t4 is a mutiply task
-				((EntModel)mgr.getMogram()).putValue("morpher3", val + 20.0);
+				((EntryModel)mgr.getMogram()).putValue("morpher3", val + 20.0);
 			}
 		};
 

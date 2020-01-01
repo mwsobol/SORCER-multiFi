@@ -19,7 +19,7 @@ package sorcer.core.dispatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.exertion.Mograms;
 import sorcer.service.Exerter;
 import sorcer.service.*;
@@ -90,8 +90,8 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                     if (mogram instanceof Block) {
                         xrt.getDataContext().append(previous);
                     }
-                } else if (mogram instanceof EntModel) {
-                    ((EntModel)mogram).updateEntries(xrt.getContext());
+                } else if (mogram instanceof EntryModel) {
+                    ((EntryModel)mogram).updateEntries(xrt.getContext());
                     xrt.getDataContext().append((Context) ((Model) mogram).getResponse());
                 }
             } catch (Exception e) {

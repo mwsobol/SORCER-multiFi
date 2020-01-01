@@ -1,4 +1,4 @@
-package sorcer.core.context.model.srv;
+package sorcer.core.context.model.rqe;
 
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
@@ -7,7 +7,7 @@ import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.service.*;
@@ -26,10 +26,10 @@ import static sorcer.eo.operator.task;
 /**
  * Created by Mike Sobolewski on 4/14/15.
  */
-public class Srv extends Function<Object> implements Serviceableness,
+public class RequestEntry extends Function<Object> implements Serviceableness,
         Comparable<Object>, Reactive<Object>, Serializable, func<Object> {
 
-    private static Logger logger = LoggerFactory.getLogger(Srv.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(RequestEntry.class.getName());
 
     protected String name;
 
@@ -39,13 +39,13 @@ public class Srv extends Function<Object> implements Serviceableness,
 
     protected Context.Return returnPath;
 
-    public Srv(String name) {
+    public RequestEntry(String name) {
         super(name);
         this.name = name;
         type = Functionality.Type.SRV;
     }
 
-    public Srv(String name, String path, Service service, String[] paths) {
+    public RequestEntry(String name, String path, Service service, String[] paths) {
         key = path;
         impl = service;
         this.name = name;
@@ -53,7 +53,7 @@ public class Srv extends Function<Object> implements Serviceableness,
         type = Functionality.Type.SRV;
     }
 
-    public Srv(String name, String path, Client service) {
+    public RequestEntry(String name, String path, Client service) {
         key = path;
         impl = service;
         this.name = name;
@@ -61,7 +61,7 @@ public class Srv extends Function<Object> implements Serviceableness,
     }
 
 
-    public Srv(String name, Object value) {
+    public RequestEntry(String name, Object value) {
         if(name == null)
             throw new IllegalArgumentException("key must not be null");
         this.key = name;
@@ -76,34 +76,34 @@ public class Srv extends Function<Object> implements Serviceableness,
         type = Functionality.Type.SRV;
     }
 
-    public Srv(String name, Object value, String[] paths) {
+    public RequestEntry(String name, Object value, String[] paths) {
         this(name, value);
         this.paths = paths;
         type = Functionality.Type.SRV;
     }
 
-    public Srv(String name, Object value, Context.Return returnPath) {
+    public RequestEntry(String name, Object value, Context.Return returnPath) {
         this(name, value);
         this.returnPath = returnPath;
     }
 
-    public Srv(String name, String path, Object value, Context.Return returnPath) {
+    public RequestEntry(String name, String path, Object value, Context.Return returnPath) {
         super(path, value);
         this.returnPath = returnPath;
         type = Functionality.Type.SRV;
     }
 
-    public Srv(String name, Object value, String path) {
+    public RequestEntry(String name, Object value, String path) {
         super(path, value);
         this.name = name;
     }
 
-    public Srv(String name, Object value, String path, Type type) {
+    public RequestEntry(String name, Object value, String path, Type type) {
         this(name, value, path);
         this.type = type;
     }
 
-    public Srv(String name, Model model, String path) {
+    public RequestEntry(String name, Model model, String path) {
         super(path, model);
         this.name = name;
         type = Functionality.Type.SRV;
@@ -184,9 +184,9 @@ public class Srv extends Function<Object> implements Serviceableness,
             if (impl instanceof Callable) {
                 return ((Callable) impl).call();
             } else if (impl instanceof SignatureEntry) {
-                if (scope != null && scope instanceof SrvModel) {
+                if (scope != null && scope instanceof RequestModel) {
                     try {
-                        return ((SrvModel) scope).evalSignature((Signature) ((SignatureEntry) impl).getImpl(), getKey());
+                        return ((RequestModel) scope).evalSignature((Signature) ((SignatureEntry) impl).getImpl(), getKey());
                     } catch (Exception e) {
                         throw new EvaluationException(e);
                     }
@@ -280,7 +280,7 @@ public class Srv extends Function<Object> implements Serviceableness,
     public Object execute(Arg... args) throws ServiceException, RemoteException {
         ContextDomain mod = Arg.selectDomain(args);
         if (mod != null) {
-            if (mod instanceof EntModel && impl instanceof ValueCallable) {
+            if (mod instanceof EntryModel && impl instanceof ValueCallable) {
                 return ((ValueCallable) impl).call((Context) mod);
             } else if (mod instanceof Context && impl instanceof SignatureEntry) {
                 return ((ServiceContext) mod).execSignature((Signature) ((SignatureEntry) impl).getImpl(), args);

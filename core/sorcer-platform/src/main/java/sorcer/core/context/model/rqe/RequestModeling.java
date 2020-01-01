@@ -18,7 +18,7 @@
 /**
  * @author Mike Sobolewski
  */
-package sorcer.core.context.model.srv;
+package sorcer.core.context.model.rqe;
 
-public interface SrvModeling {
+public interface RequestModeling {
 }

@@ -24,8 +24,8 @@ import org.codehaus.plexus.util.dag.Vertex;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Function;
-import sorcer.core.context.model.srv.Srv;
-import sorcer.core.context.model.srv.SrvModel;
+import sorcer.core.context.model.rqe.RequestEntry;
+import sorcer.core.context.model.rqe.RequestModel;
 import sorcer.core.dispatch.graph.DirectedGraph;
 import sorcer.core.dispatch.graph.DirectedGraphRenderer;
 import sorcer.core.dispatch.graph.GraphNodeRenderer;
@@ -50,14 +50,14 @@ public class SrvModelAutoDeps {
     private final DAG dag;
     private final Map entryMap;
     private final Map<String, String> entryToResultMap;
-    private SrvModel srvModel;
+    private RequestModel srvModel;
     private List<String> sortedData;
     private List<String> topNodes = new ArrayList<String>();
 
     /**
      * Construct the SrvModelAutoDeps
      */
-    public SrvModelAutoDeps(SrvModel srvModel) throws SortingException, ContextException {
+    public SrvModelAutoDeps(RequestModel srvModel) throws SortingException, ContextException {
 
         dag = new DAG();
         entryMap = new HashMap();
@@ -78,16 +78,16 @@ public class SrvModelAutoDeps {
     }
 
     /**
-     * Return the processed SrvModel
-     * @return srvModel
+     * Return the processed RequestModel
+     * @return rqeModel
      */
-    public SrvModel get() {
+    public RequestModel get() {
         return srvModel;
     }
 
     /**
-     * Return the processed SrvModel
-     * @return srvModel
+     * Return the processed RequestModel
+     * @return rqeModel
      */
     public String printDeps() {
         DirectedGraphRenderer<String> graphRenderer = new DirectedGraphRenderer<String>(new GraphNodeRenderer<String>() {
@@ -119,15 +119,15 @@ public class SrvModelAutoDeps {
 
 
     /**
-     * Add dependency information to the srvModel
+     * Add dependency information to the rqeModel
      *
      * @param srvModel
      * @throws CycleDetectedException
      * @throws ContextException
      */
-    private void addDependsOn(SrvModel srvModel, List<String> sortedEntries) throws ContextException {
+    private void addDependsOn(RequestModel srvModel, List<String> sortedEntries) throws ContextException {
         for (String entryName : sortedEntries) {
-            // Only those that are args in the srvModel
+            // Only those that are args in the rqeModel
             if (!srvModel.getData().keySet().contains(entryName)) continue;
             Vertex vertex = dag.getVertex(entryName);
             if (vertex.getParentLabels() != null && vertex.getParentLabels().size() > 0) {
@@ -157,12 +157,12 @@ public class SrvModelAutoDeps {
     }
 
     /**
-     * Add SrvModel args as Vertexes to the Directed Acyclic Graph (DAG)
+     * Add RequestModel args as Vertexes to the Directed Acyclic Graph (DAG)
      *
      * @param srvModel
      * @throws SortingException
      */
-    private void addVertex(SrvModel srvModel) throws SortingException {
+    private void addVertex(RequestModel srvModel) throws SortingException {
 
         for (String entryName : srvModel.getData().keySet()) {
 
@@ -185,8 +185,8 @@ public class SrvModelAutoDeps {
                 if (entryVal instanceof SignatureEntry) {
                     Signature signature = (Signature) ((SignatureEntry)entryVal).getImpl();
                     if (signature!=null) rp = (Context.Return)signature.getContextReturn();
-                } else if (entry instanceof Srv) {
-                    rp = ((Srv) entry).getReturnPath();
+                } else if (entry instanceof RequestEntry) {
+                    rp = ((RequestEntry) entry).getReturnPath();
                 }
                 if (rp!=null) {
                     dag.addVertex(rp.getName());
@@ -195,8 +195,8 @@ public class SrvModelAutoDeps {
 
 
             }
-            if (srvModel.getData().get(entryName) instanceof SrvModel) {
-                addVertex((SrvModel)srvModel.getData().get(entryName));
+            if (srvModel.getData().get(entryName) instanceof RequestModel) {
+                addVertex((RequestModel)srvModel.getData().get(entryName));
             }
         }
     }
@@ -208,7 +208,7 @@ public class SrvModelAutoDeps {
      * @throws CycleDetectedException
      * @throws SortingException
      */
-    private void getMapping(SrvModel srvModel) throws CycleDetectedException, SortingException {
+    private void getMapping(RequestModel srvModel) throws CycleDetectedException, SortingException {
         for (String entryName : srvModel.getData().keySet()) {
             Object entry = srvModel.getData().get(entryName);
             if (entry instanceof Function) {
@@ -217,8 +217,8 @@ public class SrvModelAutoDeps {
                 if (entryVal instanceof SignatureEntry) {
                     Signature signature = (Signature) ((SignatureEntry)entryVal).getImpl();
                     rp =  (Context.Return)signature.getContextReturn();
-                } else if (entry instanceof Srv) {
-                    rp = ((Srv)entry).getReturnPath();
+                } else if (entry instanceof RequestEntry) {
+                    rp = ((RequestEntry)entry).getReturnPath();
                 }
                 if (rp!=null) {
                     dag.addEdge(rp.getName(), entryName);

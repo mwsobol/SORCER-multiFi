@@ -1,4 +1,4 @@
-package sorcer.core.context.model.srv;
+package sorcer.core.context.model.rqe;
 
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecDependency;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.AnalysisEntry;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.plexus.FidelityManager;
@@ -22,9 +22,9 @@ import static sorcer.mo.operator.result;
 /**
  * Created by Mike Sobolewski on 12/28/2019.
  */
-public class SrvTransmodel extends SrvModel implements Transmodel {
+public class RequestTransmodel extends RequestModel implements Transmodel {
 
-    private static final Logger logger = LoggerFactory.getLogger(SrvTransmodel.class);
+    private static final Logger logger = LoggerFactory.getLogger(RequestTransmodel.class);
 
     protected Map<String, Domain> children = new HashMap<>();
 
@@ -34,24 +34,24 @@ public class SrvTransmodel extends SrvModel implements Transmodel {
 
     protected Fidelity<AnalysisEntry> analyzerFi;
 
-    public SrvTransmodel() {
+    public RequestTransmodel() {
         super();
         type = Functionality.Type.TRANS;
     }
 
-    public SrvTransmodel(String name) {
+    public RequestTransmodel(String name) {
         super(name);
         type = Functionality.Type.TRANS;
     }
 
-    public static SrvTransmodel instance(Signature builder) throws SignatureException {
-        SrvTransmodel model = SrvTransmodel.instance(null, builder);
+    public static RequestTransmodel instance(Signature builder) throws SignatureException {
+        RequestTransmodel model = RequestTransmodel.instance(null, builder);
         model.setEvaluated(false);
         return model;
     }
 
-    public static SrvTransmodel instance(String name, Signature builder) throws SignatureException {
-        SrvTransmodel model = (SrvTransmodel) sorcer.co.operator.instance(builder);
+    public static RequestTransmodel instance(String name, Signature builder) throws SignatureException {
+        RequestTransmodel model = (RequestTransmodel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         if (name != null) {
             model.setName(name);
@@ -60,15 +60,15 @@ public class SrvTransmodel extends SrvModel implements Transmodel {
         return model;
     }
 
-    public SrvTransmodel(String name, List<SrvTransmodel> models) {
+    public RequestTransmodel(String name, List<RequestTransmodel> models) {
         super(name);
-        for (SrvTransmodel vm : models)
+        for (RequestTransmodel vm : models)
             children.put(vm.getName(), vm);
     }
 
-    public SrvTransmodel(String name, SrvTransmodel... models) {
+    public RequestTransmodel(String name, RequestTransmodel... models) {
         super(name);
-        for (SrvTransmodel vm : models)
+        for (RequestTransmodel vm : models)
             children.put(vm.getName(), vm);
     }
 
@@ -188,8 +188,8 @@ public class SrvTransmodel extends SrvModel implements Transmodel {
                             Domain domain = children.get(p.getName());
                             execDependencies(p.getName(), inContext, args);
                             Context cxt = null;
-                            if (children.get(p.path) instanceof EntModel) {
-                                EntModel mdl = (EntModel) children.get(p.path);
+                            if (children.get(p.path) instanceof EntryModel) {
+                                EntryModel mdl = (EntryModel) children.get(p.path);
                                 mdl.evaluate(inContext, args);
                                 cxt = mdl.getMogramStrategy().getOutcome();
                                 dataContext.append(cxt);

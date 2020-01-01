@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sorcer.core.context.model;
+package sorcer.core.context.model.ent;
 
 import sorcer.co.tuple.ExecDependency;
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.*;
-import sorcer.core.context.model.srv.Srv;
+import sorcer.core.context.model.rqe.RequestEntry;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
@@ -57,7 +56,7 @@ import static sorcer.so.operator.exec;
  */
 
 /**
- * The EntModel is an active shared service context as a map of associations,
+ * The EntryModel is an active shared service context as a map of associations,
  * key and its getValue (argument). The association <key, argument> is the definition
  * of an independent or a dependent argument. Arguments that dependent on other
  * arguments are subroutines (evaluators, invokers), so that, each time the
@@ -67,17 +66,17 @@ import static sorcer.so.operator.exec;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class EntModel extends PositionalContext<Object> implements Model, Invocation<Object> {
+public class EntryModel extends PositionalContext<Object> implements Model, Invocation<Object> {
 
     private static final long serialVersionUID = -6932730998474298653L;
 
-	public static EntModel instance(Signature builder) throws SignatureException {
-		EntModel model = (EntModel) sorcer.co.operator.instance(builder);
+	public static EntryModel instance(Signature builder) throws SignatureException {
+		EntryModel model = (EntryModel) sorcer.co.operator.instance(builder);
 		model.setBuilder(builder);
 		return model;
 	}
 
-    public EntModel() {
+    public EntryModel() {
 		super();
 		key = PROC_MODEL;
 		out = new Date();
@@ -85,24 +84,24 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 		isRevaluable = true;
 	}
 
-    public EntModel(String name) {
+    public EntryModel(String name) {
         super(name);
 		isRevaluable = true;
 	}
 
-	public EntModel(String name, Signature builder) {
+	public EntryModel(String name, Signature builder) {
 		this(name);
 		this.builder = builder;
 	}
 
-    public EntModel(Context context) throws RemoteException, ContextException {
+    public EntryModel(Context context) throws RemoteException, ContextException {
         super(context);
         key = PROC_MODEL;
         setSubject("prc/model", new Date());
 		isRevaluable = true;
 	}
 
-    public EntModel(Identifiable... objects) throws RemoteException,
+    public EntryModel(Identifiable... objects) throws RemoteException,
             ContextException {
         this();
         add(objects);
@@ -242,7 +241,7 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
                 if (scope != null && ((Context) scope).size() > 0) {
                     ((Context) scope).append(this);
                 }
-                if (value instanceof Srv && ((Srv) value).getImpl() instanceof ServiceInvoker) {
+                if (value instanceof RequestEntry && ((RequestEntry) value).getImpl() instanceof ServiceInvoker) {
                     ((ServiceInvoker) ((Entry) value).getImpl()).setInvokeContext(this);
                 } else if (value instanceof ServiceInvoker) {
                     ((ServiceInvoker) value).setInvokeContext(this);
@@ -273,14 +272,14 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 		return ent;
 	}
 
-	public EntModel add(List<Identifiable> objects) throws RemoteException, ContextException {
+	public EntryModel add(List<Identifiable> objects) throws RemoteException, ContextException {
 		Identifiable[] objs = new Identifiable[objects.size()];
 		objects.toArray(objs);
 		add(objs);
 		return this;
 	}
 
-	public EntModel append(Arg... objects) throws ContextException {
+	public EntryModel append(Arg... objects) throws ContextException {
 		Prc p = null;
 		boolean changed = false;
 		for (Arg obj : objects) {
@@ -295,7 +294,7 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 //			restrict identifiables
 //			else if (obj instanceof Identifiable) {
 //				String pn = obj.getName();
-//				p = new Proc(pn, obj, new EntModel(pn).append(this));
+//				p = new Proc(pn, obj, new EntryModel(pn).append(this));
 //			}
 
 			if (p != null) {

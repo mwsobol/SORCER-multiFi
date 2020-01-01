@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.SysCall;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.SysCaller;
@@ -57,7 +57,7 @@ public class SysCalls {
 		ServiceInvoker cmd = cmdInvoker("volume",
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
 
-		EntModel pm = entModel(operator.prc(cmd),
+		EntryModel pm = entModel(operator.prc(cmd),
 				val("x", 10.0), val("y"),
 				prc("multiply", invoker("x * y", args("x", "y"))),
 				prc("add", invoker("x + y", args("x", "y"))));
@@ -164,12 +164,12 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-		Model sm = srvModel(val("x", 10.0), val("y"),
+		Model sm = rqeModel(val("x", 10.0), val("y"),
 				prc("multiply", invoker("x * y", args("x", "y"))),
 				prc("add", invoker("x + y", args("x", "y"))),
 				result("cylinder/volume"),
-				srv("volume", sig("exec", SysCaller.class,
-//				srv("volume", sig("exec", SysCallerProvider.class,
+				rqe("volume", sig("exec", SysCaller.class,
+//				rqe("volume", sig("exec", SysCallerProvider.class,
 						cxt(val("cmd", "java -cp  " + cp + Volume.class.getName()),
 								inVal("cylinder"),
 								outVal("cylinder/volume"), outVal("cylinder/radius"), outVal("cylinder/height")))));
@@ -204,12 +204,12 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-		Model sm = srvModel(val("x", 10.0), val("y"),
+		Model sm = rqeModel(val("x", 10.0), val("y"),
 				ent("multiply", invoker("x * y", args("x", "y"))),
 				ent("add", invoker("x + y", args("x", "y"))),
 				result("cylinder/volume"),
-				srv("volume", sig("exec", SysCallerProvider.class,
-//				srv("volume", sig("exec", SysCaller.class,
+				rqe("volume", sig("exec", SysCallerProvider.class,
+//				rqe("volume", sig("exec", SysCaller.class,
 						cxt(val("cmd", "java -cp  " + cp + Volume.class.getName()),
 								inVal("cylinder", Arg.class),
 								outVal("cylinder/volume", double.class),

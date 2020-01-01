@@ -27,11 +27,11 @@ import sorcer.co.tuple.*;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.DataContext;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.QueueStrategy;
 import sorcer.core.context.model.ent.*;
-import sorcer.core.context.model.srv.Srv;
-import sorcer.core.context.model.srv.SrvModel;
+import sorcer.core.context.model.rqe.RequestModel;
+import sorcer.core.context.model.rqe.RequestEntry;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
@@ -70,7 +70,7 @@ import java.util.Collections;
 import static sorcer.co.operator.path;
 import static sorcer.co.operator.*;
 import static sorcer.mo.operator.*;
-import static sorcer.ent.operator.srv;
+import static sorcer.ent.operator.rqe;
 
 /**
  * Operators defined for the Service Modeling Language (SML).
@@ -607,8 +607,8 @@ operator extends Operator {
         try {
             if (sig != null)
                 cxt.setSubject(sig.getSelector(), sig.getServiceType());
-            if (cxt instanceof SrvModel && autoDeps) {
-                cxt = new SrvModelAutoDeps((SrvModel) cxt).get();
+            if (cxt instanceof RequestModel && autoDeps) {
+                cxt = new SrvModelAutoDeps((RequestModel) cxt).get();
             }
         } catch (SignatureException | SortingException e) {
             throw new ContextException(e);
@@ -651,8 +651,8 @@ operator extends Operator {
             while(i.hasNext()) {
                 e = i.next();
                 val = e.getValue();
-                if (val instanceof Srv && ((Srv)val).asis() instanceof ServiceFidelity) {
-                    fiMap.put(e.getKey(), (ServiceFidelity)((Srv)val).asis());
+                if (val instanceof RequestEntry && ((RequestEntry)val).asis() instanceof ServiceFidelity) {
+                    fiMap.put(e.getKey(), (ServiceFidelity)((RequestEntry)val).asis());
                 }
             }
             if (((ServiceContext)cxt).getProjection() != null)
@@ -701,7 +701,7 @@ operator extends Operator {
                                                    List<Entry> entryList) throws ContextException {
         for (int i = 0; i < entryList.size(); i++) {
             Entry ent = entryList.get(i);
-            if (ent instanceof Srv) {
+            if (ent instanceof RequestEntry) {
                 if (ent.asis() instanceof Scopable) {
                     if (((Scopable) ent.getImpl()).getScope() != null)
                         ((Scopable) ent.getImpl()).getScope().setScope(pcxt);
@@ -2497,7 +2497,7 @@ operator extends Operator {
         Context cxt = null;
         boolean isBlock =false;
         for (int i = 0; i < items.length; i++) {
-            if (items[i] instanceof Routine || items[i] instanceof EntModel) {
+            if (items[i] instanceof Routine || items[i] instanceof EntryModel) {
                 exertions.add((Mogram) items[i]);
                 if (items[i] instanceof ConditionalTask)
                     isBlock = true;
@@ -3540,8 +3540,8 @@ operator extends Operator {
         return provider;
     }
 
-    public static Condition condition(EntModel parcontext, String expression,
-                                      String... pars) {
+    public static Condition condition(EntryModel parcontext, String expression,
+									  String... pars) {
         return new Condition(parcontext, expression, pars);
     }
 
@@ -3675,7 +3675,7 @@ operator extends Operator {
         Context context = null;
         Evaluator evaluator = null;
         for (int i = 0; i < items.length; i++) {
-            if (items[i] instanceof Routine || items[i] instanceof EntModel) {
+            if (items[i] instanceof Routine || items[i] instanceof EntryModel) {
                 mograms.add((Mogram) items[i]);
             } else if (items[i] instanceof Evaluation) {
                 evaluators.add((Evaluator)items[i]);
@@ -3720,19 +3720,19 @@ operator extends Operator {
         } catch (Exception se) {
             throw new ContextException(se);
         }
-        //make sure it has EntModel as the data context
-        EntModel pm = null;
+        //make sure it has EntryModel as the data context
+        EntryModel pm = null;
         Context cxt = null;
         try {
             cxt = block.getDataContext();
             if (cxt == null) {
-                cxt = new EntModel();
+                cxt = new EntryModel();
                 block.setContext(cxt);
             }
-            if (cxt instanceof EntModel) {
-                pm = (EntModel)cxt;
+            if (cxt instanceof EntryModel) {
+                pm = (EntryModel)cxt;
             } else {
-                pm = new EntModel("block context: " + cxt.getName());
+                pm = new EntryModel("block context: " + cxt.getName());
                 block.setContext(pm);
                 pm.append(cxt);
                 pm.setScope(pm);

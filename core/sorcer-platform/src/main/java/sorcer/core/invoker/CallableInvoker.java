@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import sorcer.core.context.model.ent.Prc;
-import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;
 import sorcer.service.Context;
@@ -50,11 +50,11 @@ public class CallableInvoker<T> extends ServiceInvoker<T> {
 		defaultName = "collable-";
 	}
 	
-	public CallableInvoker(EntModel context) {
+	public CallableInvoker(EntryModel context) {
 		super(context);
 	}
 	
-	public CallableInvoker(EntModel context, Callable callable, Prc... callEntries) {
+	public CallableInvoker(EntryModel context, Callable callable, Prc... callEntries) {
 		super(context);
 		this.callable = callable;
 		this.args = new ArgSet(callEntries);

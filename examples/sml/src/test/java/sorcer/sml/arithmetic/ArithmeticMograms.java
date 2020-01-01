@@ -1,6 +1,5 @@
 package sorcer.sml.arithmetic;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -11,7 +10,7 @@ import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.context.model.srv.Srv;
+import sorcer.core.context.model.rqe.RequestEntry;
 import sorcer.service.Morpher;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
@@ -127,10 +126,10 @@ public class ArithmeticMograms {
 		dependsOn(mo, dep("subtract", paths("multiply2", "add")));
 
 		Object val = asis(mo, "subtract");
-		if (val instanceof Srv) {
-			Srv srv = ((Srv)val);
-			if (srv.getValue() instanceof ContextCallable) {
-				ContextCallable ctx = (ContextCallable) srv.getValue();
+		if (val instanceof RequestEntry) {
+			RequestEntry rqe = ((RequestEntry)val);
+			if (rqe.getValue() instanceof ContextCallable) {
+				ContextCallable ctx = (ContextCallable) rqe.getValue();
 				logger.info("class: " + ctx.getClass());
 			}
 		}

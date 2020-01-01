@@ -173,7 +173,7 @@ public class Services {
     @Test
     public void signatureEntry() throws Exception {
 
-        Function y1 = srv("y1", sig("add", AdderImpl.class, result("add/out",
+        Function y1 = rqe("y1", sig("add", AdderImpl.class, result("add/out",
                         inPaths("x1", "x2"))),
                     context(inVal("x1", 10.0), inVal("x2", 20.0)));
 
@@ -183,7 +183,7 @@ public class Services {
     @Test
     public void getEntryValueWithArgSelector() throws Exception {
 
-        Function y1 = srv("y1", sig("add", AdderImpl.class),
+        Function y1 = rqe("y1", sig("add", AdderImpl.class),
                 context(inVal("x1", 10.0), inVal("x2", 20.0)));
 
 //        logger.info("out eval: {}", eval(y1, selector("result/eval")));
@@ -193,7 +193,7 @@ public class Services {
     @Test
     public void getEntryValueWithSelector() throws Exception {
 
-        Function y1 = srv("y1", sig("add", AdderImpl.class),
+        Function y1 = rqe("y1", sig("add", AdderImpl.class),
                 context(inVal("x1", 10.0), inVal("x2", 20.0)),
                 selector("result/eval"));
 
@@ -269,7 +269,7 @@ public class Services {
     @Test
     public void getConditionalBlockSrvValue() throws Exception {
 
-        Function y1 = srv("y1", block(context(prc("x1", 10.0), prc("x2", 20.0)),
+        Function y1 = rqe("y1", block(context(prc("x1", 10.0), prc("x2", 20.0)),
             alt(opt(condition((Context<Double> cxt)
                             -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))),
                 opt(condition((Context<Double> cxt)
@@ -284,7 +284,7 @@ public class Services {
 
         Model mdl = model(
             val("x1", 10.0), val("x2", 20.0),
-            srv("y1", block(alt(opt(condition((Context<Double> cxt)
+            rqe("y1", block(alt(opt(condition((Context<Double> cxt)
                             -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
                     opt(condition((Context<Double> cxt) -> v(cxt, "x1")
                             <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))))));
@@ -298,7 +298,7 @@ public class Services {
 
 		Model mdl = model(
 			val("x1", 10.0), val("x2", 20.0),
-			srv("y1", alt(opt(condition((Context<Double> cxt)
+			rqe("y1", alt(opt(condition((Context<Double> cxt)
 					-> v(cxt, "x1") > v(cxt, "x2")), func(expr("x1 * x2", args("x1", "x2")))),
 				opt(condition((Context<Double> cxt) -> v(cxt, "x1")
 					<= v(cxt, "x2")), func(expr("x1 + x2", args("x1", "x2")))))));

@@ -22,7 +22,7 @@ import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.*;
-import sorcer.core.context.model.srv.SrvModel;
+import sorcer.core.context.model.rqe.RequestModel;
 import sorcer.core.provider.Modeler;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
@@ -54,8 +54,8 @@ public class ServiceModeler extends SorcerExerterBean implements Modeler {
         Context dataContext = null;
         ModelTask taskModel = null;
         try {
-            if (mogram instanceof SrvModel) {
-                  return ((SrvModel)mogram).exert(args);
+            if (mogram instanceof RequestModel) {
+                  return ((RequestModel)mogram).exert(args);
             } else if (mogram instanceof ModelerTask) {
                 taskModel = ((ModelerTask) mogram).getModelTask();
                 if (taskModel != null) {

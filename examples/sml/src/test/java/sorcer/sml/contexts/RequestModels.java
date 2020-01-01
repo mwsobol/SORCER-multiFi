@@ -35,9 +35,9 @@ import static sorcer.so.operator.*;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class SrvModels {
+public class RequestModels {
 
-    private final static Logger logger = LoggerFactory.getLogger(SrvModels.class);
+    private final static Logger logger = LoggerFactory.getLogger(RequestModels.class);
 
     @Test
     public void lambdaInvoker() throws Exception {
@@ -227,7 +227,7 @@ public class SrvModels {
 
         // getValue response from a service model
 
-        Model mdl = srvModel(
+        Model mdl = rqeModel(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
@@ -338,8 +338,6 @@ public class SrvModels {
                         inPaths("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
                         inPaths("multiply/out", "add/out")))));
-
-//                prc("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
 
         responseUp(model, "add", "multiply", "subtract");
         // specify how model connects to exertion
