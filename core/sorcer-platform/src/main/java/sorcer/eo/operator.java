@@ -3142,31 +3142,6 @@ operator extends Operator {
         }
     }
 
-    public static class result extends Entry {
-
-        private static final long serialVersionUID = 1L;
-
-        Class returnType;
-
-        result(String path) {
-            this.key = path;
-        }
-
-        result(String path, Class returnType) {
-            this.key = path;
-            this.impl = returnType;
-        }
-
-        public Class returnPath() {
-            return (Class) this.impl;
-        }
-
-        @Override
-        public String toString() {
-            return "return contextReturn: " + impl;
-        }
-    }
-
     public static ParameterTypes types(Class... parameterTypes) {
         return new ParameterTypes(parameterTypes);
     }

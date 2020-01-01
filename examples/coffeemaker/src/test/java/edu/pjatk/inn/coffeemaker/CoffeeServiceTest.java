@@ -25,7 +25,6 @@ import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.result;
 import static sorcer.ent.operator.ent;
-import static sorcer.ent.operator.ents;
 import static sorcer.ent.operator.invoker;
 import static sorcer.so.operator.*;
 
