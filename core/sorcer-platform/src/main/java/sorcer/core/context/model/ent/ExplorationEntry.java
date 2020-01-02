@@ -17,7 +17,7 @@
 
 package sorcer.core.context.model.ent;
 
-import sorcer.core.context.model.Analysis;
+import sorcer.service.Analysis;
 import sorcer.core.service.Collaboration;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;

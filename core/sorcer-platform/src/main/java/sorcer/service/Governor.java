@@ -3,7 +3,6 @@ package sorcer.service;
 import sorcer.co.tuple.ExecDependency;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.Analysis;
 import sorcer.core.service.Governance;
 import sorcer.service.modeling.*;
 
@@ -13,9 +12,10 @@ import java.util.Map;
 
 import static sorcer.co.operator.path;
 
-public class Governor implements Service, Supervisor {
+public class Governor implements Service, Supervision {
 
     protected Governance governance;
+
     // exec discipline dependencies
     public Governor() {
         // do nothing

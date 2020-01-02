@@ -61,14 +61,14 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 
 	protected Morpher morpher;
 
-    // active disciplnes
-    protected Paths domainPaths;
-
-	protected Fidelity<AnalysisEntry> analyzerFi;
+	protected Fidelity<Analysis> analyzerFi;
 
 	protected Fidelity<ExplorationEntry> explorerFi;
 
 	protected Map<String, Domain> domains = new HashMap<>();
+
+	// active disciplnes
+	protected Paths domainPaths;
 
 	// dependency management for this collaboration
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
@@ -208,11 +208,11 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 		return name;
 	}
 
-	public Fidelity<AnalysisEntry> getAnalyzerFi() {
+	public Fidelity<Analysis> getAnalyzerFi() {
 		return analyzerFi;
 	}
 
-	public void setAnalyzerFi(Fidelity<AnalysisEntry> analyzerFi) {
+	public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
 		this.analyzerFi = analyzerFi;
 	}
 
@@ -250,7 +250,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 		return explorerFi;
 	}
 
-	public Fidelity<AnalysisEntry> setAnalyzerFi(Context context) throws ConfigurationException {
+	public Fidelity<Analysis> setAnalyzerFi(Context context) throws ConfigurationException {
 		if(analyzerFi == null) {
 			Object mdaComponent = context.get(Context.MDA_PATH);
 			if (mdaComponent != null) {
@@ -262,7 +262,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 				} else if (mdaComponent instanceof ServiceFidelity
 						&& ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
 					analyzerFi = (Fidelity) mdaComponent;
-					analyzerFi.getSelect().setContextion(this);
+					((AnalysisEntry)analyzerFi.getSelect()).setContextion(this);
 				}
 			}
 		}
@@ -331,8 +331,8 @@ public class Collaboration implements Contextion, Transdomain, Dependency {
 						analyzerFi.selectSelect(fi.getName());
 					}
 				}
-				analyzerFi.getSelect().setContextion(this);
-				logger.info("*** analyzerFi: {}", analyzerFi.getSelect().getName());
+				((AnalysisEntry)analyzerFi.getSelect()).setContextion(this);
+				logger.info("*** analyzerFi: {}", ((AnalysisEntry)analyzerFi.getSelect()).getName());
 			}
 			if (explorerFi != null) {
 				for (Fi fi : fis) {

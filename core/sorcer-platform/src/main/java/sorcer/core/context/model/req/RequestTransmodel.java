@@ -30,9 +30,7 @@ public class RequestTransmodel extends RequestModel implements Transmodel {
 
     protected Paths childrenPaths;
 
-    protected FidelityManager collabFiManager;
-
-    protected Fidelity<AnalysisEntry> analyzerFi;
+    protected Fidelity<Analysis> analyzerFi;
 
     public RequestTransmodel() {
         super();
@@ -92,14 +90,6 @@ public class RequestTransmodel extends RequestModel implements Transmodel {
         return children.get(domainName);
     }
 
-    public FidelityManager getCollabFiManager() {
-        return collabFiManager;
-    }
-
-    public void setCollabFiManager(FidelityManager collabFiManager) {
-        this.collabFiManager = collabFiManager;
-    }
-
     @Override
     public boolean configure(Object... configs) throws ConfigurationException, RemoteException {
         return false;
@@ -150,11 +140,11 @@ public class RequestTransmodel extends RequestModel implements Transmodel {
         return dataContext;
     }
 
-    public Fidelity<AnalysisEntry> getAnalyzerFi() {
+    public Fidelity<Analysis> getAnalyzerFi() {
         return analyzerFi;
     }
 
-    public void setAnalyzerFi(Fidelity<AnalysisEntry> analyzerFi) {
+    public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
         this.analyzerFi = analyzerFi;
     }
 

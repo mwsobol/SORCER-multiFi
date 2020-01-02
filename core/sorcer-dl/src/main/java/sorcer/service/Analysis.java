@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model;
+package sorcer.service;
 
 import sorcer.service.Context;
 import sorcer.service.ContextException;

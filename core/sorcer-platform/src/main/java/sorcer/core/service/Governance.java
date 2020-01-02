@@ -138,8 +138,8 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 		return disciplines.get(name);
 	}
 
-    public Supervisor getSuperviser() {
-        return (Supervisor) supervisorFi.getSelect();
+    public Supervision getSuperviser() {
+        return (Supervision) supervisorFi.getSelect();
     }
 
     public void setSuperviser(Governor superviser) {
@@ -352,10 +352,10 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 					}
 				}
 				logger.info("*** analyzerFi: {}", analyzerFi.getSelect().getName());
-				out = ((Supervisor)supervisorFi.getSelect()).supervise(cxt, args);
+				out = ((Supervision)supervisorFi.getSelect()).supervise(cxt, args);
 				strategy.setExecState(Exec.State.DONE);
 			} else {
-				out = ((Supervisor)supervisorFi.getSelect()).supervise(cxt, args);
+				out = ((Supervision)supervisorFi.getSelect()).supervise(cxt, args);
 			}
 			((ModelStrategy)mogramStrategy).setOutcome(output);
 		} catch (SuperviseException | ConfigurationException e) {

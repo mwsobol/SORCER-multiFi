@@ -26,4 +26,6 @@ public interface Transdomain extends Contextion, CombinedRequest {
     public Mogram getChild(String name);
 
     public Object get(String path$domain);
+
+    public Fidelity<Analysis> getAnalyzerFi();
 }

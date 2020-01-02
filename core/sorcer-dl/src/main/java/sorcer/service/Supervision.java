@@ -20,7 +20,7 @@ import sorcer.service.modeling.SuperviseException;
 
 import java.rmi.RemoteException;
 
-public interface Supervisor {
+public interface Supervision {
 
     @SuppressWarnings("rawtypes")
     public Context supervise(Context context, Arg... args) throws SuperviseException,

@@ -74,5 +74,4 @@ public class ObjectBlock extends Block {
 		}
 		return result;
 	}
-
 }

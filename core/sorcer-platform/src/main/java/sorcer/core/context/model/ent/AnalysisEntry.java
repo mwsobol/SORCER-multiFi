@@ -17,10 +17,9 @@
 
 package sorcer.core.context.model.ent;
 
-import sorcer.core.context.model.Analysis;
+import sorcer.service.Analysis;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
-import sorcer.service.ContextDomain;
 import sorcer.service.modeling.Functionality;
 
 /**

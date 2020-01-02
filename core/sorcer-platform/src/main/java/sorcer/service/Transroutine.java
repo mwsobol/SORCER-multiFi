@@ -37,6 +37,8 @@ abstract public class Transroutine extends Subroutine implements Transdomain {
 	 */
 	protected List<Mogram> mograms = new ArrayList<Mogram>();
 
+	protected Fidelity<Analysis> analyzerFi;
+
 	public Transroutine() {
 		this("transroutine-" + count++);
 	}
@@ -215,4 +217,14 @@ abstract public class Transroutine extends Subroutine implements Transdomain {
 		}
 		return children;
 	}
+
+	@Override
+	public Fidelity<Analysis> getAnalyzerFi() {
+		return analyzerFi;
+	}
+
+	public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
+		this.analyzerFi = analyzerFi;
+	}
+
 }
