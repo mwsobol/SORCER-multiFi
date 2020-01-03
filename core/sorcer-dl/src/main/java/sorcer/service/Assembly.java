@@ -23,6 +23,6 @@ package sorcer.service;
  *
  * @author Mike Sobolewski
  */
-public interface Assembly extends Domain {
+public interface Assembly extends Contextion {
 
 }
