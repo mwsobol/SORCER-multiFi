@@ -343,9 +343,9 @@ operator extends Operator {
         Context.Out outPaths = null;
         Context.In inPaths = null;
         Paths paths = null;
-        AnalysisEntry mdaEntry = null;
+        EntryAnalyzer mdaEntry = null;
         ServiceFidelity mdaFi = null;
-        ExplorationEntry explEntry = null;
+        EntryExplorer explEntry = null;
         ServiceFidelity explFi = null;
         List<Path> responsePaths = null;
         boolean autoDeps = true;
@@ -411,10 +411,10 @@ operator extends Operator {
                     } else if (((ServiceFidelity) o).getFiType().equals(Fi.Type.EXPLORER)) {
                         explFi = (ServiceFidelity) o;
                     }
-                } else if (o instanceof AnalysisEntry) {
-                    mdaEntry = (AnalysisEntry) o;
-                } else if (o instanceof ExplorationEntry) {
-                    explEntry = (ExplorationEntry) o;
+                } else if (o instanceof EntryAnalyzer) {
+                    mdaEntry = (EntryAnalyzer) o;
+                } else if (o instanceof EntryExplorer) {
+                    explEntry = (EntryExplorer) o;
                 }
             }
         }

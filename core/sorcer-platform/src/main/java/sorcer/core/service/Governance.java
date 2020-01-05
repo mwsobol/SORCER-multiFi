@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.AnalysisEntry;
+import sorcer.core.context.model.ent.EntryAnalyzer;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
 import sorcer.service.Discipline;
@@ -64,7 +64,7 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 
 	protected ServiceFidelity supervisorFi;
 
-	protected Fidelity<AnalysisEntry> analyzerFi;
+	protected Fidelity<EntryAnalyzer> analyzerFi;
 
 	protected ServiceFidelity contextMultiFi;
 
@@ -245,11 +245,11 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 		return name;
 	}
 
-	public Fidelity<AnalysisEntry> getAnalyzerFi() {
+	public Fidelity<EntryAnalyzer> getAnalyzerFi() {
 		return analyzerFi;
 	}
 
-	public void setAnalyzerFi(Fidelity<AnalysisEntry> analyzerFi) {
+	public void setAnalyzerFi(Fidelity<EntryAnalyzer> analyzerFi) {
 		this.analyzerFi = analyzerFi;
 	}
 
@@ -263,14 +263,14 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 		return discList;
 	}
 
-	public Fidelity<AnalysisEntry> setAnalyzerFi(Context context) throws ConfigurationException {
+	public Fidelity<EntryAnalyzer> setAnalyzerFi(Context context) throws ConfigurationException {
 		if(analyzerFi == null) {
 			Object mdaComponent = context.get(Context.MDA_PATH);
 			if (mdaComponent != null) {
-				if (mdaComponent instanceof AnalysisEntry) {
-					analyzerFi = new Fidelity(((AnalysisEntry) mdaComponent).getName());
-					analyzerFi.addSelect((AnalysisEntry) mdaComponent);
-					analyzerFi.setSelect((AnalysisEntry) mdaComponent);
+				if (mdaComponent instanceof EntryAnalyzer) {
+					analyzerFi = new Fidelity(((EntryAnalyzer) mdaComponent).getName());
+					analyzerFi.addSelect((EntryAnalyzer) mdaComponent);
+					analyzerFi.setSelect((EntryAnalyzer) mdaComponent);
 				} else if (mdaComponent instanceof ServiceFidelity
 					&& ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
 					analyzerFi = (Fidelity) mdaComponent;
@@ -438,7 +438,7 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 	}
 
 	public Functionality.Type getDependencyType() {
-		return Functionality.Type.GOVVERNANCE;
+		return Functionality.Type.GOVERNANCE;
 	}
 
 	@Override

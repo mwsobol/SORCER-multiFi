@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Soblewski on 06/03/16.
  */
-public class ExplorationEntry extends Entry<Exploration> implements Exploration {
+public class EntryExplorer extends Entry<Exploration> implements Exploration {
 
     private static final long serialVersionUID = 1L;
 
@@ -39,19 +39,19 @@ public class ExplorationEntry extends Entry<Exploration> implements Exploration 
 
     private Signature signature;
 
-    public ExplorationEntry(String name, Exploration explorer)  {
+    public EntryExplorer(String name, Exploration explorer)  {
         this.key = name;
         this.impl = explorer;
         this.type = Functionality.Type.EXPLORER;
     }
 
-    public ExplorationEntry(String name, Signature signature) {
+    public EntryExplorer(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
         this.type = Functionality.Type.EXPLORER;
     }
 
-    public ExplorationEntry(String name, Exploration mda, Context context) {
+    public EntryExplorer(String name, Exploration mda, Context context) {
         this.key = name;
         scope = context;
         this.impl = mda;

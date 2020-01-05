@@ -25,7 +25,7 @@ import sorcer.service.modeling.Functionality;
 /**
  * Created by Mike Soblewski on 06/03/16.
  */
-public class AnalysisEntry extends Entry<Analysis> implements Analysis {
+public class EntryAnalyzer extends Entry<Analysis> implements Analysis {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,19 +33,19 @@ public class AnalysisEntry extends Entry<Analysis> implements Analysis {
 
     private Signature signature;
 
-    public AnalysisEntry(String name, Analysis mda)  {
+    public EntryAnalyzer(String name, Analysis mda)  {
         this.key = name;
         this.impl = mda;
         this.type = Functionality.Type.MDA;
     }
 
-    public AnalysisEntry(String name, Signature signature) {
+    public EntryAnalyzer(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
         this.type = Functionality.Type.MDA;
     }
 
-    public AnalysisEntry(String name, Analysis mda, Context context) {
+    public EntryAnalyzer(String name, Analysis mda, Context context) {
         this.key = name;
         scope = context;
         this.impl = mda;
