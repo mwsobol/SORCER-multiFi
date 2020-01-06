@@ -16,12 +16,14 @@
  */
 package sorcer.service;
 
+import sorcer.service.modeling.cxtn;
+
 /**
  *  The interface for a service discipline design pattern as governance-multiFi-dispatcher.
  *  Service governance is the indeterminate multifidelity process of decision-making
  *  and the process by which decisions are actualized in the form of a service federation.
  */
-public interface Discipline extends Contextion, CombinedRequest, Dependency {
+public interface Discipline extends Contextion, CombinedRequest, Dependency, cxtn {
 
     /**
      * Returns a context multifidelity

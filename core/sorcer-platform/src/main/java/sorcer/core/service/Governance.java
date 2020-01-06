@@ -31,6 +31,7 @@ import sorcer.service.*;
 import sorcer.service.Discipline;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.SuperviseException;
+import sorcer.service.modeling.cxtn;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Governance implements Contextion, Transdiscipline, Dependency {
+public class Governance implements Contextion, Transdiscipline, Dependency, cxtn {
 
 	private static final long serialVersionUID = 1L;
 

@@ -26,6 +26,7 @@ import sorcer.core.context.RoutineStrategy;
 import sorcer.core.provider.Jobber;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
+import sorcer.service.modeling.dmn;
 import sorcer.service.modeling.mog;
 
 /**
@@ -69,7 +70,7 @@ import sorcer.service.modeling.mog;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Routine extends Assembly, Domain, Dependency, Dispatch, Invocation<Object>, Paradigmatic, Serializable, mog {
+public interface Routine extends Assembly, Domain, Dependency, Dispatch, Invocation<Object>, Paradigmatic, Serializable, dmn, mog {
 
 	/**
 	 * Assigns a dispatch for this exertion.
