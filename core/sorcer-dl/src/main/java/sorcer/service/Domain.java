@@ -17,6 +17,8 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.cxtn;
+import sorcer.service.modeling.dmn;
 import sorcer.service.modeling.mog;
 
 import java.rmi.RemoteException;
@@ -26,7 +28,7 @@ import java.rmi.RemoteException;
  *
  * Created by Mike Sobolewski on 11/26/2019.
  */
-public interface Domain extends Contextion, CombinedRequest, Dependency, mog {
+public interface Domain extends Contextion, CombinedRequest, Dependency, mog, cxtn {
 
     /**
      * Returns an execute of the domain at the returnPath as is

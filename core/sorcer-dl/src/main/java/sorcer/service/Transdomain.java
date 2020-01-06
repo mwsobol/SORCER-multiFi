@@ -17,9 +17,11 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.cxtn;
+
 import java.util.Map;
 
-public interface Transdomain extends Contextion, CombinedRequest {
+public interface Transdomain extends Contextion, CombinedRequest, cxtn {
 
     public Map<String, Domain> getChildren();
 

@@ -16,7 +16,7 @@ public class Governor implements Service, Supervision {
 
     protected Governance governance;
 
-    // exec discipline dependencies
+    protected Supervision supervisor;
     public Governor() {
         // do nothing
     }
@@ -25,12 +25,21 @@ public class Governor implements Service, Supervision {
         this.governance = governance;
     }
 
+    public Governor(Governance governance, Supervision supervisor) {
+        this.governance = governance;
+        this.supervisor = this.supervisor;
+    }
+
     @Override
     public Object execute(Arg... args) throws ServiceException {
         try {
             List<Fidelity> fis = Arg.selectFidelities(args);
+            Context input = Arg.selectContext(args);
+            if (input != null) {
+                governance.setInput(input);
+            }
             if (fis != null && fis.size() > 0) {
-                ((ServiceFidelity)governance.getMultiFi()).selectSelect(fis.get(0).getName());
+                ((ServiceFidelity) governance.getMultiFi()).selectSelect(fis.get(0).getName());
             }
             Analysis analyzer = null;
             if (governance.getAnalyzerFi() != null) {
@@ -81,11 +90,36 @@ public class Governor implements Service, Supervision {
         }
     }
 
+    public Supervision getSupervisor() {
+        return supervisor;
+    }
+
+    public void setSupervisor(Supervision govSuervision) {
+        this.supervisor = govSuervision;
+    }
+
+
     @Override
-    public Context supervise(Context searchContext, Arg... args) throws SuperviseException, RemoteException {
+    public Context supervise(Context input, Arg... args) throws SuperviseException, RemoteException {
         try {
-            governance.setInput(searchContext);
-            return (Context) execute(args);
+            if (governance.getInput() == null)  {
+                governance.setInput(input);
+            } else {
+                governance.getInput().substitute(input);
+            }
+            Context outCxt = (Context) execute(args);
+            Supervision sup = null;
+            Context tmpCxt;
+            if (governance.getSupervisorFi() != null) {
+                sup = governance.getSupervisorFi().getSelect();
+                tmpCxt = sup.supervise(input, args);
+                outCxt.appendContext(tmpCxt);
+            }
+            if (supervisor != null) {
+                tmpCxt = supervisor.supervise(outCxt);
+                outCxt.appendContext(tmpCxt);
+            }
+            return outCxt;
         } catch (ServiceException e) {
             throw new SuperviseException(e);
         }

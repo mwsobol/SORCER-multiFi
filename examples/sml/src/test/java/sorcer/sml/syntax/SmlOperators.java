@@ -62,13 +62,18 @@ public class SmlOperators {
 		// Data Contexts
 		cxt c1 = context(v1, val("x4", 10.8), execEnt(p1), execEnt(f2));
 
-		// Mograms
-		mog m1 = model(v1, p1, f1, f2);
-		mog t1 = task(op1, c1);
-		mog t2 = task(op1, op2, c1);
-		mog ex1 = block(t1, t2, m1);
+		// Contextions
+		cxtn pl1 = pl("name");
+		dmn t1 = task(op1, c1);
+		dmn t2 = task(op1, op2, c1);
+		dmn m1 = model(v1, p1, f1, f2);
+		dmn ex1 = block(t1, t2, m1);
 		mog ex2 = job(t1, job(t2, m1));
-		mog m2 = model(m1, op1, t1, ex2);
+		dmn m2 = model(m1, op1, t1, ex2);
+		dmn tm1 = tModel("name");
+		cxtn cb1 = clb("domainCollab");
+		cxtn d1 = dsc("name");
+		cxtn g1 = gov("name", d1);
 
 		// Object outputs
 		Object o1 = exec(op1);
@@ -94,9 +99,9 @@ public class SmlOperators {
 		ent e7 = execEnt(model(), "path");
 
 		// Exerting domains
-		mog m3 = exert(task());
-		mog m4 = exert(job());
-		mog m5 = exert(model());
+		dmn m3 = exert(task());
+		cxtn m4 = exert(job());
+		cxtn m5 = exert(model());
 
 		// Data context of domains
 		cxt c2 = context(job());
@@ -105,11 +110,11 @@ public class SmlOperators {
 		// Evaluate domains
 		cxt c4 = eval(model());
 		cxt c5 = eval(ex2);
-		// Mogram results
+		// Domain results
 		cxt out1 = result(model());
 		cxt out2 = result(job());
 
-		// Evalate specific models
+		// Evaluate specific models
 		// Context, Table, row is rsp (Response)
 		rsp r1 = eval(model());
 		rsp r2 = row(c2);
@@ -190,5 +195,12 @@ public class SmlOperators {
 	@Test
 	public void testIt() throws Exception {
 		logger.info("" + ent("name$domain").getProperName());
+	}
+
+	@Test
+	public void isModelContext() throws Exception {
+		logger.info("one:" + Model.class.isAssignableFrom(Context.class));
+		logger.info("two:" + Context.class.isAssignableFrom(Model.class));
+
 	}
 }

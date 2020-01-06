@@ -75,14 +75,14 @@ public class ModelThread extends Thread {
 					&& governor.getState() != Exec.SUSPENDED) {
 				count--;
 				if (count < 0) {
-					logger.debug("*** Concatenator's Subroutine Dispatcher waiting in state: "
+					logger.debug("*** Concatenator's Subroutine Dispatch waiting in state: "
 							+ governor.getState());
 					count = COUNT;
 				}
 				Thread.sleep(SLEEP_TIME);
 			} */
 
-			logger.debug("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + result.state
+			logger.debug("*** Dispatch exit state = " + dispatcher.getClass().getName()  + " state: " + result.state
 					+ " for block***\n" + task.getControlContext());
             this.result = (Task) result.exertion;
         } catch (DispatchException de) {

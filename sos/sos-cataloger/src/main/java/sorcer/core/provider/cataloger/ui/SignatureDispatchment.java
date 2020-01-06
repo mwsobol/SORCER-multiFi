@@ -26,7 +26,7 @@ import sorcer.service.Exerter;
 import sorcer.service.Context;
 
 /**
- * The Signature Dispatcher Interface allows us to abstract the interactions
+ * The Signature Dispatch Interface allows us to abstract the interactions
  * with cataloger or the provider. The two implementations of this interface are @link
  * SignatureDispatcherForCataloger and @link SignatureDispatcherForCataloger
  * each implementation handles obtaining the information requested by the model.

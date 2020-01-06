@@ -25,9 +25,9 @@ import net.jini.core.event.RemoteEventListener;
 import sorcer.service.Arg;
 import sorcer.service.Context;
 
+@FunctionalInterface
 public interface Exploration {
 
-    @SuppressWarnings("rawtypes")
     public Context explore(Context context) throws ContextException,
             RemoteException;
 

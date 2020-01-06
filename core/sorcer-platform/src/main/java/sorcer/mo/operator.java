@@ -31,7 +31,7 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.req.Req;
 import sorcer.core.context.model.req.RequestModel;
-import sorcer.core.context.model.req.RequestTransmodel;
+import sorcer.core.context.model.req.Transmodel;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
@@ -702,7 +702,7 @@ public class operator {
         throw new ModelException("do not know what model to create");
     }
 
-    public static Transmodel transModel(Object... data) throws ContextException {
+    public static Transmodel tModel(Object... data) throws ContextException {
         String name = getUnknown();
         List<Domain> domains = new ArrayList<>();
         List<ServiceFidelity> modelFis = new ArrayList<>();
@@ -739,7 +739,7 @@ public class operator {
             dataList.remove(fi);
         }
 
-        RequestTransmodel transModel = new RequestTransmodel(name);
+        Transmodel transModel = new Transmodel(name);
         transModel.addDomains(domains);
         Object[] names = new Object[domains.size()];
         for (int i = 0; i < domains.size(); i++) {
@@ -1295,8 +1295,6 @@ public class operator {
                 sorcer.co.operator.dependsOn(gov, execDeps.deps);
             }
         }
-
-        gov.setSuperviser(new Governor(gov));
         return gov;
     }
 
@@ -1305,6 +1303,22 @@ public class operator {
         fi.fiType = Fi.Type.MDA;
         fi.setOption(Fi.Type.SELECT);
         return fi;
+    }
+
+    public static EntrySupervisor sup(String name, Supervision supervisor)
+        throws EvaluationException {
+        return new EntrySupervisor(name, supervisor);
+    }
+
+    public static ServiceFidelity supFi(String name, Supervision... supEntries) {
+        EntrySupervisor[] entries = new EntrySupervisor[supEntries.length];
+        for (int i = 0; i < supEntries.length; i++) {
+            entries[i] = (EntrySupervisor) supEntries[i];
+        }
+        ServiceFidelity mdaFi =  new ServiceFidelity(entries);
+        mdaFi.setName(name);
+        mdaFi.setType(Fi.Type.SUP);
+        return mdaFi;
     }
 
     public static EntryAnalyzer mda(String name, Analysis mda)

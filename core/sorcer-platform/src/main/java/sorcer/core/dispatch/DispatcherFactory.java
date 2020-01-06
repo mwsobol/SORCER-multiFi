@@ -25,12 +25,12 @@ import java.util.Set;
 
 /**
  * This interface must be implemented by all factory classes used to
- * create instances of subclasses of Dispatcher.
+ * create instances of subclasses of Dispatch.
  */
 public interface DispatcherFactory {
     /**
      * This method returns an instance of the appropriate subclass of
-     * Dispatcher as determined from information provided by the given
+     * Dispatch as determined from information provided by the given
      * instance of ServiceJob.
      *
      * @param mogram The SORCER job that will be used to perform a collection

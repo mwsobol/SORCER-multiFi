@@ -17,15 +17,17 @@
 
 package sorcer.core.context.model.ent;
 
-import sorcer.service.Analysis;
+import sorcer.core.service.Collaboration;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
 
+import java.rmi.RemoteException;
+
 /**
  * Created by Mike Sobolewski on 01/05/20.
  */
-public class EntryAnalyzer extends Entry<Analysis> implements Analysis {
+public class EntryDispatcher extends Entry<Dispatch> implements Dispatch {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,27 +35,27 @@ public class EntryAnalyzer extends Entry<Analysis> implements Analysis {
 
     private Signature signature;
 
-    public EntryAnalyzer(String name, Analysis mda)  {
+    public EntryDispatcher(String name, Dispatch dispatcher)  {
         this.key = name;
-        this.impl = mda;
-        this.type = Functionality.Type.MDA;
+        this.impl = dispatcher;
+        this.type = Functionality.Type.DISPATCH;
     }
 
-    public EntryAnalyzer(String name, Signature signature) {
+    public EntryDispatcher(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
-        this.type = Functionality.Type.MDA;
+        this.type = Functionality.Type.DISPATCH;
     }
 
-    public EntryAnalyzer(String name, Analysis mda, Context context) {
+    public EntryDispatcher(String name, Dispatch dispatcher, Context context) {
         this.key = name;
         scope = context;
-        this.impl = mda;
-        this.type = Functionality.Type.MDA;
+        this.impl = dispatcher;
+        this.type = Functionality.Type.DISPATCH;
     }
 
-    public Analysis getAnalyzer() {
-        return (Analysis) impl;
+    public Dispatch getDispatcher() {
+        return (Dispatch) impl;
     }
 
     public Contextion getContextion() {
@@ -69,22 +71,24 @@ public class EntryAnalyzer extends Entry<Analysis> implements Analysis {
     }
 
     @Override
-    public void analyze(Request request, Context context) throws EvaluationException {
+    public Context dispatch(Context context, Arg... args) throws DispatchException, RemoteException {
+        Context out = ((Collaboration) contextion).getOutput();
         try {
             if (impl != null && impl instanceof Analysis) {
                 if (contextion == null) {
-                    ((Analysis) impl).analyze(request, context);
+                    out = ((Dispatch) impl).dispatch(context, args);
                 } else {
-                    ((Analysis) impl).analyze(contextion, context);
+                    out = ((Dispatch) impl).dispatch(context, args);
                 }
             } else if (signature != null) {
-                impl = ((ObjectSignature)signature).initInstance();
-                ((Analysis)impl).analyze(request, context);
+                impl = ((ObjectSignature) signature).initInstance();
+                out = ((Dispatch) impl).dispatch(context);
             } else if (impl == null) {
-                throw new InvocationException("No MDA analysis available!");
+                throw new InvocationException("No dispatcher available!");
             }
-        } catch (ContextException | SignatureException e) {
-            throw new EvaluationException(e);
+        } catch (ContextException | SignatureException | DispatchException | RemoteException e) {
+            throw new DispatchException(e);
         }
+        return out;
     }
 }

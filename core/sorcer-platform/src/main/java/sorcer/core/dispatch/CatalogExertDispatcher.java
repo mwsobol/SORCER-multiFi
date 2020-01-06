@@ -224,7 +224,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
             }
             logger.debug("got result: {}", result);
         } catch (Exception re) {
-            logger.error("+++++++++++++++Dispatcher failed for task, tried: " + tried + " : "
+            logger.error("+++++++++++++++Dispatch failed for task, tried: " + tried + " : "
                     + xrt.getName());
             task.setStatus(State.FAILED.ordinal());
 
@@ -239,7 +239,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                 }
             } */
             task.reportException(re);
-            throw new RoutineException("Dispatcher failed for task, tried: " + tried + " : "
+            throw new RoutineException("Dispatch failed for task, tried: " + tried + " : "
                     + xrt.getName(), re);
         }
         return result;

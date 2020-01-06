@@ -111,7 +111,7 @@ public class ServiceSpacer extends SorcerExerterBean implements Spacer {
 
                 dispatcher.exec();
                 DispatchResult dispatchResult = dispatcher.getResult();
-                logger.debug("Dispatcher State: " + dispatchResult.state);
+                logger.debug("Dispatch State: " + dispatchResult.state);
 
                 result = (NetTask) dispatchResult.exertion;
             } catch (DispatchException | RemoteException e) {

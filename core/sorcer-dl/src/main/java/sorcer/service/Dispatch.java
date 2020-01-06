@@ -18,7 +18,8 @@ package sorcer.service;
 		import java.io.Serializable;
 		import java.rmi.RemoteException;
 
-public interface Dispatcher extends Service {
+@FunctionalInterface
+public interface Dispatch {
 
 	public Context dispatch(Context context, Arg... args) throws DispatchException, RemoteException;
 

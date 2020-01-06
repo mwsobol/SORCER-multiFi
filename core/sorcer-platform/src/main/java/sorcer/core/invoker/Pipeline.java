@@ -5,12 +5,13 @@ import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.cxtn;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pipeline extends ServiceInvoker<Context> implements Contextion {
+public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxtn {
 
     private Context newInvokeContext;
 

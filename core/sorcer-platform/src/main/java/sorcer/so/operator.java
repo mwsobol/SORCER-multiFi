@@ -27,6 +27,7 @@ import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.req.Req;
+import sorcer.core.context.model.req.Transmodel;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.service.Governance;
@@ -228,7 +229,7 @@ public class operator extends Operator {
         return ((Routine)discipline.getOutDispatcher()).getContext();
     }
 
-    public static Dispatcher dispatcher(Discipline discipline) {
+    public static Dispatch dispatcher(Discipline discipline) {
         return discipline.getOutDispatcher();
     }
 

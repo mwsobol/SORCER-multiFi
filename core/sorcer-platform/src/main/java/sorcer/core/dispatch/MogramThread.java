@@ -70,7 +70,7 @@ public class MogramThread implements Runnable {
 					&& governor.getState() != Exec.SUSPENDED) {
 				 count--;
 				 if (count < 0) {
-				 logger.debug("*** Mogramber's Routine Dispatcher waiting in state: "
+				 logger.debug("*** Mogramber's Routine Dispatch waiting in state: "
 				 + governor.getState());
 				 count = COUNT;
 				 }
@@ -78,7 +78,7 @@ public class MogramThread implements Runnable {
 			}*/
 		dispatcher.exec();
 		DispatchResult dispatchResult = dispatcher.getResult();
-		logger.debug("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + dispatchResult.state
+		logger.debug("*** Dispatch exit state = " + dispatcher.getClass().getName()  + " state: " + dispatchResult.state
 			+ " for job***\n" + ((Routine)job).getControlContext());
 		result = (Mogram) dispatchResult.exertion;
 	}

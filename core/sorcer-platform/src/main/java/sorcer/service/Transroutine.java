@@ -20,6 +20,7 @@ package sorcer.service;
 import net.jini.id.Uuid;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.service.modeling.dmn;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ import java.util.Map;
 /**
  * @author Mike Sobolewski
  */
-abstract public class Transroutine extends Subroutine implements Transdomain {
+abstract public class Transroutine extends Subroutine implements Transdomain, dmn {
 	/**
 	 * Component domains of this job (the Composite Design pattern)
 	 */

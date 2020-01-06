@@ -39,7 +39,7 @@ public class BrowserWindow extends JSplitPane {
 	 * @param model
 	 * @link BrowserModel the data will be stored in
 	 * @param dispatcher
-	 *            Dispatcher that should be utilized.
+	 *            Dispatch that should be utilized.
 	 */
 	public BrowserWindow(BrowserModel model, SignatureDispatchment dispatcher,
 			boolean withProviderList) {
