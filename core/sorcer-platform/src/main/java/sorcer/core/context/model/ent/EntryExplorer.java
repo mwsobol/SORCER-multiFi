@@ -27,7 +27,7 @@ import sorcer.service.modeling.Functionality;
 import java.rmi.RemoteException;
 
 /**
- * Created by Mike Soblewski on 06/03/16.
+ * Created by Mike Sobolewski on 01/05/20.
  */
 public class EntryExplorer extends Entry<Exploration> implements Exploration {
 
@@ -35,7 +35,7 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
 
     private Contextion contextion;
 
-    private Dispatcher disptacher;
+    private Dispatch disptacher;
 
     private Signature signature;
 
@@ -66,11 +66,11 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
         this.contextion = contextion;
     }
 
-    public Dispatcher getDisptacher() {
+    public Dispatch getDisptacher() {
         return disptacher;
     }
 
-    public void setDisptacher(Dispatcher disptacher) {
+    public void setDisptacher(Dispatch disptacher) {
         this.disptacher = disptacher;
     }
 

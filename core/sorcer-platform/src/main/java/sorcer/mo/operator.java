@@ -1295,8 +1295,6 @@ public class operator {
                 sorcer.co.operator.dependsOn(gov, execDeps.deps);
             }
         }
-
-        gov.setSuperviser(new Governor(gov));
         return gov;
     }
 
@@ -1305,6 +1303,22 @@ public class operator {
         fi.fiType = Fi.Type.MDA;
         fi.setOption(Fi.Type.SELECT);
         return fi;
+    }
+
+    public static EntrySupervisor sup(String name, Supervision supervisor)
+        throws EvaluationException {
+        return new EntrySupervisor(name, supervisor);
+    }
+
+    public static ServiceFidelity supFi(String name, Supervision... supEntries) {
+        EntrySupervisor[] entries = new EntrySupervisor[supEntries.length];
+        for (int i = 0; i < supEntries.length; i++) {
+            entries[i] = (EntrySupervisor) supEntries[i];
+        }
+        ServiceFidelity mdaFi =  new ServiceFidelity(entries);
+        mdaFi.setName(name);
+        mdaFi.setType(Fi.Type.SUP);
+        return mdaFi;
     }
 
     public static EntryAnalyzer mda(String name, Analysis mda)

@@ -228,7 +228,7 @@ public class operator extends Operator {
         return ((Routine)discipline.getOutDispatcher()).getContext();
     }
 
-    public static Dispatcher dispatcher(Discipline discipline) {
+    public static Dispatch dispatcher(Discipline discipline) {
         return discipline.getOutDispatcher();
     }
 

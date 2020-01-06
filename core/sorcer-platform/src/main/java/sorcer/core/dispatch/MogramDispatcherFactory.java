@@ -41,7 +41,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This class creates instances of appropriate subclasses of Dispatcher. The
+ * This class creates instances of appropriate subclasses of Dispatch. The
  * appropriate subclass is determined by calling the provided Mogram insatnce.
  */
 public class MogramDispatcherFactory implements DispatcherFactory {
@@ -84,14 +84,14 @@ public class MogramDispatcherFactory implements DispatcherFactory {
                 mogram = new ExertionSorter((Job)mogram).getSortedJob();
 
             if ( mogram instanceof Block && Mograms.isCatalogBlock((Routine)mogram)) {
-                logger.info("Running Catalog Block Dispatcher...");
+                logger.info("Running Catalog Block Dispatch...");
                 dispatcher = new CatalogBlockDispatcher((Block)mogram,
                                                         sharedContexts,
                                                         isSpawned,
                                                         provider,
                                                         provisionManager);
             } else if (isSpaceSequential(mogram)) {
-                logger.info("Running Space Sequential Dispatcher...");
+                logger.info("Running Space Sequential Dispatch...");
                 dispatcher = new SpaceSequentialDispatcher((Routine)mogram,
                                                            sharedContexts,
                                                            isSpawned,
@@ -102,7 +102,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
             if (dispatcher==null && mogram instanceof Job) {
                 Job job = (Job) mogram;
                 if (Mograms.isSpaceParallel(job)) {
-                    logger.info("Running Space Parallel Dispatcher...");
+                    logger.info("Running Space Parallel Dispatch...");
                     dispatcher = new SpaceParallelDispatcher(job,
                                                              sharedContexts,
                                                              isSpawned,
@@ -110,14 +110,14 @@ public class MogramDispatcherFactory implements DispatcherFactory {
                                                              provider,
                                                              provisionManager);
                 } else if (Mograms.isCatalogParallel(job)) {
-                    logger.info("Running Catalog Parallel Dispatcher...");
+                    logger.info("Running Catalog Parallel Dispatch...");
                     dispatcher = new CatalogParallelDispatcher(job,
                                                                sharedContexts,
                                                                isSpawned,
                                                                provider,
                                                                provisionManager);
                 } else if (Mograms.isCatalogSequential(job)) {
-                    logger.info("Running Catalog Sequential Dispatcher...");
+                    logger.info("Running Catalog Sequential Dispatch...");
                     dispatcher = new CatalogSequentialDispatcher(job,
                                                                  sharedContexts,
                                                                  isSpawned,
@@ -168,7 +168,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
     }
 
     /**
-     * Returns an instance of the appropriate subclass of Dispatcher as
+     * Returns an instance of the appropriate subclass of Dispatch as
      * determined from information provided by the given Mogram instance.
      *
      * @param mogram
@@ -187,7 +187,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
         if (deployments.size() > 0)
             provisionManager = new ProvisionManager(task);
 
-        logger.info("Running Space Task Dispatcher...");
+        logger.info("Running Space Task Dispatch...");
         try {
             return new SpaceTaskDispatcher(task,
 				Collections.synchronizedSet(new HashSet<Context>()),

@@ -17,7 +17,7 @@
 
 package sorcer.core.provider.cataloger.ui;
 
-//Main Dispatcher/Listener for all UI components
+//Main Dispatch/Listener for all UI components
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +77,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 	private String[] interfaceIgnoreList;
 
 	/**
-	 * Constructor for the Dispatcher
+	 * Constructor for the Dispatch
 	 * 
 	 * @param model
 	 *            BrowserModel that holds the current data

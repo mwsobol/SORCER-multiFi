@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntryAnalyzer;
+import sorcer.core.context.model.ent.EntrySupervisor;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
 import sorcer.service.Discipline;
@@ -62,13 +63,15 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
     // active disciplnes
     protected Paths disciplnePaths = new Paths();
 
-	protected ServiceFidelity supervisorFi;
+	protected Fidelity<EntrySupervisor> supervisorFi;
 
 	protected Fidelity<EntryAnalyzer> analyzerFi;
 
 	protected ServiceFidelity contextMultiFi;
 
 	protected Map<String, Discipline> disciplines = new HashMap<>();
+
+	private Governor governor;
 
 	// dependency management for this governance
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
@@ -96,6 +99,7 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
             this.name = name;
         }
 		mogramStrategy = new ModelStrategy(this);
+		governor = new Governor(this);
     }
 
     public Governance(String name, Discipline[] disciplines) {
@@ -139,16 +143,7 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 	}
 
     public Supervision getSuperviser() {
-        return (Supervision) supervisorFi.getSelect();
-    }
-
-    public void setSuperviser(Governor superviser) {
-		if (supervisorFi == null) {
-			supervisorFi = new ServiceFidelity(new Service[]{superviser});
-		} else {
-			supervisorFi.addSelect(superviser);
-			supervisorFi.setSelect(superviser);
-		}
+        return supervisorFi.getSelect();
     }
 
 	public void selectSuperviser(String name) throws ConfigurationException {
@@ -284,6 +279,27 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 		return analyzerFi;
 	}
 
+	public Fidelity<EntrySupervisor> setSupervisorFi(Context context) throws ConfigurationException {
+		if(supervisorFi == null) {
+			Object supComponent = context.get(Context.MDA_PATH);
+			if (supComponent != null) {
+				if (supComponent instanceof EntrySupervisor) {
+					supervisorFi = new Fidelity(((EntrySupervisor) supComponent).getName());
+					supervisorFi.addSelect((EntrySupervisor) supComponent);
+					supervisorFi.setSelect((EntrySupervisor) supComponent);
+				} else if (supComponent instanceof ServiceFidelity
+					&& ((ServiceFidelity) supComponent).getFiType().equals(Fi.Type.SUP)) {
+					supervisorFi = (Fidelity) supComponent;
+				}
+			}
+		}
+		((ServiceContext)context).getMogramStrategy().setExecState(Exec.State.INITIAL);
+		if (output == null) {
+			output = new ServiceContext(name);
+		}
+		return supervisorFi;
+	}
+
 	public Context getInConnector() {
 		return inConnector;
 	}
@@ -341,23 +357,15 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 			if (analyzerFi == null) {
 				setAnalyzerFi(cxt);
 			}
-			ModelStrategy strategy = ((ModelStrategy) cxt.getMogramStrategy());
-			if (analyzerFi != null) {
-				strategy.setExecState(Exec.State.RUNNING);
-				// select mda Fi if provided
-				List<Fidelity> fis = Arg.selectFidelities(args);
-				for (Fi fi : fis) {
-					if (analyzerFi.getName().equalsIgnoreCase(fi.getPath())) {
-						analyzerFi.selectSelect(fi.getName());
-					}
-				}
-				logger.info("*** analyzerFi: {}", analyzerFi.getSelect().getName());
-				out = ((Supervision)supervisorFi.getSelect()).supervise(cxt, args);
-				strategy.setExecState(Exec.State.DONE);
-			} else {
-				out = ((Supervision)supervisorFi.getSelect()).supervise(cxt, args);
+			if (supervisorFi == null) {
+				setSupervisorFi(cxt);
 			}
+
+			ModelStrategy strategy = ((ModelStrategy) cxt.getMogramStrategy());
+			strategy.setExecState(Exec.State.RUNNING);
+			governor.supervise(cxt, args);
 			((ModelStrategy)mogramStrategy).setOutcome(output);
+			strategy.setExecState(Exec.State.DONE);
 		} catch (SuperviseException | ConfigurationException e) {
 			throw new EvaluationException(e);
 		}
@@ -367,6 +375,14 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 	@Override
 	public Context exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
 		return evaluate(input, args);
+	}
+
+	public Fidelity<EntrySupervisor> getSupervisorFi() {
+		return supervisorFi;
+	}
+
+	public void setSupervisorFi(Fidelity<EntrySupervisor> supervisorFi) {
+		this.supervisorFi = supervisorFi;
 	}
 
 	public void reportException(String message, Throwable t) {
@@ -445,4 +461,6 @@ public class Governance implements Contextion, Transdiscipline, Dependency {
 	public void selectFidelity(Fidelity fi) throws ConfigurationException {
 
 	}
+
+
 }
