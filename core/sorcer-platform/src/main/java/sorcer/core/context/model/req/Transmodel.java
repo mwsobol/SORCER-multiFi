@@ -10,7 +10,7 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Transmodel;
+import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -20,9 +20,9 @@ import static sorcer.mo.operator.result;
 /**
  * Created by Mike Sobolewski on 12/28/2019.
  */
-public class RequestTransmodel extends RequestModel implements Transmodel {
+public class Transmodel extends RequestModel implements Model, Transdomain, Configurable {
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestTransmodel.class);
+    private static final Logger logger = LoggerFactory.getLogger(Transmodel.class);
 
     protected Map<String, Domain> children = new HashMap<>();
 
@@ -30,24 +30,24 @@ public class RequestTransmodel extends RequestModel implements Transmodel {
 
     protected Fidelity<Analysis> analyzerFi;
 
-    public RequestTransmodel() {
+    public Transmodel() {
         super();
         type = Functionality.Type.TRANS;
     }
 
-    public RequestTransmodel(String name) {
+    public Transmodel(String name) {
         super(name);
         type = Functionality.Type.TRANS;
     }
 
-    public static RequestTransmodel instance(Signature builder) throws SignatureException {
-        RequestTransmodel model = RequestTransmodel.instance(null, builder);
+    public static Transmodel instance(Signature builder) throws SignatureException {
+        Transmodel model = Transmodel.instance(null, builder);
         model.setEvaluated(false);
         return model;
     }
 
-    public static RequestTransmodel instance(String name, Signature builder) throws SignatureException {
-        RequestTransmodel model = (RequestTransmodel) sorcer.co.operator.instance(builder);
+    public static Transmodel instance(String name, Signature builder) throws SignatureException {
+        Transmodel model = (Transmodel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         if (name != null) {
             model.setName(name);
@@ -56,15 +56,15 @@ public class RequestTransmodel extends RequestModel implements Transmodel {
         return model;
     }
 
-    public RequestTransmodel(String name, List<RequestTransmodel> models) {
+    public Transmodel(String name, List<Transmodel> models) {
         super(name);
-        for (RequestTransmodel vm : models)
+        for (Transmodel vm : models)
             children.put(vm.getName(), vm);
     }
 
-    public RequestTransmodel(String name, RequestTransmodel... models) {
+    public Transmodel(String name, Transmodel... models) {
         super(name);
-        for (RequestTransmodel vm : models)
+        for (Transmodel vm : models)
             children.put(vm.getName(), vm);
     }
 

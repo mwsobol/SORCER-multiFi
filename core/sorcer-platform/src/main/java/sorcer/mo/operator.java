@@ -31,7 +31,7 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.req.Req;
 import sorcer.core.context.model.req.RequestModel;
-import sorcer.core.context.model.req.RequestTransmodel;
+import sorcer.core.context.model.req.Transmodel;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
@@ -739,7 +739,7 @@ public class operator {
             dataList.remove(fi);
         }
 
-        RequestTransmodel transModel = new RequestTransmodel(name);
+        Transmodel transModel = new Transmodel(name);
         transModel.addDomains(domains);
         Object[] names = new Object[domains.size()];
         for (int i = 0; i < domains.size(); i++) {

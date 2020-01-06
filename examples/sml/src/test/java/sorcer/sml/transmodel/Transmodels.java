@@ -25,10 +25,10 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.req.Transmodel;
 import sorcer.service.Context;
 import sorcer.service.Evaluator;
 import sorcer.service.Request;
-import sorcer.service.modeling.Transmodel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -45,9 +45,9 @@ import static sorcer.so.operator.response;
 //@Ignore
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("vml-tutorial")
-public class TransModels {
+public class Transmodels {
 
-    private final static Logger logger = LoggerFactory.getLogger(TransModels.class);
+    private final static Logger logger = LoggerFactory.getLogger(Transmodels.class);
 
 
     public static Transmodel getArithmeticTransmodel() throws Exception {
@@ -85,7 +85,7 @@ public class TransModels {
     @Test
     public void testArithmeticTransmodel() throws Exception {
 
-        Transmodel mdl = (Transmodel)instance(sig(TransModels.class, "getArithmeticTransmodel"));
+        Transmodel mdl = (Transmodel)instance(sig(Transmodels.class, "getArithmeticTransmodel"));
 
         logger.info("y1: " + get(mdl, "z1"));
         Entry z1 = (Entry) get(mdl, "z1");
@@ -101,7 +101,7 @@ public class TransModels {
     @Test
     public void evalArithmeticTransmodel() throws Exception {
 
-        Transmodel mdl = (Transmodel) instance(sig(TransModels.class, "getArithmeticTransmodel"));
+        Transmodel mdl = (Transmodel) instance(sig(Transmodels.class, "getArithmeticTransmodel"));
 
         Context rc = eval(mdl);
 
@@ -138,7 +138,7 @@ public class TransModels {
                 }))
         );
 
-        Transmodel mdl = (Transmodel) instance(sig(TransModels.class, "getArithmeticTransmodel"));
+        Transmodel mdl = (Transmodel) instance(sig(Transmodels.class, "getArithmeticTransmodel"));
 
         Context rc = eval(mdl, mdaCxt);
 

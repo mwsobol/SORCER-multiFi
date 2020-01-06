@@ -191,4 +191,11 @@ public class SmlOperators {
 	public void testIt() throws Exception {
 		logger.info("" + ent("name$domain").getProperName());
 	}
+
+	@Test
+	public void isModelContext() throws Exception {
+		logger.info("one:" + Model.class.isAssignableFrom(Context.class));
+		logger.info("two:" + Context.class.isAssignableFrom(Model.class));
+
+	}
 }
