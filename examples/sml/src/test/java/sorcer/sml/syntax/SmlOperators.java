@@ -70,7 +70,7 @@ public class SmlOperators {
 		dmn ex1 = block(t1, t2, m1);
 		mog ex2 = job(t1, job(t2, m1));
 		dmn m2 = model(m1, op1, t1, ex2);
-		dmn tm1 = transModel("name");
+		dmn tm1 = tModel("name");
 		cxtn cb1 = clb("domainCollab");
 		cxtn d1 = dsc("name");
 		cxtn g1 = gov("name", d1);
@@ -110,11 +110,11 @@ public class SmlOperators {
 		// Evaluate domains
 		cxt c4 = eval(model());
 		cxt c5 = eval(ex2);
-		// Domains results
+		// Domain results
 		cxt out1 = result(model());
 		cxt out2 = result(job());
 
-		// Evalate specific models
+		// Evaluate specific models
 		// Context, Table, row is rsp (Response)
 		rsp r1 = eval(model());
 		rsp r2 = row(c2);

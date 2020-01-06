@@ -702,7 +702,7 @@ public class operator {
         throw new ModelException("do not know what model to create");
     }
 
-    public static Transmodel transModel(Object... data) throws ContextException {
+    public static Transmodel tModel(Object... data) throws ContextException {
         String name = getUnknown();
         List<Domain> domains = new ArrayList<>();
         List<ServiceFidelity> modelFis = new ArrayList<>();

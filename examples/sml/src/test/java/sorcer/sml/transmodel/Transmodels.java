@@ -52,7 +52,7 @@ public class Transmodels {
 
     public static Transmodel getArithmeticTransmodel() throws Exception {
 
-        Transmodel transmodel = transModel("arithmeticTransmodel",
+        Transmodel transmodel = tModel("arithmeticTransmodel",
             ent("z1", expr("y3 + result", args("y3", "result"))),
             ent("z2", expr("y1 - y2", args("y1", "y2"))),
 
@@ -68,7 +68,7 @@ public class Transmodels {
 
     public static Transmodel getArithmeticTransmodeMdal() throws Exception {
 
-        Transmodel transmodel = transModel("arithmeticTransmodel",
+        Transmodel transmodel = tModel("arithmeticTransmodel",
             ent("z1", expr("y3 + result", args("y3", "result"))),
             ent("z2", expr("y1 - y2", args("y1", "y2"))),
 
