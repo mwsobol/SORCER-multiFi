@@ -50,7 +50,7 @@ import java.util.List;
  */
 @SuppressWarnings("rawtypes")
 public interface Signature extends Opservice, Exertion, Comparable, Dependency, Identifiable,
-		Arg, EvaluationComponent, SupportComponent, Serializable {
+		Scopable, Arg, EvaluationComponent, SupportComponent, Serializable {
 
 	/**
 	 * Returns a name of this signature.

@@ -21,10 +21,7 @@ import sorcer.co.tuple.ExecDependency;
 import sorcer.co.tuple.InoutValue;
 import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
-import sorcer.core.context.Connector;
-import sorcer.core.context.ModelStrategy;
-import sorcer.core.context.PositionalContext;
-import sorcer.core.context.ServiceContext;
+import sorcer.core.context.*;
 import sorcer.service.Analysis;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.EntryModel;
@@ -1205,6 +1202,17 @@ public class operator {
 
 //        collab.setExplorer(new Explorer(collab));
         return collab;
+    }
+
+    public static ContextList componentContexts(String name, Context... data) throws ContextException {
+        ContextList contextList = new ContextList(data);
+        contextList.setName(name);
+        return contextList;
+    }
+
+    public static ContextList componentContexts(Context... data) throws ContextException {
+        ContextList contextList = new ContextList(data);
+        return contextList;
     }
 
     public static Governance gov(Object... data) throws ContextException {

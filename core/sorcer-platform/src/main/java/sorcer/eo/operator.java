@@ -1031,6 +1031,13 @@ operator extends Operator {
         return mfi;
     }
 
+    public static ServiceSignature sig(String operation, Class serviceType, Context dataContext)
+        throws SignatureException {
+        Signature signature = sig(operation, serviceType);
+        signature.setScope(dataContext);
+        return (ServiceSignature)signature;
+    }
+
     public static ServiceSignature sig(String operation, Class serviceType)
         throws SignatureException {
         return sig(operation, serviceType, new Object[]{});
@@ -1050,6 +1057,12 @@ operator extends Operator {
             throw new SignatureException(e);
         }
         return ts;
+    }
+
+    public static Signature sig(Class serviceType, String initSelector, Context context) throws SignatureException {
+        Signature signature = sig(serviceType, initSelector);
+        signature.setScope(context);
+        return signature;
     }
 
     public static Signature sig(Class serviceType, String initSelector) throws SignatureException {

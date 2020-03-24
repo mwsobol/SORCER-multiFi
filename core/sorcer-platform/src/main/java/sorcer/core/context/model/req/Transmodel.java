@@ -4,6 +4,7 @@ import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecDependency;
+import sorcer.core.context.ContextList;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntryModel;
@@ -25,6 +26,8 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
     private static final Logger logger = LoggerFactory.getLogger(Transmodel.class);
 
     protected Map<String, Domain> children = new HashMap<>();
+
+    protected Map<String, Context> childrenContexts = new HashMap<>();
 
     protected Paths childrenPaths;
 
@@ -144,6 +147,24 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
 
     public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
         this.analyzerFi = analyzerFi;
+    }
+
+    public Map<String, Context> getChildrenContexts() {
+        return childrenContexts;
+    }
+
+    public void setChildrenContexts(Map<String, Context> childrenContexts) {
+        this.childrenContexts = childrenContexts;
+    }
+
+    public void addChildrenContexts(ContextList componentContexts) {
+        if (childrenContexts == null) {
+            childrenContexts = new HashMap();
+        }
+        for (Context cxt : componentContexts) {
+            childrenContexts.put(cxt.getName(), cxt);
+        }
+        this.childrenContexts = childrenContexts;
     }
 
     @Override
