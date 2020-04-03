@@ -21,7 +21,7 @@ import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -41,7 +41,7 @@ public class ObjectBlock extends Block {
 	}
 	
 	public ObjectBlock(String name) throws SignatureException {
-		super(name, new ObjectSignature("exert", ServiceConcatenator.class));
+		super(name, new LocalSignature("exert", ServiceConcatenator.class));
 	}
 
 	public ObjectBlock(String name, Context context)
@@ -56,8 +56,8 @@ public class ObjectBlock extends Block {
 		// return (Job) new ServiceJobber().execEnt(job, txn);
 		Block result = null;
 		try {
-			ObjectSignature os = (ObjectSignature) getProcessSignature();
-			Evaluator evaluator = ((ObjectSignature) getProcessSignature())
+			LocalSignature os = (LocalSignature) getProcessSignature();
+			Evaluator evaluator = ((LocalSignature) getProcessSignature())
 					.getEvaluator();
 			if (evaluator == null) {
 				evaluator = new MethodInvoker(os.newInstance(),

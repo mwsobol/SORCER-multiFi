@@ -21,7 +21,7 @@ import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.provider.ServiceBean;
 import sorcer.core.provider.ServiceExerter;
 import sorcer.core.service.Projection;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.modeling.Data;
@@ -252,7 +252,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public void setService(Service provider) {
-        NetSignature ps = (NetSignature) getProcessSignature();
+        RemoteSignature ps = (RemoteSignature) getProcessSignature();
         ps.setProvider(provider);
     }
 

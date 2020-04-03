@@ -34,9 +34,9 @@ import sorcer.core.context.node.ContextNodeException;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.monitor.MonitorUtil;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.service.Exerter;
 import sorcer.core.provider.ServiceExerter;
-import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.service.*;
@@ -2731,7 +2731,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public Exerter getProvider() throws SignatureException {
 		if (exertion != null)
-			return ((NetSignature) exertion.getProcessSignature()).getService();
+			return ((RemoteSignature) exertion.getProcessSignature()).getService();
 		else
 			return null;
 	}

@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetTask;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.service.Context;
 import sorcer.service.Routine;
 import sorcer.service.Task;
@@ -52,7 +52,7 @@ public class WorkerTaskApplication {
         context.putValue("consumer/work", Works.work2);
 
 
-        NetSignature signature = new NetSignature("doWork", Worker.class, pn);
+        RemoteSignature signature = new RemoteSignature("doWork", Worker.class, pn);
 
 		Task task = new NetTask("work", signature, context);
 

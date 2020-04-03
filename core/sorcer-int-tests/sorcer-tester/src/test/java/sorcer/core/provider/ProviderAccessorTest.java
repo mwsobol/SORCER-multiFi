@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.SorcerConstants;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.service.Accessor;
 import sorcer.util.ProviderAccessor;
 import sorcer.util.ProviderLookup;
@@ -34,7 +34,7 @@ public class ProviderAccessorTest implements SorcerConstants {
 	@Test
 	public void providerAcessorTest() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Object provider = Accessor.get().getService(new NetSignature(Jobber.class));
+		Object provider = Accessor.get().getService(new RemoteSignature(Jobber.class));
 //		logger.info("Accessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertNotNull(provider);
@@ -59,7 +59,7 @@ public class ProviderAccessorTest implements SorcerConstants {
 	@Test
 	public void accessingConcatenatorTest() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Object provider = Accessor.get().getService(new NetSignature(Concatenator.class));
+		Object provider = Accessor.get().getService(new RemoteSignature(Concatenator.class));
 //		logger.info("Accessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertNotNull(provider);

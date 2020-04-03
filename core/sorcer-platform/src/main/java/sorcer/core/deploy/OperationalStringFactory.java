@@ -26,7 +26,7 @@ import org.rioproject.resolver.Artifact;
 import org.rioproject.resolver.ResolverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.Routine;
@@ -114,7 +114,7 @@ public final class OperationalStringFactory {
             if(netSignature.getDeployment().getType()==ServiceDeployment.Type.SELF) {
                 selfies.add(netSignature);
             } else if(netSignature.getDeployment().getType()==ServiceDeployment.Type.FED) {
-                checkAddToFederatedList((NetSignature) netSignature, federated);
+                checkAddToFederatedList((RemoteSignature) netSignature, federated);
             }
         }
 
@@ -236,7 +236,7 @@ public final class OperationalStringFactory {
     }
 
 
-    private static void checkAddToFederatedList(NetSignature netSignature, List<Signature> federated) {
+    private static void checkAddToFederatedList(RemoteSignature netSignature, List<Signature> federated) {
         if(netSignature.getDeployment() != null) {
             ServiceDeployment serviceDeployment = netSignature.getDeployment();
             if(serviceDeployment.getConfig()!=null) {

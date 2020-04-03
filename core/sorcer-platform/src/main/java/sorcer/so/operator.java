@@ -31,9 +31,9 @@ import sorcer.core.context.model.req.Transmodel;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.service.Governance;
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.Exertion;
 import sorcer.core.provider.exerter.ServiceShell;
-import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
 import sorcer.service.Discipline;
@@ -190,7 +190,7 @@ public class operator extends Operator {
         throws ContextException {
         Context out = null;
         try {
-            Object target = ((ObjectSignature) signature).build();
+            Object target = ((LocalSignature) signature).build();
 
             if (target instanceof Discipline) {
                 out = (Context) ((Discipline) target).execute(args);

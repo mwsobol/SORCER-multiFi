@@ -16,7 +16,7 @@
 package sorcer.core.context;
 
 import net.jini.core.transaction.Transaction;
-import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.FilterException;
 import sorcer.service.modeling.Model;
@@ -70,7 +70,7 @@ public class ModelTask extends Task {
 			return (Context) contextFilter.doSelect(model);
 	}
 	
-	private  Object instance(ObjectSignature signature)
+	private  Object instance(LocalSignature signature)
 			throws SignatureException {
 		
 		if (signature.getSelector() == null

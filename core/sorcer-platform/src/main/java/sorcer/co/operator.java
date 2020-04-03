@@ -30,8 +30,8 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.provider.DatabaseStorer;
+import sorcer.core.signature.LocalSignature;
 import sorcer.core.signature.NetletSignature;
-import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
@@ -1852,20 +1852,20 @@ public class operator extends Operator {
 	 * @return object created
 	 * @throws SignatureException
 	 */
-	public static Object instance(ObjectSignature signature, Context context)
+	public static Object instance(LocalSignature signature, Context context)
 			throws SignatureException {
 		return signature.build(context);
 	}
 
-	public static Object instance(ObjectSignature signature)
+	public static Object instance(LocalSignature signature)
 		throws SignatureException {
 		return signature.build();
 	}
 
 	public static Contextion instance(String domainName, Signature signature)
 		throws SignatureException {
-		if (signature instanceof ObjectSignature) {
-			Object obj = ((ObjectSignature) signature).build();
+		if (signature instanceof LocalSignature) {
+			Object obj = ((LocalSignature) signature).build();
 			if (obj instanceof Contextion) {
 				((Contextion) obj).setName(domainName);
 				return (Contextion) obj;
@@ -1902,13 +1902,13 @@ public class operator extends Operator {
 				throw new SignatureException("missing netlet filename");
 			}
 		} else if ((signature.getSelector() == null
-				&& ((ObjectSignature) signature).getInitSelector() == null)
+				&& ((LocalSignature) signature).getInitSelector() == null)
 				|| (signature.getSelector() != null && signature.getSelector().equals("new"))
-				|| (((ObjectSignature) signature).getInitSelector() != null
-				&& ((ObjectSignature) signature).getInitSelector().equals("new")))
-			return ((ObjectSignature) signature).newInstance();
+				|| (((LocalSignature) signature).getInitSelector() != null
+				&& ((LocalSignature) signature).getInitSelector().equals("new")))
+			return ((LocalSignature) signature).newInstance();
 		else
-			return ((ObjectSignature) signature).initInstance();
+			return ((LocalSignature) signature).initInstance();
 	}
 
 	public static Object instance(Signature signature, Fidelity fidefity) throws SignatureException {

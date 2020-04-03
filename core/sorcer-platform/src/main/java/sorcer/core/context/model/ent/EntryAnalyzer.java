@@ -17,8 +17,8 @@
 
 package sorcer.core.context.model.ent;
 
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.Analysis;
-import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
 
@@ -78,7 +78,7 @@ public class EntryAnalyzer extends Entry<Analysis> implements Analysis {
                     ((Analysis) impl).analyze(contextion, context);
                 }
             } else if (signature != null) {
-                impl = ((ObjectSignature)signature).initInstance();
+                impl = ((LocalSignature)signature).initInstance();
                 ((Analysis)impl).analyze(request, context);
             } else if (impl == null) {
                 throw new InvocationException("No MDA analysis available!");

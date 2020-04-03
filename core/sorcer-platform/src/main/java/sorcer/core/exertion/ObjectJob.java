@@ -21,7 +21,7 @@ import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -42,19 +42,19 @@ public class ObjectJob extends Job {
 
 	public ObjectJob(String name) throws SignatureException {
 		super(name);
-		addSignature(new ObjectSignature("exert", ServiceJobber.class));
+		addSignature(new LocalSignature("exert", ServiceJobber.class));
 	}
 
 	public ObjectJob(String name, Signature signature)
 			throws SignatureException {
 		super(name);
-		if (signature instanceof ObjectSignature) {
+		if (signature instanceof LocalSignature) {
 			ServiceFidelity sFi = new ServiceFidelity(signature);
 			sFi.setSelect(signature);
 			((ServiceFidelity)multiFi).getSelects().add(sFi);// Add the signature
 			multiFi.setSelect(sFi);
 		} else
-			throw new SignatureException("ObjectJob requires ObjectSignature: "
+			throw new SignatureException("ObjectJob requires LocalSignature: "
 					+ signature);
 	}
 
@@ -70,8 +70,8 @@ public class ObjectJob extends Job {
 		// return (Job) new ServiceJobber().execEnt(job, txn);
 		Job result = null;
 		try {
-			ObjectSignature os = (ObjectSignature) getProcessSignature();
-			Evaluator evaluator = ((ObjectSignature) getProcessSignature())
+			LocalSignature os = (LocalSignature) getProcessSignature();
+			Evaluator evaluator = ((LocalSignature) getProcessSignature())
 					.getEvaluator();
 			if (evaluator == null) {
 				evaluator = new MethodInvoker(os.newInstance(),

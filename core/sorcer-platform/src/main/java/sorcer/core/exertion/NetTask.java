@@ -18,11 +18,10 @@
 package sorcer.core.exertion;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import sorcer.core.provider.ProviderName;
 import sorcer.core.provider.exerter.ServiceShell;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -78,10 +77,10 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 	public NetTask(String name, String description, Signature signature,
 			Context context) throws SignatureException {
 		this(name, description);
-		if (signature instanceof NetSignature)
+		if (signature instanceof RemoteSignature)
 			addSignature(signature);
 		else
-			throw new SignatureException("Net task requires NetSignature: "
+			throw new SignatureException("Net task requires RemoteSignature: "
 					+ signature);
 		if (context != null)
 			setContext(context);
@@ -94,10 +93,10 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 
 		try {
 			for (Signature s : signatures) {
-				if (s instanceof NetSignature)
-					((NetSignature) s).setExertion(this);
+				if (s instanceof RemoteSignature)
+					((RemoteSignature) s).setExertion(this);
 				else
-					throw new SignatureException("Net task requires NetSignature: "
+					throw new SignatureException("Net task requires RemoteSignature: "
 							+ s);
 			}
 		} catch (RoutineException e) {
@@ -109,11 +108,11 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 	}
 
 	public void setService(Service provider) {
-		((NetSignature) getProcessSignature()).setProvider(provider);
+		((RemoteSignature) getProcessSignature()).setProvider(provider);
 	}
 
 	public Service getService() throws SignatureException {
-		return ((NetSignature) getProcessSignature()).getService();
+		return ((RemoteSignature) getProcessSignature()).getService();
 	}
 
 	public Task doTask(Transaction txn, Arg... args) throws EvaluationException {

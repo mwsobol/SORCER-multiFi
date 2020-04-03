@@ -17,11 +17,9 @@
 
 package sorcer.core.context.model.ent;
 
-import sorcer.core.service.Collaboration;
 import sorcer.core.service.Governance;
-import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
-import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.SuperviseException;
 
@@ -88,7 +86,7 @@ public class EntrySupervisor extends Entry<Supervision> implements Supervision {
                     out = ((Supervision) impl).supervise(context, args);
                 }
             } else if (signature != null) {
-                impl = ((ObjectSignature) signature).initInstance();
+                impl = ((LocalSignature) signature).initInstance();
                 out = ((Supervision) impl).supervise(context);
             } else if (impl == null) {
                 throw new InvocationException("No supervisor available!");

@@ -42,9 +42,9 @@ import sorcer.core.exertion.ObjectTask;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.*;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.NetletSignature;
-import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.LocalSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.jini.lookup.ProviderID;
 import sorcer.netlet.ServiceScripter;
@@ -373,7 +373,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			}
 
 			// exert object tasks and jobs
-			if (!(signature instanceof NetSignature)) {
+			if (!(signature instanceof RemoteSignature)) {
 				if (exertion instanceof Task) {
 					if (exertion.getSelectedFidelity() == null
 							|| exertion.getSelectedFidelity().getSelects().size() == 1) {
@@ -417,9 +417,9 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 				if (signature.getProviderName() instanceof ServiceName) {
 					srvName =  signature.getProviderName().getName();
 				}
-				signature = new NetSignature("exert", Spacer.class, srvName);
+				signature = new RemoteSignature("exert", Spacer.class, srvName);
 			}
-			provider = ((NetSignature) signature).getProvider();
+			provider = ((RemoteSignature) signature).getProvider();
 			if (provider == null) {
                 // check proxy cache and ping with a provider key
 				try {
@@ -454,13 +454,13 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		if (provider != null) {
 			if (provider instanceof Exerter) {
 				// cache the provider for the signature
-				((NetSignature) signature).setProvider((Exerter) provider);
+				((RemoteSignature) signature).setProvider((Exerter) provider);
 //				if (proxies != null)
 //					proxies.put(signature, provider);
 			} else if (exertion instanceof Task){
 				// exert smart proxy as an object task delegate
 				try {
-					ObjectSignature sig = new ObjectSignature();
+					LocalSignature sig = new LocalSignature();
 					sig.setSelector(signature.getSelector());
 					sig.setTarget(provider);
 					Context cxt = exertion.getContext();
@@ -580,7 +580,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 					&& !mogram.getProcessSignature().getServiceType()
 					.isAssignableFrom(Spacer.class)) {
 				sig.setServiceType(Spacer.class);
-				((NetSignature) sig).setSelector("exert");
+				((RemoteSignature) sig).setSelector("exert");
 				sig.getProviderName().setName(SorcerConstants.ANY);
 				sig.setType(Signature.Type.PROC);
 				exertion.getControlContext().setAccessType(access);
@@ -589,14 +589,14 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 					.isAssignableFrom(Jobber.class)) {
 				if (sig.getServiceType().isAssignableFrom(Spacer.class)) {
 					sig.setServiceType(Jobber.class);
-					((NetSignature) sig).setSelector("exert");
+					((RemoteSignature) sig).setSelector("exert");
 					sig.getProviderName().setName(SorcerConstants.ANY);
 					sig.setType(Signature.Type.PROC);
 					exertion.getControlContext().setAccessType(access);
 				}
 			}
 		} else {
-			sig = new NetSignature("exert", Jobber.class);
+			sig = new RemoteSignature("exert", Jobber.class);
 		}
 		return sig;
 	}
@@ -870,7 +870,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			((Mogram) service).setScope(cxt);
 			return (T) exert((Mogram) service);
 		} else try {
-			if (service instanceof NetSignature
+			if (service instanceof RemoteSignature
                     && ((Signature) service).getServiceType() == RemoteServiceShell.class) {
                 Exerter prv = (Exerter) Accessor.get().getService((Signature) service);
                 return (T) prv.exert(mogram, txn).getContext();

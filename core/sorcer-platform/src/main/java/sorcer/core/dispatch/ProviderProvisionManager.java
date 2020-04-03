@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.exertion.ExertionEnvelop;
 import sorcer.core.provider.Spacer;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.ext.ProvisioningException;
 import sorcer.service.*;
 import sorcer.service.space.SpaceAccessor;
@@ -49,7 +49,7 @@ public class ProviderProvisionManager {
     }
 
     private void doProvision(Routine exertion, SpaceParallelDispatcher spaceExertDispatcher) throws SignatureException {
-        NetSignature sig = (NetSignature) exertion.getProcessSignature();
+        RemoteSignature sig = (RemoteSignature) exertion.getProcessSignature();
         // A hack to disable provisioning spacer itself
         if (!sig.getServiceType().getName().equals(Spacer.class.getName())) {
             ThreadGroup provGroup = new ThreadGroup("spacer-provisioning");

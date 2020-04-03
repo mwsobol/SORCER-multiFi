@@ -17,9 +17,9 @@
 
 package sorcer.core.context.model.ent;
 
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.Analysis;
 import sorcer.core.service.Collaboration;
-import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.Functionality;
@@ -106,7 +106,7 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
             if (impl != null && impl instanceof Exploration) {
                 out = ((Exploration) impl).explore(out);
             } else if (signature != null) {
-                impl = ((ObjectSignature)signature).initInstance();
+                impl = ((LocalSignature)signature).initInstance();
                 out = ((Exploration)impl).explore(out);
             } else if (impl == null) {
                 throw new InvocationException("No explorer available!");

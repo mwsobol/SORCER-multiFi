@@ -1015,7 +1015,7 @@ operator extends Operator {
 
     public static SignatureDeployer deployer(String operation, Class serviceType)
         throws SignatureException {
-        ObjectSignature builder = (ObjectSignature) sig(operation, serviceType, new Object[]{});
+        LocalSignature builder = (LocalSignature) sig(operation, serviceType, new Object[]{});
         SignatureDeployer dpl = new SignatureDeployer(builder);
         return dpl;
     }
@@ -1029,13 +1029,6 @@ operator extends Operator {
             throws SignatureException {
         MultiFiSignature mfi = new MultiFiSignature(signatures);
         return mfi;
-    }
-
-    public static ServiceSignature sig(String operation, Class serviceType, Context dataContext)
-        throws SignatureException {
-        Signature signature = sig(operation, serviceType);
-        signature.setScope(dataContext);
-        return (ServiceSignature)signature;
     }
 
     public static ServiceSignature sig(String operation, Class serviceType)
@@ -1052,7 +1045,7 @@ operator extends Operator {
                 Object bean = serviceType.newInstance();
                 ((ServiceExerter)provider).setBean(bean);
             }
-            ((ObjectSignature)ts).setTarget(provider);
+            ((LocalSignature)ts).setTarget(provider);
         } catch (InstantiationException | IllegalAccessException e) {
             throw new SignatureException(e);
         }
@@ -1079,7 +1072,7 @@ operator extends Operator {
     public static Signature sig(String operation, Class serviceType,
                                 String initSelector) throws SignatureException {
         try {
-            return new ObjectSignature(operation, serviceType, initSelector,
+            return new LocalSignature(operation, serviceType, initSelector,
                 (Class<?>[]) null, (Object[]) null);
         } catch (Exception e) {
             throw new SignatureException(e);
@@ -1091,7 +1084,7 @@ operator extends Operator {
     }
 
     public static Signature sig(String operation, Object provider, Object... args) throws SignatureException {
-        ObjectSignature sig = new ObjectSignature();
+        LocalSignature sig = new LocalSignature();
         sig.setName(operation);
         sig.setSelector(operation);
         sig.setTarget(provider);
@@ -1125,7 +1118,7 @@ operator extends Operator {
             if (multitype.providerType != null) {
                 return defaultSig(multitype.providerType);
             } else if (multitype.typeName != null) {
-                ObjectSignature os = new ObjectSignature();
+                LocalSignature os = new LocalSignature();
                 os.setMultitype(multitype);
                 os.getServiceType();
                 return os;
@@ -1173,7 +1166,7 @@ operator extends Operator {
         }
         ServiceSignature signature = null;
         if (args != null && parTypes != null) {
-            ObjectSignature os = new ObjectSignature();
+            LocalSignature os = new LocalSignature();
             os.setMultitype(multitype);
             os.getServiceType();
             os.setArgs(args.args);
@@ -1261,7 +1254,7 @@ operator extends Operator {
         }
         ServiceSignature newSig = null;
         if (args != null && parTypes != null) {
-            ObjectSignature os = new ObjectSignature();
+            LocalSignature os = new LocalSignature();
             os.setMultitype(multitype);
             os.getServiceType();
             os.setArgs(args.args);
@@ -1361,9 +1354,9 @@ operator extends Operator {
             sig = new ServiceSignature(operation, srvType, providerName);
         } else if (serviceType != null) {
             if (serviceType.isInterface()) {
-                sig = new NetSignature(operation, serviceType, providerName);
+                sig = new RemoteSignature(operation, serviceType, providerName);
             } else {
-                sig = new ObjectSignature(operation, serviceType);
+                sig = new LocalSignature(operation, serviceType);
                 if (provider != null) {
                     // loclal SessionProvider
                     if (provider instanceof SessionProvider) {
@@ -1375,11 +1368,11 @@ operator extends Operator {
                         }
                         ((SessionProvider)provider).setBean(bean);
                     }
-                    ((ObjectSignature)sig).setTarget(provider);
+                    ((LocalSignature)sig).setTarget(provider);
                 }
                 sig.setProviderName(providerName);
                 if (args != null) {
-                    ((ObjectSignature)sig).setArgs(args.args);
+                    ((LocalSignature)sig).setArgs(args.args);
                 }
             }
         }
@@ -1425,10 +1418,10 @@ operator extends Operator {
                     }
                 } else if (o instanceof ServiceDeployment) {
                     ((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
-                } else if (o instanceof Version && sig instanceof NetSignature) {
-                    ((NetSignature) sig).setVersion(((Version) o).getName());
-                } else if (o instanceof ServiceSignature && sig instanceof ObjectSignature) {
-                    ((ObjectSignature) sig).setTargetSignature(((ServiceSignature) o));
+                } else if (o instanceof Version && sig instanceof RemoteSignature) {
+                    ((RemoteSignature) sig).setVersion(((Version) o).getName());
+                } else if (o instanceof ServiceSignature && sig instanceof LocalSignature) {
+                    ((LocalSignature) sig).setTargetSignature(((ServiceSignature) o));
                 } else if (o instanceof ServiceContext
                     // not applied to connectors in Signatures
                     && o.getClass() != Connector.class) {
@@ -1600,11 +1593,11 @@ operator extends Operator {
         throws SignatureException {
         Signature sig = null;
         if (serviceType.isInterface()) {
-            sig = new NetSignature("exert", serviceType);
+            sig = new RemoteSignature("exert", serviceType);
         } else if (Executor.class.isAssignableFrom(serviceType)) {
-            sig = new ObjectSignature("exert", serviceType);
+            sig = new LocalSignature("exert", serviceType);
         } else {
-            sig = new ObjectSignature(serviceType);
+            sig = new LocalSignature(serviceType);
         }
         if (returnPath != null)
             sig.setContextReturn(returnPath);
@@ -2112,19 +2105,19 @@ operator extends Operator {
             return sig(operation, object, null, types, args);
     }
 
-    public static ObjectSignature sig(String operation, Object object, String initOperation,
-                                      Class[] types) throws SignatureException {
+    public static LocalSignature sig(String operation, Object object, String initOperation,
+                                     Class[] types) throws SignatureException {
         try {
             if (object instanceof Class && ((Class) object).isInterface()) {
                 if (initOperation != null)
-                    return new NetSignature(operation, (Class) object, Sorcer.getActualName(initOperation));
+                    return new RemoteSignature(operation, (Class) object, Sorcer.getActualName(initOperation));
                 else
-                    return new NetSignature(operation, (Class) object);
+                    return new RemoteSignature(operation, (Class) object);
             } else if (object instanceof Class) {
-                return new ObjectSignature(operation, object, initOperation,
+                return new LocalSignature(operation, object, initOperation,
                     types == null || types.length == 0 ? null : types);
             } else {
-                return new ObjectSignature(operation, object,
+                return new LocalSignature(operation, object,
                     types == null || types.length == 0 ? null : types);
             }
         } catch (Exception e) {
@@ -2133,10 +2126,10 @@ operator extends Operator {
         }
     }
 
-    public static ObjectSignature sig(Object object, String initSelector,
-                                      Class[] types, Object[] args) throws SignatureException {
+    public static LocalSignature sig(Object object, String initSelector,
+                                     Class[] types, Object[] args) throws SignatureException {
         try {
-            return new ObjectSignature(object, initSelector, types, args);
+            return new LocalSignature(object, initSelector, types, args);
         } catch (Exception e) {
             e.printStackTrace();
             throw new SignatureException(e);
@@ -2146,11 +2139,11 @@ operator extends Operator {
     public static Signature sig(String selector, Object object, String initSelector,
                                 Class[] types, Object[] args) throws SignatureException {
         try {
-            if (object instanceof NetSignature) {
-                ((NetSignature)object).setSelector(selector);
+            if (object instanceof RemoteSignature) {
+                ((RemoteSignature)object).setSelector(selector);
                 return (Signature)object;
             } else {
-                return new ObjectSignature(selector, object, initSelector, types, args);
+                return new LocalSignature(selector, object, initSelector, types, args);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -2194,13 +2187,13 @@ operator extends Operator {
             name = signature.getSelector();
         }
 
-        if (signature.getClass() == ObjectSignature.class) {
+        if (signature.getClass() == LocalSignature.class) {
             task = new ObjectTask(name, signature);
-        } else if (signature.getClass() == NetSignature.class) {
+        } else if (signature.getClass() == RemoteSignature.class) {
             task = new NetTask(name, signature);
         } else if (signature.getClass() == EvaluationSignature.class) {
             task = new EvaluationTask(name, (EvaluationSignature)signature);
-        } else if (signature.getClass() == NetSignature.class) {
+        } else if (signature.getClass() == RemoteSignature.class) {
             task = new Task(name, signature);
         }
         if (context != null) {
@@ -2212,9 +2205,9 @@ operator extends Operator {
     public static ModelingTask modelerTask(String name, Signature signature)
         throws SignatureException {
         ModelingTask task = null;
-        if (signature instanceof NetSignature) {
+        if (signature instanceof RemoteSignature) {
             task = new ModelerNetTask(name, signature);
-        } else if (signature instanceof ObjectSignature) {
+        } else if (signature instanceof LocalSignature) {
             task = new ModelerTask(name, signature);
         }
         return task;
@@ -2223,9 +2216,9 @@ operator extends Operator {
     public static ModelingTask modelerTask(Signature signature, Context context)
         throws SignatureException {
         ModelingTask task = null;
-        if (signature instanceof NetSignature) {
+        if (signature instanceof RemoteSignature) {
             task = new ModelerNetTask(signature, context);
-        } else if (signature instanceof ObjectSignature) {
+        } else if (signature instanceof LocalSignature) {
             task = new ModelerTask(signature, context);
         }
         return task;
@@ -2308,9 +2301,9 @@ operator extends Operator {
             try {
                 if (((ServiceSignature)srvSig).isModelerSignature()) {
                     task = (Task) modelerTask(name, (Signature)srvSig);
-                } else if (srvSig.getClass() == ObjectSignature.class) {
+                } else if (srvSig.getClass() == LocalSignature.class) {
                     task = new ObjectTask(name, (Signature) srvSig);
-                } else if (srvSig.getClass() == NetSignature.class) {
+                } else if (srvSig.getClass() == RemoteSignature.class) {
                     task = new NetTask(name,  (Signature) srvSig);
                 } else if (srvSig.getClass() == EvaluationSignature.class) {
                     task = new EvaluationTask(name, (EvaluationSignature)srvSig);
@@ -2588,9 +2581,9 @@ operator extends Operator {
             }
         }
         Job job = null;
-        if (signature instanceof NetSignature) {
+        if (signature instanceof RemoteSignature) {
             job = new NetJob(name, signature);
-        } else if (signature instanceof ObjectSignature) {
+        } else if (signature instanceof LocalSignature) {
             job = new ObjectJob(name, signature);
         } else {
             if (fis != null && fis.size() > 0) {
@@ -3461,8 +3454,8 @@ operator extends Operator {
 
     public static Object prv(Signature signature)
         throws SignatureException {
-        if (signature instanceof ObjectSignature && ((ObjectSignature)signature).getTarget() != null)
-            return  ((ObjectSignature)signature).getTarget();
+        if (signature instanceof LocalSignature && ((LocalSignature)signature).getTarget() != null)
+            return  ((LocalSignature)signature).getTarget();
         else if (signature instanceof NetletSignature) {
             String source = ((NetletSignature)signature).getServiceSource();
             if(source != null) {
@@ -3479,35 +3472,35 @@ operator extends Operator {
         Object provider = null;
         Signature targetSignatue = null;
         Class providerType = signature.getServiceType();
-        if (signature.getClass() == ObjectSignature.class) {
-            target = ((ObjectSignature) signature).getTarget();
-            targetSignatue = ((ObjectSignature) signature).getTargetSignature();
+        if (signature.getClass() == LocalSignature.class) {
+            target = ((LocalSignature) signature).getTarget();
+            targetSignatue = ((LocalSignature) signature).getTargetSignature();
         }
         try {
-            if (signature.getClass() == NetSignature.class) {
-                provider = ((NetSignature) signature).getService();
+            if (signature.getClass() == RemoteSignature.class) {
+                provider = ((RemoteSignature) signature).getService();
                 if (provider == null) {
                     provider = Accessor.get().getService(signature);
-                    ((NetSignature) signature).setProvider((Service)provider);
+                    ((RemoteSignature) signature).setProvider((Service)provider);
                 }
-            } else if (signature.getClass() == ObjectSignature.class) {
+            } else if (signature.getClass() == LocalSignature.class) {
                 if (target != null) {
                     provider = target;
                 } else if (targetSignatue != null) {
                     provider = instance(targetSignatue);
-                    ((ObjectSignature)signature).setTarget(provider);
+                    ((LocalSignature)signature).setTarget(provider);
                 } else if (Exerter.class.isAssignableFrom(providerType)) {
                     provider = providerType.newInstance();
                 } else {
                     if (signature.getSelector() == null &&
-                        (((ObjectSignature)signature).getInitSelector())== null) {
-                        provider = ((ObjectSignature) signature).getProviderType().newInstance();
-                    } else if (signature.getSelector().equals(((ObjectSignature)signature).getInitSelector())) {
+                        (((LocalSignature)signature).getInitSelector())== null) {
+                        provider = ((LocalSignature) signature).getProviderType().newInstance();
+                    } else if (signature.getSelector().equals(((LocalSignature)signature).getInitSelector())) {
                         // utility class returns a utility (class) method
-                        provider = ((ObjectSignature) signature).getProviderType();
+                        provider = ((LocalSignature) signature).getProviderType();
                     } else {
                         provider = sorcer.co.operator.instance(signature);
-                        ((ObjectSignature)signature).setTarget(provider);
+                        ((LocalSignature)signature).setTarget(provider);
                     }
                 }
             } else if (signature instanceof ModelSignature) {
@@ -3679,7 +3672,7 @@ operator extends Operator {
         Block block;
         try {
             if (sig != null) {
-                if (sig instanceof ObjectSignature)
+                if (sig instanceof LocalSignature)
                     block = new ObjectBlock(name);
                 else
                     block = new NetBlock(name);

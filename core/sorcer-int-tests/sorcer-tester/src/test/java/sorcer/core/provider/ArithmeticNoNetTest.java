@@ -14,7 +14,7 @@ import sorcer.core.context.PositionalContext;
 import sorcer.core.exertion.ObjectJob;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
@@ -127,7 +127,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		context.putInValue("arg2/eval", 80.0);
 		// We know that the output is gonna be placed in this path
 		context.putOutValue("out/eval", 0.0);
-		Signature method = new ObjectSignature("add", AdderImpl.class);
+		Signature method = new LocalSignature("add", AdderImpl.class);
 		Task task = new ObjectTask("add", method);
 		task.setContext(context);
 		return task;
@@ -139,7 +139,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		context.putInValue("arg2/eval", 50.0);
 		// We know that the output is gonna be placed in this path
 		context.putOutValue("out/eval", 0.0);
-		Signature method = new ObjectSignature("multiply", MultiplierImpl.class);
+		Signature method = new LocalSignature("multiply", MultiplierImpl.class);
 		Task task = new ObjectTask("multiply", method);
 		task.setContext(context);
 		return task;
@@ -151,7 +151,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		context.putInValueAt("arg1/eval", 0.0, 1);
 		// We want to stick in the result of add in here
 		context.putInValueAt("arg2/eval", 0.0, 2);
-		Signature method = new ObjectSignature("subtract", SubtractorImpl.class);
+		Signature method = new LocalSignature("subtract", SubtractorImpl.class);
 		Task task = new ObjectTask("subtract",
 				"processing results from two previouseky executed tasks", method);
 		task.setContext(context);
