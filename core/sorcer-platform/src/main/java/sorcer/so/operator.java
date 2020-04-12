@@ -274,7 +274,7 @@ public class operator extends Operator {
         if (request instanceof DataContext) {
             return value((Context)request, path$domain);
         } else {
-            return response((Model)request, path$domain);
+            return response((Context)request, path$domain);
         }
     }
 
