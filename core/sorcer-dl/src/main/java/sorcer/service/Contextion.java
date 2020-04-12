@@ -30,7 +30,7 @@ import java.util.List;
  *
  * @author Mike Sobolewski
  */
-public interface Contextion extends Request, Scopable {
+public interface Contextion extends CombinedRequest, Scopable {
 
     /**
      * Returns the context of evaluation of this contextion.
