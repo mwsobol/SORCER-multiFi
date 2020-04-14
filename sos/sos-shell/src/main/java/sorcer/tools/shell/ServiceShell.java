@@ -37,7 +37,6 @@ import org.fusesource.jansi.AnsiConsole;
 import org.rioproject.config.DynamicConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.netlet.util.LoaderConfiguration;
 import sorcer.netlet.util.ScriptExertException;
@@ -76,7 +75,7 @@ import static sorcer.util.StringUtils.tName;
  * prc the 'help' command at the nsh prompt
  */
 @SuppressWarnings("unchecked")
-public class NetworkShell implements DiscoveryListener, INetworkShell {
+public class ServiceShell implements DiscoveryListener, ServiceShellIf {
 
     public static final String NSH_HELP="SORCER Network Shell - command line options:\n" +
              "\t<file[.ext]> \t\t- eval the sorcer.netlet script provided in the specified file\n" +
@@ -119,13 +118,13 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	public static final String COMPONENT = "sorcer.tools.shell";
 
-	static final String CONFIG_COMPONENT = NetworkShell.class.getName();
+	static final String CONFIG_COMPONENT = ServiceShell.class.getName();
 
 	public static Logger logger = LoggerFactory.getLogger(COMPONENT);
 
-	protected static NetworkShell instance;
+	protected static ServiceShell instance;
 
-	protected static ServiceShell serviceShell;
+	protected static sorcer.core.provider.exerter.ServiceShell serviceShell;
 
 	protected static String[] groups;
 
@@ -189,7 +188,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	public static String nshUrl;
 	
-	private NetworkShell() {
+	private ServiceShell() {
 		// do nothing, see buildInstance
 	}
 	
@@ -200,14 +199,14 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
             if(ensureSecurityManager) {
                 ensureSecurityManager();
             }
-			instance = new NetworkShell();
+			instance = new ServiceShell();
 			instance.enumerateCommands();
 			return initShell(argv);
 		}
 		return argv;
 	}
 
-	public static synchronized INetworkShell getInstance() {
+	public static synchronized ServiceShellIf getInstance() {
 		return instance;
 	}
 
@@ -255,8 +254,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			}
 			
 			argv = buildInstance(true, argv);
-			principal = new SorcerPrincipal(NetworkShell.getUserName());
-			principal.setId(NetworkShell.getUserName());
+			principal = new SorcerPrincipal(ServiceShell.getUserName());
+			principal.setId(ServiceShell.getUserName());
 
 			instance.loadExternalCommands();
 			if (!instance.interactive) {
@@ -554,7 +553,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                     lc.configure(new FileInputStream(cfgFile));
                 }
             }
-            final ClassLoader cl = new URLClassLoader(lc.getClassPathUrls(), NetworkShell.class.getClassLoader());
+            final ClassLoader cl = new URLClassLoader(lc.getClassPathUrls(), ServiceShell.class.getClassLoader());
             Thread.currentThread().setContextClassLoader(cl);
             //new Activator().activate(((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs());
         } catch (Exception e) {
@@ -562,8 +561,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
             System.exit(-1);
         }
 
-        ServiceLoader<IShellCmdFactory> loader = ServiceLoader.load(IShellCmdFactory.class, getExtClassLoader());
-		for (IShellCmdFactory factory : loader) {
+        ServiceLoader<ShellCmdFactoryIf> loader = ServiceLoader.load(ShellCmdFactoryIf.class, getExtClassLoader());
+		for (ShellCmdFactoryIf factory : loader) {
 			factory.instantiateCommands(this);
 		}
 	}
@@ -653,7 +652,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	@Override
 	public void addToCommandTable(String cmd, ShellCmd cmdInstance) {
-		cmdInstance.setNetworkShell(this);
+		cmdInstance.setServiceShell(this);
 		cmdInstance.setConfiguration(getConfiguration());
 		commandTable.put(cmd, cmdInstance);
 	}
@@ -1531,7 +1530,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	}
 
 	public static void setGroups(String[] groups) {
-		NetworkShell.groups = groups;
+		ServiceShell.groups = groups;
 	}
 
 	private static Object[] toArray(String s) {
@@ -1666,13 +1665,13 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	}
 
 	public static void setRequest(String request) {
-		NetworkShell.request = request;
+		ServiceShell.request = request;
 	}
 
 	static public void printLookupAttributes(Entry[] attributeSets)
 			throws IOException, ClassNotFoundException {
 		if (attributeSets.length > 0) {
-			PrintStream out = NetworkShell.getShellOutputStream();
+			PrintStream out = ServiceShell.getShellOutputStream();
 			out.println("Lookup attributes:");
 			for (int k = 0; k < attributeSets.length; k++) {
 				if (attributeSets[k] instanceof UIDescriptor) {
@@ -1722,7 +1721,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	}
 
 	public static void printSorcerServiceInfo(SorcerServiceInfo serviceInfo) {
-		PrintStream out = NetworkShell.getShellOutputStream();
+		PrintStream out = ServiceShell.getShellOutputStream();
 		out.println("  description: " + serviceInfo.shortDescription);
 		out.println("  published services: "
 				+ Arrays.toString(serviceInfo.publishedServices));
@@ -1753,11 +1752,11 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
         aliases.put("sorcer-boot", "boot");
 	}
 
-	public ServiceShell getServiceShell() {
+	public sorcer.core.provider.exerter.ServiceShell getServiceShell() {
 		return serviceShell;
 	}
 
-	public void setServiceShell(ServiceShell serviceShell) {
+	public void setServiceShell(sorcer.core.provider.exerter.ServiceShell serviceShell) {
 		this.serviceShell = serviceShell;
 	}
 

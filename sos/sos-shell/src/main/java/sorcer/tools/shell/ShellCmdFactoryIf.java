@@ -19,6 +19,6 @@ package sorcer.tools.shell;
 /**
  * @author Rafał Krupiński
  */
-public interface IShellCmdFactory {
-    void instantiateCommands(INetworkShell shell);
+public interface ShellCmdFactoryIf {
+    void instantiateCommands(ServiceShellIf shell);
 }

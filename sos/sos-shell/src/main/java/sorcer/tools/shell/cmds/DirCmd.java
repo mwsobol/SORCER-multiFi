@@ -20,7 +20,7 @@ package sorcer.tools.shell.cmds;
 import sorcer.core.provider.Cataloger;
 import sorcer.service.Exerter;
 import sorcer.service.Accessor;
-import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.ServiceShell;
 import sorcer.tools.shell.ShellCmd;
 
 import java.io.BufferedReader;
@@ -49,13 +49,13 @@ public class DirCmd extends ShellCmd {
     private PrintStream out;
 
 	public void execute(String... args) throws Throwable {
-		BufferedReader br = NetworkShell.getShellInputStream();
-		out = NetworkShell.getShellOutputStream();
+		BufferedReader br = ServiceShell.getShellInputStream();
+		out = ServiceShell.getShellOutputStream();
         String input = shell.getCmd();
 		if (out == null)
 			throw new NullPointerException("Must have an output PrintStream");
 		if (input.startsWith("ls") || input.startsWith("dir")) {
-			File d = NetworkShell.getInstance().getCurrentDir();
+			File d = ServiceShell.getInstance().getCurrentDir();
 			boolean details = false;
 			StringTokenizer tok = new StringTokenizer(input);
 			if (tok.countTokens() > 1) {
@@ -87,10 +87,10 @@ public class DirCmd extends ShellCmd {
 			}
 			File[] files = d.listFiles();
 			if (files == null) {
-				String path = NetworkShell.getInstance().getCurrentDir()
+				String path = ServiceShell.getInstance().getCurrentDir()
 						.getAbsolutePath();
 				try {
-					path = NetworkShell.getInstance().getCurrentDir()
+					path = ServiceShell.getInstance().getCurrentDir()
 							.getCanonicalPath();
 				} catch (IOException e) {
 					/* ignore */
@@ -127,12 +127,12 @@ public class DirCmd extends ShellCmd {
 		} else if (input.equals("pwd")) {
 			try {
 				out.println("\""
-						+ NetworkShell.getInstance().getCurrentDir()
+						+ ServiceShell.getInstance().getCurrentDir()
 								.getCanonicalPath() + "\" "
 						+ "is the current working directory");
 			} catch (IOException e) {
 				out.println("\""
-						+ NetworkShell.getInstance().getCurrentDir()
+						+ ServiceShell.getInstance().getCurrentDir()
 								.getAbsolutePath() + "\" "
 						+ "is the current working directory");
 			}
@@ -196,18 +196,18 @@ public class DirCmd extends ShellCmd {
 			PrintStream out) throws Throwable {
 		boolean changed = false;
 		if (dirName.startsWith("core/sorcer-ui/src/main")) {
-			dirName = NetworkShell.getInstance().getCurrentDir()
+			dirName = ServiceShell.getInstance().getCurrentDir()
 					.getAbsolutePath()
 					+ File.separator + dirName;
 		}
 		if (dirName.equals("~")) {
-			dirName = NetworkShell.getInstance().getHomeDir();
+			dirName = ServiceShell.getInstance().getHomeDir();
 		}
 		/* See if the passed in property is a complete directory */
 		File dir = new File(dirName);
 		/* If its not, it may be a relative contextReturn */
 		if (!dir.exists()) {
-			dir = new File(NetworkShell.getInstance().getCurrentDir()
+			dir = new File(ServiceShell.getInstance().getCurrentDir()
 					.getAbsolutePath()
 					+ File.separator + dirName);
 			if (!dir.exists()) {
@@ -216,7 +216,7 @@ public class DirCmd extends ShellCmd {
 		}
 		if (dir.isDirectory()) {
 			try {
-				NetworkShell.getInstance()
+				ServiceShell.getInstance()
 						.setCurrentDir(dir.getCanonicalFile());
 				if (echoSuccess) {
 					out.println("Command successful " + dir.getCanonicalPath());

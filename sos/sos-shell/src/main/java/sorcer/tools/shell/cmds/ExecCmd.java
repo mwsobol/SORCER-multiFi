@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.StringTokenizer;
 
-import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.ServiceShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.util.exec.ExecUtils;
 import sorcer.util.exec.ExecUtils.CmdResult;
@@ -49,7 +49,7 @@ public class ExecCmd extends ShellCmd {
 	private Thread execThread;
 	
 	public void execute(String... args) throws Throwable {
-		out = NetworkShell.getShellOutputStream();
+		out = ServiceShell.getShellOutputStream();
 		String cmd = "";
 		input = shell.getCmd();
 		if (out == null)

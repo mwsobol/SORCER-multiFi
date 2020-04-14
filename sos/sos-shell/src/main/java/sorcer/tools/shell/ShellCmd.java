@@ -40,7 +40,7 @@ abstract public class ShellCmd {
 
 	protected String COMMAND_HELP;
 
-	protected INetworkShell shell;
+	protected ServiceShellIf shell;
 
 	protected Configuration config;
 
@@ -74,7 +74,7 @@ abstract public class ShellCmd {
 	public void endSubsystem() {
 	}
 
-	public void setNetworkShell(INetworkShell shell){
+	public void setServiceShell(ServiceShellIf shell){
 		this.shell = shell;
 	}
 

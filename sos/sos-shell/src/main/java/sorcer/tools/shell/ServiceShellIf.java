@@ -27,7 +27,7 @@ import java.io.PrintStream;
 /**
  * @author Rafał Krupiński
  */
-public interface INetworkShell {
+public interface ServiceShellIf {
     void addToCommandTable(String cmd, ShellCmd inst);
 
     void addAlias(String alias, String command);

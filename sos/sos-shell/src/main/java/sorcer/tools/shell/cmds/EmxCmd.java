@@ -25,7 +25,7 @@ import sorcer.service.Exerter;
 import sorcer.jini.lookup.AttributesUtil;
 import sorcer.service.*;
 import sorcer.service.Exec.State;
-import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.ServiceShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.tools.shell.WhitespaceTokenizer;
 
@@ -84,8 +84,8 @@ public class EmxCmd extends ShellCmd {
 	}
 
 	public void execute(String... args) throws RemoteException, MonitorException, ContextException {
-		out = NetworkShell.getShellOutputStream();
-		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
+		out = ServiceShell.getShellOutputStream();
+		WhitespaceTokenizer myTk = ServiceShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
 		int myIdx = 0;
 		String next = null;
@@ -231,10 +231,10 @@ public class EmxCmd extends ShellCmd {
         }
 		if (selectedMonitor >= 0) {
 			xrt = ((MonitorUIManagement) emxMonitors[selectedMonitor].service)
-					.getMonitorableExertion(id, NetworkShell.getPrincipal());
+					.getMonitorableExertion(id, ServiceShell.getPrincipal());
 		} else {
             if (monitorMap.size()>0) xrt = ((MonitorUIManagement) monitorMap.get(id).service)
-					.getMonitorableExertion(id, NetworkShell.getPrincipal());
+					.getMonitorableExertion(id, ServiceShell.getPrincipal());
 		}
 
         out.println(ansi().render("@|blue ---------"
@@ -270,7 +270,7 @@ public class EmxCmd extends ShellCmd {
 
 			all = ((MonitorUIManagement) emxMonitors[selectedMonitor].service)
 					.getMonitorableExertionInfo(xetType,
-							NetworkShell.getPrincipal());
+							ServiceShell.getPrincipal());
 		} else {
 			Map<Uuid, ExertionInfo> hm;
 			all = new HashMap<Uuid, ExertionInfo>();
@@ -284,7 +284,7 @@ public class EmxCmd extends ShellCmd {
 
 					MonitorUIManagement emx = (MonitorUIManagement) emxMonitors[i].service;
 					hm = emx.getMonitorableExertionInfo(xetType,
-							NetworkShell.getPrincipal());
+							ServiceShell.getPrincipal());
 					if (hm != null && hm.size() > 0) {
 						all.putAll(hm);
 					}
@@ -358,11 +358,11 @@ public class EmxCmd extends ShellCmd {
 	
 	public static void printCurrentMonitor() {
 		if (selectedMonitor >= 0) {
-			NetworkShell.shellOutput.println("Current exertion monitoring service: ");
+			ServiceShell.shellOutput.println("Current exertion monitoring service: ");
 			describeMonitor(selectedMonitor);
 		}
 		else {
-			NetworkShell.shellOutput.println("No selected EMX, use 'mxe' command");
+			ServiceShell.shellOutput.println("No selected EMX, use 'mxe' command");
 		}
 	}
 

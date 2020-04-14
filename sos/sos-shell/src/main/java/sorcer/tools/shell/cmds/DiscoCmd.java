@@ -26,7 +26,7 @@ import java.util.*;
 import net.jini.admin.Administrable;
 import net.jini.admin.JoinAdmin;
 import net.jini.core.lookup.ServiceRegistrar;
-import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.ServiceShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.tools.shell.WhitespaceTokenizer;
 
@@ -56,23 +56,23 @@ public class DiscoCmd extends ShellCmd {
 
 	public void execute(String... args) throws IOException, ClassNotFoundException {
 		// create a clone of list - command may modify it
-		registrars = new ArrayList<ServiceRegistrar>(NetworkShell.getRegistrars());
+		registrars = new ArrayList<ServiceRegistrar>(ServiceShell.getRegistrars());
 		// out.println("registrars: " + registrars);
-		out = NetworkShell.getShellOutputStream();
-		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
+		out = ServiceShell.getShellOutputStream();
+		WhitespaceTokenizer myTk = ServiceShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
 		int index = 0;
 		String next = null;
 		if (numTokens == 1) {
 			next = myTk.nextToken();
 			if (next.equals("-x")) {
-				NetworkShell.getRegistrars().clear();
+				ServiceShell.getRegistrars().clear();
 				registrars.clear();
 				// default index
 				selectedRegistrar = 0;
-				NetworkShell.getDisco().terminate();
+				ServiceShell.getDisco().terminate();
 				// start new lookup discovery
-				NetworkShell.setLookupDiscovery(NetworkShell.getGroups());
+				ServiceShell.setLookupDiscovery(ServiceShell.getGroups());
 			}
 			else if (next.equals("-v")) {
 				if (selectedRegistrar >= 0
@@ -109,7 +109,7 @@ public class DiscoCmd extends ShellCmd {
 		String[] groups;
 		String msg = "";
 		if (out == null) {
-			out = NetworkShell.getShellOutputStream();
+			out = ServiceShell.getShellOutputStream();
 		}
 
         out.println(ansi().render("@|green ---------" + (msg != null ? " " + msg : "")
@@ -130,13 +130,13 @@ public class DiscoCmd extends ShellCmd {
 	static public void printCurrentLus() throws IOException,
 			ClassNotFoundException {
 		if (registrars == null)
-			registrars = NetworkShell.getRegistrars();
+			registrars = ServiceShell.getRegistrars();
 		if (selectedRegistrar >= 0) {
-			NetworkShell.shellOutput.println("Current lookup service: ");
+			ServiceShell.shellOutput.println("Current lookup service: ");
 			if (registrars.size() > 0)
 				describeServiceRegistrar(registrars.get(selectedRegistrar), false);
 		} else {
-			NetworkShell.shellOutput
+			ServiceShell.shellOutput
 					.println("No selected LUS; use 'disco' cmd");
 		}
 	}
@@ -167,13 +167,13 @@ public class DiscoCmd extends ShellCmd {
 					}
 				}
 			}
-			NetworkShell.printLookupAttributes(jAdmin.getLookupAttributes());
+			ServiceShell.printLookupAttributes(jAdmin.getLookupAttributes());
 		}
 	}
 
 	public static ServiceRegistrar getSelectedRegistrar() {
         if (registrars==null)
-            registrars = new ArrayList<ServiceRegistrar>(NetworkShell.getRegistrars());
+            registrars = new ArrayList<ServiceRegistrar>(ServiceShell.getRegistrars());
 		if (registrars != null && registrars.size() > 0
 				&& selectedRegistrar >= 0)
 			return registrars.get(selectedRegistrar);
