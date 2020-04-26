@@ -529,6 +529,31 @@ public class operator extends Operator {
 		return ent;
 	}
 
+	public static <T> Value<T> depVal(String path, String domain, T value) {
+		Value ent = new Value<T>(path, value);
+		ent.setDomain(domain);
+		ent.setType(Type.DOMAIN_DEP);
+		return ent;
+	}
+
+	public static <T> Value<T> depVal(String domainPath, T value) {
+		String pn = domainPath;
+		String domain = null;
+		if (domainPath.indexOf("$") > 0) {
+			int ind = domainPath.indexOf("$");
+			pn = domainPath.substring(0, ind);
+			domain = domainPath.substring(ind + 1);
+		}
+		Value ent = null;
+		if (domain != null) {
+			ent = depVal(pn, domain, value);
+		} else {
+			ent = new Value<T>(pn, value);
+			ent.setType(Type.DEP);
+		}
+		return ent;
+	}
+
 	public static <T> Value<T> val(String path, String domain, T value) {
 		Value ent = new Value<T>(path, value);
 		ent.setDomain(domain);
