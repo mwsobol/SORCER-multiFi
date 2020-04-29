@@ -29,7 +29,9 @@ public interface Setter extends Opservice, EvaluationComponent, SupportComponent
 	public String getName();
 
 	public void setValue(Object value) throws SetterException, RemoteException;
-	
+
 	public boolean isPersistent();
+
+	public void setPersistent(boolean state);
 	
 }
