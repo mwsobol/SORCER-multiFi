@@ -10,6 +10,8 @@ public class ContextList extends ArrayList<Context> {
 
 	private String name;
 
+	private Type type;
+
 	public ContextList () {
 
 	}
@@ -35,6 +37,29 @@ public class ContextList extends ArrayList<Context> {
 		this.type = type;
 	}
 
-	private Type type;
+	public Context select(String domain) {
+		for (Context cxt : this) {
+			if (cxt.getName().equals(domain)) {
+				return cxt;
+			}
+		}
+		return null;
+	}
+
+	public Context set(Context domainContext) {
+		Context existing = select(domainContext.getName());
+		if (existing != null) {
+			remove(existing);
+		}
+		add(domainContext);
+		return domainContext;
+	}
+
+	public void remove(String domain) {
+		Context existing = select(domain);
+		if (existing != null) {
+			remove(existing);
+		}
+	}
 
 }
