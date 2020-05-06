@@ -24,9 +24,9 @@ import java.rmi.RemoteException;
 
 public class GetterSetter implements Getter {
 
-    Getter getter;
+    public Getter getter;
 
-    boolean isDual;
+    public boolean isDual;
 
     public GetterSetter(Getter getter) {
         this.getter = getter;
