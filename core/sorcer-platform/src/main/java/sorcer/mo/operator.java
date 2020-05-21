@@ -196,8 +196,8 @@ public class operator {
 
                 if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
                     out = (T) context.getEvaluatedValue(path);
-                } else if (context instanceof Model && context.getMogramStrategy().getOutcome() != null) {
-                    context.getMogramStrategy().getOutcome().putValue(path, out);
+                } else if (context instanceof Model && context.getDomainStrategy().getOutcome() != null) {
+                    context.getDomainStrategy().getOutcome().putValue(path, out);
                 } else {
                     if (obj instanceof Getter) {
                     out = (T) ((Getter) obj).getValue(args);
@@ -344,47 +344,47 @@ public class operator {
     }
 
     public static Model inConn(Model model, Context inConnector) {
-        ((ServiceContext)model).getMogramStrategy().setInConnector(inConnector);
+        ((ServiceContext)model).getDomainStrategy().setInConnector(inConnector);
         if (inConnector instanceof Connector)
             ((Connector)inConnector).direction =  Connector.Direction.IN;
         return model;
     }
 
     public static Model outConn(Model model, Context outConnector) {
-        ((ServiceContext) model).getMogramStrategy().setOutConnector(outConnector);
+        ((ServiceContext) model).getDomainStrategy().setOutConnector(outConnector);
         if (outConnector instanceof Connector)
             ((Connector)outConnector).direction = Connector.Direction.OUT;
         return model;
     }
 
     public static Model responseClear(Model model) throws ContextException {
-            ((ServiceContext)model).getMogramStrategy().getResponsePaths().clear();
+            ((ServiceContext)model).getDomainStrategy().getResponsePaths().clear();
         return model;
     }
 
     public static Mogram responseUp(Mogram mogram, String... responsePaths) throws ContextException {
         if (responsePaths == null || responsePaths.length == 0) {
-            ((ServiceContext) mogram).getMogramStrategy().getResponsePaths().clear();
-            ((ServiceContext) mogram).getMogramStrategy().getResponsePaths().addAll(((ServiceContext) mogram).getOutPaths());
+            ((ServiceContext) mogram).getDomainStrategy().getResponsePaths().clear();
+            ((ServiceContext) mogram).getDomainStrategy().getResponsePaths().addAll(((ServiceContext) mogram).getOutPaths());
         } else {
             for (String path : responsePaths) {
-                ((ServiceContext) mogram).getMogramStrategy().getResponsePaths().add(new Path(path));
+                ((ServiceContext) mogram).getDomainStrategy().getResponsePaths().add(new Path(path));
             }
         }
         return mogram;
     }
 
     public static ContextDomain clearResponse(ContextDomain model) throws ContextException {
-        ((ServiceContext) model).getMogramStrategy().getResponsePaths().clear();
+        ((ServiceContext) model).getDomainStrategy().getResponsePaths().clear();
         return model;
     }
 
     public static Mogram responseDown(Mogram mogram, String... responsePaths) throws ContextException {
         if (responsePaths == null || responsePaths.length == 0) {
-            ((ServiceContext) mogram).getMogramStrategy().getResponsePaths().clear();
+            ((ServiceContext) mogram).getDomainStrategy().getResponsePaths().clear();
         } else {
             for (String path : responsePaths) {
-                ((ServiceContext) mogram).getMogramStrategy().getResponsePaths().remove(new Path(path));
+                ((ServiceContext) mogram).getDomainStrategy().getResponsePaths().remove(new Path(path));
             }
         }
         return mogram;
@@ -404,7 +404,7 @@ public class operator {
 
     public static ServiceContext result(Mogram mogram) throws ContextException {
         if (mogram instanceof ContextDomain) {
-            return (ServiceContext)((ServiceContext) mogram).getMogramStrategy().getOutcome();
+            return (ServiceContext)((ServiceContext) mogram).getDomainStrategy().getOutcome();
         } else if (mogram instanceof Routine) {
             return (ServiceContext)mogram.getContext();
         }
@@ -417,7 +417,7 @@ public class operator {
 
     public static Object result(Mogram mogram, String path) throws ContextException {
         if (mogram instanceof ContextDomain) {
-            return ((ServiceContext) mogram).getMogramStrategy().getOutcome().asis(path);
+            return ((ServiceContext) mogram).getDomainStrategy().getOutcome().asis(path);
         } else if (mogram instanceof Routine) {
             try {
                 return mogram.getContext().getValue(path);
@@ -471,7 +471,7 @@ public class operator {
 
     public static Mogram setResponse(Mogram mogram, Path... mogramPaths) throws ContextException {
         List<Path> paths = Arrays.asList(mogramPaths);
-        mogram.getMogramStrategy().setResponsePaths(paths);
+        mogram.getDomainStrategy().setResponsePaths(paths);
         return mogram;
     }
 
@@ -480,13 +480,13 @@ public class operator {
         for (String ps : mogramPaths) {
             paths.add(new Path(ps));
         }
-        mogram.getMogramStrategy().setResponsePaths(paths);
+        mogram.getDomainStrategy().setResponsePaths(paths);
         return mogram;
     }
 
     public static void init(ContextDomain model, Arg... args) throws ContextException {
         // initialize a model
-        Map<String, List<ExecDependency>> depMap = ((ModelStrategy)model.getMogramStrategy()).getDependentPaths();
+        Map<String, List<ExecDependency>> depMap = ((ModelStrategy)model.getDomainStrategy()).getDependentPaths();
         Paths paths = Arg.selectPaths(args);
         if (paths != null) {
             model.getDependers().add(new ExecDependency(paths));
@@ -507,7 +507,7 @@ public class operator {
         } if (contextion instanceof Governance) {
             return (ServiceContext) ((Governance)contextion).getOutput();
         } else {
-            return (ServiceContext) contextion.getMogramStrategy().getOutcome();
+            return (ServiceContext) contextion.getDomainStrategy().getOutcome();
         }
     }
 
@@ -691,9 +691,9 @@ public class operator {
                 }
             }
             if (responsePaths != null) {
-                mo.getMogramStrategy().setResponsePaths(responsePaths.getSelects());
+                mo.getDomainStrategy().setResponsePaths(responsePaths.getSelects());
             }
-            ((ModelStrategy)mo.getMogramStrategy()).setOutcome(new ServiceContext(name + "-Output)"));
+            ((ModelStrategy)mo.getDomainStrategy()).setOutcome(new ServiceContext(name + "-Output)"));
             return mo;
         }
         throw new ModelException("do not know what model to create");
@@ -986,7 +986,7 @@ public class operator {
         }
 
         if (responsePaths != null) {
-            model.getMogramStrategy().setResponsePaths(responsePaths.getSelects());
+            model.getDomainStrategy().setResponsePaths(responsePaths.getSelects());
         }
         if (complement != null) {
             model.setSubject(complement.getName(), complement.getId());

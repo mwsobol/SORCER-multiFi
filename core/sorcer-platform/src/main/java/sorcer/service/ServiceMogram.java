@@ -68,7 +68,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected String[] metaFiNames;
     // list of fidelities of this mogram
     protected String[] profile;
-    protected MogramStrategy mogramStrategy;
+    protected ServiceStrategy domainStrategy;
     protected Differentiator differentiator;
     protected Differentiator fdDifferentiator;
     protected Differentiator globalDifferentiator;
@@ -921,12 +921,12 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public MogramStrategy getMogramStrategy() {
-        return mogramStrategy;
+    public ServiceStrategy getDomainStrategy() {
+        return domainStrategy;
     }
 
-    public void setModelStrategy(MogramStrategy strategy) {
-        mogramStrategy = strategy;
+    public void setModelStrategy(ServiceStrategy strategy) {
+        domainStrategy = strategy;
     }
 
     public boolean isBatch() {
@@ -1084,25 +1084,25 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     @Override
     public void reportException(String message, Throwable t) {
-        mogramStrategy.addException(t);
+        domainStrategy.addException(t);
     }
 
     @Override
     public void reportException(String message, Throwable t, ProviderInfo info) {
         // reimplement in sublasses
-        mogramStrategy.addException(t);
+        domainStrategy.addException(t);
     }
 
     @Override
     public void reportException(String message, Throwable t, Exerter provider) {
         // reimplement in sublasses
-        mogramStrategy.addException(t);
+        domainStrategy.addException(t);
     }
 
     @Override
     public void reportException(String message, Throwable t, Exerter provider, ProviderInfo info) {
         // reimplement in sublasses
-        mogramStrategy.addException(t);
+        domainStrategy.addException(t);
     }
 
     @Override
@@ -1197,8 +1197,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public Mogram clear() throws MogramException {
-        if (mogramStrategy != null) {
-            mogramStrategy.getOutcome().clear();
+        if (domainStrategy != null) {
+            domainStrategy.getOutcome().clear();
         }
         isValid = false;
         isChanged = true;

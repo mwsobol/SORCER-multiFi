@@ -92,7 +92,7 @@ public class ObjectTask extends Task {
 
 		MethodInvoker evaluator = null;
 		LocalSignature os = (LocalSignature) getProcessSignature();
-		dataContext.getMogramStrategy().setCurrentSelector(os.getSelector());
+		dataContext.getDomainStrategy().setCurrentSelector(os.getSelector());
 		dataContext.setCurrentPrefix(os.getPrefix());
 		try {
 			Context.Return rt = getProcessSignature().getContextReturn();

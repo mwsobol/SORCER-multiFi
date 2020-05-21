@@ -115,7 +115,7 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
         if (dataContext == null) {
             dataContext = new ServiceContext(key);
         }
-        getMogramStrategy().setOutcome(dataContext);
+        getDomainStrategy().setOutcome(dataContext);
         context.setScope(dataContext);
         try {
             // set mda if available
@@ -184,7 +184,7 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
     }
 
     protected void execDependencies(String path, Context inContext, Arg... args) throws MogramException, RemoteException, TransactionException {
-        Map<String, List<ExecDependency>> dpm = ((ModelStrategy) mogramStrategy).getDependentDomains();
+        Map<String, List<ExecDependency>> dpm = ((ModelStrategy) domainStrategy).getDependentDomains();
         if (dpm != null && dpm.get(path) != null) {
             List<Path> dpl = null;
             List<ExecDependency> del = dpm.get(path);
@@ -200,7 +200,7 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
                             if (children.get(p.path) instanceof EntryModel) {
                                 EntryModel mdl = (EntryModel) children.get(p.path);
                                 mdl.evaluate(inContext, args);
-                                cxt = mdl.getMogramStrategy().getOutcome();
+                                cxt = mdl.getDomainStrategy().getOutcome();
                                 dataContext.append(cxt);
                             } else {
                                 domain.setScope(dataContext);

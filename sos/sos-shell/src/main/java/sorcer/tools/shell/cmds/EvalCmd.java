@@ -250,7 +250,7 @@ public class EvalCmd extends ShellCmd {
 				}
 				if (ifMogramControl) {
 					out.println("\n---> OUTPUT STRATEGY --->");
-					out.println(((Model) out).getMogramStrategy());
+					out.println(((Model) out).getDomainStrategy());
 				}
 			} else {
 				out.println("\n---> EVALUATION RESULT --->");

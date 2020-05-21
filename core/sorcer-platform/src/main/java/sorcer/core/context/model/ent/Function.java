@@ -298,7 +298,7 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 		if (mogram instanceof Model) {
 			if (impl != null && impl != Context.none)
 				add((ContextDomain) mogram, this);
-			((ServiceContext)mogram).getMogramStrategy().getResponsePaths().add(new Path(key));
+			((ServiceContext)mogram).getDomainStrategy().getResponsePaths().add(new Path(key));
 			out = (Context) ((Model)mogram).getResponse();
 		} else if (mogram instanceof ServiceContext) {
 			if (impl == null || impl == Context.none) {

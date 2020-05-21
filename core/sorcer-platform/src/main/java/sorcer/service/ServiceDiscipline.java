@@ -83,11 +83,11 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     // default instance new Return(Context.RETURN);
     protected Context.Return contextReturn;
 
-    protected MogramStrategy mogramStrategy;
+    protected ServiceStrategy serviceStrategy;
 
     public ServiceDiscipline() {
         disciplineId = UuidFactory.generate();
-        mogramStrategy = new ModelStrategy(this);
+        serviceStrategy = new ModelStrategy(this);
     }
 
     public ServiceDiscipline(Routine... dispatchs) {
@@ -385,8 +385,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
-    public MogramStrategy getMogramStrategy() {
-        return mogramStrategy;
+    public ServiceStrategy getDomainStrategy() {
+        return serviceStrategy;
     }
 
     @Override

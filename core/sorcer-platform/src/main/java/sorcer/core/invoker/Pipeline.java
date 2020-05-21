@@ -260,7 +260,7 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
     }
 
     @Override
-    public MogramStrategy getMogramStrategy() {
+    public ServiceStrategy getDomainStrategy() {
         return null;
     }
 

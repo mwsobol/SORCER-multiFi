@@ -273,6 +273,12 @@ operator extends Operator {
         return context((Object[])entries);
     }
 
+    public static ServiceContext strategyContext(Object... entries) throws ContextException {
+        ServiceContext scxt =  context(entries);
+        scxt.setType(Functionality.Type.STRATEGY);
+        return scxt;
+    }
+
     public static ServiceContext context(Object... entries) throws ContextException {
         // do not create a context from Context, jut return
         if (entries == null || entries.length == 0) {
@@ -530,9 +536,9 @@ operator extends Operator {
         }
         if (response != null) {
             if (response.getName() != null) {
-                cxt.getMogramStrategy().getResponsePaths().add(new Path(response.getName()));
+                cxt.getDomainStrategy().getResponsePaths().add(new Path(response.getName()));
             }
-            cxt.getMogramStrategy().setResult(response.getName(), response.target);
+            cxt.getDomainStrategy().setResult(response.getName(), response.target);
         }
         if (entryLists.size() > 0) {
             cxt.setEntryLists(entryLists);
@@ -540,14 +546,14 @@ operator extends Operator {
         if (connList.size() > 0) {
             for (Connector conn : connList) {
                 if (conn.direction == Connector.Direction.IN) {
-                    cxt.getMogramStrategy().setInConnector(conn);
+                    cxt.getDomainStrategy().setInConnector(conn);
                 } else {
-                    cxt.getMogramStrategy().setOutConnector(conn);
+                    cxt.getDomainStrategy().setOutConnector(conn);
                 }
             }
         }
         if (depList.size() > 0) {
-            Map<String, List<ExecDependency>> dm = ((ServiceContext) cxt).getMogramStrategy().getDependentPaths();
+            Map<String, List<ExecDependency>> dm = ((ServiceContext) cxt).getDomainStrategy().getDependentPaths();
             String path = null;
             List<ExecDependency> dependentPaths = null;
             for (ExecDependency e : depList) {
@@ -585,7 +591,7 @@ operator extends Operator {
         }
 
         if (responsePaths != null) {
-            cxt.getMogramStrategy().setResponsePaths(responsePaths);
+            cxt.getDomainStrategy().setResponsePaths(responsePaths);
         }
 
         if (mdaEntry != null) {
@@ -601,9 +607,9 @@ operator extends Operator {
         }
 
         if (accessType != null)
-            cxt.getMogramStrategy().setAccessType(accessType);
+            cxt.getDomainStrategy().setAccessType(accessType);
         if (flowType != null)
-            cxt.getMogramStrategy().setFlowType(flowType);
+            cxt.getDomainStrategy().setFlowType(flowType);
         try {
             if (sig != null)
                 cxt.setSubject(sig.getSelector(), sig.getServiceType());
@@ -2685,9 +2691,9 @@ operator extends Operator {
         if (connList != null) {
             for (Connector conn : connList) {
                 if (conn.direction == Connector.Direction.IN)
-                    ((ServiceContext)job.getDataContext()).getMogramStrategy().setInConnector(conn);
+                    ((ServiceContext)job.getDataContext()).getDomainStrategy().setInConnector(conn);
                 else
-                    ((ServiceContext)job.getDataContext()).getMogramStrategy().setOutConnector(conn);
+                    ((ServiceContext)job.getDataContext()).getDomainStrategy().setOutConnector(conn);
             }
         }
 

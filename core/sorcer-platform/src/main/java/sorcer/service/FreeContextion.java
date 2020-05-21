@@ -87,7 +87,7 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
-	public MogramStrategy getMogramStrategy() {
+	public ServiceStrategy getDomainStrategy() {
 		return null;
 	}
 

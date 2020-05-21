@@ -360,8 +360,8 @@ public class Job extends Transroutine {
 	}
 
 	public Context finalizeOutDataContext() throws ContextException {
-		if (dataContext.getMogramStrategy().getOutConnector() != null) {
-			updateContextWith(dataContext.getMogramStrategy().getOutConnector());
+		if (dataContext.getDomainStrategy().getOutConnector() != null) {
+			updateContextWith(dataContext.getDomainStrategy().getOutConnector());
 		}
 		return dataContext;
 	}

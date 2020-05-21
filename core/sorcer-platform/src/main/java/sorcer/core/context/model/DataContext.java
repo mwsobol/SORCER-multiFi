@@ -49,7 +49,7 @@ public class DataContext<T> extends PositionalContext<T> {
             this.key = name;
         }
         mogramId = UuidFactory.generate();
-        mogramStrategy = new ModelStrategy(this);
+        domainStrategy = new ModelStrategy(this);
         creationDate = new Date();
     }
 

@@ -1091,7 +1091,7 @@ public class ProviderDelegate {
 //					logger.trace("Executing service bean method: {} by: {} isContextual: {}",
 //								 m, config.getProviderName(), isContextual);
 //				task.getContext().setRoutine(task);
-//				((ServiceContext) task.getContext()).getMogramStrategy().setCurrentSelector(selector);
+//				((ServiceContext) task.getContext()).getDomainStrategy().setCurrentSelector(selector);
 //				String pf = task.getProcessSignature().getPrefix();
 //				if (pf != null)
 //					((ServiceContext) task.getContext()).setCurrentPrefix(pf);
@@ -1164,7 +1164,7 @@ public class ProviderDelegate {
 					logger.trace("Executing service bean method: {} by: {} isContextual: {}",
 						m, config.getProviderName(), isContextual);
 				task.getContext().setRoutine(task);
-				((ServiceContext) task.getContext()).getMogramStrategy().setCurrentSelector(selector);
+				((ServiceContext) task.getContext()).getDomainStrategy().setCurrentSelector(selector);
 				String pf = task.getProcessSignature().getPrefix();
 				if (pf != null)
 					((ServiceContext) task.getContext()).setCurrentPrefix(pf);
@@ -1392,7 +1392,7 @@ public class ProviderDelegate {
 				if (sig.getContextReturn() != null)
 					cxt.setContextReturn(sig.getContextReturn());
 
-				cxt.getMogramStrategy().setCurrentSelector(sig.getSelector());
+				cxt.getDomainStrategy().setCurrentSelector(sig.getSelector());
 				cxt.setCurrentPrefix(sig.getPrefix());
 
 				cxt.setRoutine(task);

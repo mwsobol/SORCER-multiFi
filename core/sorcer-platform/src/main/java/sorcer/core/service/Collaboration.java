@@ -77,7 +77,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 
 	private FidelityManager fiManager;
 
-	protected MogramStrategy mogramStrategy;
+	protected ServiceStrategy serviceStrategy;
 
 	// context input connector
 	protected Context inConnector;
@@ -97,7 +97,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
         } else {
             this.name = name;
         }
-		mogramStrategy = new ModelStrategy(this);
+		serviceStrategy = new ModelStrategy(this);
     }
 
     public Collaboration(String name, Domain[] domains) {
@@ -244,7 +244,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 
 			}
 		}
-		((ServiceContext)context).getMogramStrategy().setExecState(Exec.State.INITIAL);
+		((ServiceContext)context).getDomainStrategy().setExecState(Exec.State.INITIAL);
 		if (output == null) {
 			output = new ServiceContext(name);
 		}
@@ -267,7 +267,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 				}
 			}
 		}
-		((ServiceContext)context).getMogramStrategy().setExecState(Exec.State.INITIAL);
+		((ServiceContext)context).getDomainStrategy().setExecState(Exec.State.INITIAL);
 		if (output == null) {
 			output = new ServiceContext(name);
 		}
@@ -298,12 +298,12 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 		this.fiManager = fiManager;
 	}
 
-	public MogramStrategy getMogramStrategy() {
-		return mogramStrategy;
+	public ServiceStrategy getDomainStrategy() {
+		return serviceStrategy;
 	}
 
-	public void setModelStrategy(MogramStrategy strategy) {
-		mogramStrategy = strategy;
+	public void setModelStrategy(ServiceStrategy strategy) {
+		serviceStrategy = strategy;
 	}
 
 	@Override
@@ -322,7 +322,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 			if (cxt == null) {
 				cxt = getInput();
 			}
-			ModelStrategy strategy = ((ModelStrategy) cxt.getMogramStrategy());
+			ModelStrategy strategy = ((ModelStrategy) cxt.getDomainStrategy());
 			List<Fidelity> fis = Arg.selectFidelities(args);
 			if (analyzerFi != null) {
 				strategy.setExecState(Exec.State.RUNNING);
@@ -353,7 +353,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 			}
 
 			out = explorerFi.getSelect().explore(cxt);
-			((ModelStrategy)mogramStrategy).setOutcome(output);
+			((ModelStrategy) serviceStrategy).setOutcome(output);
 			strategy.setExecState(Exec.State.DONE);
 		} catch (ConfigurationException | ContextException e) {
 			throw new EvaluationException(e);
@@ -395,22 +395,22 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 	}
 
 	public void reportException(String message, Throwable t) {
-		mogramStrategy.addException(t);
+		serviceStrategy.addException(t);
 	}
 
 	public void reportException(String message, Throwable t, ProviderInfo info) {
 		// reimplement in sublasses
-		mogramStrategy.addException(t);
+		serviceStrategy.addException(t);
 	}
 
 	public void reportException(String message, Throwable t, Exerter provider) {
 		// reimplement in sublasses
-		mogramStrategy.addException(t);
+		serviceStrategy.addException(t);
 	}
 
 	public void reportException(String message, Throwable t, Exerter provider, ProviderInfo info) {
 		// reimplement in sublasses
-		mogramStrategy.addException(t);
+		serviceStrategy.addException(t);
 	}
 
 	public Collaboration addDepender(Evaluation depender) {

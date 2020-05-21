@@ -1586,15 +1586,15 @@ public class operator extends Operator {
 	}
 
     public static List<Evaluation>  mdlDeps(ContextDomain model) {
-        return ((ServiceContext)model).getMogramStrategy().getModelDependers();
+        return ((ServiceContext)model).getDomainStrategy().getModelDependers();
     }
 
     public static Map<String, List<ExecDependency>> domDeps(ContextDomain model) {
-        return ((ServiceContext)model).getMogramStrategy().getDependentDomains();
+        return ((ServiceContext)model).getDomainStrategy().getDependentDomains();
     }
 
     public static Map<String, List<ExecDependency>> deps(ContextDomain model) {
-         return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
+         return ((ServiceContext)model).getDomainStrategy().getDependentPaths();
     }
 
     public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
@@ -1672,7 +1672,7 @@ public class operator extends Operator {
         }
 
         if (dependers.length > 0 && dependers[0] instanceof ExecDependency) {
-            Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Contextion) dependee).getMogramStrategy()).getDependentDomains();
+            Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Contextion) dependee).getDomainStrategy()).getDependentDomains();
             for (Evaluation e : dependers) {
                 if (e != null) {
                     path = ((Identifiable) e).getName();
@@ -1741,7 +1741,7 @@ public class operator extends Operator {
 		}
 
 		if (dependee instanceof ContextDomain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
-			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((ContextDomain) dependee).getMogramStrategy()).getDependentPaths();
+			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((ContextDomain) dependee).getDomainStrategy()).getDependentPaths();
 			for (Evaluation e : dependers) {
 				if (e != null && ((Functionality)e).getType() != Type.MODEL) {
 					path = ((Identifiable)e).getName();

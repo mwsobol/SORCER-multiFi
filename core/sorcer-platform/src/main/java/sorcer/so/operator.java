@@ -372,7 +372,7 @@ public class operator extends Operator {
                 }
             }
             if (paths != null && paths.size() > 0) {
-                model.getMogramStrategy().setResponsePaths(paths);
+                model.getDomainStrategy().setResponsePaths(paths);
             }
             Arg[] args = new Arg[argl.size()];
             argl.toArray(args);
@@ -410,7 +410,7 @@ public class operator extends Operator {
                 }
             }
             if (paths != null && paths.size() > 0) {
-                exertion.getMogramStrategy().setResponsePaths(paths);
+                exertion.getDomainStrategy().setResponsePaths(paths);
             }
             Arg[] args = new Arg[argl.size()];
             argl.toArray(args);

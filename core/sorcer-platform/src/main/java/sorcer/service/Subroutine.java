@@ -512,7 +512,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         return controlContext;
     }
 
-    public ControlContext getMogramStrategy() {
+    public ControlContext getDomainStrategy() {
         return controlContext;
     }
 
@@ -578,8 +578,8 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
             throws ContextException;
 
     public Context finalizeOutDataContext() throws ContextException {
-        if (dataContext.getMogramStrategy().getOutConnector() != null) {
-            dataContext.updateContextWith(dataContext.getMogramStrategy().getOutConnector());
+        if (dataContext.getDomainStrategy().getOutConnector() != null) {
+            dataContext.updateContextWith(dataContext.getDomainStrategy().getOutConnector());
         }
         return dataContext;
     }

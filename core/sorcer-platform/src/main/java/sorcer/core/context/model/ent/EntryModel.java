@@ -117,9 +117,9 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				Context.Return rp = Arg.getReturnPath(args);
 				if (rp != null)
 					val = getReturnValue(rp);
-				else if (mogramStrategy.getResponsePaths() != null
-					&& mogramStrategy.getResponsePaths().size() == 1) {
-					val = asis(mogramStrategy.getResponsePaths().get(0).getName());
+				else if (domainStrategy.getResponsePaths() != null
+					&& domainStrategy.getResponsePaths().size() == 1) {
+					val = asis(domainStrategy.getResponsePaths().get(0).getName());
 				} else {
 					val = super.getValue(path, args);
 				}
@@ -185,9 +185,9 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			}  else  if (val instanceof ServiceFidelity) {
 				return new Function(path, val).evaluate(args);
 			} else if (path == null && val == null
-				&& mogramStrategy.getResponsePaths() != null) {
-				if (mogramStrategy.getResponsePaths().size() == 1) {
-					return getValue(mogramStrategy.getResponsePaths().get(0).getName(), args);
+				&& domainStrategy.getResponsePaths() != null) {
+				if (domainStrategy.getResponsePaths().size() == 1) {
+					return getValue(domainStrategy.getResponsePaths().get(0).getName(), args);
 				} else {
 					return getResponse();
 				}
@@ -497,7 +497,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	}
 
 	public void execDependencies(String path, Arg... args) throws ContextException {
-		Map<String, List<ExecDependency>> dpm = ((ModelStrategy)mogramStrategy).getDependentPaths();
+		Map<String, List<ExecDependency>> dpm = ((ModelStrategy) domainStrategy).getDependentPaths();
 		if (dpm != null && dpm.get(path) != null) {
 			List<ExecDependency> del = dpm.get(path);
 			Entry entry = entry(path);
