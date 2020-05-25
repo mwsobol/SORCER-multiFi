@@ -47,6 +47,7 @@ public class SmlOperators {
 
 		// Evaluators
 		evr ev1 = expr("exprssionToExecute");
+		evr ev2 = gvy("exprssionToExecute", args("x1", "x2", "x3"));
 
 		// Entries
 		val v1 = val("x2", 10.6);

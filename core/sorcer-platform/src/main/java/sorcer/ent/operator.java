@@ -546,6 +546,9 @@ public class operator extends Operator {
 		return 	invoker(expression, args);
 		}
 
+	public static ServiceInvoker gvy(String expression, Args args) {
+		return new GroovyInvoker(expression, args.args());
+	}
 	public static ServiceInvoker invoker(String expression, Args args) {
 		return new GroovyInvoker(expression, args.args());
 	}
@@ -788,10 +791,10 @@ public class operator extends Operator {
 		return entry;
 	}
 
-	public static Entry inv(Entry ent) {
-		ent.setCached(true);
-		return ent;
-	}
+//	public static Entry inv(Entry ent) {
+//		ent.setCached(true);
+//		return ent;
+//	}
 
 	public static <T> Ref<T> ref(SupportComponent component) {
 		Ref cr = new Ref();
