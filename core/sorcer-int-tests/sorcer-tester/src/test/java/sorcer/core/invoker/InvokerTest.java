@@ -77,7 +77,7 @@ public class InvokerTest {
 	@Test
 	public void lambdaInvoker() throws RemoteException, ContextException,
 			SignatureException, RoutineException {
-		Evaluator invoker = invoker("lambda",
+		Evaluator invoker = invoker("req",
 				cxt ->  (double) value(cxt, "x") + (double) value(cxt, "y") + 30,
 				context(val("x", 10.0), val("y", 20.0)),
 				args("x", "y"));
@@ -117,22 +117,22 @@ public class InvokerTest {
 	public void lambdaInvokerTest() throws RemoteException, ContextException {
 		EntryModel pm = entModel("model");
 		add(pm, prc("x", 10.0), prc("y", 20.0));
-		add(pm, invoker("lambda", cxt -> (double)value(cxt, "x") + (double)value(cxt, "y") + 30));
-		logger.info("invoke eval: " + invoke(pm, "lambda"));
-		assertEquals(invoke(pm, "lambda"), 60.0);
-		logger.info("getValue eval: " + value(pm, "lambda"));
-		assertEquals(exec(pm, "lambda"), 60.0);
+		add(pm, invoker("req", cxt -> (double)value(cxt, "x") + (double)value(cxt, "y") + 30));
+		logger.info("invoke eval: " + invoke(pm, "req"));
+		assertEquals(invoke(pm, "req"), 60.0);
+		logger.info("getValue eval: " + value(pm, "req"));
+		assertEquals(exec(pm, "req"), 60.0);
 	}
 
 	@Test
 	public void lambdaInvokerTest2() throws Exception {
 
 		Model mo = model(prc("x", 10.0), prc("y", 20.0),
-				operator.prc(invoker("lambda", cxt -> (double) value(cxt, "x")
+				operator.prc(invoker("req", cxt -> (double) value(cxt, "x")
 									+ (double) value(cxt, "y")
 									+ 30)));
-		logger.info("invoke eval: " + eval(mo, "lambda"));
-		assertEquals(exec(mo, "lambda"), 60.0);
+		logger.info("invoke eval: " + eval(mo, "req"));
+		assertEquals(exec(mo, "req"), 60.0);
 	}
 
 	@Test
@@ -142,7 +142,7 @@ public class InvokerTest {
 		Context scope = context(prc("x1", 20.0), prc("y1", 40.0));
 
 		Model mo = model(prc("x", 10.0), prc("y", 20.0),
-			operator.prc(invoker("lambda", (cxt) -> {
+			operator.prc(invoker("req", (cxt) -> {
 						return (double) value(cxt, "x")
 								+ (double) value(cxt, "y")
 								+ (double) value(cxt, "y1")
@@ -150,8 +150,8 @@ public class InvokerTest {
 					},
 				scope,
 				args("x", "y", "y1"))));
-		logger.info("invoke eval: " + eval(mo, "lambda"));
-		assertEquals(exec(mo, "lambda"), 100.0);
+		logger.info("invoke eval: " + eval(mo, "req"));
+		assertEquals(exec(mo, "req"), 100.0);
 	}
 
 	@Test

@@ -976,68 +976,64 @@ public class operator extends Operator {
 		return ie;
 	}
 
-    public static Req lmb(String path, Args args) {
+
+    public static Req req(String path, Args args) {
         Req srv = new Req(path, path);
         srv.setType(Functionality.Type.LAMBDA);
         return srv;
     }
 
-    public static Req lmb(String path, Service service, Args args) {
-        Req srv = new Req(path, path, service, args.getNameArray());
-        srv.setType(Functionality.Type.LAMBDA);
-        return srv;
-    }
 
-    public static Req lambda(String path, Service service, Args args) {
+    public static Req req(String path, Service service, Args args) {
 		Req srv = new Req(path, path, service, args.getNameArray());
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static Req lambda(String path, Service service, String name, Args args) {
+	public static Req req(String path, Service service, String name, Args args) {
 		Req srv = new Req(name, path, service,  args.getNameArray());
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static Req lambda(String name, String path, Client client) {
+	public static Req req(String name, String path, Client client) {
 		Req srv = new Req(name, path, client);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> Req lambda(String path, Callable<T> call) {
+	public static <T> Req req(String path, Callable<T> call) {
 		Req srv = new Req(path, call);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> Req lambda(String path, ValueCallable<T> call) {
+	public static <T> Req req(String path, ValueCallable<T> call) {
 		Req srv = new Req(path, call);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> Req lambda(String path, ValueCallable<T> call, Args args) {
+	public static <T> Req req(String path, ValueCallable<T> call, Args args) {
 		Req srv = new Req(path, call, args.getNameArray());
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> Req lambda(String path, ValueCallable<T> lambda, Context context, Args args)
+	public static <T> Req req(String path, ValueCallable<T> lambda, Context context, Args args)
 			throws InvocationException {
 		Req srv = new Req(path, invoker(lambda, context, args));
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> Req lambda(String path, EntryCollable call) {
+	public static <T> Req req(String path, EntryCollable call) {
 		Req srv = new Req(path, call);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> Req lambda(String path, ValueCallable<T> call, Context.Return returnPath) {
+	public static <T> Req req(String path, ValueCallable<T> call, Context.Return returnPath) {
 		Req srv = new Req(path, call, returnPath);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;

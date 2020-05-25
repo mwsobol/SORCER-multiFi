@@ -40,11 +40,8 @@ import static sorcer.so.operator.eval;
 import static sorcer.so.operator.exec;
 
 /**
- * In service-based modeling, a parameter (for short a prc) is a special kind of
- * variable, used in a service context {@link EntryModel} to refer to one of the
- * pieces of data provided as input to the invokers (subroutines of the
- * context). These pieces of data are called arguments.
- * 
+ * In service-based modeling, a procedure (for short a prc) is an implementation of
+ * a function call, used in a service models to refer to a specific type of Entry.
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })

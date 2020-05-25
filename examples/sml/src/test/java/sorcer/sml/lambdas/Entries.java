@@ -36,9 +36,9 @@ public class Entries {
     @Test
     public void lambdaValue() throws Exception {
 
-        // the model execute a lambda expression with no model state altered
+        // the model execute a req expression with no model state altered
         Model mdl = model(ent("x1", 10.0), ent("x2", 20.0),
-                lambda("x3", (Model model) -> ent("x5", (double)exec(model, "x2") + 100.0)));
+                operator.req("x3", (Model model) -> ent("x5", (double)exec(model, "x2") + 100.0)));
 
         logger.info("x3: " + eval(mdl, "x3"));
         assertEquals(120.0, exec((ent)exec(mdl, "x3")));
@@ -49,13 +49,13 @@ public class Entries {
     public void lambdaEntries() throws Exception {
 
         // no free variables
-        Function y1 = lambda("y1", () -> 20.0 * pow(0.5, 6) + 10.0);
+        Function y1 = operator.req("y1", () -> 20.0 * pow(0.5, 6) + 10.0);
 
         assertEquals(10.3125, exec(y1));
 
-        // the model itself as a free variable of the lambda y2
+        // the model itself as a free variable of the req y2
         Model mo = model(ent("x1", 10.0), ent("x2", 20.0),
-                lambda("y2", (Context<Double> cxt) ->
+                operator.req("y2", (Context<Double> cxt) ->
                         value(cxt, "x1") + value(cxt, "x2")));
 
         assertEquals(30.0, exec(mo, "y2"));
@@ -72,14 +72,14 @@ public class Entries {
             args = args("cmd",  "/C", "echo %USERNAME%");
         }
 
-        // a lambda as a EntryCollable used to enhance the behavior of a model
+        // a req as a EntryCollable used to enhance the behavior of a model
         EntryCollable verifyExitValue = (Model mdl) -> {
             CmdResult out = (CmdResult)exec(mdl, "cmd");
             int code = out.getExitValue();
             ent("cmd/exitValue", code);
             if (code == -1) {
                 EvaluationException ex = new EvaluationException();
-                mdl.reportException("cmd failed for lambda", ex);
+                mdl.reportException("cmd failed for req", ex);
                 throw ex;
             } else
                 return ent("cmd/out", out.getOut());
@@ -93,13 +93,13 @@ public class Entries {
                 ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
                 ent("cmd", invoker(args)),
-                lambda("lambda", verifyExitValue),
-                response("lambda", "cmd", "cmd/out"));
+                operator.req("req", verifyExitValue),
+                response("req", "cmd", "cmd/out"));
 
         Context out = response(m);
 
         String un = property("user.name");
-        assertTrue(((String)get(out, "lambda")).trim().equals(un));
+        assertTrue(((String)get(out, "req")).trim().equals(un));
         assertTrue(((String)get(out, "cmd/out")).trim().equals(un));
         assertTrue(((CmdResult)get(out, "cmd")).getOut().trim().equals(un));
     }
@@ -108,19 +108,19 @@ public class Entries {
     public void entryAsLambdaInvoker() throws Exception {
 
         Model mo = model(val("x", 10.0), val("y", 20.0),
-                operator.prc(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
+                operator.prc(invoker("req", (Context<Double> cxt) -> value(cxt, "x")
                         + value(cxt, "y")
                         + 30, args("x", "y"))));
-        logger.info("invoke eval: " + eval(mo, "lambda"));
-        assertEquals(exec(mo, "lambda"), 60.0);
+        logger.info("invoke eval: " + eval(mo, "req"));
+        assertEquals(exec(mo, "req"), 60.0);
     }
 
     @Test
     public void lambdaService() throws Exception  {
 
-        // an entry as a Service lambda
+        // an entry as a Service req
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                lambda("s1", (Arg[] args) -> {
+                operator.req("s1", (Arg[] args) -> {
                     Arg.set(args, "x",  Arg.get(args, "y"));
                     return exec(Arg.selectService(args, "x")); },
                         args("x", "y")));
@@ -133,9 +133,9 @@ public class Entries {
     public void lambdaClient() throws Exception {
         // args as ValueCallable and  Requestor lambdas
         Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
-                lambda("multiply", (Context<Double> model) ->
+                operator.req("multiply", (Context<Double> model) ->
                         value(model, "multiply/x1") * value(model, "multiply/x2")),
-                lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
+                operator.req("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
                     double out = (double)exec(entry, scope);
                     if (out > 400) {
                         putValue(scope, "multiply/x1", 20.0);

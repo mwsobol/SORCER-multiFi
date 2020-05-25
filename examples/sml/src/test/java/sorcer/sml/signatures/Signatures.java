@@ -441,7 +441,7 @@ public class Signatures {
 				inVal("x", 10.0),
 				inVal("y", 20.0));
 
-		Object out = exec(task(sig("add", invoker("lambda",
+		Object out = exec(task(sig("add", invoker("req",
 						(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
 						args("x", "y")))), in);
 		logger.info("result: " + out);

@@ -43,11 +43,11 @@ public class RequestModels {
     public void lambdaInvoker() throws Exception {
 
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                operator.prc(invoker("lambda", cxt -> (double) value(cxt, "x")
+                operator.prc(invoker("req", cxt -> (double) value(cxt, "x")
                         + (double) value(cxt, "y")
                         + 30, args("x", "y"))));
-        logger.info("invoke eval: " + eval(mo, "lambda"));
-        assertEquals(exec(mo, "lambda"), 60.0);
+        logger.info("invoke eval: " + eval(mo, "req"));
+        assertEquals(exec(mo, "req"), 60.0);
     }
 
     @Test
@@ -56,17 +56,17 @@ public class RequestModels {
         Context scope = context(val("x1", 20.0), val("y1", 40.0));
 
         Model mdl = model(ent("x", 10.0), ent("y", 20.0),
-            prc(invoker("lambda", (cxt) -> {
+            prc(invoker("req", (cxt) -> {
                     return (double) value(cxt, "x")
                         + (double) value(cxt, "y")
                         + (double) value(cxt, "y1")
                         + 30;
                 },
                 scope, args("x", "y"))));
-//        logger.info("invoke eval: " + eval(mo, "lambda"));
-        assertEquals(exec(mdl, "lambda"), 100.0);
-        assertEquals(exec(ent("lambda", mdl)), 100.0);
-        assertEquals(result(ent("lambda", mdl)), ent("lambda", 100.0));
+//        logger.info("invoke eval: " + eval(mo, "req"));
+        assertEquals(exec(mdl, "req"), 100.0);
+        assertEquals(exec(ent("req", mdl)), 100.0);
+        assertEquals(result(ent("req", mdl)), ent("req", 100.0));
     }
 
     @Test

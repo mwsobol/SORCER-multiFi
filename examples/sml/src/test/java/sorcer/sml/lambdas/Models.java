@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.ent.operator;
 import sorcer.service.Morpher;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.*;
@@ -38,11 +39,11 @@ public class Models {
 
 		Model mdl = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 				ent("add/x1", 20.0), ent("add/x2", 80.0),
-				lambda("add", (Context<Double> model) ->
+				operator.req("add", (Context<Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
-				lambda("multiply", (Context<Double> model) ->
+				operator.req("multiply", (Context<Double> model) ->
 						v(model, "multiply/x1") * v(model, "multiply/x2")),
-				lambda("subtract", (Context<Double> model) ->
+				operator.req("subtract", (Context<Double> model) ->
 						v(model, "multiply") - v(model, "add")),
 				response("subtract", "multiply", "add"));
 
@@ -59,11 +60,11 @@ public class Models {
 
 		Model mdl = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			    ent("add/x1", 20.0), ent("add/x2", 80.0),
-				lambda("add", (Context<Double> model) ->
+				operator.req("add", (Context<Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
-				lambda("multiply", (Context<Double> model) ->
+				operator.req("multiply", (Context<Double> model) ->
 						v(model, "multiply/x1") * v(model, "multiply/x2")),
-				lambda("subtract", (Context<Double> model) ->
+				operator.req("subtract", (Context<Double> model) ->
 						v(model, "multiply") - v(model, "add")),
 				response("subtract", "multiply", "add"));
 
@@ -82,13 +83,13 @@ public class Models {
 		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			    ent("add/x1", 20.0), ent("add/x2", 80.0),
 			    ent("multiply/done", false),
-				lambda("add", (Context<Double> model) ->
+				operator.req("add", (Context<Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
-				lambda("multiply", (Context<Double> model) ->
+				operator.req("multiply", (Context<Double> model) ->
 						v(model, "multiply/x1") * v(model, "multiply/x2")),
-				lambda("subtract", (Context<Double> model) ->
+				operator.req("subtract", (Context<Double> model) ->
 						v(model, "multiply") - v(model, "add")),
-				lambda("multiply2", (Context<Object> cxt) -> {
+				operator.req("multiply2", (Context<Object> cxt) -> {
 					ent multiply = (ent) get(cxt, "multiply");
 					double out = 0;
 					if (value(cxt, "multiply/done").equals(false)) {
@@ -99,7 +100,7 @@ public class Models {
 					}
 					return out;
 				}),
-				lambda("multiply3", (Context<Object> cxt) -> {
+				operator.req("multiply3", (Context<Object> cxt) -> {
 					ent multiply = (ent) get(cxt, "multiply");
 					double out = 0;
 					if (value(cxt, "multiply/done").equals(false)) {
@@ -127,13 +128,13 @@ public class Models {
 
 		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			    ent("add/x1", 20.0), ent("add/x2", 80.0),
-				lambda("add", (Context <Double> model) ->
+				operator.req("add", (Context <Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
-				lambda("multiply", (Context <Double> model) ->
+				operator.req("multiply", (Context <Double> model) ->
 						v(model, "multiply/x1") * v(model, "multiply/x2")),
-				lambda("subtract", (Context <Double> model) ->
+				operator.req("subtract", (Context <Double> model) ->
 						v(model, "multiply") - v(model, "add")),
-				lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
+				operator.req("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
 					double out = (double) exec(entry, scope);
 					// out is result of multiply
 					if (out > 400) {
@@ -160,15 +161,15 @@ public class Models {
 		ContextDomain mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			    ent("add/x1", 20.0), ent("add/x2", 80.0),
 			    ent("arg/x1", 30.0), ent("arg/x2", 90.0),
-				lambda("add", (Context <Double> model) ->
+				operator.req("add", (Context <Double> model) ->
 								v(model, "add/x1") + v(model, "add/x2"),
 						result("add/out",
 								inPaths("add/x1", "add/x2"))),
-				lambda("multiply", (Context <Double> model) ->
+				operator.req("multiply", (Context <Double> model) ->
 								v(model, "multiply/x1") * v(model, "multiply/x2"),
 						result("multiply/out",
 								inPaths("multiply/x1", "multiply/x2"))),
-				lambda("subtract", (Context <Double> model) ->
+				operator.req("subtract", (Context <Double> model) ->
 								v(model, "multiply/out") - v(model, "add/out"),
 						result("model/response")),
 				response("subtract", "multiply/out", "add/out", "model/response"));
@@ -203,17 +204,17 @@ public class Models {
 						inPaths("add/x1", "add/x2")))),
 				ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
 						inPaths("multiply/out", "add/out")))),
-				response("subtract", "lambda", "out"));
+				response("subtract", "req", "out"));
 
 	//	dependsOn(mo, dep("subtract", paths("multiply", "add")));
 
-		add(mo, lambda("lambda", entFunction));
+		add(mo, operator.req("req", entFunction));
 
 		Context out = response(mo);
 		logger.info("response: " + out);
 		assertTrue(get(out, "subtract").equals(400.0));
 		assertTrue(get(out, "out").equals(1500.5));
-		assertTrue(get(out, "lambda").equals(1500.5));
+		assertTrue(get(out, "req").equals(1500.5));
 	}
 
 	@Test
@@ -248,19 +249,19 @@ public class Models {
 				ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
 						inPaths("multiply/out", "add/out")))),
 				response("subtract", "multiply"));
-//				response("lambda"));
+//				response("req"));
 
-		dependsOn(mdl, dep("subtract", paths("lambda", "add")));
+		dependsOn(mdl, dep("subtract", paths("req", "add")));
 
 		add(mdl, modelTask);
-		add(mdl, lambda("lambda", lambdaTask));
+		add(mdl, operator.req("req", lambdaTask));
 //		responseDown(mdl, "multiply");
-		responseUp(mdl, "lambda");
+		responseUp(mdl, "req");
 
 		Context out = response(mdl);
 		logger.info("response: " + out);
 //		assertTrue(getValue(out, "multiply").equals(500.0));
-//		assertTrue(getValue(out, "lambda").equals(2000.0));
+//		assertTrue(getValue(out, "req").equals(2000.0));
 //		assertTrue(getValue(out, "subtract").equals(1900.0));
 	}
 
@@ -274,7 +275,7 @@ public class Models {
 
 		Block lb = block(sig(ServiceConcatenator.class),
 				context(ent("sum", 0.0)),
-				loop(0, 100, task(lambda("sum", (Context<Double> cxt) -> {
+				loop(0, 100, task(operator.req("sum", (Context<Double> cxt) -> {
 					Double out = value(cxt, "sum") + (Double) exec(ti);
 					putValue(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
 					return out; }))));
@@ -294,7 +295,7 @@ public class Models {
 		Block lb = block(sig(ServiceConcatenator.class),
 				context(ent("sum", 0.0),
 					ent("from", 320.0), ent("to", 420.0)),
-				loop(0, 100, task(lambda("sum", (Context<Double> cxt) -> {
+				loop(0, 100, task(operator.req("sum", (Context<Double> cxt) -> {
 					Double from = value(cxt, "from");
 					Double to = value(cxt, "to");
 					Double out = value(cxt, "sum") + (Double) exec(ti);
