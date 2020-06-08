@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -92,6 +93,15 @@ public class SorcerRioResolver extends SorcerResolver implements SettableResolve
             ((SettableResolver)resolver).setFlatDirectories(directories);
         }
         return this;
+    }
+
+    @Override
+    public Collection<File> getFlatDirectories() {
+        Collection<File> results = new ArrayList<>();
+        if(resolver instanceof SettableResolver) {
+            results.addAll(((SettableResolver)resolver).getFlatDirectories());
+        }
+        return results;
     }
 
 }

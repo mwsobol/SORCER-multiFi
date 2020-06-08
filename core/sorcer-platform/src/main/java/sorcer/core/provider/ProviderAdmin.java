@@ -46,7 +46,7 @@ public class ProviderAdmin implements ProviderAdminMBean {
      */
     public void register() {
         try {
-            JMXConnectionUtil.createJMXConnection();
+            //JMXConnectionUtil.createJMXConnection();
             ObjectName objectName = getObjectName();
             MBeanServer mBeanServer = MBeanServerFactory.getMBeanServer();
             if(mBeanServer.isRegistered(objectName)) {

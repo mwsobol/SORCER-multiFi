@@ -28,17 +28,17 @@ import org.rioproject.resolver.maven2.Repository
 @Component('org.rioproject.start')
 class StartMonitorConfig {
 
-    String[] getMonitorConfigArgs(String rioHome) {
+    static String[] getMonitorConfigArgs(String rioHome) {
         def configArgs = [rioHome+'/config/common.groovy', rioHome+'/config/monitor.groovy']
         return configArgs as String[]
     }
 
-    String[] getLookupConfigArgs(String rioHome) {
+    static String[] getLookupConfigArgs(String rioHome) {
         def configArgs = [rioHome+'/config/common.groovy', rioHome+'/config/reggie.groovy']
         return configArgs as String[]
     }
 
-    void sorcerData() {
+    static void sorcerData() {
         String user = System.properties['user.name']
         String tmpDir = System.getenv("TMPDIR")==null?System.properties['java.io.tmpdir']:System.getenv("TMPDIR")
         File sorcerDataDir = new File("${tmpDir}/sorcer-${user}/data")

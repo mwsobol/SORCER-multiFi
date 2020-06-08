@@ -411,7 +411,9 @@ public class SorcerEnv extends SOS {
                 }
 			}
 		} catch (Exception le) {
-			logger.warn("* could not load properties: " + filename);
+			logger.warn(String.format("SORCER_HOME: %s, sorcer.home: %s",
+					System.getenv("SORCER_HOME"), System.getProperty("sorcer.home")));
+			logger.warn(String.format("* could not load properties: %s %s", filename, le.getMessage()));
 			throw new ConfigurationException(le);
 		}
 
