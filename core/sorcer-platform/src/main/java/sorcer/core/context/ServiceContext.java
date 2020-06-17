@@ -22,6 +22,7 @@ import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
 import sorcer.co.tuple.Tuple2;
@@ -34,7 +35,11 @@ import sorcer.core.context.node.ContextNodeException;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.monitor.MonitorUtil;
+import sorcer.core.monitor.MonitoringSession;
+import sorcer.core.plexus.MorphFidelity;
+import sorcer.core.service.Projection;
 import sorcer.core.signature.RemoteSignature;
+import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Exerter;
 import sorcer.core.provider.ServiceExerter;
 import sorcer.core.signature.ServiceSignature;
@@ -47,6 +52,7 @@ import sorcer.util.ObjectCloner;
 import sorcer.util.Row;
 import sorcer.util.SorcerUtil;
 
+import javax.security.auth.Subject;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -106,7 +112,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public boolean isPersistantTaskAssociated = false;
 
 	/** EMPTY LEAF NODE ie. node with no data and not empty string */
-	public final static String EMPTY_LEAF = ":Empty";
+	public static String EMPTY_LEAF = ":Empty";
 
 	// this class logger
 	static Logger logger = LoggerFactory.getLogger(ServiceContext.class);
@@ -3747,4 +3753,112 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 		return context;
 	}
+
+    public Context copyFrom(ServiceContext context) {
+        this.key = (String) context.key;
+        this.out = context.out;
+
+        // properties from MultiFiSlot
+        this.impl = context.impl;
+        this.multiMetaFi = context.multiMetaFi;
+        this.morpher = context.morpher;
+        this.annotation = context.annotation;
+        this.valClass = context.valClass;
+        this.scope = context.scope;
+        this.isValid = context.isValid;
+        this.isChanged = context.isChanged;
+        this.isCached = context.isCached;
+        this.index = context.index;
+        this.type = context.type;
+        this.contextReturn = context.contextReturn;
+
+        // properties from ServiceMogram
+        this.mogramId = context.mogramId;
+        this.parentId = context.parentId;
+        this.parent = context.parent;
+        this.parentPath = context.parentPath;
+        this.execPath = context.execPath;
+        this.sessionId = context.sessionId;
+        this.subjectId = context.subjectId;
+        this.subject = context.subject;
+        this.ownerId = context.ownerId;
+        this.runtimeId = context.runtimeId;
+        this.lsbId = context.lsbId;
+        this.msbId = context.msbId;
+        this.domainId = context.domainId;
+        this.subdomainId = context.subdomainId;
+        this.domainName = context.domainName;
+        this.subdomainName = context.subdomainName;
+        this.fiManager = context.fiManager;
+        this.projection = context.projection;
+        this.metaFiNames = context.metaFiNames;
+        this.profile = context.profile;
+        this.domainStrategy = context.domainStrategy;
+        this.differentiator = context.differentiator;
+        this.fdDifferentiator = context.fdDifferentiator;
+        this.globalDifferentiator = context.globalDifferentiator;
+        this.mdaFi = context.mdaFi;
+        this.couplings = context.couplings;
+        this.contextSelector = context.contextSelector;
+        this.status = context.status;
+        this.priority = context.priority;
+        this.description = context.description;
+        this.projectName = context.projectName;
+        this.isRevaluable = context.isRevaluable;
+        this.isSuper = context.isSuper;
+        this.isInitializable = context.isInitializable;
+        this.dbUrl = context.dbUrl;
+        this.multiMetaFi = context.multiMetaFi;
+        this.serviceMorphFidelity = context.serviceMorphFidelity;
+        this.principal = context.principal;
+        this.serviceFidelitySelector = context.serviceFidelitySelector;
+        this.creationDate = context.creationDate;
+        this.lastUpdateDate = context.lastUpdateDate;
+        this.goodUntilDate = context.goodUntilDate;
+        this.accessClass = context.accessClass;
+        this.isExportControlled = context.isExportControlled;
+        this.monitorSession = context.monitorSession;
+        this.builder = context.builder;
+        this.configFilename = context.configFilename;
+        this.dataContext = context.dataContext;
+        this.provider = context.provider;
+        this.isEvaluated = context.isEvaluated;
+
+        // ServiceContext proprties
+        this.data = context.data;
+        this.paths = context.paths;
+        this.subjectPath = context.subjectPath;
+        this.subjectValue = context.subjectValue;
+        this.jobContextReturn = contextReturn;
+
+        this.argsPath = context.argsPath;
+        this.parameterTypesPath = context.parameterTypesPath;
+        this.isShared = context.isShared;
+        this.prefix = context.prefix;
+        this.entryLists = context.entryLists;
+        this.metacontext = context.metacontext;
+        this.initContext = context.initContext;
+        this.exertion = context.exertion;
+        this.currentPrefix = context.currentPrefix;
+        this.isFinalized = context.isFinalized;
+        this.type = context.type;
+        this.direction = context.direction;
+
+        this.isSoft = context.isSoft;
+        this.isSelf = context.isSelf;
+        this.isPersistantTaskAssociated = context.isPersistantTaskAssociated;
+
+        return this;
+    }
+
+    @Override
+    public Fidelity selectFidelity(String selection) throws ConfigurationException {
+        if (selection == null ) {
+            throw new ConfigurationException();
+        }
+        copyFrom((ServiceContext)multiMetaFi.selectSelect(selection));
+        isChanged = true;
+        isValid = true;
+        return new Fidelity(new Context[] { this });
+    }
 }
