@@ -7,7 +7,6 @@ import org.sorcer.test.ProjectContext;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.context.model.ent.Function;
-import sorcer.ent.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ent;
@@ -38,7 +37,7 @@ public class Entries {
 
         // the model execute a req expression with no model state altered
         Model mdl = model(ent("x1", 10.0), ent("x2", 20.0),
-                operator.req("x3", (Model model) -> ent("x5", (double)exec(model, "x2") + 100.0)));
+                req("x3", (Model model) -> ent("x5", (double)exec(model, "x2") + 100.0)));
 
         logger.info("x3: " + eval(mdl, "x3"));
         assertEquals(120.0, exec((ent)exec(mdl, "x3")));
@@ -49,13 +48,13 @@ public class Entries {
     public void lambdaEntries() throws Exception {
 
         // no free variables
-        Function y1 = operator.req("y1", () -> 20.0 * pow(0.5, 6) + 10.0);
+        Function y1 = req("y1", () -> 20.0 * pow(0.5, 6) + 10.0);
 
         assertEquals(10.3125, exec(y1));
 
         // the model itself as a free variable of the req y2
         Model mo = model(ent("x1", 10.0), ent("x2", 20.0),
-                operator.req("y2", (Context<Double> cxt) ->
+                req("y2", (Context<Double> cxt) ->
                         value(cxt, "x1") + value(cxt, "x2")));
 
         assertEquals(30.0, exec(mo, "y2"));
@@ -93,7 +92,7 @@ public class Entries {
                 ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
                 ent("cmd", invoker(args)),
-                operator.req("req", verifyExitValue),
+                req("req", verifyExitValue),
                 response("req", "cmd", "cmd/out"));
 
         Context out = response(m);
@@ -108,7 +107,7 @@ public class Entries {
     public void entryAsLambdaInvoker() throws Exception {
 
         Model mo = model(val("x", 10.0), val("y", 20.0),
-                operator.prc(invoker("req", (Context<Double> cxt) -> value(cxt, "x")
+                prc(invoker("req", (Context<Double> cxt) -> value(cxt, "x")
                         + value(cxt, "y")
                         + 30, args("x", "y"))));
         logger.info("invoke eval: " + eval(mo, "req"));
@@ -120,7 +119,7 @@ public class Entries {
 
         // an entry as a Service req
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                operator.req("s1", (Arg[] args) -> {
+               req("s1", (Arg[] args) -> {
                     Arg.set(args, "x",  Arg.get(args, "y"));
                     return exec(Arg.selectService(args, "x")); },
                         args("x", "y")));
@@ -133,9 +132,9 @@ public class Entries {
     public void lambdaClient() throws Exception {
         // args as ValueCallable and  Requestor lambdas
         Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
-                operator.req("multiply", (Context<Double> model) ->
+                req("multiply", (Context<Double> model) ->
                         value(model, "multiply/x1") * value(model, "multiply/x2")),
-                operator.req("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
+                req("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
                     double out = (double)exec(entry, scope);
                     if (out > 400) {
                         putValue(scope, "multiply/x1", 20.0);
