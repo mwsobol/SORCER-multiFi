@@ -60,6 +60,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
+import static sorcer.eo.operator.cxtFi;
 import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.task;
 import static sorcer.mo.operator.setValues;
@@ -3755,74 +3756,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
     public Context copyFrom(ServiceContext context) {
-        this.key = (String) context.key;
-        this.out = context.out;
-
-        // properties from MultiFiSlot
-        this.impl = context.impl;
-        this.multiMetaFi = context.multiMetaFi;
-        this.morpher = context.morpher;
-        this.annotation = context.annotation;
-        this.valClass = context.valClass;
-        this.scope = context.scope;
-        this.isValid = context.isValid;
-        this.isChanged = context.isChanged;
-        this.isCached = context.isCached;
-        this.index = context.index;
-        this.type = context.type;
-        this.contextReturn = context.contextReturn;
-
-        // properties from ServiceMogram
-        this.mogramId = context.mogramId;
-        this.parentId = context.parentId;
-        this.parent = context.parent;
-        this.parentPath = context.parentPath;
-        this.execPath = context.execPath;
-        this.sessionId = context.sessionId;
-        this.subjectId = context.subjectId;
-        this.subject = context.subject;
-        this.ownerId = context.ownerId;
-        this.runtimeId = context.runtimeId;
-        this.lsbId = context.lsbId;
-        this.msbId = context.msbId;
-        this.domainId = context.domainId;
-        this.subdomainId = context.subdomainId;
-        this.domainName = context.domainName;
-        this.subdomainName = context.subdomainName;
-        this.fiManager = context.fiManager;
-        this.projection = context.projection;
-        this.metaFiNames = context.metaFiNames;
-        this.profile = context.profile;
-        this.domainStrategy = context.domainStrategy;
-        this.differentiator = context.differentiator;
-        this.fdDifferentiator = context.fdDifferentiator;
-        this.globalDifferentiator = context.globalDifferentiator;
-        this.mdaFi = context.mdaFi;
-        this.couplings = context.couplings;
-        this.contextSelector = context.contextSelector;
-        this.status = context.status;
-        this.priority = context.priority;
-        this.description = context.description;
-        this.projectName = context.projectName;
-        this.isRevaluable = context.isRevaluable;
-        this.isSuper = context.isSuper;
-        this.isInitializable = context.isInitializable;
-        this.dbUrl = context.dbUrl;
-        this.multiMetaFi = context.multiMetaFi;
-        this.serviceMorphFidelity = context.serviceMorphFidelity;
-        this.principal = context.principal;
-        this.serviceFidelitySelector = context.serviceFidelitySelector;
-        this.creationDate = context.creationDate;
-        this.lastUpdateDate = context.lastUpdateDate;
-        this.goodUntilDate = context.goodUntilDate;
-        this.accessClass = context.accessClass;
-        this.isExportControlled = context.isExportControlled;
-        this.monitorSession = context.monitorSession;
-        this.builder = context.builder;
-        this.configFilename = context.configFilename;
-        this.dataContext = context.dataContext;
-        this.provider = context.provider;
-        this.isEvaluated = context.isEvaluated;
+        super.copyFrom(context);
 
         // ServiceContext proprties
         this.data = context.data;
@@ -3856,9 +3790,12 @@ public class ServiceContext<T> extends ServiceMogram implements
         if (selection == null ) {
             throw new ConfigurationException();
         }
-        copyFrom((ServiceContext)multiMetaFi.selectSelect(selection));
+        Fi mFi = multiFi;
+        Context selected = (Context) multiFi.selectSelect(selection);
+        copyFrom((ServiceContext) selected);
+        multiFi = mFi;
         isChanged = true;
         isValid = true;
-        return new Fidelity(new Context[] { this });
+        return cxtFi(selected.getName(), selected );
     }
 }

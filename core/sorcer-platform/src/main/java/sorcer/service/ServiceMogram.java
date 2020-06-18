@@ -852,6 +852,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
                     }
                 } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.META) {
                     fi = selectMetafidelity((Fidelity) a);
+                } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.CONTEXT) {
+                    dataContext.selectFidelity(a.getName());
                 }
         }
         return fi;
@@ -1239,5 +1241,64 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public void execDependencies(String path, Arg... args) throws ContextException {
         // implement in subclasses
+    }
+
+    public ServiceMogram copyFrom(ServiceMogram mogram) {
+        super.copyFrom(mogram);
+
+        // properties from ServiceMogram
+        this.multiMetaFi = mogram.multiMetaFi;
+        this.mogramId = mogram.mogramId;
+        this.parentId = mogram.parentId;
+        this.parent = mogram.parent;
+        this.parentPath = mogram.parentPath;
+        this.execPath = mogram.execPath;
+        this.sessionId = mogram.sessionId;
+        this.subjectId = mogram.subjectId;
+        this.subject = mogram.subject;
+        this.ownerId = mogram.ownerId;
+        this.runtimeId = mogram.runtimeId;
+        this.lsbId = mogram.lsbId;
+        this.msbId = mogram.msbId;
+        this.domainId = mogram.domainId;
+        this.subdomainId = mogram.subdomainId;
+        this.domainName = mogram.domainName;
+        this.subdomainName = mogram.subdomainName;
+        this.fiManager = mogram.fiManager;
+        this.projection = mogram.projection;
+        this.metaFiNames = mogram.metaFiNames;
+        this.profile = mogram.profile;
+        this.domainStrategy = mogram.domainStrategy;
+        this.differentiator = mogram.differentiator;
+        this.fdDifferentiator = mogram.fdDifferentiator;
+        this.globalDifferentiator = mogram.globalDifferentiator;
+        this.mdaFi = mogram.mdaFi;
+        this.couplings = mogram.couplings;
+        this.contextSelector = mogram.contextSelector;
+        this.status = mogram.status;
+        this.priority = mogram.priority;
+        this.description = mogram.description;
+        this.projectName = mogram.projectName;
+        this.isRevaluable = mogram.isRevaluable;
+        this.isSuper = mogram.isSuper;
+        this.isInitializable = mogram.isInitializable;
+        this.dbUrl = mogram.dbUrl;
+        this.multiMetaFi = mogram.multiMetaFi;
+        this.serviceMorphFidelity = mogram.serviceMorphFidelity;
+        this.principal = mogram.principal;
+        this.serviceFidelitySelector = mogram.serviceFidelitySelector;
+        this.creationDate = mogram.creationDate;
+        this.lastUpdateDate = mogram.lastUpdateDate;
+        this.goodUntilDate = mogram.goodUntilDate;
+        this.accessClass = mogram.accessClass;
+        this.isExportControlled = mogram.isExportControlled;
+        this.monitorSession = mogram.monitorSession;
+        this.builder = mogram.builder;
+        this.configFilename = mogram.configFilename;
+        this.dataContext = mogram.dataContext;
+        this.provider = mogram.provider;
+        this.isEvaluated = mogram.isEvaluated;
+
+        return this;
     }
 }

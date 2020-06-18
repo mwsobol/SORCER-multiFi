@@ -1770,6 +1770,20 @@ operator extends Operator {
         return fi;
     }
 
+    public static Context cmFi(Context... contexts) {
+        return  cmFi(null,  contexts);
+    }
+
+    public static Context cmFi(String name, Context... contexts) {
+        PositionalContext cxt = new PositionalContext(name);
+        for (Context c : contexts) {
+            cxt.getMultiFi().getSelects().add(c);
+        }
+        cxt.copyFrom((ServiceContext)contexts[0]);
+        cxt.getMultiFi().setSelect(contexts[0]);
+        return cxt;
+    }
+
     public static Fidelity dspFi(String name) {
         Fidelity fi = new Fidelity(name);
         fi.fiType = Fi.Type.DISPATCHER;
