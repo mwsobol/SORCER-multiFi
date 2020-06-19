@@ -58,6 +58,7 @@ import sorcer.util.url.sos.SdbUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.InetAddress;
@@ -1521,8 +1522,46 @@ operator extends Operator {
         return System.getProperty(property);
     }
 
-    public static String property(String property, String value) {
+    public static String property(String property, Properties properties) {
+        return properties.getProperty(property);
+    }
+
+    public static String setProperty(String property, String value) {
         return System.setProperty(property, value);
+    }
+
+    public static Object setProperty(String property,  String value, Properties properties) {
+        return properties.setProperty(property, value);
+    }
+
+    public static Properties resourceProperties(String resourceName, Object dependent) throws IOException {
+        ClassLoader classLoader = dependent.getClass().getClassLoader();
+        URL url = classLoader.getResource(resourceName);
+        Properties properties = new Properties();
+        try (InputStream rs = url.openStream()) {
+            properties.load(rs);
+        }
+        return properties;
+    }
+
+    public static Properties providerProperties(String propertiesFile, Object provider) throws IOException {
+        Class providerClass = null;
+        if (provider instanceof Class) {
+            providerClass = (Class) provider;
+        } else {
+            providerClass = provider.getClass();
+        }
+        return new PropertyHelper(propertiesFile, providerClass.getClassLoader()).getProperties();
+    }
+
+    public static Properties modelProperties(Class providerClass) throws IOException {
+        String propertiesFile = System.getProperty("model.properties");
+        return new PropertyHelper(propertiesFile, providerClass.getClassLoader()).getProperties();
+    }
+
+    public static Properties providerProperties(Class providerClass) throws IOException {
+        String propertiesFile = System.getProperty("provider.properties");
+        return new PropertyHelper(propertiesFile, providerClass.getClassLoader()).getProperties();
     }
 
     public static String home() {
@@ -1729,6 +1768,20 @@ operator extends Operator {
         fi.setSelect(select);
         fi.fiType = Fi.Type.CONTEXT;
         return fi;
+    }
+
+    public static Context cmFi(Context... contexts) {
+        return  cmFi(null,  contexts);
+    }
+
+    public static Context cmFi(String name, Context... contexts) {
+        PositionalContext cxt = new PositionalContext(name);
+        for (Context c : contexts) {
+            cxt.getMultiFi().getSelects().add(c);
+        }
+        cxt.copyFrom((ServiceContext)contexts[0]);
+        cxt.getMultiFi().setSelect(contexts[0]);
+        return cxt;
     }
 
     public static Fidelity dspFi(String name) {

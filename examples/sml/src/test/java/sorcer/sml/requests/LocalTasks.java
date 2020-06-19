@@ -33,7 +33,7 @@ public class LocalTasks {
 	public void exertTask() throws Exception  {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
+			cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
@@ -43,15 +43,53 @@ public class LocalTasks {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
-				value(cxt, outPaths("result/eval", "arg/x1"))));
+			value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
+
+	@Test
+	public void exertMultiFiContextTask() throws Exception  {
+
+		Context cxt1 = context("cxt1",
+			inVal("arg/x1", 20.0),
+			inVal("arg/x2", 80.0));
+
+		Context cxt2 = context("cxt2",
+			inVal("arg/x1", 30.0),
+			inVal("arg/x2", 90.0));
+
+		Task t5 = task("t5", sig("add", AdderImpl.class),
+				cmFi(cxt1, cxt2));
+
+		Routine out = exert(t5);
+		Context cxt = context(out);
+
+		// getValue a single context argument
+		assertEquals(100.0, value(cxt, "result/eval"));
+
+		// getValue the subcontext output from the context
+		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
+			value(cxt, outPaths("result/eval", "arg/x1"))));
+
+
+		out = exert(t5, cxtFi("cxt2"));
+		cxt = context(out);
+
+		// getValue a single context argument
+		assertEquals(120.0, value(cxt, "result/eval"));
+
+		// getValue the subcontext output from the context
+		assertTrue(context(ent("result/eval", 120.0), ent("arg/x1", 30.0)).equals(
+			value(cxt, outPaths("result/eval", "arg/x1"))));
+
+	}
+
 
 	@Test
 	public void exertOpTask() throws Exception  {
 
 		Task t5 = task(sig(AdderImpl.class), op("add"),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
+			cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
@@ -65,7 +103,7 @@ public class LocalTasks {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
-				value(cxt, outPaths("result/eval", "arg/x1"))));
+			value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
 

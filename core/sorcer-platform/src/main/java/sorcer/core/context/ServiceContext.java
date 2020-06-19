@@ -22,6 +22,7 @@ import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
 import sorcer.co.tuple.Tuple2;
@@ -34,7 +35,11 @@ import sorcer.core.context.node.ContextNodeException;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.monitor.MonitorUtil;
+import sorcer.core.monitor.MonitoringSession;
+import sorcer.core.plexus.MorphFidelity;
+import sorcer.core.service.Projection;
 import sorcer.core.signature.RemoteSignature;
+import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Exerter;
 import sorcer.core.provider.ServiceExerter;
 import sorcer.core.signature.ServiceSignature;
@@ -47,6 +52,7 @@ import sorcer.util.ObjectCloner;
 import sorcer.util.Row;
 import sorcer.util.SorcerUtil;
 
+import javax.security.auth.Subject;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -54,6 +60,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
+import static sorcer.eo.operator.cxtFi;
 import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.task;
 import static sorcer.mo.operator.setValues;
@@ -106,7 +113,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public boolean isPersistantTaskAssociated = false;
 
 	/** EMPTY LEAF NODE ie. node with no data and not empty string */
-	public final static String EMPTY_LEAF = ":Empty";
+	public static String EMPTY_LEAF = ":Empty";
 
 	// this class logger
 	static Logger logger = LoggerFactory.getLogger(ServiceContext.class);
@@ -3747,4 +3754,48 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 		return context;
 	}
+
+    public Context copyFrom(ServiceContext context) {
+        super.copyFrom(context);
+
+        // ServiceContext proprties
+        this.data = context.data;
+        this.paths = context.paths;
+        this.subjectPath = context.subjectPath;
+        this.subjectValue = context.subjectValue;
+        this.jobContextReturn = contextReturn;
+
+        this.argsPath = context.argsPath;
+        this.parameterTypesPath = context.parameterTypesPath;
+        this.isShared = context.isShared;
+        this.prefix = context.prefix;
+        this.entryLists = context.entryLists;
+        this.metacontext = context.metacontext;
+        this.initContext = context.initContext;
+        this.exertion = context.exertion;
+        this.currentPrefix = context.currentPrefix;
+        this.isFinalized = context.isFinalized;
+        this.type = context.type;
+        this.direction = context.direction;
+
+        this.isSoft = context.isSoft;
+        this.isSelf = context.isSelf;
+        this.isPersistantTaskAssociated = context.isPersistantTaskAssociated;
+
+        return this;
+    }
+
+    @Override
+    public Fidelity selectFidelity(String selection) throws ConfigurationException {
+        if (selection == null ) {
+            throw new ConfigurationException();
+        }
+        Fi mFi = multiFi;
+        Context selected = (Context) multiFi.selectSelect(selection);
+        copyFrom((ServiceContext) selected);
+        multiFi = mFi;
+        isChanged = true;
+        isValid = true;
+        return cxtFi(selected.getName(), selected );
+    }
 }

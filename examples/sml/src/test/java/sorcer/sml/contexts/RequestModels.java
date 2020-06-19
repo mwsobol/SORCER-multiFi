@@ -13,7 +13,6 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.Connector;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.ent.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Flow;
 import sorcer.service.modeling.Model;
@@ -43,7 +42,7 @@ public class RequestModels {
     public void lambdaInvoker() throws Exception {
 
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                operator.prc(invoker("req", cxt -> (double) value(cxt, "x")
+                prc(invoker("req", cxt -> (double) value(cxt, "x")
                         + (double) value(cxt, "y")
                         + 30, args("x", "y"))));
         logger.info("invoke eval: " + eval(mo, "req"));

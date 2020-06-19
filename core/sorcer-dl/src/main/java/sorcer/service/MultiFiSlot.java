@@ -28,10 +28,10 @@ import java.rmi.RemoteException;
  * @author Mike Sobolewski
  */
 public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
-	private  static final long serialVersionUID =  1L;
+    private static final long serialVersionUID = 1L;
 
     // selectable carrier (fidelity) of out
-	protected Object impl;
+    protected Object impl;
 
     protected Fi multiFi;
 
@@ -61,14 +61,14 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
     protected Context.Return contextReturn;
 
     public MultiFiSlot() {
-	}
+    }
 
     public MultiFiSlot(K key) {
         this.key = key;
     }
 
     public MultiFiSlot(K key, Object item) {
-        if(key==null)
+        if (key == null)
             throw new IllegalArgumentException("key must not be null");
         this.key = key;
         if (item instanceof Fi) {
@@ -79,13 +79,13 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
             this.impl = item;
         }
         isValid = true;
-	}
+    }
 
-	public Object getImpl() {
+    public Object getImpl() {
         return impl;
-	}
+    }
 
-	@Override
+    @Override
     public O getData(Arg... args) throws ContextException {
         if (out != null) {
             return out;
@@ -95,12 +95,12 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
     }
 
     public void setImpl(Object impl) {
-		this.impl = impl;
-	}
+        this.impl = impl;
+    }
 
-	public Object execute(Arg... entries) throws ServiceException, RemoteException {
-		return impl;
-	}
+    public Object execute(Arg... entries) throws ServiceException, RemoteException {
+        return impl;
+    }
 
     /**
      * Returns the index assigned by the container.
@@ -147,6 +147,7 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
             ((Routine) impl).setContext(scope);
         }
     }
+
     public boolean isValid() {
         return isValid;
     }
@@ -199,7 +200,7 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
     }
 
     public String fiName() {
-        return ((Identifiable)multiFi.getSelect()).getName();
+        return ((Identifiable) multiFi.getSelect()).getName();
     }
 
     public Context.Return getContextReturn() {
@@ -223,7 +224,7 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
     }
 
     public void selectFidelity(Fidelity fi) throws ConfigurationException {
-        ((Fidelity)multiFi).selectSelect(fi);
+        ((Fidelity) multiFi).selectSelect(fi);
     }
 
     public boolean isAnnotated() {
@@ -237,10 +238,10 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
             } else if (impl == null && ((MultiFiSlot) object).impl != null) {
                 return false;
             } else if (((MultiFiSlot) object).key.equals(key)
-                    && ((MultiFiSlot) object).impl == impl) {
+                && ((MultiFiSlot) object).impl == impl) {
                 return true;
-            }  else if (((MultiFiSlot) object).key.equals(key)
-                    && ((MultiFiSlot) object).impl.equals(impl)) {
+            } else if (((MultiFiSlot) object).key.equals(key)
+                && ((MultiFiSlot) object).impl.equals(impl)) {
                 return true;
             }
         }
@@ -252,5 +253,26 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
         // define how the select of a fidelity is implemented by this association
         impl = fidelity.getSelect();
         return impl;
+    }
+
+    public MultiFiSlot copyFrom(MultiFiSlot slot) {
+        // properties from Slot
+        this.key = (K) slot.key;
+        this.out = (O) slot.out;
+
+        // properties from MultiFiSlot
+        this.impl = slot.impl;
+        this.morpher = slot.morpher;
+        this.annotation = slot.annotation;
+        this.valClass = slot.valClass;
+        this.scope = slot.scope;
+        this.isValid = slot.isValid;
+        this.isChanged = slot.isChanged;
+        this.isCached = slot.isCached;
+        this.index = slot.index;
+        this.type = slot.type;
+        this.contextReturn = slot.contextReturn;
+
+        return this;
     }
 }

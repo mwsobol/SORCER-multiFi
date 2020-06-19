@@ -204,4 +204,10 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 	public int getTally() {
 		return tally;
 	}
+
+	@Override
+	public Context copyFrom(ServiceContext context) {
+		this.tally = ((PositionalContext)context).tally;
+		return super.copyFrom(context);
+	}
 }

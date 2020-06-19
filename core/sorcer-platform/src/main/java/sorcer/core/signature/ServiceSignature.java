@@ -602,6 +602,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 
 	public void setDeployment(ServiceDeployment deployment) {
 		this.deployment = deployment;
+		operation.isProvisionable = deployment.isProvisionable();
 	}
 
 	/* (non-Javadoc)
