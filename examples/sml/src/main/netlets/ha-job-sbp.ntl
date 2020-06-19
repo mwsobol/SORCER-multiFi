@@ -21,27 +21,27 @@ import sorcer.arithmetic.provider.Subtractor
 
 String configDir = home() + "/../../../examples/sml/configs/"
 
-Task f4 = task("f4", sig("multiply", Multiplier.class,
+Task f4 = task("f4", sig("multiply", Multiplier.class, Strategy.Provision.YES,
                 deploy(configuration(configDir+"/multiplier-prv.config"),
                         idle(1),
                         Deployment.Type.SELF)),
         context("multiply", inVal("arg/x1", 10.0d),
                 inVal("arg/x2", 50.0d), result("result/y1")));
 
-Task f5 = task("f5", sig("add", Adder.class,
-                deploy(configuration(configDir+"/AdderProviderConfig.groovy"))),
+Task f5 = task("f5", sig("add", Adder.class, Strategy.Provision.YES,
+            deploy(configuration(configDir+"/adder-prv.config"))),
         context("add", inVal("arg/x3", 20.0d), inVal("arg/x4", 80.0d),
                 result("result/y2")));
 
-Task f3 = task("f3", sig("subtract", Subtractor.class,
+Task f3 = task("f3", sig("subtract", Subtractor.class, Strategy.Provision.YES,
                 deploy(maintain(2, perNode(2)),
                         idle(1),
                         configuration(configDir+"/subtractor-prv.config"))),
         context("subtract", inVal("arg/x5"),
                 inVal("arg/x6"), result("result/y3")));
 
-job("f1", sig("exert", Jobber.class, deploy(idle(1))),
+job("f1", sig("exert", Jobber.class, Strategy.Provision.YES, deploy(idle(1))),
         job("f2", f4, f5), f3,
-        strategy(Strategy.Provision.YES),
+        //strategy(Strategy.Provision.YES),
         pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
         pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
