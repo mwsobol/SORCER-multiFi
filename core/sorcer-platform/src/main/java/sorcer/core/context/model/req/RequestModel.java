@@ -69,7 +69,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
         super();
         key = SRV_MODEL;
         setSignature();
-        setSubject("req/model", new Date());
+        setSubject("fxn/model", new Date());
         isRevaluable = true;
     }
 

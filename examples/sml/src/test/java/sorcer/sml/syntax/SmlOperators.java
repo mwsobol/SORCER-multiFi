@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.ent.operator;
 import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
@@ -54,7 +53,7 @@ public class SmlOperators {
 		func p1 = prc("x3", ev1);
 		func n2 = snr("x6", 1.0);
 		func r0 = req(op1);
-		func r1 = req("s1", args("v1", "f1"));
+		func r1 = fxn("s1", args("v1", "f1"));
 
 		// ent - generic operator for all entries
 		ent e1 = ent(sig("s1", Class.class));

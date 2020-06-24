@@ -203,15 +203,15 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 	@Test
 	public void exertSrvTest() throws Exception {
 		Job srv = createSrv();
-		logger.info("req job context: " + upcontext(srv));
-		logger.info("req j1/t3 context: " + context(srv, "j1/t3"));
-		logger.info("req j1/j2/t4 context: " + context(srv, "j1/j2/t4"));
-		logger.info("req j1/j2/t5 context: " + context(srv, "j1/j2/t5"));
+		logger.info("fxn job context: " + upcontext(srv));
+		logger.info("fxn j1/t3 context: " + context(srv, "j1/t3"));
+		logger.info("fxn j1/j2/t4 context: " + context(srv, "j1/j2/t4"));
+		logger.info("fxn j1/j2/t5 context: " + context(srv, "j1/j2/t5"));
 
 		srv = exert(srv);
-		logger.info("req job context: " + upcontext(srv));
+		logger.info("fxn job context: " + upcontext(srv));
 
-		// logger.info("req eval @  t3/arg/x2 = " + getValue(req, "j1/t3/arg/x2"));
+		// logger.info("fxn eval @  t3/arg/x2 = " + getValue(fxn, "j1/t3/arg/x2"));
 		assertEquals(get(srv, "j1/t3/arg/x2"), 100.0);
 	}
 

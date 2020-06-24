@@ -441,7 +441,7 @@ public class Signatures {
 				inVal("x", 10.0),
 				inVal("y", 20.0));
 
-		Object out = exec(task(sig("add", invoker("req",
+		Object out = exec(task(sig("add", invoker("fxn",
 						(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
 						args("x", "y")))), in);
 		logger.info("result: " + out);
@@ -471,7 +471,7 @@ public class Signatures {
 		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
 
 		Service srv = (Service)provider(sig(filePath(netlet)));
-//		logger.info("job service: " + execEnt(req));
+//		logger.info("job service: " + execEnt(fxn));
 		assertTrue(exec(srv).equals(400.0));
 	}
 

@@ -28,7 +28,7 @@ public class AddConsumer {
 	public void adderRequestorAsService() throws Exception {
 
 		Consumer req = consumer(AdderConsumer.class, "routine");
-//		Consumer req = consumer(AdderConsumer.class, "netlet");
+//		Consumer fxn = consumer(AdderConsumer.class, "netlet");
 
 		Context cxt = (Context) exec(req);
 
