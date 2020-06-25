@@ -143,6 +143,9 @@ public class operator extends Operator {
 	}
 
 	public static Req req(String name, MorphFidelity fidelity) {
+		fidelity.setPath(name);
+		fidelity.getFidelity().setPath(name);
+		fidelity.getFidelity().setName(name);
 		Req service = new Req(name, fidelity);
 		return service;
 	}

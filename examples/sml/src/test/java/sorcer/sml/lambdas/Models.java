@@ -197,11 +197,11 @@ public class Models {
 		Model mo = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+				req(sig("multiply", MultiplierImpl.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", AdderImpl.class, result("add/out",
+				req(sig("add", AdderImpl.class, result("add/out",
 						inPaths("add/x1", "add/x2")))),
-				ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+				req(sig("subtract", SubtractorImpl.class, result("subtract/out",
 						inPaths("multiply/out", "add/out")))),
 				response("subtract", "fxn", "out"));
 
@@ -241,11 +241,11 @@ public class Models {
 		ContextDomain mdl = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+				req(sig("multiply", MultiplierImpl.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", AdderImpl.class, result("add/out",
+				req(sig("add", AdderImpl.class, result("add/out",
 						inPaths("add/x1", "add/x2")))),
-				ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+				req(sig("subtract", SubtractorImpl.class, result("subtract/out",
 						inPaths("multiply/out", "add/out")))),
 				response("subtract", "multiply"));
 //				response("fxn"));
@@ -355,9 +355,9 @@ public class Models {
 
         // three entry multifidelity model with morphers
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
-                ent("mFi1", mphFi(mFi1Morpher, add, multiply)),
-                ent("mFi2", mphFi(mFi2Morpher, average, divide, subtract)),
-                ent("mFi3", mphFi(average, divide, multiply)),
+                req("mFi1", mphFi(mFi1Morpher, add, multiply)),
+                req("mFi2", mphFi(mFi2Morpher, average, divide, subtract)),
+                req("mFi3", mphFi(average, divide, multiply)),
                 fi2, fi3, fi4,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
