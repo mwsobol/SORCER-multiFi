@@ -316,7 +316,7 @@ public class Services {
 
 		func y1 = prc("y1",
 			loop(condition((Context<Double> cxt) -> v(cxt, "x1") < v(cxt, "x2")),
-				invoker("req",
+				invoker("fxn",
                         (Context<Double> cxt) -> { putValue(cxt, "x1", v(cxt, "x1") + 1.0);
                             return v(cxt, "x1") * v(cxt, "x3"); },
 				    context(val("x1", 10.0), val("x2", 20.0), val("x3", 40.0)),
@@ -333,7 +333,7 @@ public class Services {
 			val("x1", 10.0), val("x2", 20.0), val("x3", 40.0),
 			prc("y1",
 				loop(condition((Context<Double> cxt) -> v(cxt, "x1") < v(cxt, "x2")),
-					invoker("req",
+					invoker("fxn",
 						(Context<Double> cxt) -> { putValue(cxt, "x1", v(cxt, "x1") + 1.0);
 							return v(cxt, "x1") * v(cxt, "x3"); },
                         args("x1", "x2", "x3")))));

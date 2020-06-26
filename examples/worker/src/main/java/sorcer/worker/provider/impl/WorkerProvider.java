@@ -35,7 +35,7 @@ public class WorkerProvider extends ServiceTasker implements Worker {
 	public Context sayHi(Context context) throws RemoteException,
 			ContextException {
 		context.putValue("prv/host/key", hostName);
-		String reply = "Hi" + " " + context.getValue("req/key") + "!";
+		String reply = "Hi" + " " + context.getValue("fxn/key") + "!";
 		setMessage(context, reply);
 		return context;
 	}
@@ -43,7 +43,7 @@ public class WorkerProvider extends ServiceTasker implements Worker {
 	public Context sayBye(Context context) throws RemoteException,
 			ContextException {
 		context.putValue("prv/host/key", hostName);
-		String reply = "Bye" + " " + context.getValue("req/key") + "!";
+		String reply = "Bye" + " " + context.getValue("fxn/key") + "!";
 		setMessage(context, reply);
 		return context;
 	}
@@ -52,7 +52,7 @@ public class WorkerProvider extends ServiceTasker implements Worker {
 			ContextException {
         context.putValue("prv/host/key", hostName);
         String sigPrefix = ((ServiceContext)context).getCurrentPrefix();
-        String path = "req/work";
+        String path = "fxn/work";
         if (sigPrefix != null && sigPrefix.length() > 0)
         	path = sigPrefix + "/" + path;
         Object workToDo = context.getValue(path);

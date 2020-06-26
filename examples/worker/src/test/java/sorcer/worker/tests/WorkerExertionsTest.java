@@ -47,10 +47,10 @@ public class WorkerExertionsTest {
 		hostname = InetAddress.getLocalHost().getHostName();
 		
 		context = context("work", 
-				operator.ent("req/key", hostname),
-				operator.ent("req/arg/1", 11),
-				operator.ent("req/arg/2", 101),
-				operator.ent("req/work", Works.work0),
+				operator.ent("fxn/key", hostname),
+				operator.ent("fxn/arg/1", 11),
+				operator.ent("fxn/arg/2", 101),
+				operator.ent("fxn/work", Works.work0),
 				operator.ent("to/prv/key", "SORCER Worker"));
 		
 		contextUrl = store(context);
@@ -115,20 +115,20 @@ public class WorkerExertionsTest {
 
 		// prefixed task context and output values
 		context = context("pBatch",
-					inVal("w1/req/arg/1", 20), inVal("w1/req/arg/2", 80),
-					inVal("w1/req/work", Works.work1), outVal("req/arg/1", "tag|w1"),
+					inVal("w1/fxn/arg/1", 20), inVal("w1/fxn/arg/2", 80),
+					inVal("w1/fxn/work", Works.work1), outVal("fxn/arg/1", "tag|w1"),
 
-					inVal("w2/req/arg/1", 10), inVal("w2/req/arg/2", 50),
-					inVal("w2/req/work", Works.work2), outVal("req/arg/2", "tag|w2"),
+					inVal("w2/fxn/arg/1", 10), inVal("w2/fxn/arg/2", 50),
+					inVal("w2/fxn/work", Works.work2), outVal("fxn/arg/2", "tag|w2"),
 
-					inVal("req/work", Works.work3), outVal("prv/result"));
+					inVal("fxn/work", Works.work3), outVal("prv/result"));
 
 
 		Task bt = task("pBatch", 
 					type(sig("doWork#w1", Worker.class, prvName("Worker1"),
-							result("req/arg/1")), Signature.PRE),
+							result("fxn/arg/1")), Signature.PRE),
 					type(sig("doWork#w2", Worker.class, prvName("Worker2"),
-							result("req/arg/2")), Signature.PRE),
+							result("fxn/arg/2")), Signature.PRE),
 					sig("doWork", Worker.class, prvName("Worker3"),
 							result("prv/result")),
 					context);
@@ -143,27 +143,27 @@ public class WorkerExertionsTest {
 	@Test
 	public void contextPipes() throws Exception {
 		
-		Context cxt1 = context(operator.ent("req/key", "workaholic"),
-				operator.ent("req/arg/1", 20),  operator.ent("req/arg/2", 80),
-				operator.ent("req/work", Works.work1),  operator.ent("tp/prv/key", "Worker1"),
+		Context cxt1 = context(operator.ent("fxn/key", "workaholic"),
+				operator.ent("fxn/arg/1", 20),  operator.ent("fxn/arg/2", 80),
+				operator.ent("fxn/work", Works.work1),  operator.ent("tp/prv/key", "Worker1"),
 				outVal("prv/result"));
 
-		Context cxt2 = context(operator.ent("req/key", "workaholic"),
-				operator.ent("req/arg/1", 10),  operator.ent("req/arg/2", 50),
-				operator.ent("req/work", Works.work2),  operator.ent("tp/prv/key", "Worker2"),
+		Context cxt2 = context(operator.ent("fxn/key", "workaholic"),
+				operator.ent("fxn/arg/1", 10),  operator.ent("fxn/arg/2", 50),
+				operator.ent("fxn/work", Works.work2),  operator.ent("tp/prv/key", "Worker2"),
 				outVal("prv/result"));
 
-		Context cxt3 = context(operator.ent("req/key", "workaholic"),
-				inVal("req/arg/1"),  inVal("req/arg/2"),
-				operator.ent("req/work", Works.work3),  operator.ent("tp/prv/key", "Worker3"),
+		Context cxt3 = context(operator.ent("fxn/key", "workaholic"),
+				inVal("fxn/arg/1"),  inVal("fxn/arg/2"),
+				operator.ent("fxn/work", Works.work3),  operator.ent("tp/prv/key", "Worker3"),
 				outVal("prv/result"));
 
 		Job job = job("strategy", 
 				task("work1", sig("doWork", Worker.class, prvName("Worker1")), cxt1),
 				task("work2", sig("doWork", Worker.class, prvName("Worker2")), cxt2),
 				task("work3", sig("doWork", Worker.class, prvName("Worker3")), cxt3),
-				pipe(outPoint("strategy/work1", "prv/result"), inPoint("strategy/work3", "req/arg/1")),
-				pipe(outPoint("strategy/work2", "prv/result"), inPoint("strategy/work3", "req/arg/2")));
+				pipe(outPoint("strategy/work1", "prv/result"), inPoint("strategy/work3", "fxn/arg/1")),
+				pipe(outPoint("strategy/work2", "prv/result"), inPoint("strategy/work3", "fxn/arg/2")));
 
 		requestTime(job);
 		Job out = exert(job);
@@ -175,17 +175,17 @@ public class WorkerExertionsTest {
 	@Test
 	public void exertionStrategy() throws Exception {
 
-		Context cxt1 = context(operator.ent("req/key", "workaholic"),
-				operator.ent("req/arg/1", 20),  operator.ent("req/arg/2", 80),
-				operator.ent("req/work", Works.work1),  operator.ent("tp/prv/key", "Worker1"));
+		Context cxt1 = context(operator.ent("fxn/key", "workaholic"),
+				operator.ent("fxn/arg/1", 20),  operator.ent("fxn/arg/2", 80),
+				operator.ent("fxn/work", Works.work1),  operator.ent("tp/prv/key", "Worker1"));
 
-		Context cxt2 = context(operator.ent("req/key", "workaholic"),
-				operator.ent("req/arg/1", 10),  operator.ent("req/arg/2", 50),
-				operator.ent("req/work", Works.work2),  operator.ent("tp/prv/key", "Worker2"));
+		Context cxt2 = context(operator.ent("fxn/key", "workaholic"),
+				operator.ent("fxn/arg/1", 10),  operator.ent("fxn/arg/2", 50),
+				operator.ent("fxn/work", Works.work2),  operator.ent("tp/prv/key", "Worker2"));
 
-		Context cxt3 = context(operator.ent("req/key", "workaholic"),
-				operator.ent("req/arg/1", 100),  operator.ent("req/arg/2", 100),
-				operator.ent("req/work", Works.work3),  operator.ent("tp/prv/key", "Worker3"));
+		Context cxt3 = context(operator.ent("fxn/key", "workaholic"),
+				operator.ent("fxn/arg/1", 100),  operator.ent("fxn/arg/2", 100),
+				operator.ent("fxn/work", Works.work3),  operator.ent("tp/prv/key", "Worker3"));
 
 		Job job = job("strategy", 
 				task("work1", sig("doWork", Worker.class, prvName("Worker1")), cxt1),

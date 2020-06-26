@@ -31,8 +31,8 @@ public class Works implements Serializable {
 			private static final long serialVersionUID = 1L;
 
 			public Context<Integer> exec(Context cxt) throws InvalidWork, ContextException, RemoteException {
-				int arg1 = (Integer)value(cxt, "req/arg/1");
-				int arg2 = (Integer)value(cxt, "req/arg/2");
+				int arg1 = (Integer)value(cxt, "fxn/arg/1");
+				int arg2 = (Integer)value(cxt, "fxn/arg/2");
 				int result =  arg1 * arg2;
 				put(cxt, "prv/result", result);
 				cxt.setReturnValue(result);
@@ -45,8 +45,8 @@ public class Works implements Serializable {
 
 			public Context exec(Context cxt) throws ContextException, RemoteException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
-				String operand1Path = "req/arg/1";
-				String operand2Path = "req/arg/2";
+				String operand1Path = "fxn/arg/1";
+				String operand2Path = "fxn/arg/2";
 			     if (sigPrefix != null && sigPrefix.length() > 0) {
 			    	 operand1Path = sigPrefix + "/" + operand1Path;
 			    	 operand2Path = sigPrefix + "/" + operand2Path;
@@ -81,8 +81,8 @@ public class Works implements Serializable {
 
 			public Context exec(Context cxt) throws ContextException, RemoteException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
-				String operand1Path = "req/arg/1";
-				String operand2Path = "req/arg/2";
+				String operand1Path = "fxn/arg/1";
+				String operand2Path = "fxn/arg/2";
 			     if (sigPrefix != null && sigPrefix.length() > 0) {
 			    	 operand1Path = sigPrefix + "/" + operand1Path;
 			    	 operand2Path = sigPrefix + "/" + operand2Path;
@@ -117,8 +117,8 @@ public class Works implements Serializable {
 
 			public Context exec(Context cxt) throws ContextException, RemoteException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
-				String operand1Path = "req/arg/1";
-				String operand2Path = "req/arg/2";
+				String operand1Path = "fxn/arg/1";
+				String operand2Path = "fxn/arg/2";
 			     if (sigPrefix != null && sigPrefix.length() > 0) {
 			    	 operand1Path = sigPrefix + "/" + operand1Path;
 			    	 operand2Path = sigPrefix + "/" + operand2Path;
@@ -153,9 +153,9 @@ public class Works implements Serializable {
 
 			public Context exec(Context cxt) throws ContextException, RemoteException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
-				String operand1Path = "req/arg/1";
-				String operand2Path = "req/arg/2";
-				String operand3Path = "req/arg/3";
+				String operand1Path = "fxn/arg/1";
+				String operand2Path = "fxn/arg/2";
+				String operand3Path = "fxn/arg/3";
 			     if (sigPrefix != null && sigPrefix.length() > 0) {
 			    	 operand1Path = sigPrefix + "/" + operand1Path;
 			    	 operand2Path = sigPrefix + "/" + operand2Path;
