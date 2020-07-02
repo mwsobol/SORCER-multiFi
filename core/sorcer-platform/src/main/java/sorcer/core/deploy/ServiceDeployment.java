@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Attributes related to signature based deployment.
@@ -72,7 +73,7 @@ public class ServiceDeployment implements Serializable, Deployment {
 
     private Boolean fork;
     private String jvmArgs;
-    private final List<String> deployedNames = new ArrayList<>();
+    private final List<String> deployedNames = new CopyOnWriteArrayList<>();
     private static final Logger logger = LoggerFactory.getLogger(ServiceDeployment.class.getName());
 
     public ServiceDeployment() {
