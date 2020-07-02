@@ -57,7 +57,6 @@ def appendJars(def dlJars) {
 def getCommonDLs() {
     return ["sorcer-dl-${Sorcer.sorcerVersion}.jar",
             "jsk-dl-${Sorcer.riverVersion}.jar",
-            "rio-api-${RioVersion.VERSION}.jar",
             "serviceui-${Sorcer.riverVersion}.jar",
             "commons-io-${Sorcer.commonsIoVersion}.jar"]
 }
@@ -111,7 +110,7 @@ deployment(name: "Sorcer OS") {
         }
         implementation(class: "sorcer.core.provider.ServiceExerter") {
             resources "sorcer-lib-${Sorcer.sorcerVersion}.jar",
-                      "rio-api-${RioVersion.VERSION}.jar"
+                      "rio-lib-${RioVersion.VERSION}.jar"
         }
         configuration new File("${Sorcer.sorcerHome}/bin/sorcer/rendezvous/configs/all-rendezvous-prv.config").text
         maintain 1
@@ -146,7 +145,7 @@ deployment(name: "Sorcer OS") {
     service(name: SorcerEnv.getActualName('EvaluMon')) {
         interfaces {
             classes 'sorcer.core.monitoring.Monitor'
-            resources appendJars(["rio-proxy-${RioVersion.VERSION}.jar"])
+            resources appendJars(["rio-lib-${RioVersion.VERSION}.jar"])
         }
         implementation(class: 'sorcer.core.monitoring.MonitorImpl') {
             resources "sos-evalumon-${Sorcer.sorcerVersion}.jar"
@@ -163,7 +162,7 @@ deployment(name: "Sorcer OS") {
             resources "sorcer-lib-${Sorcer.sorcerVersion}.jar",
                       "sos-logger-${Sorcer.sorcerVersion}.jar",
                       "commons-io-${Sorcer.commonsIoVersion}.jar"
-                      "rio-api-${RioVersion.VERSION}.jar"
+                      "rio-lib-${RioVersion.VERSION}.jar"
         }
         configuration new File("${Sorcer.sorcerHome}/bin/sorcer/logger/configs/logger-prv.config").text
         maintain 1
@@ -191,7 +190,7 @@ deployment(name: "Sorcer OS") {
             }
             implementation(class: 'sorcer.core.provider.ServiceTasker') {
                 resources "sorcer-lib-${Sorcer.sorcerVersion}.jar",
-                          "rio-api-${RioVersion.VERSION}.jar"
+                          "rio-lib-${RioVersion.VERSION}.jar"
             }
             configuration new File("${Sorcer.sorcerHome}/bin/sorcer/exerter/configs/exerter-prv.config").text
             maintain 1
@@ -205,7 +204,7 @@ deployment(name: "Sorcer OS") {
             implementation(class: 'sorcer.core.provider.dbp.DatabaseProvider') {
                 resources "sos-db-prv-${Sorcer.sorcerVersion}.jar",
                           "sorcer-lib-${Sorcer.sorcerVersion}.jar",
-                          "rio-api-${RioVersion.VERSION}.jar"
+                          "rio-lib-${RioVersion.VERSION}.jar"
             }
             configuration new File("${Sorcer.sorcerHome}/bin/sorcer/dbp/configs/dbp-prv.config").text
             maintain 1

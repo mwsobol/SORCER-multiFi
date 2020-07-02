@@ -20,8 +20,7 @@ dependencies {
     compile project(':sorcer-platform')
 	compile "org.apache.river:start:${riverVersion}",
 			"org.rioproject:rio-platform:${rioVersion}",
-			"org.rioproject:rio-lib:${rioVersion}",
-    		"org.rioproject:rio-api:${rioVersion}"
+			"org.rioproject:rio-lib:${rioVersion}"
     runtime libs.logback
     runtime "org.slf4j:jul-to-slf4j:${slf4jVersion}"
 }

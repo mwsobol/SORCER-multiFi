@@ -31,6 +31,8 @@ scan()
 
 jmxConfigurator()
 
+statusListener(NopStatusListener)
+
 /*
  * Utility to check if the passed in string ends with a File.separator
  */
@@ -62,17 +64,17 @@ def appenders = []
 /*
  * Only add the CONSOLE appender if we have a console
  */
-if (System.getProperty("forceConsoleLogging")!=null || System.console() != null) {
+if (System.console() != null) {
     appender("CONSOLE", ConsoleAppender) {
         if(!System.getProperty("os.name").startsWith("Windows") && System.console() != null) {
             withJansi = true
 
             encoder(PatternLayoutEncoder) {
-                pattern = "%highlight(%-5level) %d{HH:mm:ss.SSS} %logger{36} %X{mogId} - %msg%n%rEx"
+                pattern = "%highlight(%-5level) %d{HH:mm:ss.SSS} %magenta([%thread]) %cyan(%logger{36}) - %msg%n%rEx"
             }
         } else {
             encoder(PatternLayoutEncoder) {
-                pattern = "%-5level %d{HH:mm:ss.SSS} %logger{36} %X{mogId} - %msg%n%rEx"
+                pattern = "%-5level %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n%rEx"
             }
         }
     }
@@ -92,6 +94,7 @@ if (System.getProperty("org.rioproject.service")!=null) {
             /* Rollover daily */
             fileNamePattern = "${serviceLogFilename}-%d{yyyy-MM-dd}.%i.log"
 
+
             /* Or whenever the file size reaches 10MB */
             timeBasedFileNamingAndTriggeringPolicy(SizeAndTimeBasedFNATP) {
                 maxFileSize = "10MB"
@@ -102,7 +105,7 @@ if (System.getProperty("org.rioproject.service")!=null) {
 
         }
         encoder(PatternLayoutEncoder) {
-            pattern = "%-5level %d{HH:mm:ss.SSS} %logger{36} %X{mogId} - %msg%n%rEx"
+            pattern = "%-5level %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n%rEx"
         }
     }
     appenders << "ROLLING"
