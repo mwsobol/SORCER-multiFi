@@ -74,12 +74,12 @@ public class DeployExertionTest extends DeploySetup implements SorcerConstants {
     }
 
     private void verifyExertion(Job job) throws Exception {
-        System.out.println("Verifying "+job.getName()  );
+        logger.info("Verifying "+job.getName()  );
     	long t0 = System.currentTimeMillis();
         Mogram out = exert(job);
         System.out.println("Waited "+(System.currentTimeMillis()-t0)+" millis for exerting: " + out.getName());
         assertNotNull(out);
-        System.out.println("===> out: "+ upcontext(out));
+        logger.info("===> out: "+ upcontext(out));
         assertEquals(400.0, get(out, "f1/f3/result/y3"));
 
         ServiceDeployment deployment = (ServiceDeployment)out.getProcessSignature().getDeployment();

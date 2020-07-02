@@ -31,8 +31,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static sorcer.core.deploy.DeploySetup.verifySorcerRunning;
 
 /**
@@ -101,10 +100,10 @@ public class ProvisionManagerTest {
         Job f1 = JobUtil.createJob();
         ProvisionManager provisionManager = new ProvisionManager(f1);
 
-        List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
-        for(int i=0; i<50; i++) {
+        List<Future<Boolean>> futures = new ArrayList<>();
+        for (int i = 0; i < 50; i++) {
             Callable<Boolean> exertionVerifier = new DeployVerifier(provisionManager);
-            FutureTask<Boolean> task = new FutureTask<Boolean>(exertionVerifier);
+            FutureTask<Boolean> task = new FutureTask<>(exertionVerifier);
             futures.add(task);
             new Thread(task).start();
         }
@@ -114,21 +113,24 @@ public class ProvisionManagerTest {
         }
         List<String> deployed = provisionManager.getDeploymentNames();
         StringBuilder sb = new StringBuilder();
-        int i=1;
+        int i = 1;
         for(String d : deployed) {
             if(sb.length()>0)
                 sb.append("\n");
             sb.append("[").append(i++).append("] ").append(d);
         }
-        assertTrue("Deployed size: "+deployed.size()+", expected 2\n"+sb.toString(), deployed.size()==2);
+        assertEquals("Deployed size: " + deployed.size() + ", expected 2\n" +
+                             sb.toString(),
+                     2,
+                     deployed.size());
         provisionManager.undeploy();
         assertFalse(provisionManager.getDeployAdmin().hasDeployed(deployed.get(0)));
         assertFalse(provisionManager.getDeployAdmin().hasDeployed(deployed.get(1)));
-        assertTrue(provisionManager.getDeploymentNames().size()==0);
+        assertEquals(0, provisionManager.getDeploymentNames().size());
     }
 
 
-    class DeployVerifier implements Callable<Boolean> {
+    static class DeployVerifier implements Callable<Boolean> {
         final ProvisionManager provisionManager;
 
         DeployVerifier(ProvisionManager provisionManager) {
