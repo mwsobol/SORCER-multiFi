@@ -729,7 +729,7 @@ public class ModelMultiFidelities {
                 value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
         Discipline morphDis = dsc(
-            ctxFi("cxtn1", sig("cxtn1", ModelMultiFidelities.class, "getMorphingModel")),
+            cxtnFi("cxtn1", sig("cxtn1", ModelMultiFidelities.class, "getMorphingModel")),
             dspFi("dspt1", mdlDispatch));
 
         // out is the discipline output
