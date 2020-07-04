@@ -1797,13 +1797,13 @@ operator extends Operator {
         return fi;
     }
 
-    public static Fidelity ctxFi(String name) {
+    public static Fidelity cxtnFi(String name) {
         Fidelity fi = new Fidelity(name);
         fi.fiType = Fi.Type.CONTEXTION;
         return fi;
     }
 
-    public static Fidelity ctxFi(String name, Object select) {
+    public static Fidelity cxtnFi(String name, Object select) {
         Fidelity fi = new Fidelity(name);
         fi.setSelect(select);
         if (select instanceof Signature) {
