@@ -22,8 +22,7 @@ ext {
 	sorcerVersion = version
 
 	groovyVersion = "2.4.19"
-	rioVersion = "6.0.0"
-    //rioVersion = "5.7"
+	rioVersion = "5.9.0"
 	riverVersion = "2.2.2"
 	slf4jVersion = "1.7.25"
 	blitzVersion = "2.1.7"
@@ -34,7 +33,6 @@ ext {
 	junitAddonsVersion = "1.4"
 	antVersion = "1.8.2"
     plexusVersion = "3.3.0"
-    //plexusVersion = "3.0.15"
     jansiVersion = "1.11"
     commonsIoVersion = "2.4"
     commonsExecVersion = "1.3"
