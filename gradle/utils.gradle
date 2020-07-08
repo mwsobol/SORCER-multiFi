@@ -147,27 +147,6 @@ browser.onlyIf {
 }
 
 /*
- * Start the Rio UI
- */
-task rioUI(type: Exec) {
-    description = 'Starts a user agent (GUI) for Rio service provisioning.'
-    def args = []
-    if(System.properties['os.name'].contains("Windows")) {
-        args << "cmd.exe"
-        args << "/C"
-    }
-    args << "ant"
-    args << "-f"
-    args << "${file("${sorcerDistHome}").path}/bin/rio/rio-ui.xml"
-    args << "spawn"
-    commandLine args
-}
-rioUI.onlyIf {
-    def jps = jps().execute()
-    !jps.text.contains("rio-ui")
-}
-
-/*
  * Start Sorcer Webster
  */
 task webster(type: Exec) {

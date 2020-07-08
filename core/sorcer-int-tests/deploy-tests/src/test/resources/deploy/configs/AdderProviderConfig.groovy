@@ -52,12 +52,12 @@ class AdderProviderConfig {
      * @return An array of service implementation classes required to load the service
      */
     Class[] getBeanClasses() {
-        return [sorcer.arithmetic.tester.provider.impl.AdderImpl.class]
+        [sorcer.arithmetic.tester.provider.impl.AdderImpl.class]
     }
 
 
     Class[] getPublishedInterfaces() {
-        return [Thread.currentThread().contextClassLoader.loadClass(interfaceClass)]
+        [Thread.currentThread().contextClassLoader.loadClass(interfaceClass)]
     }
 
     /* This is declared as a static property so the class below can reference it, and used by the published interfaces
@@ -69,7 +69,7 @@ class AdderProviderConfig {
 /**
  * Configuration for the deployment
  */
-@Component('tsorcer.core.exertion.deploymen')
+@Component('sorcer.core.exertion.deployment')
 class AdderDeploymentConfig {
     String sorcerVersion = System.getProperty("sorcer.version")
     String[] interfaces = ["sorcer.arithmetic.tester.provider.Adder"]

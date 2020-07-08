@@ -280,8 +280,7 @@ public class SorcerDescriptorUtil {
                              "jsk-dl-"+riverVersion+".jar",
                              "serviceui-"+riverVersion+".jar",
                              "sorcer-ui-"+sorcerVersion+".jar",
-				 			 "commons-io-"+commonsIoVersion+".jar",
-                             getRioDlJar()};
+				 			 "commons-io-"+commonsIoVersion+".jar"};
     }
 	
 	/**
@@ -1187,13 +1186,11 @@ public class SorcerDescriptorUtil {
 
 		File rioLibDl = new File(sorcerHome+fs+"rio-"+rioVersion+fs+"lib-dl");
 		File rioLib = new File(sorcerHome+fs+"rio-"+rioVersion+fs+"lib");
-		String rioApiJar = find(rioLibDl, "rio-api").getAbsolutePath();
 		// service provider classpath
 		String loggerClasspath = ConfigUtil.concat(new Object[] {
 				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-logger-" + sorcerVersion + ".jar",
 				ps,sorcerLib,fs,"sorcer",fs,"lib",fs,"sorcer-lib-" + sorcerVersion + ".jar",
 				ps,rioLib,fs,"rio-lib-" + rioVersion + ".jar"
-				,ps,rioApiJar
 		});
 		// service provider codebase
         String loggerCodebase = Booter.getCodebase(getDefaultSorcerExports(),
@@ -1352,12 +1349,7 @@ public class SorcerDescriptorUtil {
 		throw new IllegalArgumentException(hd
 				+ " is not a vald SORCER home directory");
 	}
-
-    static String getRioDlJar() {
-        File rioLibDl = new File(sorcerHome+fs+"rio-"+rioVersion+fs+"lib-dl");
-        return find(rioLibDl, "rio-api").getName();
-    }
-
+	
     /**
      * Find a file starting with the {@code baseName}.
      *

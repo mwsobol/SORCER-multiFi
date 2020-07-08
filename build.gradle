@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+plugins {
+    id 'org.owasp.dependencycheck' version '5.2.2' apply false
+}
+
 /* Grab the current branch from git and append to version */
 String ref = new File(rootProject.projectDir, ".git/HEAD").text
 int ndx = ref.lastIndexOf("/")
@@ -77,6 +81,8 @@ allprojects {
 }
 
 subprojects {
+    apply from: "${rootDir}/gradle/cve.gradle"
+
     if (project.name != "examples" && project.name != "sorcer-int-tests") {
         apply plugin: "maven"
         apply plugin: "maven-publish"
@@ -122,7 +128,8 @@ subprojects {
         repositories {
             mavenLocal()
             if (!enclave) {
-                maven { url "http://www.rio-project.org/maven2" }
+                maven { url "https://dl.bintray.com/dreedyman/Rio"}
+                //maven { url "http://www.rio-project.org/maven2" }
                 //maven { url"http://pol.sytes.net/repository/public/" }
                 mavenCentral()
             } else {
