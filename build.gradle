@@ -137,7 +137,6 @@ subprojects {
             }
         }
     }
-
 }
 
 def isAnAggregateTest(graph) {
