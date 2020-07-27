@@ -17,6 +17,8 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.Conversion;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,10 @@ public class Path implements Arg, Service {
 	}
 
 	public enum State { CACHED, UNCACHED, VALID, INVALID, CHANGED, BEFORE, AFTER }
+
+	public Fidelity<Path> multiFi;
+
+	public Path metaPath;
 
 	public String path;
 
@@ -46,6 +52,8 @@ public class Path implements Arg, Service {
 	public Type type = Type.PATH;
 
 	public  Signature.Direction direction = Signature.Direction.INOUT;
+
+    private Conversion conversion;
 
 	public Path() {
 	}
@@ -84,6 +92,11 @@ public class Path implements Arg, Service {
         this.info = info;
 	}
 
+	public Path(Path... paths) {
+		multiFi = new Fidelity<Path>(paths);
+		metaPath = multiFi.getSelect();
+	}
+
 	public Object info() {
 		return this.info;
 	}
@@ -91,11 +104,19 @@ public class Path implements Arg, Service {
 
     @Override
     public String getName() {
-        return path;
+		if (multiFi != null) {
+			metaPath = multiFi.getSelect();
+		}
+		return path;
     }
 
 	public String getDomainName() {
 	    // procedural paths ins args bind to a returnPath's domain
+		if (multiFi != null) {
+			path = getName();
+			type = metaPath.type;
+			domain = metaPath.domain;
+		}
 	    if (type.equals(Type.PROC)) {
 	        return path + "$" + domain;
         } else {
@@ -174,6 +195,14 @@ public class Path implements Arg, Service {
 		return sa;
 	}
 
+	public Fidelity<Path> getMultiFi() {
+		return multiFi;
+	}
+
+	public void setMultiFi(Fidelity<Path> multiFi) {
+		this.multiFi = multiFi;
+	}
+
 	@Override
 	public int hashCode() {
 		if (path != null) {
@@ -204,7 +233,15 @@ public class Path implements Arg, Service {
 		return sa;
 	}
 
-	@Override
+    public Conversion getConversion() {
+        return conversion;
+    }
+
+    public void setConversion(Conversion conversion) {
+        this.conversion = conversion;
+    }
+
+    @Override
 	public Object execute(Arg... args) throws ServiceException, RemoteException {
 		return path;
 	}
