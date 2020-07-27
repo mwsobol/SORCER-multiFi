@@ -2006,7 +2006,7 @@ operator extends Operator {
         return fi;
     }
 
-    public static Projection po(String name, Fidelity... fidelities) {
+    public static Projection proj(String name, Fidelity... fidelities) {
         return projection(name, fidelities);
     }
 
@@ -2016,16 +2016,16 @@ operator extends Operator {
         return p;
     }
 
-    public static Projection po(Fidelity... fidelities) {
+    public static Projection proj(Fidelity... fidelities) {
         return new Projection(fidelities);
     }
 
     // projection of
-    public static Projection po(ServiceFidelity fidelity) {
+    public static Projection proj(ServiceFidelity fidelity) {
         return new Projection(fidelity);
     }
 
-    public static Projection po(String name, ServiceFidelity fidelity) {
+    public static Projection proj(String name, ServiceFidelity fidelity) {
         Projection p = new Projection(fidelity);
         p.setName(name);
         return p;
@@ -2116,11 +2116,29 @@ operator extends Operator {
     }
 
 
+    // rest fidelity
     public static ServiceFidelity rFi(String name, String path) throws ConfigurationException {
         ServiceFidelity fi = new ServiceFidelity(name, (List<Service>) path(path));
         fi.setPath(path);
         fi.selectSelect(path);
         fi.fiType = Fi.Type.SELECT;
+        return fi;
+    }
+
+    // select path fidelity
+    public static Fidelity<String> pFi(String name, String path) {
+        Fidelity<String> fi = new Fidelity(name);
+        fi.setPath(path);
+        fi.fiType = Fi.Type.PATH;
+        return fi;
+    }
+
+    // path fidelity
+    public static Fidelity<Path> pFi(Paths paths) throws ConfigurationException {
+        Fidelity<Path> fi = new Fidelity();
+        fi.setSelects(paths);
+        fi.setSelect(paths.get(0));
+        fi.fiType = Fi.Type.PATH;
         return fi;
     }
 

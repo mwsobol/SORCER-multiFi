@@ -39,6 +39,8 @@ public class Entry<V> extends MultiFiSlot<String, V>
 
     private Path.State state;
 
+    protected Fidelity<Path> multiFiPath;
+
     public Entry() {
     }
 
@@ -412,6 +414,14 @@ public class Entry<V> extends MultiFiSlot<String, V>
         } catch (ContextException e) {
             throw new EvaluationException(e);
         }
+    }
+
+    public Fidelity<Path> getMultiFiPath() {
+        return multiFiPath;
+    }
+
+    public void setMultiFiPath(Fidelity<Path> multiFiPath) {
+        this.multiFiPath = multiFiPath;
     }
 
     @Override

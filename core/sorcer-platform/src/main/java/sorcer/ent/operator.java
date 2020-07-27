@@ -814,6 +814,12 @@ public class operator extends Operator {
 		return new Entry(object.getName(), object);
 	}
 
+    public static Entry ent(Fidelity<Path> multiFipath, Object value, Arg... args) {
+	    Entry mpe = ent(multiFipath.getSelect().getName(), value, args);
+	    mpe.setMultiFiPath(multiFipath);
+	    return mpe;
+    }
+
     public static Entry ent(String path, Object value, Arg... args) {
 		Entry entry = null;
 		if (value instanceof List) {
@@ -900,7 +906,7 @@ public class operator extends Operator {
 		return req(sig);
 	}
 
-	public static Slot<Fidelity, Service> ent(Fidelity selectFi, Service service) throws ConfigurationException {
+	public static Slot<Fidelity, Service> slot(Fidelity selectFi, Service service) throws ConfigurationException {
 		Slot<Fidelity, Service> assoc = new Slot(selectFi, service);
 		if (service instanceof Fidelity) {
 			Fidelity fi = (Fidelity)service;
@@ -1032,6 +1038,13 @@ public class operator extends Operator {
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
+
+    public static <T> Req fxn(Fidelity<Path> multiFipath, EntryCollable call) {
+        Req srv = new Req(multiFipath.getSelect().getName(), call);
+        srv.setType(Functionality.Type.LAMBDA);
+        srv.setMultiFiPath(multiFipath);
+        return srv;
+    }
 
 	public static <T> Req fxn(String path, EntryCollable call) {
 		Req srv = new Req(path, call);

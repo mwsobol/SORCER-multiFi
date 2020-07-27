@@ -127,7 +127,7 @@ public class Projection extends ServiceFidelity {
 			}
 			sb.append(")");
 		} else {
-			sb.append("po(");
+			sb.append("proj(");
 			sb.append(super.toString());
 			sb.append(")");
 		}

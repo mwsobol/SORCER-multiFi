@@ -16,6 +16,7 @@ import static java.lang.Math.pow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.paths;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.mo.operator.*;
@@ -42,6 +43,19 @@ public class Entries {
         logger.info("x3: " + eval(mdl, "x3"));
         assertEquals(120.0, exec((ent)exec(mdl, "x3")));
 
+    }
+
+    @Test
+    public void multiPathLambdaValue() throws Exception {
+
+        // the model execute a fxn expression with no model state altered
+        Model mdl = model(ent(pFi(paths("x1", "arg/x1")), 10.0), ent("x2", 20.0),
+            fxn(pFi(paths("x3", "arg/x3")), (Model model) -> ent("x5", (double)exec(model, "x2") + 100.0)));
+
+        logger.info("x3: " + eval(mdl, "x3"));
+        assertEquals(120.0, exec((ent)exec(mdl)));
+        assertEquals(120.0, exec((ent)exec(mdl, pFi("x3", "arg/x3"))));
+        assertEquals(120.0, exec((ent)exec(mdl, pFi("arg/x3", "x3"))));
     }
 
     @Test
