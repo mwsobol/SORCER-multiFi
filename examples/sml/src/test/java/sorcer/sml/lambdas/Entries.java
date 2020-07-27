@@ -53,9 +53,9 @@ public class Entries {
             fxn(pFi(paths("x3", "arg/x3")), (Model model) -> ent("x5", (double)exec(model, "x2") + 100.0)));
 
         logger.info("x3: " + eval(mdl, "x3"));
-        assertEquals(120.0, exec((ent)exec(mdl)));
-        assertEquals(120.0, exec((ent)exec(mdl, pFi("x3", "arg/x3"))));
-        assertEquals(120.0, exec((ent)exec(mdl, pFi("arg/x3", "x3"))));
+        assertEquals(120.0, exec(mdl));
+        assertEquals(120.0, exec(mdl, pFi("x3", "arg/x3")));
+        assertEquals(120.0, exec(mdl, pFi("arg/x3", "x3")));
     }
 
     @Test
