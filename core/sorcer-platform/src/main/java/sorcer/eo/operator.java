@@ -261,6 +261,7 @@ operator extends Operator {
     public static Context cxt(Object... entries) throws ContextException {
         return context(entries);
     }
+
     public static Context data(Object... entries) throws ContextException {
         for (Object obj : entries) {
             if (!(obj instanceof String) || !(obj instanceof Function && ((Function)obj).getType().equals(Functionality.Type.VAL))) {
@@ -274,9 +275,9 @@ operator extends Operator {
         return context((Object[])entries);
     }
 
-    public static ServiceContext strategyContext(Object... entries) throws ContextException {
-        ServiceContext scxt =  context(entries);
-        scxt.setType(Functionality.Type.STRATEGY);
+    public static Context strategyContext(Object... entries) throws ContextException {
+        Context scxt =  context(entries);
+        ((ServiceContext)scxt).setType(Functionality.Type.STRATEGY);
         return scxt;
     }
 
@@ -1794,6 +1795,13 @@ operator extends Operator {
         Fidelity fi = new Fidelity(name);
         fi.setSelect(select);
         fi.fiType = Fi.Type.DISPATCHER;
+        return fi;
+    }
+
+    public static Fidelity projFi(String name, Object select) {
+        Fidelity fi = new Fidelity(name);
+        fi.setSelect(select);
+        fi.fiType = Fi.Type.PROJECTION;
         return fi;
     }
 

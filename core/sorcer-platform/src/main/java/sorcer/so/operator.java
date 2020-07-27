@@ -159,7 +159,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Context eval(Request request, Context context)
+    public static ServiceContext eval(Request request, Context context)
             throws ContextException {
         Context rc = null;
         try {
@@ -179,7 +179,7 @@ public class operator extends Operator {
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
-        return rc;
+        return (ServiceContext)rc;
     }
 
     public static void clear(Discipline discipline) throws MogramException {

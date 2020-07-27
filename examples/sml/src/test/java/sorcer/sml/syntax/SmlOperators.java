@@ -90,6 +90,7 @@ public class SmlOperators {
 		Object o10 = value(context(), "path");
 		Object o11 = exec(model(), "path");
 		Object o12 = exec(model(), "path", "domain");
+		Object o13 = exec(dsc(), cxt());
 
 		// Entries for results of exec
 		ent e3 = execEnt(v1);
@@ -109,7 +110,8 @@ public class SmlOperators {
 
 		// Evaluate domains
 		cxt c4 = eval(model());
-		cxt c5 = eval(ex2);
+		Context c5 = eval(ex2, context());
+		cxt c6 = eval(dsc(), cxt());
 		// Domain results
 		cxt out1 = result(model());
 		cxt out2 = result(job());
