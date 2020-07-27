@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.apache.tools.ant.filters.ReplaceTokens
 
 /* Build a distribution  */
 
@@ -46,10 +47,21 @@ ext {
     distDir = "${project.buildDir.path}/sorcer"
 }
 
+
 task installer(dependsOn: ["distribution"]) {
     description = "Creates a distribution and an IzPack based installer."
     inputs.dir("${project.buildDir.path}/sorcer-${version}" as File)
     outputs.files "${project.buildDir.path}/sorcer-${version}-installer.jar"
+
+    doFirst {
+        copy {
+            from("${projectDir.path}/izpack/") {
+                include "installer.xml"
+                filter (ReplaceTokens, tokens: [sorcerV: project.version as String] )
+            }
+            into "${project.buildDir.path}"
+        }
+    }
 
     doLast {
         ant.taskdef(name: 'izpack',
@@ -66,7 +78,7 @@ task installer(dependsOn: ["distribution"]) {
                    output: "${project.buildDir.path}/sorcer-${version}-installer.jar",
                    compression: 'deflate',
                    compressionlevel: '9') {
-            config(file("${rootProject.projectDir.path}/distribution/izpack/installer.xml").text)
+            config(file("${rootProject.projectDir.path}/distribution/build/installer.xml").text)
         }
     }
 }
