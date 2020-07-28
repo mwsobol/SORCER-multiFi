@@ -75,12 +75,12 @@ public class operator extends Operator {
 		return new Tuple2<T1,T2>( x1, x2 );
 	}
 
-	public static <K,Oobject> Slot<K, Object> slot(K x1) {
-		return new Slot<K,Object>( x1 );
+	public static <String,Oobject> Slot<String, Object> slot(String x1) {
+		return new Slot<String,Object>( x1 );
 	}
 
-	public static <K,O> Slot<K,O> slot(K x1, O x2 ){
-		return new Slot<K,O>( x1, x2 );
+	public static <String,O> Slot<String,O> slot(String x1, O x2 ){
+		return new Slot<String,O>(x1, x2 );
 	}
 
 	public static <T1,T2,T3> Tuple3<T1,T2,T3> x(T1 x1, T2 x2, T3 x3 ){
