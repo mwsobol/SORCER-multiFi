@@ -1,7 +1,7 @@
 /*
  * Copyright to the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -48,7 +48,7 @@ class MonitorConfig {
     String serviceName = sorcer.util.SorcerEnv.getActualName('Provision Monitor')
     String serviceComment = 'Dynamic Provisioning Agent'
     String jmxName = 'org.rioproject.monitor:type=Monitor'
-    long initialOpStringLoadDelay = TimeUnit.MILLISECONDS.toMillis(500);
+    long initialOpStringLoadDelay = TimeUnit.MILLISECONDS.toMillis(500)
 
     String[] getInitialOpStrings() {
         def sorcer = ["${System.getProperty("sorcer.home")}/configs/opstrings/sorcerBoot.groovy"]
@@ -64,7 +64,7 @@ class MonitorConfig {
     }
 
     RemoteRepository[] getRemoteRepositories() {
-        RemoteRepository remoteRepository = new RemoteRepository();
+        RemoteRepository remoteRepository = new RemoteRepository()
         remoteRepository.setId(serviceName.replaceAll(" ", ""))
         remoteRepository.setUrl(System.getProperty(Constants.CODESERVER))
         remoteRepository.setSnapshotChecksumPolicy(RemoteRepository.CHECKSUM_POLICY_IGNORE)
@@ -75,7 +75,7 @@ class MonitorConfig {
 
     LookupLocator[] getInitialLookupLocators() {
         String locators = System.getProperty(Constants.LOCATOR_PROPERTY_NAME)
-        if(locators!=null) {
+        if (locators != null) {
             def lookupLocators = JiniClient.parseLocators(locators)
             return lookupLocators as LookupLocator[]
         } else {
@@ -87,20 +87,13 @@ class MonitorConfig {
         return new LeastActiveSelector()
     }*/
 
-    Entry[] getServiceUIs(String codebase) {
-        String uiClass = 'org.rioproject.tools.ui.ServiceUIWrapper'
-        URL url = new URL("artifact:org.rioproject:rio-ui:${RioVersion.VERSION}")
-        def entry = [UIDescriptorFactory.getUIDescriptor(MainUI.ROLE, new UIFrameFactory(url, uiClass))]
-        return entry as Entry[]
-    }
-
     /*
      * Use a JrmpExporter for the OpStringManager.
      */
     Exporter getOpStringManagerExporter() {
         int port = 0
         String portRange = System.getProperty(Constants.PORT_RANGE)
-        if(portRange!=null)
+        if (portRange != null)
             port = PortUtil.getPortFromRange(portRange)
         return new JrmpExporter(port)
     }
@@ -109,6 +102,6 @@ class MonitorConfig {
         MethodConstraints serviceListenerConstraints =
                 new BasicMethodConstraints(new InvocationConstraints(new ConnectionRelativeTime(30000),
                                                                      null))
-        return  new BasicProxyPreparer(false, serviceListenerConstraints, null);        
+        return  new BasicProxyPreparer(false, serviceListenerConstraints, null)        
     }
 }
