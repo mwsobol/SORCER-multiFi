@@ -579,7 +579,7 @@ public class operator extends Operator {
 	}
 
 	public static ServiceInvoker invoker(Routine exertion) {
-        return new ExertInvoker(exertion);
+        return new RoutineInvoker(exertion);
     }
 
     public static ServiceInvoker invoker(Args args) {
@@ -658,16 +658,16 @@ public class operator extends Operator {
 		return mi;
 	}
 
-	public static ExertInvoker exertInvoker(String name, Routine exertion, String path, Prc... callEntries) {
-		return new ExertInvoker(name, exertion, path, callEntries);
+	public static RoutineInvoker exertInvoker(String name, Routine exertion, String path, Prc... callEntries) {
+		return new RoutineInvoker(name, exertion, path, callEntries);
 	}
 
-	public static ExertInvoker exertInvoker(Routine exertion, String path, Prc... callEntries) {
-		return new ExertInvoker(exertion, path, callEntries);
+	public static RoutineInvoker exertInvoker(Routine exertion, String path, Prc... callEntries) {
+		return new RoutineInvoker(exertion, path, callEntries);
 	}
 
-	public static ExertInvoker exertInvoker(Routine exertion, Prc... callEntries) {
-		return new ExertInvoker(exertion, callEntries);
+	public static RoutineInvoker exertInvoker(Routine exertion, Prc... callEntries) {
+		return new RoutineInvoker(exertion, callEntries);
 	}
 
 	public static CmdInvoker cmdInvoker(String name, String cmd, Prc... callEntries) {

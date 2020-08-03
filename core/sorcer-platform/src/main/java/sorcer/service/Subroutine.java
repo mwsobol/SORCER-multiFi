@@ -27,7 +27,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Prc;
 import sorcer.core.deploy.DeploymentIdFactory;
 import sorcer.core.deploy.ServiceDeployment;
-import sorcer.core.invoker.ExertInvoker;
+import sorcer.core.invoker.RoutineInvoker;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.LocalSignature;
@@ -597,12 +597,12 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         controlContext.addException(et);
     }
 
-    public ExertInvoker getInoker() {
-        return new ExertInvoker(this);
+    public RoutineInvoker getInoker() {
+        return new RoutineInvoker(this);
     }
 
-    public ExertInvoker getInvoker(String name) {
-        ExertInvoker invoker = new ExertInvoker(this);
+    public RoutineInvoker getInvoker(String name) {
+        RoutineInvoker invoker = new RoutineInvoker(this);
         invoker.setName(name);
         return invoker;
     }
