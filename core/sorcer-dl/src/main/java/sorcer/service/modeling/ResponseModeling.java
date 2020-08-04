@@ -29,9 +29,6 @@ public interface ResponseModeling extends Modeling, Configurable {
 	public Context getSnapshot(Context context) throws ContextException,
 			RemoteException;
 
-//    public Context getSnapshot(VarInfoList... varInfoLists) throws ContextException,
-//			RemoteException;
-
 	public Response evaluateResponse(String... varNames) throws EvaluationException,
 			RemoteException;
 
