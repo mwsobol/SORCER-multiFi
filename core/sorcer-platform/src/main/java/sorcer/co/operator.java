@@ -900,6 +900,12 @@ public class operator extends Operator {
 		return new InputValue(path, value, 0);
 	}
 
+	public static <T> InputValue<T> inVal(Fidelity<Path> multiFipath, T value) {
+		InputValue mpe = new InputValue(multiFipath.getSelect().getName(), value, 0);
+		mpe.setMultiFiPath(multiFipath);
+		return mpe;
+	}
+
 	public static <T> InputValue<T> dbInVal(String path, T value, String annotation) {
 		InputValue<T> ie = new InputValue(path, value, true, 0);
 		ie.annotation(annotation);
