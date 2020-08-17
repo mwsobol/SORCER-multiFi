@@ -54,7 +54,6 @@ public class ContextFidelity {
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
 			value(cxt, outPaths("result/eval", "arg/x1"))));
 
-
 		out = exert(t5, cxtFi("cxt2"));
 		cxt = context(out);
 
@@ -64,7 +63,6 @@ public class ContextFidelity {
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 120.0), ent("arg/x1", 30.0)).equals(
 			value(cxt, outPaths("result/eval", "arg/x1"))));
-
 	}
 
 	@Test
@@ -93,7 +91,6 @@ public class ContextFidelity {
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
 			value(cxt, outPaths("result/eval", "arg/x1"))));
 
-
 		out = exert(t5, cxtFi("cxt2"));
 		cxt = context(out);
 
@@ -103,7 +100,6 @@ public class ContextFidelity {
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 120.0), ent("arg/x1", 30.0)).equals(
 			value(cxt, outPaths("result/eval", "arg/x1"))));
-
 	}
 }
 	
