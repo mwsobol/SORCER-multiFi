@@ -19,6 +19,10 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
 
     private List<Opservice> opservices = new ArrayList<>();
 
+    protected Projection inPathProjection;
+
+    protected Projection outPathProjection;
+
     public Pipeline(Opservice... opservices) {
         this(null, opservices);
     }
@@ -237,6 +241,24 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
 
     public Functionality.Type getDependencyType() {
         return Functionality.Type.PIPELINE;
+    }
+
+    @Override
+    public Projection getInPathProjection() {
+        return inPathProjection;
+    }
+
+    public void setInPathProjection(Projection inPathProjection) {
+        this.inPathProjection = inPathProjection;
+    }
+
+    @Override
+    public Projection getOutPathProjection() {
+        return outPathProjection;
+    }
+
+    public void setOutPathProjection(Projection outPathProjection) {
+        this.outPathProjection = outPathProjection;
     }
 
     @Override

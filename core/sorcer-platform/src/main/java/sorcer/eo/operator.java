@@ -45,7 +45,7 @@ import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.consumer.ServiceConsumer;
-import sorcer.core.service.Projection;
+import sorcer.service.Projection;
 import sorcer.core.signature.*;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
@@ -2026,6 +2026,12 @@ operator extends Operator {
 
     public static Projection proj(Fidelity... fidelities) {
         return new Projection(fidelities);
+    }
+
+    public static Projection pthProj(Fidelity... fidelities) {
+        Projection pr = new Projection(fidelities);
+        pr.setType(Fi.Type.PATH);
+        return pr;
     }
 
     // projection of

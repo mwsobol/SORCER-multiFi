@@ -1,4 +1,4 @@
-package sorcer.sml.requests;
+package sorcer.sml.contexts;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -6,9 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.arithmetic.provider.Adder;
-import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.service.Projection;
 import sorcer.service.*;
 
 import static org.junit.Assert.assertEquals;
@@ -69,7 +68,7 @@ public class ContextFidelity {
 	}
 
 	@Test
-	public void multiPathmultiFiContextTask() throws Exception  {
+	public void multiPathMultiFiContextTask() throws Exception  {
 
 		Context cxt1 = context("cxt1",
 			inVal(pthFi(paths("arg/x1", "arg/y1")), 20.0),
@@ -78,6 +77,8 @@ public class ContextFidelity {
 		Context cxt2 = context("cxt2",
 			inVal(pthFi(paths("arg/x1", "arg/y1")), 30.0),
 			inVal(pthFi(paths("arg/x2", "arg/y2")), 90.0));
+
+		Projection outPrj = pthProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2"));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 			cmFi(cxt1, cxt2));

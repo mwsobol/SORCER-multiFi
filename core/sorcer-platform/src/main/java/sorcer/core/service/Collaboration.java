@@ -87,6 +87,10 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 
 	protected Context scope;
 
+	protected Projection inPathProjection;
+
+	protected Projection outPathProjection;
+
     public Collaboration() {
         this(null);
     }
@@ -466,6 +470,24 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 			return getChild(path$domain);
 		}
 		return null;
+	}
+
+	@Override
+	public Projection getInPathProjection() {
+		return inPathProjection;
+	}
+
+	public void setInPathProjection(Projection inPathProjection) {
+		this.inPathProjection = inPathProjection;
+	}
+
+	@Override
+	public Projection getOutPathProjection() {
+		return outPathProjection;
+	}
+
+	public void setOutPathProjection(Projection outPathProjection) {
+		this.outPathProjection = outPathProjection;
 	}
 
 	@Override

@@ -20,7 +20,6 @@ import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.provider.ServiceBean;
 import sorcer.core.provider.ServiceExerter;
-import sorcer.core.service.Projection;
 import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
@@ -75,6 +74,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected Fidelity<EntryAnalyzer> mdaFi;
     protected List<Coupling> couplings;
     protected ContextSelector contextSelector;
+    protected Projection inPathProjection;
+    protected Projection outPathProjection;
 
     /**
      * execution status: INITIAL|DONE|RUNNING|SUSPENDED|HALTED
@@ -1241,6 +1242,24 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public void execDependencies(String path, Arg... args) throws ContextException {
         // implement in subclasses
+    }
+
+    @Override
+    public Projection getInPathProjection() {
+        return inPathProjection;
+    }
+
+    public void setInPathProjection(Projection inPathProjection) {
+        this.inPathProjection = inPathProjection;
+    }
+
+    @Override
+    public Projection getOutPathProjection() {
+        return outPathProjection;
+    }
+
+    public void setOutPathProjection(Projection outPathProjection) {
+        this.outPathProjection = outPathProjection;
     }
 
     public ServiceMogram copyFrom(ServiceMogram mogram) {

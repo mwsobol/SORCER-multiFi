@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-package sorcer.core.service;
-
-import sorcer.service.*;
+package sorcer.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;

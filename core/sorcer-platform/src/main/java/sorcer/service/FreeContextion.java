@@ -15,6 +15,10 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 
 	protected Functionality.Type type = Functionality.Type.CONTEXTION;
 
+	protected Projection inPathProjection;
+
+	protected Projection outPathProjection;
+
 	public FreeContextion(String name) {
 		this.name = name;
 	}
@@ -155,6 +159,24 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	@Override
 	public void setScope(Context scope) {
 
+	}
+
+	@Override
+	public Projection getInPathProjection() {
+		return inPathProjection;
+	}
+
+	public void setInPathProjection(Projection inPathProjection) {
+		this.inPathProjection = inPathProjection;
+	}
+
+	@Override
+	public Projection getOutPathProjection() {
+		return outPathProjection;
+	}
+
+	public void setOutPathProjection(Projection outPathProjection) {
+		this.outPathProjection = outPathProjection;
 	}
 
 	@Override

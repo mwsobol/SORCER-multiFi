@@ -83,6 +83,10 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     // default instance new Return(Context.RETURN);
     protected Context.Return contextReturn;
 
+    protected Projection inPathProjection;
+
+    protected Projection outPathProjection;
+
     protected ServiceStrategy serviceStrategy;
 
     public ServiceDiscipline() {
@@ -533,6 +537,24 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             this.dependers = new ArrayList<Evaluation>();
         dependers.add(depender);
         return this;
+    }
+
+    @Override
+    public Projection getInPathProjection() {
+        return inPathProjection;
+    }
+
+    public void setInPathProjection(Projection inPathProjection) {
+        this.inPathProjection = inPathProjection;
+    }
+
+    @Override
+    public Projection getOutPathProjection() {
+        return outPathProjection;
+    }
+
+    public void setOutPathProjection(Projection outPathProjection) {
+        this.outPathProjection = outPathProjection;
     }
 
     @Override

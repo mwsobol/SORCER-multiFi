@@ -119,6 +119,10 @@ public interface Contextion extends Request, Scopable {
 
 	public ServiceStrategy getDomainStrategy();
 
+	public Projection getInPathProjection();
+
+	public Projection getOutPathProjection();
+
 	public List<Contextion> getContextions(List<Contextion> contextionList);
 
 	public void selectFidelity(Fidelity fi) throws ConfigurationException;

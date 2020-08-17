@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.plexus.FiMap;
-import sorcer.core.service.Projection;
+import sorcer.service.Projection;
 import sorcer.service.*;
 import sorcer.util.ModelTable;
 import sorcer.util.DataTable;
