@@ -63,7 +63,7 @@ public class ContextModels {
 	}
 
 	@Test
-	public void modelingInputsResponses() throws Exception {
+	public void modelInputsResponses() throws Exception {
 
 		Model mdl = entModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
 				val("arg/x3", 3.0), val("arg/x4", 4.0), val("arg/x5", 5.0));

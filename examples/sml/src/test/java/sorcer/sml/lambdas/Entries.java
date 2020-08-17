@@ -49,13 +49,13 @@ public class Entries {
     public void multiPathLambdaValue() throws Exception {
 
         // the model execute a fxn expression with no model state altered
-        Model mdl = model(ent(pFi(paths("x1", "arg/x1")), 10.0), ent("x2", 20.0),
-            fxn(pFi(paths("x3", "arg/x3")), (Model model) -> ent("x5", (double)exec(model, "x2") + 100.0)));
+        Model mdl = model(ent(pthFi(paths("x1", "arg/x1")), 10.0), ent("x2", 20.0),
+            fxn(pthFi(paths("x3", "arg/x3")), (Model model) -> ent("x5", (double)exec(model, "x2") + 100.0)));
 
         logger.info("x3: " + eval(mdl, "x3"));
         assertEquals(120.0, exec(mdl));
-        assertEquals(120.0, exec(mdl, pFi("x3", "arg/x3")));
-        assertEquals(120.0, exec(mdl, pFi("arg/x3", "x3")));
+        assertEquals(120.0, exec(mdl, pthFi("x3", "arg/x3")));
+        assertEquals(120.0, exec(mdl, pthFi("arg/x3", "x3")));
     }
 
     @Test

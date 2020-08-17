@@ -2134,7 +2134,7 @@ operator extends Operator {
     }
 
     // select path fidelity
-    public static Fidelity<String> pFi(String name, String path) {
+    public static Fidelity<String> pthFi(String name, String path) {
         Fidelity<String> fi = new Fidelity(name);
         fi.setPath(path);
         fi.fiType = Fi.Type.PATH;
@@ -2142,7 +2142,7 @@ operator extends Operator {
     }
 
     // path fidelity
-    public static Fidelity<Path> pFi(Paths paths) throws ConfigurationException {
+    public static Fidelity<Path> pthFi(Paths paths) throws ConfigurationException {
         Fidelity<Path> fi = new Fidelity();
         fi.setSelects(paths);
         fi.setSelect(paths.get(0));
