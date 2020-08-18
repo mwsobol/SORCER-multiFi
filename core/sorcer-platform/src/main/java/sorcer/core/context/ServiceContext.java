@@ -67,8 +67,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Context<T>, AssociativeContext<T>, cxt<T>, SorcerConstants {
 
 	private static final long serialVersionUID = 3311956866023311727L;
-	protected Map<String, T> data = new ConcurrentHashMap<String, T>();
-    protected Map<String, Path> paths = new ConcurrentHashMap<String, Path>();
+	protected Map<String, T> data = new ConcurrentHashMap();
+    protected Map<String, Path> paths = new ConcurrentHashMap();
+    protected Map<String, Fidelity> multiFiPaths = new ConcurrentHashMap();
 	protected String subjectPath = "";
 	protected Object subjectValue = "";
 	protected Context.Return<T> jobContextReturn;
@@ -176,7 +177,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 		setMetacontext(cxt.getMetacontext());
 		// copy instance fields
-		mogramId = (Uuid)cxt.getId();
+		mogramId = cxt.getId();
 		parentPath = cxt.getParentPath();
 		parentId = cxt.getParentId();
 		creationDate = new Date();
@@ -196,7 +197,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 		exertion = (Subroutine) cxt.getMogram();
 		principal = cxt.getPrincipal();
 		isPersistantTaskAssociated = cxt.isPersistantTaskAssociated;
-	}
+        multiFiPaths = cxt.multiFiPaths;
+        paths = cxt.paths;
+    }
 
 	public ServiceContext(List<Identifiable> objects) throws ContextException {
         this(defaultName + count++);
@@ -648,6 +651,28 @@ public class ServiceContext<T> extends ServiceMogram implements
 			throws ContextException {
 		isShared = true;
 		Contexts.map(fromPath, this, toPath, toContext);
+	}
+
+
+	public void remap(Projection projection) throws ContextException {
+		List fiList = projection.getSelects();
+		for (Object obj : fiList) {
+			if (obj instanceof Fidelity && ((Fidelity) obj).getFiType().equals(Fi.Type.PATH)) {
+				String p = ((Fidelity) obj).getPath();
+				String k = ((Fidelity) obj).getName();
+				if (multiFiPaths != null && multiFiPaths.get(k) != null) {
+				    if (multiFiPaths.get(k).getSelects().contains(new Path(k))) {
+                        Object val = get(k.toString());
+                        put(p.toString(), (T) val);
+                        remove(k.toString());
+                    };
+                } else {
+                    Object val = get(k.toString());
+                    put(p.toString(), (T) val);
+                    remove(k.toString());
+                }
+			}
+		}
 	}
 
 	/**
@@ -1769,7 +1794,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	public Context append(Context context) throws ContextException {
 		if (context != null && this != context) {
-			putAll((ServiceContext)context);
+			putAll(context);
 			// annotate as in the argument context
 			List<String> inpaths = ((ServiceContext) context).getInPaths();
 			List<String> outpaths = ((ServiceContext) context).getOutPaths();
@@ -3755,6 +3780,7 @@ public class ServiceContext<T> extends ServiceMogram implements
         // ServiceContext proprties
         this.data = context.data;
         this.paths = context.paths;
+        this.multiFiPaths =  context.multiFiPaths;
         this.subjectPath = context.subjectPath;
         this.subjectValue = context.subjectValue;
         this.jobContextReturn = contextReturn;
@@ -3777,6 +3803,14 @@ public class ServiceContext<T> extends ServiceMogram implements
         this.isPersistantTaskAssociated = context.isPersistantTaskAssociated;
 
         return this;
+    }
+
+    public Map<String, Fidelity> getMultiFiPaths() {
+        return multiFiPaths;
+    }
+
+    public void setMultiFiPaths(Map<String, Fidelity> multiFiPaths) {
+        this.multiFiPaths = multiFiPaths;
     }
 
     @Override

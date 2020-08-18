@@ -817,7 +817,9 @@ public class operator extends Operator {
     public static Entry ent(Fidelity<Path> multiFipath, Object value, Arg... args) {
 	    Entry mpe = ent(multiFipath.getSelect().getName(), value, args);
 	    mpe.setMultiFiPath(multiFipath);
-	    return mpe;
+		multiFipath.setName(multiFipath.getSelect().path);
+		multiFipath.setPath(mpe.getName());
+		return mpe;
     }
 
     public static Entry ent(String path, Object value, Arg... args) {

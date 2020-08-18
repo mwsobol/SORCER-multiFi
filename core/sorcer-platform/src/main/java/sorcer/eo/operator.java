@@ -781,6 +781,9 @@ operator extends Operator {
             } else if ((Slot)ent instanceof DataSlot) {
                 pcxt.putValueAt(Context.DSD_PATH, ent.getImpl(), i + 1);
             }
+            if (ent.getMultiFiPath() != null) {
+                ((ServiceContext)pcxt).getMultiFiPaths().put(((Path)ent.getMultiFiPath().getSelect()).path, ent.getMultiFiPath());
+            }
         }
     }
 
@@ -2028,9 +2031,15 @@ operator extends Operator {
         return new Projection(fidelities);
     }
 
-    public static Projection pthProj(Fidelity... fidelities) {
+    public static Projection inPthProj(Fidelity... fidelities) {
         Projection pr = new Projection(fidelities);
-        pr.setType(Fi.Type.PATH);
+        pr.setType(Fi.Type.IN_PATH);
+        return pr;
+    }
+
+    public static Projection outPthProj(Fidelity... fidelities) {
+        Projection pr = new Projection(fidelities);
+        pr.setType(Fi.Type.OUT_PATH);
         return pr;
     }
 
@@ -2337,6 +2346,8 @@ operator extends Operator {
         Service srvSig = null;
         Context context = null;
         ControlContext cc = null;
+        Projection inPathPrj = null;
+        Projection outPathPrj = null;
         // structural pass
         for (Object item : items) {
             if (item instanceof String) {
@@ -2427,11 +2438,24 @@ operator extends Operator {
                 fiManager = ((FidelityManager) o);
             } else if (o instanceof MorphFidelity) {
                 mFi = (MorphFidelity) o;
+            } else if (o instanceof Projection) {
+                if (((Projection)o).getFiType().equals(Fi.Type.IN_PATH)){
+                    inPathPrj = (Projection)o;
+                } else if (((Projection)o).getFiType().equals(Fi.Type.OUT_PATH)){
+                    outPathPrj = (Projection)o;
+                }
             } else if (o instanceof ServiceFidelity) {
                 fis.add(((ServiceFidelity) o));
             } else if (o instanceof Strategy.FidelityManagement) {
                 fm = (Strategy.FidelityManagement) o;
             }
+        }
+
+        if (inPathPrj != null) {
+            task.setInPathProjection(inPathPrj);
+        }
+        if (outPathPrj != null) {
+            task.setOutPathProjection(outPathPrj);
         }
 
         if (context == null) {

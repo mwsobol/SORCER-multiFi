@@ -68,6 +68,7 @@ import java.util.concurrent.TimeUnit;
 
 import static sorcer.eo.operator.*;
 import static sorcer.so.operator.eval;
+import static sorcer.so.operator.exertionResponse;
 
 /**
  * @author Mike Sobolewski
@@ -183,7 +184,14 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			if (mogram instanceof Routine) {
 				Subroutine exertion = (Subroutine)mogram;
 				exertion.selectFidelity(entries);
+				if (exertion.getInPathProjection() != null) {
+					((ServiceContext)exertion.getContext()).remap(exertion.getInPathProjection());
+				}
 				Mogram out = exerting(txn, providerName, entries);
+				if (exertion.getOutPathProjection() != null) {
+					((ServiceContext)out.getContext()).setMultiFiPaths(((ServiceContext)mogram.getContext()).getMultiFiPaths());
+					((ServiceContext)out.getContext()).remap(exertion.getOutPathProjection());
+				}
 				if (out instanceof Routine) {
 					if(out.getStatus()==Exec.ERROR || out.getStatus()==Exec.FAILED) {
 						return (T) out;

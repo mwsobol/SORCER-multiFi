@@ -903,6 +903,8 @@ public class operator extends Operator {
 	public static <T> InputValue<T> inVal(Fidelity<Path> multiFipath, T value) {
 		InputValue mpe = new InputValue(multiFipath.getSelect().getName(), value, 0);
 		mpe.setMultiFiPath(multiFipath);
+		multiFipath.setName(multiFipath.getSelect().path);
+		multiFipath.setPath(mpe.getName());
 		return mpe;
 	}
 
