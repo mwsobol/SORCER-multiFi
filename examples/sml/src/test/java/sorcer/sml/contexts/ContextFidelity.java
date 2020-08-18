@@ -3,6 +3,10 @@ package sorcer.sml.contexts;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
+
+import static sorcer.ent.operator.fxn;
+import static sorcer.so.operator.eval;
+import static sorcer.so.operator.exec;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
@@ -14,16 +18,10 @@ import sorcer.service.modeling.Model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.ent.operator.ent;
-import static sorcer.ent.operator.fxn;
+import static sorcer.ent.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.fi;
-import static sorcer.eo.operator.get;
-import static sorcer.mo.operator.model;
-import static sorcer.mo.operator.value;
-import static sorcer.so.operator.eval;
-import static sorcer.so.operator.exec;
-import static sorcer.so.operator.exert;
+import static sorcer.mo.operator.*;
+import static sorcer.so.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -36,9 +34,9 @@ public class ContextFidelity {
 	@Test
 	public void multiPathLambdaValue() throws Exception {
 
-		// the model execute a fxn expression with no model state altered
-		Model mdl = model(ent(pthFi(paths("x1", "arg/x1", "z1")), 10.0), ent("x2", 20.0),
-			fxn(pthFi(paths("x3", "arg/x3", "z3")), (Model model) -> ent("x5", (double)exec(model, "x2") + 100.0)));
+		// the model execute a fxn lambda expression with no model state altered
+		Model mdl = model(ent(pthFi(paths("x1", "arg/x1")), 10.0), ent("x2", 20.0),
+			fxn(pthFi(paths("x3", "arg/x3")), (Model model) -> ent("x5", (double)exec(model, "x2") + 100.0)));
 
 		logger.info("x3: " + eval(mdl, "x3"));
 		assertEquals(120.0, exec(mdl));
