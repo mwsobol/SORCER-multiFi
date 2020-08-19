@@ -44,7 +44,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     // sequence number for unnamed instances
     protected static int count = 0;
 
-    private String name;
+    protected String name;
 
     Uuid id = UuidFactory.generate();
 

@@ -115,6 +115,81 @@ public class ContextFidelity {
 		assertTrue(context(ent("result/eval", 120.0), ent("arg/y1", 30.0)).equals(
 			value(cxt, outPaths("result/eval", "arg/y1"))));
 	}
+
+	@Test
+	public void cxtProjectionMultiFiContextTask() throws Exception  {
+
+		Context cxt1 = context("cxt1",
+			inVal(pthFi(paths("arg/x1", "arg/y1")), 20.0),
+			inVal(pthFi(paths("arg/x2", "arg/y2")), 80.0));
+
+		Context cxt2 = context("cxt2",
+			inVal(pthFi(paths("arg/x1", "arg/y1")), 30.0),
+			inVal(pthFi(paths("arg/x2", "arg/y2")), 90.0));
+
+		Task t5 = task("t5", sig("add", AdderImpl.class),
+			cmFi(cxt1, cxt2));
+
+		Projection cxtPrj1 = cxtProj(cxtFi("cxt1"), outPthProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2")));
+		Projection cxtPrj2 = cxtProj(cxtFi("cxt2"), outPthProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2")));
+
+		Routine out = exert(t5, cxtPrj1);
+		Context cxt = context(out);
+
+		// getValue a single context argument
+		assertEquals(100.0, value(cxt, "result/eval"));
+
+		// getValue the subcontext output from the context
+		assertTrue(context(ent("result/eval", 100.0), ent("arg/y1", 20.0)).equals(
+			value(cxt, outPaths("result/eval", "arg/y1"))));
+
+		out = exert(t5, cxtPrj2);
+		cxt = context(out);
+
+		// getValue a single context argument
+		assertEquals(120.0, value(cxt, "result/eval"));
+
+		// getValue the subcontext output from the context
+		assertTrue(context(ent("result/eval", 120.0), ent("arg/y1", 30.0)).equals(
+			value(cxt, outPaths("result/eval", "arg/y1"))));
+	}
+
+	@Test
+	public void cxtFiManagerMultiFiContextTask() throws Exception  {
+
+		Context cxt1 = context("cxt1",
+			inVal(pthFi(paths("arg/x1", "arg/y1")), 20.0),
+			inVal(pthFi(paths("arg/x2", "arg/y2")), 80.0));
+
+		Context cxt2 = context("cxt2",
+			inVal(pthFi(paths("arg/x1", "arg/y1")), 30.0),
+			inVal(pthFi(paths("arg/x2", "arg/y2")), 90.0));
+
+		Task t5 = task("t5", sig("add", AdderImpl.class),
+			cmFi(cxt1, cxt2),
+			cxtProj("cxtPrj1", cxtFi("cxt1"), outPthProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2"))),
+			cxtProj("cxtPrj2", cxtFi("cxt2"), outPthProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2"))));
+
+		Routine out = exert(t5, cxtFi("cxtPrj1"));
+		Context cxt = context(out);
+
+		// getValue a single context argument
+		assertEquals(100.0, value(cxt, "result/eval"));
+
+		// getValue the subcontext output from the context
+		assertTrue(context(ent("result/eval", 100.0), ent("arg/y1", 20.0)).equals(
+			value(cxt, outPaths("result/eval", "arg/y1"))));
+
+		out = exert(t5, cxtFi("cxtPrj2"));
+		cxt = context(out);
+
+		// getValue a single context argument
+		assertEquals(120.0, value(cxt, "result/eval"));
+
+		// getValue the subcontext output from the context
+		assertTrue(context(ent("result/eval", 120.0), ent("arg/y1", 30.0)).equals(
+			value(cxt, outPaths("result/eval", "arg/y1"))));
+	}
 }
 	
 	

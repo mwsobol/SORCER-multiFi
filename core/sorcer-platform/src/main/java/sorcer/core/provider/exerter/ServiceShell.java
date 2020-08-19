@@ -184,10 +184,10 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			if (mogram instanceof Routine) {
 				Subroutine exertion = (Subroutine)mogram;
 				exertion.selectFidelity(entries);
-				if (exertion.getInPathProjection() != null) {
+                Mogram out = exerting(txn, providerName, entries);
+                if (exertion.getInPathProjection() != null) {
 					((ServiceContext)exertion.getContext()).remap(exertion.getInPathProjection());
 				}
-				Mogram out = exerting(txn, providerName, entries);
 				if (exertion.getOutPathProjection() != null) {
 					((ServiceContext)out.getContext()).setMultiFiPaths(((ServiceContext)mogram.getContext()).getMultiFiPaths());
 					((ServiceContext)out.getContext()).remap(exertion.getOutPathProjection());

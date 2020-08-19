@@ -16,6 +16,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryAnalyzer;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.monitor.MonitoringSession;
+import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.provider.ServiceBean;
@@ -62,6 +63,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected String domainName;
     protected String subdomainName;
     protected FidelityManagement fiManager;
+    protected ContextFidelityManager contextFidelityManager;
     protected Projection projection;
     // the last morphed projection
     protected String[] metaFiNames;
@@ -808,6 +810,18 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return fiManager;
     }
 
+    public void setFidelityManager(FidelityManagement fiManager) {
+        this.fiManager = fiManager;
+    }
+
+    public ContextFidelityManager getContextFidelityManager() {
+        return contextFidelityManager;
+    }
+
+    public void setContextFidelityManager(ContextFidelityManager contextFidelityManager) {
+        this.contextFidelityManager = contextFidelityManager;
+    }
+
     public FidelityManagement getRemoteFidelityManager() throws RemoteException {
         return getFidelityManager();
     }
@@ -815,10 +829,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     @Override
     public boolean isMonitorable() throws RemoteException {
         return false;
-    }
-
-    public void setFidelityManager(FidelityManagement fiManager) {
-        this.fiManager = fiManager;
     }
 
     public Projection getProjection() {
@@ -841,7 +851,22 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         Fidelity fi = null;
         if (entries != null && entries.length > 0) {
             for (Arg a : entries)
-                if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.SELECT) {
+                if (a instanceof Projection) {
+                    if (((Projection)a).fiType.equals((Fi.Type.CXT_PRJ))) {
+                        Projection inPrj = ((Projection)a).getInPathProjection();
+                        Projection outPrj = ((Projection)a).getOutPathProjection();
+                        Fidelity cxtFi = ((Projection)a).getContextFidelity();
+                        if (inPrj != null) {
+                            inPathProjection = inPrj;
+                        }
+                        if (outPrj != null) {
+                            outPathProjection = outPrj;
+                        }
+                        if (cxtFi != null) {
+                            dataContext.selectFidelity(cxtFi.getName());
+                        }
+                    }
+                } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.SELECT) {
                     Mogram mog = null;
                     if (((Fidelity) a).getPath() != null && ((Fidelity) a).getPath().length() > 0) {
                         mog = this.getComponentMogram(((Fidelity) a).getPath());
@@ -854,7 +879,15 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
                 } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.META) {
                     fi = selectMetafidelity((Fidelity) a);
                 } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.CONTEXT) {
-                    dataContext.selectFidelity(a.getName());
+                    if (contextFidelityManager == null) {
+                        dataContext.selectFidelity(a.getName());
+                    } else {
+                        try {
+                            contextFidelityManager.morph(a.getName());
+                        } catch (EvaluationException e) {
+                            throw new ConfigurationException(e);
+                        }
+                    }
                 }
         }
         return fi;

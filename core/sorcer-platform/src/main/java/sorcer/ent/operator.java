@@ -1042,8 +1042,11 @@ public class operator extends Operator {
 	}
 
     public static <T> Req fxn(Fidelity<Path> multiFipath, EntryCollable call) {
-        Req srv = new Req(multiFipath.getSelect().getName(), call);
-        srv.setType(Functionality.Type.LAMBDA);
+		Req srv = new Req(multiFipath.getSelect().getName(), call);
+        srv.setMultiFiPath(multiFipath);
+		multiFipath.setName(multiFipath.getSelect().path);
+		multiFipath.setPath(srv.getName());
+		srv.setType(Functionality.Type.LAMBDA);
         srv.setMultiFiPath(multiFipath);
         return srv;
     }

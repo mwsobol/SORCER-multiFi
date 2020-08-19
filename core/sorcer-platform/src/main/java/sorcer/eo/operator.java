@@ -513,6 +513,9 @@ operator extends Operator {
                 } else if (p.getImpl()  instanceof Entry) {
                     ((Entry) p.getImpl()).initScope(context(entryList));
                 }
+                if (p.getMultiFiPath() != null) {
+                    cxt.getMultiFiPaths().put(((Path)p.getMultiFiPath().getSelect()).path, p.getMultiFiPath());
+                }
             }
         }
         if (contextReturn != null)
@@ -782,7 +785,7 @@ operator extends Operator {
                 pcxt.putValueAt(Context.DSD_PATH, ent.getImpl(), i + 1);
             }
             if (ent.getMultiFiPath() != null) {
-                ((ServiceContext)pcxt).getMultiFiPaths().put(((Path)ent.getMultiFiPath().getSelect()).path, ent.getMultiFiPath());
+                pcxt.getMultiFiPaths().put(((Path)ent.getMultiFiPath().getSelect()).path, ent.getMultiFiPath());
             }
         }
     }
@@ -2043,6 +2046,19 @@ operator extends Operator {
         return pr;
     }
 
+    public static Projection cxtProj(String name, Fidelity... fidelities) {
+        Projection pr = new Projection(fidelities);
+        pr.setName(name);
+        pr.setType(Fi.Type.CXT_PRJ);
+        return pr;
+    }
+
+    public static Projection cxtProj(Fidelity... fidelities) {
+        Projection pr = new Projection(fidelities);
+        pr.setType(Fi.Type.CXT_PRJ);
+        return pr;
+    }
+
     // projection of
     public static Projection proj(ServiceFidelity fidelity) {
         return new Projection(fidelity);
@@ -2348,6 +2364,7 @@ operator extends Operator {
         ControlContext cc = null;
         Projection inPathPrj = null;
         Projection outPathPrj = null;
+        List<Projection> cxtPrjs = new ArrayList<>();
         // structural pass
         for (Object item : items) {
             if (item instanceof String) {
@@ -2443,6 +2460,8 @@ operator extends Operator {
                     inPathPrj = (Projection)o;
                 } else if (((Projection)o).getFiType().equals(Fi.Type.OUT_PATH)){
                     outPathPrj = (Projection)o;
+                } else  if (((Projection)o).getFiType().equals(Fi.Type.CXT_PRJ)){
+                    cxtPrjs.add((Projection)o);
                 }
             } else if (o instanceof ServiceFidelity) {
                 fis.add(((ServiceFidelity) o));
@@ -2464,6 +2483,17 @@ operator extends Operator {
 
         if (fis.size() > 0 || mFi != null) {
             task = new Task(name);
+        }
+
+        ContextFidelityManager cxtMgr = null;
+        if (cxtPrjs.size() > 0) {
+            cxtMgr = new ContextFidelityManager(task);
+            Map<String, Fidelity> fiMap = new HashMap();
+            for (Projection p : cxtPrjs) {
+                fiMap.put(p.getName(), p);
+            }
+            cxtMgr.setFidelities(fiMap);
+            task.setContextFidelityManager(cxtMgr);
         }
 
         task.setContext(context);
