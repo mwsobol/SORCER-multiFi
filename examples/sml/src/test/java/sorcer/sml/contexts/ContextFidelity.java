@@ -90,7 +90,7 @@ public class ContextFidelity {
 			inVal(pthFis("arg/x1", "arg/y1"), 30.0),
 			inVal(pthFis("arg/x2", "arg/y2"), 90.0));
 
-		Projection outPrj = outProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2"));
+		Projection outPrj = outProj(fromTo("arg/x1", "arg/y1"), fromTo("arg/x2", "arg/y2"));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 			cxtFis(cxt1, cxt2), outPrj);
@@ -130,8 +130,8 @@ public class ContextFidelity {
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 			cxtFis(cxt1, cxt2));
 
-		Projection cxtPrj1 = cxtPrj(cxtFi("cxt1"), outProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2")));
-		Projection cxtPrj2 = cxtPrj(cxtFi("cxt2"), outProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2")));
+		Projection cxtPrj1 = cxtPrj(cxtFi("cxt1"), outProj(fromTo("arg/x1", "arg/y1"), fromTo("arg/x2", "arg/y2")));
+		Projection cxtPrj2 = cxtPrj(cxtFi("cxt2"), outProj(fromTo("arg/x1", "arg/y1"), fromTo("arg/x2", "arg/y2")));
 
 		Routine out = exert(t5, cxtPrj1);
 		Context cxt = context(out);
