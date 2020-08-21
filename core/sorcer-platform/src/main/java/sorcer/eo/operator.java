@@ -1777,11 +1777,11 @@ operator extends Operator {
         return fi;
     }
 
-    public static Context cmFi(Context... contexts) {
-        return  cmFi(null,  contexts);
+    public static Context cxtFis(Context... contexts) {
+        return  cxtFis(null,  contexts);
     }
 
-    public static Context cmFi(String name, Context... contexts) {
+    public static Context cxtFis(String name, Context... contexts) {
         PositionalContext cxt = new PositionalContext(name);
         for (Context c : contexts) {
             cxt.getMultiFi().getSelects().add(c);
@@ -2020,7 +2020,7 @@ operator extends Operator {
         return fi;
     }
 
-    public static Projection proj(String name, Fidelity... fidelities) {
+    public static Projection prj(String name, Fidelity... fidelities) {
         return projection(name, fidelities);
     }
 
@@ -2030,41 +2030,41 @@ operator extends Operator {
         return p;
     }
 
-    public static Projection proj(Fidelity... fidelities) {
+    public static Projection prj(Fidelity... fidelities) {
         return new Projection(fidelities);
     }
 
-    public static Projection inPthProj(Fidelity... fidelities) {
+    public static Projection inProj(Fidelity... fidelities) {
         Projection pr = new Projection(fidelities);
         pr.setType(Fi.Type.IN_PATH);
         return pr;
     }
 
-    public static Projection outPthProj(Fidelity... fidelities) {
+    public static Projection outProj(Fidelity... fidelities) {
         Projection pr = new Projection(fidelities);
         pr.setType(Fi.Type.OUT_PATH);
         return pr;
     }
 
-    public static Projection cxtProj(String name, Fidelity... fidelities) {
+    public static Projection cxtPrj(String name, Fidelity... fidelities) {
         Projection pr = new Projection(fidelities);
         pr.setName(name);
         pr.setType(Fi.Type.CXT_PRJ);
         return pr;
     }
 
-    public static Projection cxtProj(Fidelity... fidelities) {
+    public static Projection cxtPrj(Fidelity... fidelities) {
         Projection pr = new Projection(fidelities);
         pr.setType(Fi.Type.CXT_PRJ);
         return pr;
     }
 
     // projection of
-    public static Projection proj(ServiceFidelity fidelity) {
+    public static Projection prj(ServiceFidelity fidelity) {
         return new Projection(fidelity);
     }
 
-    public static Projection proj(String name, ServiceFidelity fidelity) {
+    public static Projection prj(String name, ServiceFidelity fidelity) {
         Projection p = new Projection(fidelity);
         p.setName(name);
         return p;
@@ -2172,11 +2172,27 @@ operator extends Operator {
         return fi;
     }
 
+    public static Fidelity<String> fromTo(String from, String to) {
+        Fidelity<String> fi = new Fidelity(from);
+        fi.setPath(to);
+        fi.fiType = Fi.Type.FROM_TO;
+        return fi;
+    }
+
     // path fidelity
-    public static Fidelity<Path> pthFi(Paths paths) throws ConfigurationException {
+    public static Fidelity<Path> pthFis(Paths paths) throws ConfigurationException {
         Fidelity<Path> fi = new Fidelity();
         fi.setSelects(paths);
         fi.setSelect(paths.get(0));
+        fi.fiType = Fi.Type.PATH;
+        return fi;
+    }
+
+    public static Fidelity<Path> pthFis(String... paths) throws ConfigurationException {
+        Paths fiPaths = new Paths(paths);
+        Fidelity<Path> fi = new Fidelity();
+        fi.setSelects(fiPaths);
+        fi.setSelect(fiPaths.get(0));
         fi.fiType = Fi.Type.PATH;
         return fi;
     }

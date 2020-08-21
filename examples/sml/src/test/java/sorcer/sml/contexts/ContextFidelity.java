@@ -35,8 +35,8 @@ public class ContextFidelity {
 	public void multiPathLambdaValue() throws Exception {
 
 		// the model execute a fxn lambda expression with no model state altered
-		Model mdl = model(ent(pthFi(paths("x1", "arg/x1")), 10.0), ent("x2", 20.0),
-			fxn(pthFi(paths("x3", "arg/x3")), (Model model) -> ent("x5", (double)exec(model, "x2") + 100.0)));
+		Model mdl = model(ent(pthFis("x1", "arg/x1"), 10.0), ent("x2", 20.0),
+			fxn(pthFis("x3", "arg/x3"), (Model model) -> ent("x5", (double)exec(model, "x2") + 100.0)));
 
 		logger.info("x3: " + eval(mdl, "x3"));
 		assertEquals(120.0, exec(mdl));
@@ -56,7 +56,7 @@ public class ContextFidelity {
 			inVal("arg/x2", 90.0));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				cmFi(cxt1, cxt2));
+				cxtFis(cxt1, cxt2));
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
@@ -83,17 +83,17 @@ public class ContextFidelity {
 	public void multiPathMultiFiContextTask() throws Exception  {
 
 		Context cxt1 = context("cxt1",
-			inVal(pthFi(paths("arg/x1", "arg/y1")), 20.0),
-			inVal(pthFi(paths("arg/x2", "arg/y2")), 80.0));
+			inVal(pthFis("arg/x1", "arg/y1"), 20.0),
+			inVal(pthFis("arg/x2", "arg/y2"), 80.0));
 
 		Context cxt2 = context("cxt2",
-			inVal(pthFi(paths("arg/x1", "arg/y1")), 30.0),
-			inVal(pthFi(paths("arg/x2", "arg/y2")), 90.0));
+			inVal(pthFis("arg/x1", "arg/y1"), 30.0),
+			inVal(pthFis("arg/x2", "arg/y2"), 90.0));
 
-		Projection outPrj = outPthProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2"));
+		Projection outPrj = outProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2"));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-			cmFi(cxt1, cxt2), outPrj);
+			cxtFis(cxt1, cxt2), outPrj);
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
@@ -120,18 +120,18 @@ public class ContextFidelity {
 	public void cxtProjectionMultiFiContextTask() throws Exception  {
 
 		Context cxt1 = context("cxt1",
-			inVal(pthFi(paths("arg/x1", "arg/y1")), 20.0),
-			inVal(pthFi(paths("arg/x2", "arg/y2")), 80.0));
+			inVal(pthFis("arg/x1", "arg/y1"), 20.0),
+			inVal(pthFis("arg/x2", "arg/y2"), 80.0));
 
 		Context cxt2 = context("cxt2",
-			inVal(pthFi(paths("arg/x1", "arg/y1")), 30.0),
-			inVal(pthFi(paths("arg/x2", "arg/y2")), 90.0));
+			inVal(pthFis("arg/x1", "arg/y1"), 30.0),
+			inVal(pthFis("arg/x2", "arg/y2"), 90.0));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-			cmFi(cxt1, cxt2));
+			cxtFis(cxt1, cxt2));
 
-		Projection cxtPrj1 = cxtProj(cxtFi("cxt1"), outPthProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2")));
-		Projection cxtPrj2 = cxtProj(cxtFi("cxt2"), outPthProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2")));
+		Projection cxtPrj1 = cxtPrj(cxtFi("cxt1"), outProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2")));
+		Projection cxtPrj2 = cxtPrj(cxtFi("cxt2"), outProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2")));
 
 		Routine out = exert(t5, cxtPrj1);
 		Context cxt = context(out);
@@ -158,17 +158,17 @@ public class ContextFidelity {
 	public void cxtFiManagerMultiFiContextTask() throws Exception  {
 
 		Context cxt1 = context("cxt1",
-			inVal(pthFi(paths("arg/x1", "arg/y1")), 20.0),
-			inVal(pthFi(paths("arg/x2", "arg/y2")), 80.0));
+			inVal(pthFis("arg/x1", "arg/y1"), 20.0),
+			inVal(pthFis("arg/x2", "arg/y2"), 80.0));
 
 		Context cxt2 = context("cxt2",
-			inVal(pthFi(paths("arg/x1", "arg/y1")), 30.0),
-			inVal(pthFi(paths("arg/x2", "arg/y2")), 90.0));
+			inVal(pthFis("arg/x1", "arg/y1"), 30.0),
+			inVal(pthFis("arg/x2", "arg/y2"), 90.0));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-			cmFi(cxt1, cxt2),
-			cxtProj("cxtPrj1", cxtFi("cxt1"), outPthProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2"))),
-			cxtProj("cxtPrj2", cxtFi("cxt2"), outPthProj(pthFi("arg/x1", "arg/y1"), pthFi("arg/x2", "arg/y2"))));
+			cxtFis(cxt1, cxt2),
+			cxtPrj("cxtPrj1", cxtFi("cxt1"), outProj(fromTo("arg/x1", "arg/y1"), fromTo("arg/x2", "arg/y2"))),
+			cxtPrj("cxtPrj2", cxtFi("cxt2"), outProj(fromTo("arg/x1", "arg/y1"), fromTo("arg/x2", "arg/y2"))));
 
 		Routine out = exert(t5, cxtFi("cxtPrj1"));
 		Context cxt = context(out);

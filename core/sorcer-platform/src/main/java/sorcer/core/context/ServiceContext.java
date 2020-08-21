@@ -657,7 +657,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public void remap(Projection projection) throws ContextException {
 		List fiList = projection.getSelects();
 		for (Object obj : fiList) {
-			if (obj instanceof Fidelity && ((Fidelity) obj).getFiType().equals(Fi.Type.PATH)) {
+			if (obj instanceof Fidelity && ((Fidelity) obj).getFiType().equals(Fi.Type.FROM_TO)) {
 				String p = ((Fidelity) obj).getPath();
 				String k = ((Fidelity) obj).getName();
 				if (multiFiPaths != null && multiFiPaths.get(k) != null) {

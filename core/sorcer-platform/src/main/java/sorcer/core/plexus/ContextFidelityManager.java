@@ -32,7 +32,7 @@ public class ContextFidelityManager extends FidelityManager<Context> {
                         ((ServiceMogram) mogram).setInPathProjection(inPrj);
                     }
                     if (mogram != null) {
-                        ((ServiceMogram) mogram).setInPathProjection(outPrj);
+                        ((ServiceMogram) mogram).setOutPathProjection(outPrj);
                     }
                     if (cxtFi != null) {
                         try {
