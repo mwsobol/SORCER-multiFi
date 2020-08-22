@@ -183,21 +183,29 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		try {
 			if (mogram instanceof Routine) {
 				Subroutine exertion = (Subroutine)mogram;
-				exertion.selectFidelity(entries);
+                mogram.setValid(false);
+                exertion.selectFidelity(entries);
                 Mogram out = exerting(txn, providerName, entries);
-                if (exertion.getInPathProjection() != null) {
-					((ServiceContext)exertion.getContext()).remap(exertion.getInPathProjection());
-				}
-				if (exertion.getOutPathProjection() != null) {
-					((ServiceContext)out.getContext()).setMultiFiPaths(((ServiceContext)mogram.getContext()).getMultiFiPaths());
-					((ServiceContext)out.getContext()).remap(exertion.getOutPathProjection());
-				}
+
+				ServiceContext cxt = (ServiceContext) mogram.getContext();
 				if (out instanceof Routine) {
 					if(out.getStatus()==Exec.ERROR || out.getStatus()==Exec.FAILED) {
 						return (T) out;
 					}
 					postProcessExertion(out);
 				}
+				mogram.setValid(true);
+				if (cxt.getMorpher() != null) {
+					((ServiceMogram)mogram).getContextFidelityManager().morph();
+				}
+				if (exertion.getInPathProjection() != null) {
+					((ServiceContext)exertion.getContext()).remap(exertion.getInPathProjection());
+				}
+				if (exertion.getOutPathProjection() != null) {
+					((ServiceContext)out.getContext()).setMultiFiPaths(((ServiceContext)mogram.getContext()).getMultiFiPaths());
+					((ServiceContext)out.getContext()).remap(exertion.getOutPathProjection());
+				}
+
 				if (exertion.isProxy()) {
 					Routine xrt = (Routine) out;
 					exertion.setContext(xrt.getDataContext());

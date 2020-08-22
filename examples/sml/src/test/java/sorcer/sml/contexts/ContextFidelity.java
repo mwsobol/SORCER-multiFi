@@ -170,7 +170,7 @@ public class ContextFidelity {
 			cxtPrj("cxtPrj1", cxtFi("cxt1"), outProj(fromTo("arg/x1", "arg/y1"), fromTo("arg/x2", "arg/y2"))),
 			cxtPrj("cxtPrj2", cxtFi("cxt2"), outProj(fromTo("arg/x1", "arg/y1"), fromTo("arg/x2", "arg/y2"))));
 
-		Routine out = exert(t5, cxtFi("cxtPrj1"));
+		Routine out = exert(t5, prjFi("cxtPrj1"));
 		Context cxt = context(out);
 
 		// getValue a single context argument
@@ -180,8 +180,56 @@ public class ContextFidelity {
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/y1", 20.0)).equals(
 			value(cxt, outPaths("result/eval", "arg/y1"))));
 
-		out = exert(t5, cxtFi("cxtPrj2"));
+		out = exert(t5, prjFi("cxtPrj2"));
 		cxt = context(out);
+
+		// getValue a single context argument
+		assertEquals(120.0, value(cxt, "result/eval"));
+
+		// getValue the subcontext output from the context
+		assertTrue(context(ent("result/eval", 120.0), ent("arg/y1", 30.0)).equals(
+			value(cxt, outPaths("result/eval", "arg/y1"))));
+	}
+
+
+	@Test
+	public void morphCxtFiManagerMultiFiContextTask() throws Exception  {
+
+		Context cxt1 = context("cxt1",
+			inVal(pthFis("arg/x1", "arg/y1"), 20.0),
+			inVal(pthFis("arg/x2", "arg/y2"), 80.0));
+
+		Context cxt2 = context("cxt2",
+			inVal(pthFis("arg/x1", "arg/y1"), 30.0),
+			inVal(pthFis("arg/x2", "arg/y2"), 90.0));
+
+		Morpher morpher = (mgr, mFi, value) -> {
+			Context cxt = (Context) mFi.getSelect();
+			Task task = (Task) value;
+			if (task.isValid() && task.getContext().getName().equals("cxt1")) {
+                mgr.morph("cxtPrj1");
+            } else if (task.isValid() && task.getContext().getName().equals("cxt2")) {
+                mgr.morph("cxtPrj2");
+            }
+		};
+
+		Task t5 = task("t5", sig("add", AdderImpl.class),
+			cxtFis(morpher, cxt1, cxt2),
+			cxtPrj("cxtPrj1", cxtFi("cxt1"), outProj(fromTo("arg/x1", "arg/y1"), fromTo("arg/x2", "arg/y2"))),
+			cxtPrj("cxtPrj2", cxtFi("cxt2"), outProj(fromTo("arg/x1", "arg/y1"), fromTo("arg/x2", "arg/y2"))));
+
+		Routine out = exert(t5);
+		Context cxt = context(out);
+
+		// getValue a single context argument
+		assertEquals(100.0, value(cxt, "result/eval"));
+
+		// getValue the subcontext output from the context
+		assertTrue(context(ent("result/eval", 100.0), ent("arg/y1", 20.0)).equals(
+			value(cxt, outPaths("result/eval", "arg/y1"))));
+
+        out = exert(t5, cxtFi("cxt2"));
+        cxt = context(out);
 
 		// getValue a single context argument
 		assertEquals(120.0, value(cxt, "result/eval"));

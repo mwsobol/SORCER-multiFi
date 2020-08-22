@@ -1770,6 +1770,12 @@ operator extends Operator {
         return fi;
     }
 
+    public static Fidelity prjFi(String name) {
+        Fidelity fi = new Fidelity(name);
+        fi.fiType = Fi.Type.PROJECTION;
+        return fi;
+    }
+
     public static Fidelity cxtFi(String name, Object select) {
         Fidelity fi = new Fidelity(name);
         fi.setSelect(select);
@@ -1778,7 +1784,13 @@ operator extends Operator {
     }
 
     public static Context cxtFis(Context... contexts) {
-        return  cxtFis(null,  contexts);
+        return  cxtFis((String)null,  contexts);
+    }
+
+    public static Context cxtFis(Morpher morpher, Context... contexts) {
+        Context cxt = cxtFis((String)null,  contexts);
+        ((ServiceContext)cxt).setMorpher(morpher);
+        return cxt;
     }
 
     public static Context cxtFis(String name, Context... contexts) {
