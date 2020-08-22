@@ -356,6 +356,7 @@ public class operator extends Operator {
         try {
             List<Arg> argl = new ArrayList();
             List<Path> paths = new ArrayList();;
+            FidelityList pthFis = new FidelityList();;
             for (Object item : items) {
                 if (item instanceof Path) {
                     paths.add((Path) item);
@@ -367,9 +368,14 @@ public class operator extends Operator {
                         && ((List) item).size() > 0
                         && ((List) item).get(0) instanceof Path) {
                     paths.addAll((List<Path>) item);
+                } else if (item instanceof Fidelity && ((Fidelity)item).getFiType().equals(Fi.Type.FROM_TO)) {
+                    pthFis.add((Fidelity)item);
                 } else if (item instanceof Arg) {
                     argl.add((Arg) item);
                 }
+            }
+            if (pthFis.size() > 0) {
+                ((ServiceContext)model).remap(new Projection(pthFis));
             }
             if (paths != null && paths.size() > 0) {
                 model.getDomainStrategy().setResponsePaths(paths);

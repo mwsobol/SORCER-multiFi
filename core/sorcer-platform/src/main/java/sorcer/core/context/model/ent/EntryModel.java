@@ -282,15 +282,19 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	public EntryModel append(Arg... objects) throws ContextException {
 		Prc p = null;
 		boolean changed = false;
+		FidelityList pthFis = new FidelityList();
 		for (Arg obj : objects) {
-			if (obj instanceof Fi) {
+			if (obj instanceof Fidelity && ((Fidelity)obj).getFiType().equals(Fi.Type.FROM_TO)) {
+				pthFis.add((Fidelity)obj);
+			} else if (obj instanceof Fi) {
 				continue;
 			} else if (obj instanceof Prc) {
 				p = (Prc) obj;
 			} else if (obj instanceof Entry) {
 				putValue((String) ((Entry) obj).key(),
-						((Entry) obj).getOut());
+					((Entry) obj).getOut());
 			}
+
 //			restrict identifiables
 //			else if (obj instanceof Identifiable) {
 //				String pn = obj.getName();
@@ -302,13 +306,15 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				changed = true;
 			}
 		}
-
+		if (pthFis.size() > 0) {
+			remap(new Projection(pthFis));
+		}
 		if (changed) {
-		isChanged = true;
-		updateEvaluations();
-	}
+			isChanged = true;
+			updateEvaluations();
+		}
 		return this;
-}
+	}
 
 	@Override
 	public ContextDomain add(Identifiable... objects) throws ContextException, RemoteException {

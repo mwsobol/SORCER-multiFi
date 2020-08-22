@@ -47,6 +47,7 @@ public class ContextFidelityManager extends FidelityManager<Context> {
             try {
                 Morpher cxtMorpher = mogram.getContext().getMorpher();
                 if (cxtMorpher != null) {
+                    // based on input output contexts reconfigure context fidelity and morph multiPaths
                     cxtMorpher.morph(this, mogram.getContext().getMultiFi(), mogram);
                 }
                 return;
@@ -55,6 +56,7 @@ public class ContextFidelityManager extends FidelityManager<Context> {
             }
         }
 
+        // handle multifidelities and context projections by name
         for (String fiName : fiNames) {
             prj = (Projection) fidelities.get(fiName);
             if (prj != null && prj.fiType.equals((Fi.Type.CXT_PRJ))) {

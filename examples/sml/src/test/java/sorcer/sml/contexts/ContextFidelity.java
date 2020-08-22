@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Projection;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -34,15 +35,21 @@ public class ContextFidelity {
 	@Test
 	public void multiPathLambdaValue() throws Exception {
 
-		// the model execute a fxn lambda expression with no model state altered
-		Model mdl = model(ent(pthFis("x1", "arg/x1"), 10.0), ent("x2", 20.0),
-			fxn(pthFis("x3", "arg/x3"), (Model model) -> ent("x5", (double)exec(model, "x2") + 100.0)));
+        // the model execute a fxn lambda expression with no model state altered
+        Model mdl = model(ent(pthFis("x1", "arg/x1"), 10.0), ent(pthFis("x2", "arg/x2"), 20.0),
+            fxn(pthFis("x3", "arg/x3"),
+                (Model model) ->
+                    ent("x5", (double)exec(model, "arg/x2") + 100.0)));
 
-		logger.info("x3: " + eval(mdl, "x3"));
-		assertEquals(120.0, exec(mdl));
-		assertEquals(120.0, exec(mdl, pthFi("x3", "arg/x3")));
-		assertEquals(120.0, exec(mdl, pthFi("arg/x3", "x3")));
-	}
+        Context cxt = eval(mdl, "x3", fromTo("x2", "arg/x2"));
+        assertEquals(120.0, value(cxt, "x3"));
+
+//      Entry x3 = (Entry) exec(mdl, "x3", fromTo("x2", "arg/x2"));
+//		assertEquals(120.0, exec(x3));
+
+        Entry x3 = (Entry) exec(mdl, "x3");
+        assertEquals(120.0, exec(x3));
+    }
 
 	@Test
 	public void exertMultiFiContextTask() throws Exception  {
