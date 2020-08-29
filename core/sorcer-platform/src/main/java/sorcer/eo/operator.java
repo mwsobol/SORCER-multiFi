@@ -272,7 +272,7 @@ operator extends Operator {
     }
 
     public static Context<Float> weights(Entry... entries) throws ContextException {
-        return context((Object[])entries);
+        return (Context)context((Object[])entries);
     }
 
     public static Context strategyContext(Object... entries) throws ContextException {
@@ -282,24 +282,28 @@ operator extends Operator {
     }
 
     public static ServiceContext context(Object... entries) throws ContextException {
+        return (ServiceContext)domainContext(entries);
+    }
+
+    public static ContextDomain domainContext(Object... entries) throws ContextException {
         // do not create a context from Context, jut return
         if (entries == null || entries.length == 0) {
             return new ServiceContext();
         } else if (entries.length == 1 && entries[0] instanceof Context) {
             return (ServiceContext) entries[0];
         } else if (entries.length == 1 && entries[0] instanceof Mogram) {
-            return (ServiceContext)((Mogram)entries[0]).getContext();
+            return ((Mogram)entries[0]).getContext();
         } else if (entries.length == 1 && entries[0] instanceof List) {
-            return (ServiceContext)contextFromList((List) entries[0]);
+            return contextFromList((List) entries[0]);
         } else if (entries.length == 1 && entries[0] instanceof Row) {
             return rowContext((Row) entries[0]);
         } else if (entries.length == 1 && entries[0] instanceof Args) {
             return argsContext((Args)entries[0]);
         }
 
-        ServiceContext cxt = null;
-        List<ServiceContext> cxts = new ArrayList<ServiceContext>();;
-        List<Connector> connList = new ArrayList<Connector>();
+        ContextDomain cxt = null;
+        List<ServiceContext> cxts = new ArrayList();;
+        List<Connector> connList = new ArrayList();
         Strategy.Access accessType = null;
         Strategy.Flow flowType = null;
         Strategy.FidelityManagement fm = null;
@@ -309,9 +313,9 @@ operator extends Operator {
             Routine xrt = (Routine) entries[0];
             if (entries.length >= 2 && entries[1] instanceof String)
                 xrt = (Routine) (xrt).getComponentMogram((String) entries[1]);
-            return (ServiceContext) xrt.getDataContext();
+            return xrt.getDataContext();
         } else if (entries[0] instanceof Link) {
-            return (ServiceContext) ((Link) entries[0]).getContext();
+            return ((Link) entries[0]).getContext();
         } else if (entries.length == 1 && entries[0] instanceof String) {
             return new PositionalContext((String) entries[0]);
         } else if (entries.length == 2 && entries[0] instanceof String
@@ -319,9 +323,9 @@ operator extends Operator {
             return (ServiceContext) ((Transroutine) entries[1]).getComponentMogram(
                 (String) entries[0]).getContext();
         } else if (entries[0] instanceof Context && entries[1] instanceof List) {
-            return (ServiceContext) ((ServiceContext) entries[0]).getDirectionalSubcontext((List)entries[1]);
-        } else if (entries[0] instanceof Context) {
-            cxt = (ServiceContext) entries[0];
+            return ((ServiceContext) entries[0]).getDirectionalSubcontext((List)entries[1]);
+        } else if (entries[0] instanceof ContextDomain) {
+            cxt = (ContextDomain) entries[0];
         } else if (Context.class.isAssignableFrom(entries[0].getClass())) {
             try {
                 cxt = (ServiceContext) ((Class) entries[0]).newInstance();
@@ -329,7 +333,7 @@ operator extends Operator {
                 throw new ContextException(e);
             }
         } else {
-            cxt = (ServiceContext) getPersistedContext(entries);
+            cxt = getPersistedContext(entries);
             if (cxt != null) return cxt;
         }
         String name = getUnknown();
@@ -457,7 +461,7 @@ operator extends Operator {
                     throw new ContextException(e);
                 }
                 if (subject != null)
-                    cxt.setSubject(subject.getName(), subject.getImpl());
+                    ((Context)cxt).setSubject(subject.getName(), subject.getImpl());
                 else
                     cxt.setName(name);
             } else {
@@ -468,10 +472,10 @@ operator extends Operator {
                     cxt = new DataContext(name);
                 }
             }
-        } else if (cxts.size() > 1){
+        } else if (!(cxt instanceof Model) && cxts.size() > 1 && cxts.contains(cxt)) {
             cxt = new ServiceContext("Bag Context");
             for (ServiceContext context : cxts) {
-                cxt.append(context);
+                ((Context)cxt).append(context);
             }
         }
 
@@ -485,75 +489,75 @@ operator extends Operator {
             }
         } else {
             if (entryList.size() > 0) {
-                populteContext(cxt, entryList);
+                populteContext((Context) cxt, entryList);
             }
             if (slotList.size() > 0) {
-                useSlots(cxt, slotList);
+                useSlots((ServiceContext)cxt, slotList);
             }
         }
         if (funcEntryList.size() > 0) {
             for (Entry p : funcEntryList) {
-                cxt.putValue(p.getName(), p);
+                ((Context)cxt).putValue(p.getName(), p);
                 if (p.getImpl()  instanceof Evaluator) {
                     // preserve invokeContext of the invoker
                     if (((Evaluator)p.getImpl()).getScope() != null
                         && ((Evaluator) p.getImpl()).getScope().size() > 0) {
-                        ((Evaluator) p.getImpl()).getScope().setScope(cxt);
+                        ((Evaluator) p.getImpl()).getScope().setScope((Context) cxt);
                     } else {
                         if (p.getImpl() instanceof ServiceInvoker) {
                             if (((ServiceInvoker) p.getImpl()).getInvokeContext() == null) {
-                                ((ServiceInvoker) p.getImpl()).setInvokeContext(cxt);
+                                ((ServiceInvoker) p.getImpl()).setInvokeContext((Context) cxt);
                             } else {
-                                ((ServiceInvoker) p.getImpl()).setScope(cxt);
+                                ((ServiceInvoker) p.getImpl()).setScope((Context) cxt);
                             }
                         } else {
-                            ((Evaluator) p.getImpl()).setScope(cxt);
+                            ((Evaluator) p.getImpl()).setScope((Context) cxt);
                         }
                     }
                 } else if (p.getImpl()  instanceof Entry) {
-                    ((Entry) p.getImpl()).initScope(context(entryList));
+                    ((Entry) p.getImpl()).initScope((Context)context(entryList));
                 }
                 if (p.getMultiFiPath() != null) {
-                    cxt.getMultiFiPaths().put(((Path)p.getMultiFiPath().getSelect()).path, p.getMultiFiPath());
+                    ((ServiceContext)cxt).getMultiFiPaths().put(((Path)p.getMultiFiPath().getSelect()).path, p.getMultiFiPath());
                 }
             }
         }
         if (contextReturn != null)
-            cxt.setContextReturn(contextReturn);
+            ((ServiceContext)cxt).setContextReturn(contextReturn);
         if (execPath != null)
-            cxt.setExecPath(execPath);
+            ((ServiceContext)cxt).setExecPath(execPath);
         if (cxtArgs != null) {
             if (cxtArgs.getName() != null) {
-                cxt.setArgsPath(cxtArgs.getName());
+                ((ServiceContext)cxt).setArgsPath(cxtArgs.getName());
             } else {
-                cxt.setArgsPath(Context.PARAMETER_VALUES);
+                ((ServiceContext)cxt).setArgsPath(Context.PARAMETER_VALUES);
             }
-            cxt.setArgs(cxtArgs.args);
+            ((ServiceContext)cxt).setArgs(cxtArgs.args);
         }
         if (parTypes != null) {
             if (parTypes.getName() != null) {
-                cxt.setParameterTypesPath(parTypes
+                ((ServiceContext)cxt).setParameterTypesPath(parTypes
                     .getName());
             } else {
-                cxt.setParameterTypesPath(Context.PARAMETER_TYPES);
+                ((ServiceContext)cxt).setParameterTypesPath(Context.PARAMETER_TYPES);
             }
-            cxt.setParameterTypes(parTypes.parameterTypes);
+            ((ServiceContext)cxt).setParameterTypes(parTypes.parameterTypes);
         }
         if (response != null) {
             if (response.getName() != null) {
                 cxt.getDomainStrategy().getResponsePaths().add(new Path(response.getName()));
             }
-            cxt.getDomainStrategy().setResult(response.getName(), response.target);
+            ((ServiceContext)cxt).getDomainStrategy().setResult(response.getName(), response.target);
         }
         if (entryLists.size() > 0) {
-            cxt.setEntryLists(entryLists);
+            ((ServiceContext)cxt).setEntryLists(entryLists);
         }
         if (connList.size() > 0) {
             for (Connector conn : connList) {
                 if (conn.direction == Connector.Direction.IN) {
-                    cxt.getDomainStrategy().setInConnector(conn);
+                    ((ServiceContext)cxt).getDomainStrategy().setInConnector(conn);
                 } else {
-                    cxt.getDomainStrategy().setOutConnector(conn);
+                    ((ServiceContext)cxt).getDomainStrategy().setOutConnector(conn);
                 }
             }
         }
@@ -564,7 +568,7 @@ operator extends Operator {
             for (ExecDependency e : depList) {
                 path = e.getName();
                 if (dm.get(path) != null) {
-                    ((List)dm.get(path)).add(e);
+                    dm.get(path).add(e);
                 } else {
                     List<ExecDependency> del = new ArrayList();
                     del.add(e);
@@ -574,14 +578,14 @@ operator extends Operator {
         }
         if (outPaths instanceof Context.Out) {
             if (cxt.getContextReturn() == null) {
-                cxt.setContextReturn(new Context.Return(outPaths));
+                ((ServiceContext)cxt).setContextReturn(new Context.Return(outPaths));
             } else {
                 cxt.getContextReturn().outPaths = outPaths;
             }
         }
         if (inPaths instanceof Context.In) {
             if (cxt.getContextReturn() == null) {
-                cxt.setContextReturn(new Context.Return(inPaths));
+                ((ServiceContext)cxt).setContextReturn(new Context.Return(inPaths));
             } else {
                 cxt.getContextReturn().inPaths = new Context.In(paths);
             }
@@ -589,7 +593,7 @@ operator extends Operator {
 
         if (paths != null) {
             if (cxt.getContextReturn() == null) {
-                cxt.setContextReturn(new Context.Return(paths.toPathArray()));
+                ((ServiceContext)cxt).setContextReturn(new Context.Return(paths.toPathArray()));
             } else {
                 cxt.getContextReturn().inPaths = new Context.In(paths);
             }
@@ -600,15 +604,15 @@ operator extends Operator {
         }
 
         if (mdaEntry != null) {
-            cxt.put(Context.MDA_PATH, mdaEntry);
+            ((ServiceContext)cxt).put(Context.MDA_PATH, mdaEntry);
         } else if (mdaFi != null) {
-            cxt.put(Context.MDA_PATH, mdaFi);
+            ((ServiceContext)cxt).put(Context.MDA_PATH, mdaFi);
         }
 
         if (explEntry != null) {
-            cxt.put(Context.EXPLORER_PATH, explEntry);
+            ((ServiceContext)cxt).put(Context.EXPLORER_PATH, explEntry);
         } else if (explFi != null) {
-            cxt.put(Context.EXPLORER_PATH, explFi);
+            ((ServiceContext)cxt).put(Context.EXPLORER_PATH, explFi);
         }
 
         if (accessType != null)
@@ -617,7 +621,7 @@ operator extends Operator {
             cxt.getDomainStrategy().setFlowType(flowType);
         try {
             if (sig != null)
-                cxt.setSubject(sig.getSelector(), sig.getServiceType());
+                ((ServiceContext)cxt).setSubject(sig.getSelector(), sig.getServiceType());
             if (cxt instanceof RequestModel && autoDeps) {
                 cxt = new SrvModelAutoDeps((RequestModel) cxt).get();
             }
@@ -626,16 +630,16 @@ operator extends Operator {
         }
 
         if (cxt.getFidelityManager() == null && fm == Strategy.FidelityManagement.YES) {
-            cxt.setFidelityManager(new FidelityManager(cxt));
-            setupFiManager(cxt);
+            ((ServiceContext)cxt).setFidelityManager(new FidelityManager(cxt));
+            setupFiManager((Context) cxt);
         } else if (fiManager != null) {
-            cxt.setFidelityManager(fiManager);
-            setupFiManager(cxt);
+            ((ServiceContext)cxt).setFidelityManager(fiManager);
+            setupFiManager((Context) cxt);
         } else if (cxt.getFidelityManager() != null) {
-            setupFiManager(cxt);
+            setupFiManager((Context) cxt);
         }
         if (projection != null)
-            cxt.setProjection(projection);
+            ((ServiceContext)cxt).setProjection(projection);
 
         return cxt;
     }
@@ -1794,12 +1798,13 @@ operator extends Operator {
     }
 
     public static Context cxtFis(String name, Context... contexts) {
-        PositionalContext cxt = new PositionalContext(name);
+        ServiceContext cxt = new PositionalContext(name);
         for (Context c : contexts) {
             cxt.getMultiFi().getSelects().add(c);
         }
         cxt.copyFrom((ServiceContext)contexts[0]);
         cxt.getMultiFi().setSelect(contexts[0]);
+        cxt.setType(Functionality.Type.MFI_CONTEXT);
         return cxt;
     }
 

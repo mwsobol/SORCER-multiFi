@@ -3050,6 +3050,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public Context getResponse(Arg... args) throws ContextException, RemoteException {
 		Context result = null;
+        if (inPathProjection != null) {
+            multiFiPaths = (((ServiceContext)contextFidelityManager.getDataContext().getMultiFi().getSelect()).getMultiFiPaths());
+            remap(inPathProjection);
+        }
 		if (morpher != null) {
 			try {
 				morpher.morph(fiManager, multiFi, this);
@@ -3087,6 +3091,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 			result = ((ModelStrategy) domainStrategy).outcome;
 		}
+		if (outPathProjection != null) {
+            multiFiPaths = (((ServiceContext)contextFidelityManager.getDataContext().getMultiFi().getSelect()).getMultiFiPaths());
+            remap(outPathProjection);
+        }
 		((ModelStrategy) domainStrategy).outcome.setModeling(false);
 		result.setName("Response of " + getClass().getSimpleName() + " " + key);
 		return result;

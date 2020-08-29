@@ -629,7 +629,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		if (mogram instanceof Context) {
 			cxt = (Context)mogram;
 		} else {
-			cxt = context(exert(mogram, txn, args));
+			cxt = (Context) context(exert(mogram, txn, args));
 		}
 		Task out = null;
 		out = task(this, cxt);

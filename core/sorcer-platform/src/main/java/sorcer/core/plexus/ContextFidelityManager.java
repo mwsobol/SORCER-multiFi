@@ -1,6 +1,8 @@
 package sorcer.core.plexus;
 
+import com.sun.tools.internal.ws.processor.model.Model;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.req.RequestModel;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -8,6 +10,7 @@ import java.util.List;
 
 public class ContextFidelityManager extends FidelityManager<Context> {
 
+    private Context dataContext;
 
     public ContextFidelityManager(String name) {
         super(name);
@@ -71,7 +74,12 @@ public class ContextFidelityManager extends FidelityManager<Context> {
                 }
                 if (cxtFi != null) {
                     try {
-                        ((ServiceMogram) mogram).getDataContext().selectFidelity(cxtFi.getName());
+                        if (mogram instanceof RequestModel) {
+                            dataContext.selectFidelity(cxtFi.getName());
+                            ((ServiceContext) mogram).append((Context) dataContext.getMultiFi().getSelect());
+                        } else {
+                            ((ServiceMogram) mogram).getDataContext().selectFidelity(cxtFi.getName());
+                        }
                     } catch (ConfigurationException | ContextException e) {
                         e.printStackTrace();
                     }
@@ -79,5 +87,25 @@ public class ContextFidelityManager extends FidelityManager<Context> {
             }
         }
     }
+
+    public Projection getContextProjection(String contextName) {
+        if (fidelities != null) {
+            for (Fidelity prj : fidelities.values()) {
+                if (((Projection) prj).getContextFidelity().getName().equals(contextName)) {
+                    return (Projection) prj;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Context getDataContext() {
+        return dataContext;
+    }
+
+    public void setDataContext(Context dataContext) {
+        this.dataContext = dataContext;
+    }
+
 
 }

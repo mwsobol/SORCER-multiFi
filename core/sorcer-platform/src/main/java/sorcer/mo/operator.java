@@ -22,6 +22,7 @@ import sorcer.co.tuple.InoutValue;
 import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
 import sorcer.core.context.*;
+import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.service.Analysis;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.EntryModel;
@@ -428,7 +429,7 @@ public class operator {
         return null;
     }
 
-    public static Object get(ContextDomain model, String path) throws ConfigurationException {
+    public static Object get(ContextDomain model, String path) {
         return model.get(path);
     }
 
@@ -928,6 +929,10 @@ public class operator {
         List<Metafidelity> metaFis = new ArrayList<>();
         List<Req> morphFiEnts = new ArrayList();
         List<Fidelity> fis = new ArrayList<>();
+        Projection inPathPrj = null;
+        Projection outPathPrj = null;
+        List<Projection> cxtPrjs = new ArrayList<>();
+        Context fiContext = null;
         for (Object item : items) {
             if (item instanceof sorcer.eo.operator.Complement) {
                 complement = (sorcer.eo.operator.Complement)item;
@@ -935,6 +940,16 @@ public class operator {
                 model = ((RequestModel)item);
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
+            } else if (item instanceof Context && ((ServiceContext)item).getType().equals(Functionality.Type.MFI_CONTEXT)) {
+                fiContext = (Context) item;
+            } else if (item instanceof Projection) {
+                if (((Projection)item).getFiType().equals(Fi.Type.IN_PATH)){
+                    inPathPrj = (Projection)item;
+                } else if (((Projection)item).getFiType().equals(Fi.Type.OUT_PATH)){
+                    outPathPrj = (Projection)item;
+                } else  if (((Projection)item).getFiType().equals(Fi.Type.CXT_PRJ)){
+                    cxtPrjs.add((Projection)item);
+                }
             } else if (item instanceof Req && ((Req)item).getImpl() instanceof MorphFidelity) {
                 morphFiEnts.add((Req)item);
             } else if (item instanceof Fidelity) {
@@ -957,6 +972,27 @@ public class operator {
         if (model == null) {
             model = new RequestModel();
             newModel = true;
+        }
+
+        if (inPathPrj != null) {
+            model.setInPathProjection(inPathPrj);
+        }
+        if (outPathPrj != null) {
+            model.setOutPathProjection(outPathPrj);
+        }
+        ContextFidelityManager cxtMgr = null;
+        if (cxtPrjs.size() > 0) {
+            cxtMgr = new ContextFidelityManager(model);
+            Map<String, Fidelity> fiMap = new HashMap();
+            for (Projection p : cxtPrjs) {
+                fiMap.put(p.getName(), p);
+            }
+            cxtMgr.setFidelities(fiMap);
+            if (fiContext != null) {
+                cxtMgr.setDataContext(fiContext);
+            }
+            model.append((Context) fiContext.getMultiFi().getSelect());
+            model.setContextFidelityManager(cxtMgr);
         }
 
         if (morphFiEnts != null || metaFis != null || fis != null) {
@@ -996,9 +1032,9 @@ public class operator {
             Object[] dest = new Object[items.length + 1];
             System.arraycopy(items, 0, dest, 1, items.length);
             dest[0] = model;
-            return (Model)context(dest);
+            return (Model) domainContext(dest);
         }
-        return (Model)context(items);
+        return (Model)domainContext(items);
     }
 
     public static void update(Mogram mogram, Setup... entries) throws ContextException {
