@@ -115,8 +115,7 @@ public class ModelContextFidelity {
 			Model mdl = (Model) value;
 			if (!mdl.isValid() && prjName.equals("cxtPrj1")) {
 				setValue(mdl, "multiply/x1", 13.0);
-			}
-			if (mdl.isValid() && prjName.equals("cxtPrj1")) {
+			} else if (mdl.isValid() && prjName.equals("cxtPrj1")) {
 				mgr.morph("cxtPrj2");
 			} else if (mdl.isValid() && prjName.equals("cxtPrj2")) {
 				mgr.morph("cxtPrj3");
@@ -148,6 +147,11 @@ public class ModelContextFidelity {
 		assertTrue(get(out, "subtract").equals(550.0));
 		assertTrue(get(out, "multiply").equals(650.0));
 		assertTrue(get(out, "add").equals(100.0));
+
+		assertTrue(get(mdl, "add/x1").equals(21.0));
+		assertTrue(get(mdl, "add/x2").equals(81.0));
+		assertTrue(get(mdl, "multiply/x1").equals(11.0));
+		assertTrue(get(mdl, "multiply/x2").equals(51.0));
 
 		// select context fidelity
 		out = response(mdl, prjFi("cxtPrj3"));
