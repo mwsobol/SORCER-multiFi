@@ -155,11 +155,6 @@ public class ModelContextFidelity {
 		assertTrue(get(out, "multiply").equals(650.0));
 		assertTrue(get(out, "add").equals(100.0));
 
-//		assertTrue(get(mdl, "m-z1").equals(11.0));
-//		assertTrue(get(mdl, "m-z2").equals(51.0));
-//		assertTrue(get(mdl, "a-z3").equals(21.0));
-//		assertTrue(get(mdl, "a-z4").equals(81.0));
-
 		// select context fidelity
 		out = response(mdl, prjFi("cxtPrj3"));
 		logger.info("model response: " + out);
