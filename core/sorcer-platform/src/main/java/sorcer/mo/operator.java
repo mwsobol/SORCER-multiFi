@@ -993,9 +993,10 @@ public class operator {
             }
             model.append((Context) fiContext.getMultiFi().getSelect());
             model.setContextFidelityManager(cxtMgr);
+            model.setContextProjection(cxtPrjs.get(0));
         }
 
-        if (morphFiEnts != null || metaFis != null || fis != null) {
+        if (morphFiEnts.size() > 0 || metaFis.size() > 0 || fis.size() > 0) {
            if (fiManager == null)
                fiManager = new FidelityManager(model);
         }

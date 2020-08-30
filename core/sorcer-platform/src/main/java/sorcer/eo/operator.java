@@ -309,6 +309,7 @@ operator extends Operator {
         Strategy.FidelityManagement fm = null;
         FidelityManager fiManager = null;
         Projection projection = null;
+        Projection contextProjection = null;
         if (entries[0] instanceof Routine) {
             Routine xrt = (Routine) entries[0];
             if (entries.length >= 2 && entries[1] instanceof String)
@@ -403,7 +404,11 @@ operator extends Operator {
             } else if (o instanceof FidelityManager) {
                 fiManager = ((FidelityManager) o);
             } else if (o instanceof Projection) {
-                projection = ((Projection) o);
+                if (((Projection)o).getFiType().equals(Fi.Type.CXT_PRJ)) {
+                    contextProjection = ((Projection) o);
+                } else {
+                    projection = ((Projection) o);
+                }
             } else if (Strategy.Flow.EXPLICIT.equals(o)) {
                 autoDeps = false;
             } else if (o instanceof Context.Out) {
@@ -576,14 +581,14 @@ operator extends Operator {
                 }
             }
         }
-        if (outPaths instanceof Context.Out) {
+        if (outPaths != null && outPaths instanceof Context.Out) {
             if (cxt.getContextReturn() == null) {
                 ((ServiceContext)cxt).setContextReturn(new Context.Return(outPaths));
             } else {
                 cxt.getContextReturn().outPaths = outPaths;
             }
         }
-        if (inPaths instanceof Context.In) {
+        if (inPaths != null && inPaths instanceof Context.In) {
             if (cxt.getContextReturn() == null) {
                 ((ServiceContext)cxt).setContextReturn(new Context.Return(inPaths));
             } else {
@@ -670,8 +675,10 @@ operator extends Operator {
                     fiMap.put(e.getKey(), (ServiceFidelity)((Req)val).asis());
                 }
             }
-            if (((ServiceContext)cxt).getProjection() != null)
-                cxt.reconfigure(((ServiceContext)cxt).getProjection().toFidelityArray());
+            Projection prj = ((ServiceContext)cxt).getProjection();
+            if (prj != null&& ! prj.getFiType().equals(Fi.Type.CXT_PRJ)) {
+                cxt.reconfigure(((ServiceContext) cxt).getProjection().toFidelityArray());
+            }
         } catch (Exception ex) {
             throw new ContextException(ex);
         }

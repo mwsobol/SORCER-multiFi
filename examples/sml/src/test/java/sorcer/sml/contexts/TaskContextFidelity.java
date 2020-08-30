@@ -29,8 +29,8 @@ import static sorcer.so.operator.*;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class ContextFidelity {
-	private final static Logger logger = LoggerFactory.getLogger(ContextFidelity.class);
+public class TaskContextFidelity {
+	private final static Logger logger = LoggerFactory.getLogger(TaskContextFidelity.class);
 
 	@Test
 	public void multiPathLambdaValue() throws Exception {

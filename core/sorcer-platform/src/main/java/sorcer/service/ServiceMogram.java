@@ -68,6 +68,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected Projection outPathProjection;
     // the last morphed projection
     protected Projection projection;
+    protected Projection contextProjection;
     // list of fidelities of this mogram
     protected String[] metaFiNames;
     protected String[] profile;
@@ -1283,6 +1284,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public void execDependencies(String path, Arg... args) throws ContextException {
         // implement in subclasses
+    }
+
+    public Projection getContextProjection() {
+        return contextProjection;
+    }
+
+    public void setContextProjection(Projection contextProjection) {
+        this.contextProjection = contextProjection;
     }
 
     @Override

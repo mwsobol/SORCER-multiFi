@@ -1,9 +1,9 @@
 package sorcer.core.plexus;
 
-import com.sun.tools.internal.ws.processor.model.Model;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.req.RequestModel;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -48,10 +48,21 @@ public class ContextFidelityManager extends FidelityManager<Context> {
         Projection prj = null;
         if (fiNames == null || fiNames.length == 0) {
             try {
-                Morpher cxtMorpher = mogram.getContext().getMorpher();
+                Morpher cxtMorpher = null;
+                if (mogram instanceof Model) {
+                    cxtMorpher = dataContext.getMorpher();
+                } else {
+                    cxtMorpher = mogram.getContext().getMorpher();
+                }
                 if (cxtMorpher != null) {
+                    Fi fi = null;
+                    if (mogram instanceof Model) {
+                        fi = ((ServiceContext)mogram).getContextProjection();
+                    } else {
+                        fi = mogram.getContext().getMultiFi();
+                    }
                     // based on input output contexts reconfigure context fidelity and morph multiPaths
-                    cxtMorpher.morph(this, mogram.getContext().getMultiFi(), mogram);
+                    cxtMorpher.morph(this, fi, mogram);
                 }
                 return;
             } catch (RemoteException | ServiceException | ConfigurationException e) {

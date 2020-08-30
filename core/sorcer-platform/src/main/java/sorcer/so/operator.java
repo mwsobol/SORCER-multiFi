@@ -436,7 +436,15 @@ public class operator extends Operator {
                 }
             }
             model.substitute(args);
+            model.setValid(false);
+            if (cfmgr != null && cfmgr.getDataContext().getMorpher() != null) {
+                ((ServiceContext)model).getContextFidelityManager().morph();
+            }
             ServiceContext out = (ServiceContext) model.getResponse(args);
+            model.setValid(true);
+            if (cfmgr != null && cfmgr.getDataContext().getMorpher() != null) {
+                ((ServiceContext)model).getContextFidelityManager().morph();
+            }
             return out;
         } catch (RemoteException | ConfigurationException e) {
             throw new ContextException(e);
