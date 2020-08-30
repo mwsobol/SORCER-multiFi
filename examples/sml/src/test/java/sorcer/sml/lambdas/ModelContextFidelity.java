@@ -6,19 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.arithmetic.provider.impl.*;
 import sorcer.service.Morpher;
-import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.*;
-import sorcer.service.ContextDomain;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ent;
 
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.*;
-import static sorcer.ent.operator.inc;
 import static sorcer.ent.operator.*;
 import static sorcer.so.operator.*;
 
