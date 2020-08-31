@@ -16,26 +16,15 @@
  */
 package sorcer.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by Mike Sobolewsko on 6/19/15 based on the DataService class
  */
 public interface FileURLHandler {
-
 
         /**
          * Get a {@link URL} for a file path.
@@ -48,7 +37,7 @@ public interface FileURLHandler {
          * @throws IllegalArgumentException if the file cannot be accessed from one of the roots provided.
          * @throws IllegalStateException if the data service is not running.
          */
-        public URL getDataURL(final String path) throws IOException;
+        URL getDataURL(final String path) throws IOException;
 
         /**
          * Get a {@link URL} for a file.
@@ -61,7 +50,7 @@ public interface FileURLHandler {
          * @throws IllegalArgumentException if the file cannot be accessed from one of the roots provided.
          * @throws IllegalStateException if the data service is not available.
          */
-        public URL getDataURL(final File file) throws IOException;
+        URL getDataURL(final File file) throws IOException;
         /**
          * Download the contents of a URL to a local file
          *
@@ -70,7 +59,7 @@ public interface FileURLHandler {
          *
          * @throws IOException
          */
-        public void download(final URL url, final File to) throws IOException;
+        void download(final URL url, final File to) throws IOException;
 
         /**
          * Get a File from a URL.
@@ -81,7 +70,7 @@ public interface FileURLHandler {
          *
          * @throws FileNotFoundException If the URL cannot be accessed from one of the roots provided.
          */
-        public File getDataFile(final URL url) throws IOException;
+        File getDataFile(final URL url) throws IOException;
 
 
         /**
@@ -92,14 +81,14 @@ public interface FileURLHandler {
          *
          * @return The DataService data directory.
          */
-        public String getDir();
+        String getDir();
 
         /**
          * Get the execute of the DATA_URL system property
          *
          * @return The execute of the DATA_URL system property
          */
-        public String getDataUrl();
+        String getDataUrl();
 
     }
 
