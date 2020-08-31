@@ -319,7 +319,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     }
 
 
-    private Fidelity getFidelity(String name) {
+    public Fidelity getFidelity(String name) {
         Fidelity fi = fidelities.get(name);
         if (fi == null) {
             // getValue unknown fidelity
@@ -333,7 +333,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
                     return sf;
             }
         }
-        return null;
+        return fi;
     }
 
     public void reconfigure(List<Fidelity> fiList) throws ConfigurationException {

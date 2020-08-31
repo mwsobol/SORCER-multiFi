@@ -657,7 +657,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public void remap(Projection projection) throws ContextException {
 		List fiList = projection.getSelects();
 		for (Object obj : fiList) {
-			if (obj instanceof Fidelity && ((Fidelity) obj).getFiType().equals(Fi.Type.PATH)) {
+			if (obj instanceof Fidelity && ((Fidelity) obj).getFiType().equals(Fi.Type.FROM_TO)) {
 				String p = ((Fidelity) obj).getPath();
 				String k = ((Fidelity) obj).getName();
 				if (multiFiPaths != null && multiFiPaths.get(k) != null) {
@@ -3050,6 +3050,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public Context getResponse(Arg... args) throws ContextException, RemoteException {
 		Context result = null;
+        if (inPathProjection != null) {
+            multiFiPaths = (((ServiceContext)contextFidelityManager.getDataContext().getMultiFi().getSelect()).getMultiFiPaths());
+            remap(inPathProjection);
+        }
 		if (morpher != null) {
 			try {
 				morpher.morph(fiManager, multiFi, this);
@@ -3087,6 +3091,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 			result = ((ModelStrategy) domainStrategy).outcome;
 		}
+		if (outPathProjection != null) {
+            multiFiPaths = (((ServiceContext)contextFidelityManager.getDataContext().getMultiFi().getSelect()).getMultiFiPaths());
+            remap(outPathProjection);
+        }
 		((ModelStrategy) domainStrategy).outcome.setModeling(false);
 		result.setName("Response of " + getClass().getSimpleName() + " " + key);
 		return result;

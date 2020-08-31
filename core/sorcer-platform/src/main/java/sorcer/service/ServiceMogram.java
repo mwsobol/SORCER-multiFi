@@ -64,10 +64,13 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected String subdomainName;
     protected FidelityManagement fiManager;
     protected ContextFidelityManager contextFidelityManager;
-    protected Projection projection;
+    protected Projection inPathProjection;
+    protected Projection outPathProjection;
     // the last morphed projection
-    protected String[] metaFiNames;
+    protected Projection projection;
+    protected Projection contextProjection;
     // list of fidelities of this mogram
+    protected String[] metaFiNames;
     protected String[] profile;
     protected ServiceStrategy domainStrategy;
     protected Differentiator differentiator;
@@ -76,8 +79,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected Fidelity<EntryAnalyzer> mdaFi;
     protected List<Coupling> couplings;
     protected ContextSelector contextSelector;
-    protected Projection inPathProjection;
-    protected Projection outPathProjection;
 
     /**
      * execution status: INITIAL|DONE|RUNNING|SUSPENDED|HALTED
@@ -849,46 +850,54 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public Fidelity selectFidelity(Arg... entries) throws ConfigurationException {
         Fidelity fi = null;
-        if (entries != null && entries.length > 0) {
-            for (Arg a : entries)
-                if (a instanceof Projection) {
-                    if (((Projection)a).fiType.equals((Fi.Type.CXT_PRJ))) {
-                        Projection inPrj = ((Projection)a).getInPathProjection();
-                        Projection outPrj = ((Projection)a).getOutPathProjection();
-                        Fidelity cxtFi = ((Projection)a).getContextFidelity();
-                        if (inPrj != null) {
-                            inPathProjection = inPrj;
+        try {
+            if (entries != null && entries.length > 0) {
+                for (Arg a : entries)
+                    if (a instanceof Projection) {
+                        if (((Projection)a).fiType.equals((Fi.Type.CXT_PRJ))) {
+                            Projection inPrj = ((Projection)a).getInPathProjection();
+                            Projection outPrj = ((Projection)a).getOutPathProjection();
+                            Fidelity cxtFi = ((Projection)a).getContextFidelity();
+                            if (inPrj != null) {
+                                inPathProjection = inPrj;
+                            }
+                            if (outPrj != null) {
+                                outPathProjection = outPrj;
+                            }
+                            if (cxtFi != null) {
+                                dataContext.selectFidelity(cxtFi.getName());
+                            }
                         }
-                        if (outPrj != null) {
-                            outPathProjection = outPrj;
+                    } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.SELECT) {
+                        Mogram mog = null;
+                        if (((Fidelity) a).getPath() != null && ((Fidelity) a).getPath().length() > 0) {
+                            mog = this.getComponentMogram(((Fidelity) a).getPath());
+                        } else {
+                            mog = this;
                         }
-                        if (cxtFi != null) {
-                            dataContext.selectFidelity(cxtFi.getName());
+                        if (mog != null) {
+                            fi = mog.selectFidelity(a.getName());
                         }
-                    }
-                } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.SELECT) {
-                    Mogram mog = null;
-                    if (((Fidelity) a).getPath() != null && ((Fidelity) a).getPath().length() > 0) {
-                        mog = this.getComponentMogram(((Fidelity) a).getPath());
-                    } else {
-                        mog = this;
-                    }
-                    if (mog != null) {
-                        fi = mog.selectFidelity(a.getName());
-                    }
-                } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.META) {
-                    fi = selectMetafidelity((Fidelity) a);
-                } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.CONTEXT) {
-                    if (contextFidelityManager == null) {
-                        dataContext.selectFidelity(a.getName());
-                    } else {
-                        try {
+                    } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.META) {
+                        fi = selectMetafidelity((Fidelity) a);
+                    } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.CONTEXT) {
+                        if (contextFidelityManager == null) {
+                            dataContext.selectFidelity(a.getName());
+                        } else {
+                            contextFidelityManager.reconfigure((Fidelity)a);
+                        }
+                    } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.PROJECTION) {{
                             contextFidelityManager.morph(a.getName());
-                        } catch (EvaluationException e) {
-                            throw new ConfigurationException(e);
                         }
+
                     }
-                }
+            }
+            ServiceContext cxt = (ServiceContext) getContext();
+            if (cxt.getMorpher() != null) {
+                contextFidelityManager.morph();
+            }
+        } catch (ContextException e) {
+            throw new ConfigurationException(e);
         }
         return fi;
     }
@@ -1275,6 +1284,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public void execDependencies(String path, Arg... args) throws ContextException {
         // implement in subclasses
+    }
+
+    public Projection getContextProjection() {
+        return contextProjection;
+    }
+
+    public void setContextProjection(Projection contextProjection) {
+        this.contextProjection = contextProjection;
     }
 
     @Override
