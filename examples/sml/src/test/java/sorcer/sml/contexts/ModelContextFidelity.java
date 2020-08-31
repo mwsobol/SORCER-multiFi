@@ -1,4 +1,4 @@
-package sorcer.sml.lambdas;
+package sorcer.sml.contexts;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
