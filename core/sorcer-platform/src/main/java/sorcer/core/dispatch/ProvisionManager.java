@@ -56,13 +56,13 @@ public class ProvisionManager {
 	private volatile DeployAdmin deployAdmin;
     private Map<ServiceDeployment.Unique, List<OperationalString>> deployments;
 
-	public ProvisionManager(final Routine exertion) throws DispatchException {
+	public ProvisionManager(final Routine exertion) {
 		this.exertion = exertion;
 		this.signatures = null;
         provisionMonitorCache = ProvisionMonitorCache.getInstance();
 	}
 
-    public ProvisionManager(final List<Signature> signatures) throws DispatchException {
+    public ProvisionManager(final List<Signature> signatures) {
         this.exertion = null;
         this.signatures = signatures;
         provisionMonitorCache = ProvisionMonitorCache.getInstance();
@@ -72,8 +72,8 @@ public class ProvisionManager {
         return deployAdmin;
     }
 
-    private synchronized void doGetDeployAdmin() throws RemoteException {
-        if(deployAdmin==null) {
+    private synchronized void doGetDeployAdmin() {
+        if (deployAdmin == null) {
             logger.debug("Discover a DeployAdmin reference using {} ...", getDiscoveryInfo());
             deployAdmin = provisionMonitorCache.getDeployAdmin();
             logger.debug("Obtained a DeployAdmin reference");
@@ -81,13 +81,11 @@ public class ProvisionManager {
     }
 
     public List<String> getDeploymentNames() {
-        List<String> names = new ArrayList<>();
-        names.addAll(deploymentNames);
-        return names;
+        return new ArrayList<>(deploymentNames);
     }
 
     public synchronized boolean deployServicesSync() throws DispatchException {
-        if(!deployServices()) {
+        if (!deployServices()) {
             return false;
         }
         List<Callable<Boolean>> tasks = new ArrayList<>();
@@ -104,7 +102,7 @@ public class ProvisionManager {
         boolean deployed = true;
         for(int i=0; i<tasks.size(); i++) {
             try {
-                if(!completionService.take().get()) {
+                if (!completionService.take().get()) {
                     deployed = false;
                 }
             } catch (InterruptedException | ExecutionException e) {
@@ -116,7 +114,7 @@ public class ProvisionManager {
 
     public boolean deployServices() throws DispatchException {
         deployments = createDeployments();
-        if(deployments.isEmpty()) {
+        if (deployments.isEmpty()) {
             return false;
         }
         try {
@@ -124,31 +122,31 @@ public class ProvisionManager {
             if (deployAdmin != null) {
                 for (Map.Entry<ServiceDeployment.Unique, List<OperationalString>> entry : deployments.entrySet()) {
                     for (OperationalString deployment : entry.getValue()) {
-                        if(logger.isDebugEnabled())
+                        if (logger.isDebugEnabled())
                             logger.debug("Processing deployment {}", deployment.getName());
-                        if(deployAdmin.hasDeployed(deployment.getName())) {
+                        if (deployAdmin.hasDeployed(deployment.getName())) {
                             if (entry.getKey() == ServiceDeployment.Unique.YES) {
                                 String newName = createDeploymentName(deployment.getName(),
                                                                       deployAdmin.getOperationalStringManagers());
-                                if(logger.isDebugEnabled())
+                                if (logger.isDebugEnabled())
                                     logger.debug("Deployment for {} already exists, created new key [{}], " +
                                                           "proceed with autonomic deployment",
                                                           deployment.getName(), newName);
                                 ((OpString)deployment).setName(newName);
                             } else {
-                                if(logger.isDebugEnabled())
+                                if (logger.isDebugEnabled())
                                     logger.debug("Deployment for {} already exists", deployment.getName());
-                                if(!deploymentNames.contains(deployment.getName()))
+                                if (!deploymentNames.contains(deployment.getName()))
                                     deploymentNames.add(deployment.getName());
                                 continue;
                             }
                         } else {
-                            if(logger.isDebugEnabled())
+                            if (logger.isDebugEnabled())
                                 logger.debug("Deployment for {} not found, request autonomic deployment",
                                              deployment.getName());
                         }
                         deployAdmin.deploy(deployment);
-                        if(!deploymentNames.contains(deployment.getName()))
+                        if (!deploymentNames.contains(deployment.getName()))
                             deploymentNames.add(deployment.getName());
                     }
                 }
@@ -183,20 +181,20 @@ public class ProvisionManager {
                 throw new DispatchException(message);
             }
         } catch (Exception e) {
-            if(e instanceof DispatchException)
+            if (e instanceof DispatchException)
                 throw (DispatchException)e;
 
             if (exertion != null) {
                 java.io.OptionalDataException ode = null;
-                if(e instanceof java.rmi.ServerException) {
-                    if(e.getCause() instanceof java.rmi.UnmarshalException) {
-                        if(e.getCause().getCause() instanceof java.io.OptionalDataException) {
+                if (e instanceof java.rmi.ServerException) {
+                    if (e.getCause() instanceof java.rmi.UnmarshalException) {
+                        if (e.getCause().getCause() instanceof java.io.OptionalDataException) {
                             ode = (java.io.OptionalDataException)e.getCause().getCause();
                         }
                     }
                 }
 
-                if(ode!=null) {
+                if (ode != null) {
                     logger.warn("Unable to compute exertion deployment for {}, {}:\n" +
                                         "\tread past the end of consumable data? {}\n"+
                                         "\tnumber of bytes of primitive data immediately readable from the stream: {}",
@@ -208,14 +206,14 @@ public class ProvisionManager {
                 throw new DispatchException(String.format("While trying to provision exertion %s", exertion.getName()), e);
             } else {
                 logger.warn("Unable to compute deployment for {}", signatures, e);
-                throw new DispatchException(String.format("While trying to provision signatures %s", signatures.toString()), e);
+                throw new DispatchException(String.format("While trying to provision signatures %s", signatures), e);
             }
         }
         return true;
     }
 
     public void undeploy() {
-        if(deployAdmin==null) {
+        if (deployAdmin == null) {
             logger.warn("Unable to undeploy, there is no known DeployAdmin ");
             return;
         }
@@ -244,17 +242,20 @@ public class ProvisionManager {
                 deployments = OperationalStringFactory.create(signatures);
             }
         } catch (Exception e) {
+            if (exertion != null) {
+                throw new DispatchException(String.format("While trying to create deployment for exertion %s",
+                                                          exertion.getName()), e);
+            }
             throw new DispatchException(String.format("While trying to create deployment for exertion %s",
-                                                        exertion.getName()),
-                                          e);
+                                                      signatures), e);
         }
         return deployments;
     }
 
     private String createDeploymentName(final String baseName, OperationalStringManager... managers) throws RemoteException {
         int known = 0;
-        for(OperationalStringManager manager : managers) {
-            if(manager.getOperationalString().getName().startsWith(baseName)) {
+        for (OperationalStringManager manager : managers) {
+            if (manager.getOperationalString().getName().startsWith(baseName)) {
                 known++;
             }
         }
@@ -265,11 +266,11 @@ public class ProvisionManager {
         StringBuilder discoveryInfo = new StringBuilder();
         String groups = provisionMonitorCache.getGroups();
         String locators = provisionMonitorCache.getLocators();
-        if(groups!=null) {
+        if (groups!=null) {
             discoveryInfo.append("groups: ").append(groups);
         }
-        if(locators!=null) {
-            if(discoveryInfo.length()>0)
+        if (locators!=null) {
+            if (discoveryInfo.length()>0)
                 discoveryInfo.append(",");
             discoveryInfo.append("locators: ").append(locators);
         }
@@ -278,7 +279,7 @@ public class ProvisionManager {
 
     private Iterable<Signature> getNetSignatures() {
         List<Signature> signatures = new ArrayList<>();
-        if(exertion instanceof Subroutine) {
+        if (exertion instanceof Subroutine) {
             Subroutine serviceExertion = (Subroutine)exertion;
             signatures.addAll(serviceExertion.getAllNetTaskSignatures());
         }
@@ -320,8 +321,8 @@ public class ProvisionManager {
                             try {
                                 numDeployed = mgr.getServiceBeanInstances(elem).length;
                                 deploy.put(elem, numDeployed);
-                                if(counter % 50 == 0) {
-                                    if(logger.isDebugEnabled()) {
+                                if (counter % 50 == 0) {
+                                    if (logger.isDebugEnabled()) {
                                         logger.debug(String.format(
                                             "Service %s/%-12s is pending. Planned [%s], deployed [%d]",
                                             elem.getOperationalStringName(),
@@ -331,13 +332,13 @@ public class ProvisionManager {
                                     }
                                 }
                             } catch (OperationalStringException notReady) {
-                                if(logger.isTraceEnabled())
+                                if (logger.isTraceEnabled())
                                     logger.trace(notReady.getMessage());
                             }
                         } else {
                             String name = String.format("%s/%s", elem.getOperationalStringName(), elem.getName());
-                            if(!deployedServices.contains(name)) {
-                                if(logger.isDebugEnabled()) {
+                            if (!deployedServices.contains(name)) {
+                                if (logger.isDebugEnabled()) {
                                     logger.debug(String.format(
                                         "Service %s/%-12s is deployed. Planned [%s], deployed [%d]",
                                         elem.getOperationalStringName(),
@@ -354,14 +355,14 @@ public class ProvisionManager {
                         Thread.sleep(500);
                     }
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 logger.warn("Failed waiting for deployment [{}]", deployment, e);
                 return false;
             }
             return true;
         }
 
-        public Boolean call() throws Exception {
+        public Boolean call() {
             return waitForDeployment();
         }
     }
