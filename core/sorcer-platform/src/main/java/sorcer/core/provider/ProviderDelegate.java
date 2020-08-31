@@ -1224,7 +1224,7 @@ public class ProviderDelegate {
 			result = (Context) m.invoke(impl, new Object[] { pars[0], args });
 		} else {
 			logger.debug("getProviderName: {} invoking: {}" + getProviderName(), m);
-			logger.debug("imp: {} args: {}" + impl, Arrays.toString(pars));
+			logger.debug("imp: {} args: {}", impl, Arrays.toString(pars));
 			result = (Context) m.invoke(impl, pars);
 			logger.debug("result: {}", result);
 		}
