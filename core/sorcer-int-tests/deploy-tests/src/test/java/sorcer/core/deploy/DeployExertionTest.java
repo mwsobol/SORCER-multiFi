@@ -15,11 +15,9 @@
  */
 package sorcer.core.deploy;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.rioproject.deploy.DeployAdmin;
 import org.rioproject.opstring.OperationalString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +25,6 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import org.sorcer.test.TestsRequiringRio;
 import sorcer.core.SorcerConstants;
-import sorcer.service.Deployment;
 import sorcer.service.Job;
 import sorcer.service.Mogram;
 
@@ -45,15 +42,9 @@ import static sorcer.so.operator.exert;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
 @Category(TestsRequiringRio.class)
-public class DeployExertionTest extends DeploySetup implements SorcerConstants {
+public class DeployExertionTest implements SorcerConstants {
     private final static Logger logger = LoggerFactory.getLogger(DeployExertionTest.class.getName());
 
-    @BeforeClass
-    public static void before() throws Exception {
-        verifySorcerRunning();
-    }
-
-    //@Category(TestsRequiringRio.class)
     @Test
     public void deployAndExec() throws Exception {
         Job f1 = JobUtil.createJob();
@@ -67,7 +58,7 @@ public class DeployExertionTest extends DeploySetup implements SorcerConstants {
             }
         }
         assertNotNull(name);
-        //undeploy(name);
+        //DeploySetup.undeploy(name);
         verifyExertion(f1);
         /* Run it again to make sure that the existing deployment is used */
         verifyExertion(f1);

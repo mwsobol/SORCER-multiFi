@@ -164,7 +164,7 @@ public class DeployConstrainedExertionTest {
         return HostUtil.getFirstNonLoopbackAddress(true, false).getHostAddress();
     }
 
-    class DeployListener implements ServiceProvisionListener {
+    static class DeployListener implements ServiceProvisionListener {
         private final Exporter exporter;
         private ServiceProvisionListener remoteRef;
         private final CountDownLatch countDownLatch;

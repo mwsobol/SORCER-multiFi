@@ -67,15 +67,15 @@ public class ProvisionManagerTest {
     public void testConcurrentDeploy2() throws Exception {
         banner("testConcurrentDeploy2");
         Job f1 = JobUtil.createJob();
-        List<ProvisionManager> provisionManagers = new ArrayList<ProvisionManager>();
+        List<ProvisionManager> provisionManagers = new ArrayList<>();
         for(int i=0; i<100; i++) {
             provisionManagers.add(new ProvisionManager(f1));
         }
         System.out.println("Created "+provisionManagers.size()+" ProvisionManagers");
-        List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
+        List<Future<Boolean>> futures = new ArrayList<>();
         for(ProvisionManager provisionManager : provisionManagers) {
             Callable<Boolean> exertionVerifier = new DeployVerifier(provisionManager);
-            FutureTask<Boolean> task = new FutureTask<Boolean>(exertionVerifier);
+            FutureTask<Boolean> task = new FutureTask<>(exertionVerifier);
             futures.add(task);
             new Thread(task).start();
         }
