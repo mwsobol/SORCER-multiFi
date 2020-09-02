@@ -44,10 +44,10 @@ public class InternalWebster {
      *
      * @return The port Webster has been started on
      *
-     * @throws IOException
+     * @throws Exception
      *             If there are errors creating Webster
      */
-    public static Webster startWebster(String... exportJars) throws IOException {
+    public static Webster startWebster(String... exportJars) throws Exception {
         return startWebster(exportJars, null);
     }
 
@@ -62,10 +62,10 @@ public class InternalWebster {
 	 * 
 	 * @return The port Webster has been started on
 	 * 
-	 * @throws IOException
+	 * @throws Exception
 	 *             If there are errors creating Webster
 	 */
-	public static Webster startWebster(String[] exportJars, String[] websterRoots) throws IOException {
+	public static Webster startWebster(String[] exportJars, String[] websterRoots) throws Exception {
 		String codebase = System.getProperty("java.rmi.server.codebase");
 //		if (codebase != null)
 //			throw new RuntimeException("Codebase is alredy specified: "
