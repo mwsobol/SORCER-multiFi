@@ -61,12 +61,12 @@
             <sysproperty key="fork.mode" value="${fork.mode}" />
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
             <sysproperty key="java.security.policy" value="${rio.home}/policy/policy.all" />
-            <!--<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />-->
+            <sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
             <sysproperty key="logback.configurationFile" value="${sorcer.home}/configs/sorcer-logging.groovy"/>
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
             <sysproperty key="org.rioproject.env" value="${rio.home}/config/envs/${hostname}/rio.env"/>
-            <!--<sysproperty key="org.rioproject.env" value="${rio.home}/config/rio.env"/>-->
             <sysproperty key="rio.home" value="${rio.home}"/>
+            <sysproperty key="org.rioproject.keystore" value="${rio.home}/config/security/rio-cert.ks"/>
             <sysproperty key="rio.log.dir" value="${sorcer.home}/logs"/>
             <sysproperty key="org.rioproject.service" value="${service}"/>
             <sysproperty key="rio.script.mainClass" value="org.rioproject.start.ServiceStarter"/>

@@ -158,12 +158,14 @@ gradle.taskGraph.whenReady { graph ->
         project.subprojects { project ->
             tasks.withType(Test) {
                 if(isAnAggregateTest(graph))
-                    reports.html.enabled = false
+                    reports.html.enabled = true
                 // to debug Rio tests with InteliJ comment 159-163
                 if(!isAnAllTest(graph, project.path)) {
                     useJUnit {
                         excludeCategories 'org.sorcer.test.TestsRequiringRio'
                     }
+                } else {
+                    systemProperty "org.rioproject.keystore", "${rioHome}/config/security/rio-cert.ks"
                 }
             }
         }

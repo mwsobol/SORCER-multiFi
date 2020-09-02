@@ -62,6 +62,7 @@
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
             <sysproperty key="java.security.policy" value="../policy/ssb.policy" />
             <sysproperty key="rio.home" value="${rio.home}"/>
+            <sysproperty key="org.rioproject.keystore" value="${rio.home}/config/security/rio-cert.ks"/>
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
             <sysproperty key="java.net.preferIPv4Stack" value="true" />
             <sysproperty key="ssb.logFile" value="${sorcer.home}/bin/browser/logs/browser.log" />
