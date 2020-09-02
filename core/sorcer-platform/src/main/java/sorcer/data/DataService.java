@@ -17,20 +17,20 @@ package sorcer.data;
 
 import org.rioproject.config.Constants;
 import org.rioproject.net.HostUtil;
+import org.rioproject.tools.jetty.Jetty;
+import org.rioproject.web.WebsterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.tools.webster.Webster;
 import sorcer.util.FileURLHandler;
 import sorcer.util.GenericUtil;
 import sorcer.util.JavaSystemProperties;
+import sorcer.util.SorcerEnv;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,8 +44,9 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class DataService implements FileURLHandler {
     private int port;
+    private String protocol;
     private String[] roots;
-    private final AtomicReference<Webster> websterRef = new AtomicReference<>();
+    private final AtomicReference<WebsterService> websterRef = new AtomicReference<>();
     private String address;
     private static final Logger logger = LoggerFactory.getLogger(DataService.class.getName());
     public static final String DATA_DIR = "sorcer.data.dir";
@@ -61,9 +62,9 @@ public class DataService implements FileURLHandler {
     public static DataService getPlatformDataService() {
         DataService dataService;
         String webster = System.getProperty(DATA_URL, System.getProperty(Constants.WEBSTER));
-        if(webster!=null) {
+        if (webster != null) {
             int ndx = webster.lastIndexOf(":");
-            int port = Integer.parseInt(webster.substring(ndx+1));
+            int port = Integer.parseInt(webster.substring(ndx + 1));
             String roots = getDataDir();
             dataService = new DataService(port, roots.split(";")).start();
         } else {
@@ -72,7 +73,7 @@ public class DataService implements FileURLHandler {
                         "and an anonymous port");
             dataService = new DataService(0, getDataDir().split(";")).start();
 
-            System.setProperty(DATA_URL, String.format("http://%s:%d", dataService.address, dataService.port));
+            System.setProperty(DATA_URL, dataService.getDataUrl());
         }
         return dataService;
     }
@@ -97,18 +98,19 @@ public class DataService implements FileURLHandler {
      */
     public DataService(final int port, final String... roots) {
         this.port = port;
-        if(roots==null || roots.length==0)
+        if (roots == null || roots.length == 0) {
             throw new IllegalArgumentException("You must provide roots");
+        }
         List<String> adjusted = new ArrayList<>();
         for(String root : roots) {
             File f = new File(root);
-            if(!f.exists())
+            if (!f.exists())
                 throw new IllegalArgumentException("The root ["+root+"] does not exist");
-            if(!f.isDirectory())
+            if (!f.isDirectory())
                 throw new IllegalArgumentException("The root ["+root+"] is not a directory");
             adjusted.add(root.replace('\\', '/'));
         }
-        this.roots = adjusted.toArray(new String[adjusted.size()]);
+        this.roots = adjusted.toArray(new String[0]);
     }
 
     /**
@@ -117,7 +119,7 @@ public class DataService implements FileURLHandler {
      * @return An updated instance of the DataService.
      */
     public DataService start()  {
-        if(websterRef.get()==null) {
+        if (websterRef.get() == null) {
             StringBuilder websterRoots = new StringBuilder();
             for(String root : roots) {
                 if (websterRoots.length() > 0)
@@ -125,24 +127,39 @@ public class DataService implements FileURLHandler {
                 websterRoots.append(root);
             }
             try {
-                websterRef.set(new Webster(port, websterRoots.toString(), getDataDir()));
-                port = websterRef.get().getPort();
-                address = websterRef.get().getAddress();
+                WebsterService websterService;
+                if (SorcerEnv.useHttps()) {
+                    websterService = new Jetty().setPort(port).setRoots(roots).setPutDir(getDataDir());
+                    websterService.startSecure();
+                } else {
+                    websterService = new Webster(port, websterRoots.toString(), getDataDir());
+                }
+                websterRef.set(websterService);
+                URI uri = websterRef.get().getURI();
+                protocol = uri.getScheme();
+                port = uri.getPort();
+                address = uri.getHost();
                 logger.info(String.format("Started data service on: %s:%d\n%s",
-                                          address, port, formatRoots()));
+                        address, port, formatRoots()));
                 writeRoots();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 try {
                     address = HostUtil.getInetAddressFromProperty(JavaSystemProperties.RMI_SERVER_HOSTNAME).getHostAddress();
                 } catch (UnknownHostException e1) {
                     logger.error("Can not getValue host address", e1);
                     throw new RuntimeException("Can not getValue host address", e1);
                 }
-                if(!websterRoots.equals(getDefaultDataDir())) {
+                if (!websterRoots.toString().equals(getDefaultDataDir())) {
                     String derivedRoots = getRoots(port);
-                    if(derivedRoots!=null)
+                    if (derivedRoots!=null)
                         roots = derivedRoots.split(";");
                 }
+                String dataUrl = System.getProperty(DATA_URL, System.getProperty(Constants.WEBSTER));
+                /*if (dataUrl != null) {*/
+                    int ndx = dataUrl.indexOf(":");
+                    protocol = dataUrl.substring(0, ndx);
+                //}
+
                 logger.warn(String.format("Data service already running, join %s:%d\n%s",
                                              address, port, formatRoots()));
             }
@@ -194,28 +211,28 @@ public class DataService implements FileURLHandler {
      * @throws IllegalStateException if the data service is not available.
      */
     public URL getDataURL(final File file, final boolean verify) throws IOException {
-        if(file==null)
+        if (file==null)
             throw new IllegalArgumentException("The file argument cannot be null");
-        if(!file.exists())
+        if (!file.exists())
             throw new FileNotFoundException("The "+file.getPath()+" does not exist");
-        if(address==null)
+        if (address==null)
             throw new IllegalStateException("The data service is not available");
         String path = file.getPath().replace('\\', '/');
         String relativePath = null;
         for(String root : roots) {
-            if(path.startsWith(root)) {
+            if (path.startsWith(root)) {
                 relativePath = path.substring(root.length());
                 break;
             }
         }
-        if(relativePath==null)
+        if (relativePath==null)
             throw new IllegalArgumentException("The provided contextReturn ["+path+"], is not navigable " +
                     "from existing roots "+ Arrays.toString(roots));
 
         if (!relativePath.startsWith("/")) relativePath = "/" + relativePath;
 
-        URL url =  new URL(String.format("http://%s:%d%s", address, port, relativePath));
-        if(verify) {
+        URL url =  new URL(String.format("%s%s", getDataUrl(), relativePath));
+        if (verify) {
             IOException notAvailable = verify(url);
             if (notAvailable != null) {
                 logger.warn(String.format("Unable to verify %s, try and start DataService on %s:%d",
@@ -252,7 +269,7 @@ public class DataService implements FileURLHandler {
      */
     public File getDataFile(final URL url) throws IOException {
         File file = null;
-        if(url.getProtocol().startsWith("file")) {
+        if (url.getProtocol().startsWith("file")) {
             try {
                 File f = new File(url.toURI());
                 for(String root : roots) {
@@ -260,7 +277,7 @@ public class DataService implements FileURLHandler {
                     // for matching windows paths (or any OS)
                     root = new File(root).getAbsolutePath();
 
-                    if(f.getPath().startsWith(root)) {
+                    if (f.getPath().startsWith(root)) {
                         file = f;
                         break;
                     }
@@ -276,13 +293,13 @@ public class DataService implements FileURLHandler {
             }
             for(String root : roots) {
                 File f = new File(root, filePath);
-                if(f.exists()) {
+                if (f.exists()) {
                     file = f;
                     break;
                 }
             }
         }
-        if(file==null || !file.exists())
+        if (file==null || !file.exists())
             throw new FileNotFoundException("The "+url.toExternalForm()+" " +
                                             "is not accessible from existing roots "+ Arrays.toString(roots));
         return file;
@@ -292,7 +309,7 @@ public class DataService implements FileURLHandler {
      * Stop the data service.
      */
     public void stop() {
-        if(websterRef.get()!=null) {
+        if (websterRef.get()!= null) {
             websterRef.get().terminate();
             websterRef.set(null);
         }
@@ -315,7 +332,7 @@ public class DataService implements FileURLHandler {
         StringBuilder sb = new StringBuilder();
         int i=0;
         for(String root : roots) {
-            if(sb.length()>0)
+            if (sb.length()>0)
                 sb.append("\n");
             sb.append("Root ").append(i++).append(" ").append(root);
         }
@@ -332,7 +349,7 @@ public class DataService implements FileURLHandler {
      */
     public static String getDataDir() {
         String dataDir = System.getProperty(DATA_DIR);
-        if(dataDir==null) {
+        if (dataDir==null) {
             dataDir = getDefaultDataDir();
             System.setProperty(DATA_DIR, dataDir);
         }
@@ -342,14 +359,14 @@ public class DataService implements FileURLHandler {
     public static String getRoots(int port) {
         File rootsFile = getRootsFile(port);
         String roots = null;
-        if(rootsFile.exists()) {
+        if (rootsFile.exists()) {
             try {
                 roots = new String(Files.readAllBytes(rootsFile.toPath()));
             } catch (IOException e) {
                 logger.error("Could not read {}", rootsFile.getPath(), e);
             }
         } else {
-            if(logger.isTraceEnabled())
+            if (logger.isTraceEnabled())
                 logger.trace("roots file for {} does not exist", port);
         }
         return roots;
@@ -357,7 +374,7 @@ public class DataService implements FileURLHandler {
 
     static File getRootsFile(int port) {
         File rootsDir = new File(getDefaultDataDir(), "roots");
-        if(!rootsDir.exists())
+        if (!rootsDir.exists())
             rootsDir.mkdirs();
         return new File(rootsDir, Integer.toString(port)+".roots");
     }
@@ -393,7 +410,7 @@ public class DataService implements FileURLHandler {
      * @return The eval of the DATA_URL system property
      */
     public String getDataUrl() {
-        return String.format("http://%s:%d", address, port);
+        return String.format("%s://%s:%d", protocol, address, port);
     }
 
     /**
