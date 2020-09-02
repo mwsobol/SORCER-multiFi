@@ -139,6 +139,7 @@ logger("org.rioproject.impl.util.FileUtils", WARN)
 
 logger("org.rioproject.rmi.ResolvingLoader", OFF)
 logger("org.rioproject.config.GroovyConfig", INFO)
+logger("org.rioproject.tools.jetty", DEBUG)
 
 logger("net.jini.discovery.LookupDiscovery", OFF)
 logger("net.jini.lookup.JoinManager", OFF)
