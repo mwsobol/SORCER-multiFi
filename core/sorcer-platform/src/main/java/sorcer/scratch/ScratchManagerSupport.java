@@ -162,7 +162,7 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
         if(System.getProperty("os.name").startsWith("Windows"))
             sdf  = new SimpleDateFormat("MM-dd-HH-mm");
         else
-            sdf = new SimpleDateFormat("MM-dd-HH-mm-SSS");
+            sdf = new SimpleDateFormat("MM-dd-HH-mm-sss");
         Calendar c = Calendar.getInstance();
         long time = c.getTime().getTime();
 
