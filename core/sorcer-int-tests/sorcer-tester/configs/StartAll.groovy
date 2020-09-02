@@ -17,6 +17,7 @@ package sorcer.arithmetic.tester
 
 import com.sun.jini.start.ServiceDescriptor
 import org.rioproject.config.Component
+import org.rioproject.security.SecureEnv
 import sorcer.provider.boot.SorcerServiceDescriptor
 
 /**
@@ -26,6 +27,10 @@ import sorcer.provider.boot.SorcerServiceDescriptor
  */
 @Component("com.sun.jini.start")
 class StartAll {
+
+    StartAll() {
+        SecureEnv.setup()
+    }
 
     ServiceDescriptor[] getServiceDescriptors() {
         String riverVersion = System.getProperty("river.version")

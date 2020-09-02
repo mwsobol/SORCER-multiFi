@@ -35,6 +35,7 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.rioproject.config.DynamicConfiguration;
+import org.rioproject.security.SecureEnv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
@@ -222,7 +223,12 @@ public class ServiceShell implements DiscoveryListener, ServiceShellIf {
 
 	static public void main(String... argv) {
         AnsiConsole.systemInstall();
-        //Ansi.setDetector(new AnsiDetector());
+		try {
+			SecureEnv.setup();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		//Ansi.setDetector(new AnsiDetector());
 		URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());
 		String curToken = null;
 //		System.out.println("nsh main args: " + Arrays.toString(argv));
