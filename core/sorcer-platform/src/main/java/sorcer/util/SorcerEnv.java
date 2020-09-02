@@ -694,6 +694,15 @@ public class SorcerEnv extends SOS {
 		return "http://" + getDataServerInterface() + ':' + getDataServerPort();
 	}
 
+	public static boolean useHttps() {
+		System.getProperty("org.rioproject.keystore");
+		String useHttps = System.getProperty("org.rioproject.keystore");
+		if (useHttps == null) {
+			return false;
+		}
+		return true;
+	}
+
 	/**
 	 * Returns the hostname of a data server.
 	 * 
