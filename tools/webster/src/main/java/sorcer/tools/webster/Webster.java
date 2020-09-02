@@ -19,6 +19,7 @@ package sorcer.tools.webster;
 import net.jini.config.Configuration;
 import net.jini.config.ConfigurationProvider;
 import org.rioproject.net.HostUtil;
+import org.rioproject.web.WebsterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  *
  * @author Dennis Reedy and Mike Sobolewski
  */
-public class Webster implements Runnable {
+public class Webster implements WebsterService, Runnable {
     static final String BASE_COMPONENT = "sorcer.tools";
     public static final String CODESERVER = BASE_COMPONENT + ".codeserver";
 
@@ -65,14 +66,15 @@ public class Webster implements Runnable {
     private int startPort = 0;
     private int endPort = 0;
     private int soTimeout = 0;
-    private static Logger logger = LoggerFactory.getLogger(Webster.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(Webster.class.getName());
     private com.sun.jini.start.LifeCycle lifeCycle;
     private boolean debug = false;
     private boolean isDaemon = false;
-    private static String SERVER_DESCRIPTION = Webster.class.getName();
+    private static final String SERVER_DESCRIPTION = Webster.class.getName();
     private String tempDir;
     // Shared class server (webster) 
     private static Webster webster;
+    private InetAddress addr;
 
     /**
      * Create a new Webster. The port is determined by the
@@ -80,9 +82,9 @@ public class Webster implements Runnable {
      * webster.port system property does not exist, an
      * anonymous port will be allocated.
      *
-     * @throws IOException if Webster cannot create a socket
+     * @throws Exception if Webster cannot create a socket
      */
-    public Webster() throws IOException {
+    public Webster() throws Exception {
         String s = System.getProperty("webster.port");
         if (s != null && !s.equals("0")) {
             try {
@@ -103,9 +105,9 @@ public class Webster implements Runnable {
      * Create a new Webster
      *
      * @param port The port to use
-     * @throws IOException if Webster cannot create a socket
+     * @throws Exception if Webster cannot create a socket
      */
-    public Webster(int port, boolean isDaemon) throws IOException {
+    public Webster(int port, boolean isDaemon) throws Exception {
         this.port = port;
         this.isDaemon = isDaemon;
         initialize();
@@ -116,9 +118,9 @@ public class Webster implements Runnable {
      *
      * @param roots The root(s) to serve code from. This is a semi-colin
      *              delimited list of directories
-     * @throws IOException if Webster cannot create a socket
+     * @throws Exception if Webster cannot create a socket
      */
-    public Webster(String roots, boolean isDaemon) throws IOException {
+    public Webster(String roots, boolean isDaemon) throws Exception {
         String s = System.getProperty("webster.port");
         if (s != null) {
             port = new Integer(s);
@@ -135,9 +137,9 @@ public class Webster implements Runnable {
      * @param port  The port to use
      * @param roots The root(s) to serve code from. This is a semi-colin
      *              delimited list of directories
-     * @throws IOException if Webster cannot create a socket
+     * @throws Exception if Webster cannot create a socket
      */
-    public Webster(int port, String roots, boolean isDaemon) throws IOException {
+    public Webster(int port, String roots, boolean isDaemon) throws Exception {
         this.port = port;
         this.isDaemon = isDaemon;
         initialize(roots);
@@ -149,9 +151,9 @@ public class Webster implements Runnable {
      * @param port  The port to use
      * @param roots The root(s) to serve code from. This is a semi-colin
      *              delimited list of directories
-     * @throws IOException if Webster cannot create a socket
+     * @throws Exception if Webster cannot create a socket
      */
-    public Webster(int port, String roots, String tempDir) throws IOException {
+    public Webster(int port, String roots, String tempDir) throws Exception {
         this.port = port;
         this.tempDir  = tempDir;
         isDaemon = true;
@@ -166,15 +168,15 @@ public class Webster implements Runnable {
      *                    delimited list of directories
      * @param bindAddress TCP/IP address which Webster should bind to (null
      *                    implies no specific address)
-     * @throws IOException if Webster cannot create a socket
+     * @throws Exception if Webster cannot create a socket
      */
-    public Webster(int port, String roots, String bindAddress, boolean isDaemon) throws IOException {
+    public Webster(int port, String roots, String bindAddress, boolean isDaemon) throws Exception {
         this.port = port;
         this.isDaemon = isDaemon;
         initialize(roots, bindAddress);
     }
 
-    public Webster(int port, String[] roots, String bindAddress,boolean isDaemon) throws IOException {
+    public Webster(int port, String[] roots, String bindAddress,boolean isDaemon) throws Exception {
         this.port = port;
         this.isDaemon = isDaemon;
         initialize(roots, bindAddress);
@@ -190,14 +192,14 @@ public class Webster implements Runnable {
      *                    implies no specific address)
      * @param minThreads  Minimum threads to use in the ThreadPool
      * @param maxThreads  Minimum threads to use in the ThreadPool
-     * @throws IOException if Webster cannot create a socket
+     * @throws Exception if Webster cannot create a socket
      */
     public Webster(int port,
                    String roots,
                    String bindAddress,
                    int minThreads,
                    int maxThreads,
-                   boolean isDaemon) throws IOException {
+                   boolean isDaemon) throws Exception {
         this.port = port;
         this.minThreads = minThreads;
         this.maxThreads = maxThreads;
@@ -217,7 +219,7 @@ public class Webster implements Runnable {
      * @param maxThreads  Minimum threads to use in the ThreadPool
      * @param startPort   First port to try to listen
      * @param endPort     Last port to try to listen
-     * @throws IOException if Webster cannot create a socket
+     * @throws Exception if Webster cannot create a socket
      */
     public Webster(int port,
                    String roots,
@@ -226,7 +228,7 @@ public class Webster implements Runnable {
                    int maxThreads,
                    int startPort,
                    int endPort,
-                   boolean isDaemon) throws IOException {
+                   boolean isDaemon) throws Exception {
         this.port = port;
         this.minThreads = minThreads;
         this.maxThreads = maxThreads;
@@ -244,7 +246,7 @@ public class Webster implements Runnable {
      *                  [-roots list-of-roots], [-bindAddress address], [-minThreads minThreads],
      *                  [-maxThreads maxThreads] [-soTimeout soTimeout]
      * @param lifeCycle The LifeCycle object, may be null
-     * @throws IOException if Webster cannot create a socket
+     * @throws Exception if Webster cannot create a socket
      */
     public Webster(String[] args, com.sun.jini.start.LifeCycle lifeCycle)
             throws Exception {
@@ -332,7 +334,7 @@ public class Webster implements Runnable {
      * sorcer.tools.webster.root system property (if set) or defaulting to
      * the user.dir system property
      */
-    private void initialize() throws IOException {
+    private void initialize() throws Exception {
         String root = System.getProperty("webster.root");
         if (root == null)
             root = System.getProperty("user.dir");
@@ -345,16 +347,16 @@ public class Webster implements Runnable {
      * @param roots The root(s) to serve code from. This is a semicolon
      * delimited list of directories
      */
-    private void initialize(String roots) throws IOException {
+    private void initialize(String roots) throws Exception {
         initialize(roots, null);
     }
 
-    private void initialize(String roots, String bindAddress) throws IOException {
+    private void initialize(String roots, String bindAddress) throws Exception {
         setupRoots(roots);
         init(bindAddress);
     }
 
-    private void initialize(String[] roots, String bindAddress) throws IOException {
+    private void initialize(String[] roots, String bindAddress) throws Exception {
         websterRoot = roots;
         init(bindAddress);
     }
@@ -365,7 +367,7 @@ public class Webster implements Runnable {
      * @param roots The root(s) to serve code from. This is a semicolon
      * delimited list of directories
      */
-    private void init(String bindAddress) throws IOException {
+    private void init(String bindAddress) throws Exception {
         String str;
         if (!debug) {
             str = System.getProperty("webster.debug");
@@ -388,7 +390,7 @@ public class Webster implements Runnable {
             }
         }
 
-        InetAddress addr;
+
         try {
             if (bindAddress == null) {
                 bindAddress = System.getProperty("webster.interface");
@@ -402,10 +404,10 @@ public class Webster implements Runnable {
             return;
         }
 
-        start(addr);
+        start();
     }
 
-    private void start(InetAddress addr) throws IOException {
+    /*private void start() throws IOException {
         if (port == 0) {
             port = getPortAvailable();
             startPort = port;
@@ -421,7 +423,7 @@ public class Webster implements Runnable {
             start(i, addr);
             return;
         }
-    }
+    }*/
 
     // start with the first available port in the range STARTPORT-ENDPORT
     private void start(int websterPort, InetAddress address) throws IOException {
@@ -537,6 +539,45 @@ public class Webster implements Runnable {
             if (logger.isDebugEnabled())
                 logger.debug("Root  = " + websterRoot[0]);
         }
+    }
+
+    @Override
+    public WebsterService setRoots(String... roots) {
+        return this;
+    }
+
+    @Override
+    public URI getURI() {
+        try {
+            return new URI(String.format("http://%s:%s", getAddress(), getPort()));
+        } catch (URISyntaxException e) {
+            logger.error("Failed getting URI", e);
+        }
+        return null;
+    }
+
+    @Override
+    public void start() throws Exception {
+        if (port == 0) {
+            port = getPortAvailable();
+            startPort = port;
+            endPort = port;
+        } else {
+            if (startPort == endPort) {
+                startPort = port;
+                endPort = port;
+            }
+        }
+
+        for (int i = startPort; i <= endPort; i++) {
+            start(i, addr);
+            return;
+        }
+    }
+
+    @Override
+    public void startSecure() throws Exception {
+        throw new Exception("https is not implemented");
     }
 
     /**
