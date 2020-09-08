@@ -30,6 +30,7 @@ import sorcer.ssb.jini.studio.CodeServer;
 public class StartBrowser {
 	public static void main(String[] args) {
 		try {
+			SecureEnv.setup();
 			if (args.length > 0) {
 				final Configuration config = ConfigurationProvider.getInstance(args);
 				ServiceBrowserUI._config = config;
@@ -41,7 +42,6 @@ public class StartBrowser {
 					login.login();
 					ServiceBrowserUI.LOGGED_IN = true;
 				}
-				SecureEnv.setup();
 				PrivilegedExceptionAction<?> action = () -> {
 					ServiceBrowser.start(null, false, config);
 					return null;
