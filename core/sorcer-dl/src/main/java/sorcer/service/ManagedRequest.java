@@ -16,5 +16,6 @@
  */
 package sorcer.service;
 
-public interface SupervisedRequest extends CombinedRequest {
+public interface ManagedRequest extends CombinedRequest {
+
 }

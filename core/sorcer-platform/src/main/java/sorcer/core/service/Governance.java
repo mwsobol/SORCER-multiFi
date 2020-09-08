@@ -64,9 +64,9 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
     // active disciplnes
     protected Paths disciplnePaths = new Paths();
 
-	protected Fidelity<EntrySupervisor> supervisorFi;
+	protected Fidelity<Supervision> supervisorFi;
 
-	protected Fidelity<EntryAnalyzer> analyzerFi;
+	protected Fidelity<Analysis> analyzerFi;
 
 	protected ServiceFidelity contextMultiFi;
 
@@ -245,11 +245,11 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 		return name;
 	}
 
-	public Fidelity<EntryAnalyzer> getAnalyzerFi() {
+	public Fidelity<Analysis> getAnalyzerFi() {
 		return analyzerFi;
 	}
 
-	public void setAnalyzerFi(Fidelity<EntryAnalyzer> analyzerFi) {
+	public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
 		this.analyzerFi = analyzerFi;
 	}
 
@@ -263,7 +263,7 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 		return discList;
 	}
 
-	public Fidelity<EntryAnalyzer> setAnalyzerFi(Context context) throws ConfigurationException {
+	public Fidelity<Analysis> setAnalyzerFi(Context context) throws ConfigurationException {
 		if(analyzerFi == null) {
 			Object mdaComponent = context.get(Context.MDA_PATH);
 			if (mdaComponent != null) {
@@ -284,7 +284,7 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 		return analyzerFi;
 	}
 
-	public Fidelity<EntrySupervisor> setSupervisorFi(Context context) throws ConfigurationException {
+	public Fidelity<Supervision> setSupervisorFi(Context context) throws ConfigurationException {
 		if(supervisorFi == null) {
 			Object supComponent = context.get(Context.MDA_PATH);
 			if (supComponent != null) {
@@ -382,11 +382,11 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 		return evaluate(input, args);
 	}
 
-	public Fidelity<EntrySupervisor> getSupervisorFi() {
+	public Fidelity<Supervision> getSupervisorFi() {
 		return supervisorFi;
 	}
 
-	public void setSupervisorFi(Fidelity<EntrySupervisor> supervisorFi) {
+	public void setSupervisorFi(Fidelity<Supervision> supervisorFi) {
 		this.supervisorFi = supervisorFi;
 	}
 

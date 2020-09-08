@@ -46,7 +46,7 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 
 	public Transroutine(String name) {
 		super(name);
-		mograms = new ArrayList<Mogram>();
+		mograms = new ArrayList();
 	}
 
 	public boolean isCompound() {
@@ -61,6 +61,7 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 		for(Mogram e : mograms)
 			((Subroutine)e).reset(state);
 
+		this.setStatus(state);
 		this.setStatus(state);
 	}
 

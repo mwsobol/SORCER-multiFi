@@ -19,9 +19,14 @@ package sorcer.service;
 
 import java.util.Map;
 
-public interface Transdiscipline extends Contextion, SupervisedRequest {
+public interface Transdiscipline extends Contextion, ManagedRequest {
 
     public Map<String, Discipline> getChildren();
 
+    public Fidelity<Analysis> getAnalyzerFi();
+
+    public Fidelity<Supervision> getSupervisorFi();
+
     public Discipline getChild(String name);
+
 }
