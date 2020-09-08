@@ -1,17 +1,21 @@
 
 version = sorcerVersion
 
+dependencies {
+    compile "net.jini:jsk-platform:${riverVersion}"
+    compile "org.rioproject:rio-platform:${rioVersion}"
+    compile "org.rioproject:rio-lib:${rioVersion}"
+    compile "org.apache.river:start:${riverVersion}"
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+}
+
 jar {
 	manifest {
 		attributes("Implementation-Title": "SORCER Class Server (Webster)",
                    "Implementation-Version": version,
                    "Main-Class" : "sorcer.tools.webster.Webster")
 	   }
-}
-
-dependencies {
-    compile "net.jini:jsk-platform:${riverVersion}"
-    compile "org.rioproject:rio-platform:${rioVersion}"
-    compile  "org.apache.river:start:${riverVersion}"
-    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+        include "org/rioproject/web/**"
+    }
 }
