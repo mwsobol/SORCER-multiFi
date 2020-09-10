@@ -194,7 +194,7 @@ public class SorcerDescriptorUtil {
 	 * 
 	 * @param policy
 	 *            The security policy file to use
-	 * @param monitorConfig
+	 * @param jobberConfig
 	 *            The configuration options the Monitor will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Monitor using an anonymous port. The <tt>monitor.jar</tt> file
@@ -218,7 +218,7 @@ public class SorcerDescriptorUtil {
 	 *            The security policy file to use
 	 * @param port
 	 *            The port to use when constructing the codebase
-	 * @param monitorConfig
+	 * @param jobberConfig
 	 *            The configuration options the Monitor will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Monitor using an anonymous port. The <tt>monitor.jar</tt> file
@@ -245,7 +245,7 @@ public class SorcerDescriptorUtil {
 	 *            The address to use when constructing the codebase
 	 * @param port
 	 *            The port to use when constructing the codebase
-	 * @param monitorConfig
+	 * @param jobberConfig
 	 *            The configuration options the Monitor will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Monitor using an anonymous port. The <tt>monitor.jar</tt> file
@@ -290,7 +290,7 @@ public class SorcerDescriptorUtil {
 	 * 
 	 * @param policy
 	 *            The security policy file to use
-	 * @param spacerConfig
+	 * @param jobberConfig
 	 *            The configuration options the Spacer will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Spacer using an anonymous port. The <tt>spacer.jar</tt> file
@@ -314,7 +314,7 @@ public class SorcerDescriptorUtil {
 	 *            The security policy file to use
 	 * @param port
 	 *            The port to use when constructing the codebase
-	 * @param spacerConfig
+	 * @param jobberConfig
 	 *            The configuration options the Spacer will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Spacer using an anonymous port. The <tt>spacer.jar</tt> file
@@ -379,7 +379,7 @@ public class SorcerDescriptorUtil {
 	 * 
 	 * @param policy
 	 *            The security policy file to use
-	 * @param spacerConfig
+	 * @param concatenatorConfig
 	 *            The configuration options the Concatenator will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Spacer using an anonymous port. The <tt>concatenator.jar</tt> file
@@ -396,13 +396,13 @@ public class SorcerDescriptorUtil {
 
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
-	 * {@link sorcer.core.provider.Concarenator}.
+	 * {@link sorcer.core.provider.Concatenator}.
 	 * 
 	 * @param policy
 	 *            The security policy file to use
 	 * @param port
 	 *            The port to use when constructing the codebase
-	 * @param spacerConfig
+	 * @param concatenatorConfig
 	 *            The configuration options the Concatenator will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Spacer using an anonymous port. The <tt>concatenator.jar</tt> file
@@ -467,7 +467,7 @@ public class SorcerDescriptorUtil {
 	 * 
 	 * @param policy
 	 *            The security policy file to use
-	 * @param monitorConfig
+	 * @param jobberConfig
 	 *            The configuration options the Monitor will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Monitor using an anonymous port. The <tt>monitor.jar</tt> file
@@ -491,7 +491,7 @@ public class SorcerDescriptorUtil {
 	 *            The security policy file to use
 	 * @param port
 	 *            The port to use when constructing the codebase
-	 * @param monitorConfig
+	 * @param jobberConfig
 	 *            The configuration options the Monitor will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Monitor using an anonymous port. The <tt>monitor.jar</tt> file
@@ -518,7 +518,7 @@ public class SorcerDescriptorUtil {
 	 *            The address to use when constructing the codebase
 	 * @param port
 	 *            The port to use when constructing the codebase
-	 * @param monitorConfig
+	 * @param jobberConfig
 	 *            The configuration options the Monitor will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Monitor using an anonymous port. The <tt>monitor.jar</tt> file
@@ -557,7 +557,7 @@ public class SorcerDescriptorUtil {
 	 * 
 	 * @param policy
 	 *            The security policy file to use
-	 * @param exertConfig
+	 * @param exerterConfig
 	 *            The configuration options the ExertProcessor provider will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Exertion using an anonymous port. The <tt>sorcer-platform.jar</tt> file
@@ -610,7 +610,7 @@ public class SorcerDescriptorUtil {
 	 *            The address to use when constructing the codebase
 	 * @param port
 	 *            The port to use when constructing the codebase
-	 * @param exertConfig
+	 * @param exerterConfig
 	 *            The configuration options the ExertProcessor provider will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Exertion using an anonymous port. The <tt>sorcer-platform.jar</tt> file
@@ -748,7 +748,7 @@ public class SorcerDescriptorUtil {
 	 * 
 	 * @param policy
 	 *            The security policy file to use
-	 * @param exertmonitorConfig
+	 * @param sdbConfig
 	 *            The configuration options the DatabaseStore will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Monitor using an anonymous port. The <tt>sdb-prv.jar</tt> file
@@ -772,7 +772,7 @@ public class SorcerDescriptorUtil {
 	 *            The security policy file to use
 	 * @param port
 	 *            The port to use when constructing the codebase
-	 * @param exertmonitorConfig
+	 * @param sdbConfig
 	 *            The configuration options the DatabaseStore will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Monitor using an anonymous port. The <tt>sdb-prv.jar</tt> file
@@ -863,7 +863,7 @@ public class SorcerDescriptorUtil {
 	 *            The security policy file to use
 	 * @param port
 	 *            The port to use when constructing the codebase
-	 * @param exertmonitorConfig
+	 * @param sdbConfig
 	 *            The configuration options the DataspaceStore will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Monitor using an anonymous port. The <tt>sdb-prv.jar</tt> file
@@ -1023,7 +1023,7 @@ public class SorcerDescriptorUtil {
 	 *
 	 * @param policy
 	 *            The security policy file to use
-	 * @param catalogerConfig
+	 * @param sysCallerConfig
 	 *            The configuration options the SysCaller will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Cataloger using an anonymous port. The <tt>sos-SysCaller.jar</tt> file
@@ -1047,7 +1047,7 @@ public class SorcerDescriptorUtil {
 	 *            The security policy file to use
 	 * @param port
 	 *            The port to use when constructing the codebase
-	 * @param catalogerConfig
+	 * @param sysCallerConfig
 	 *            The configuration options the SysCaller will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Cataloger using an anonymous port. The <tt>sos-SysCaller.jar</tt> file
@@ -1074,7 +1074,7 @@ public class SorcerDescriptorUtil {
 	 *            The address to use when constructing the codebase
 	 * @param port
 	 *            The port to use when constructing the codebase
-	 * @param catalogerConfig
+	 * @param sysCallerConfig
 	 *            The configuration options the SysCaller will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
 	 *         Cataloger using an anonymous port. The <tt>sos-SysCaller.jar</tt> file
