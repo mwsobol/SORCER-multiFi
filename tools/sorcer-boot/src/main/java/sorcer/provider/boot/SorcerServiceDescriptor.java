@@ -83,19 +83,16 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
     /**
      * The parameter types for the "activation constructor".
      */
-    private static final Class[] actTypes = {String[].class, LifeCycle.class};
+    private static final Class<?>[] actTypes = {String[].class, LifeCycle.class};
     private String codebase;
-    private String policy;
-    private String classpath;
-    private String implClassName;
-    private String[] serverConfigArgs;
-    private LifeCycle lifeCycle;
-    private static LifeCycle NoOpLifeCycle = new LifeCycle() { // default, no-op
-        // object
-        public boolean unregister(Object impl) {
-            return false;
-        }
-    };
+    private final String policy;
+    private final String classpath;
+    private final String implClassName;
+    private final String[] serverConfigArgs;
+    private final LifeCycle lifeCycle;
+    // default, no-op
+    // object
+    private static final LifeCycle NoOpLifeCycle = impl -> false;
     private static AggregatePolicyProvider globalPolicy = null;
     private static Policy initialGlobalPolicy = null;
 
@@ -143,26 +140,46 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
      * @param lifeCycle        <code>LifeCycle</code> reference for hosting environment
      * @param serverConfigArgs service configuration arguments
      */
-    public SorcerServiceDescriptor(String descCodebase, String policy,
-                                   String classpath, String implClassName, String address,
+    public SorcerServiceDescriptor(String descCodebase,
+                                   String policy,
+                                   String classpath,
+                                   String implClassName,
+                                   String address,
                                    // Optional Args
+                                   boolean useHttps,
                                    LifeCycle lifeCycle, String... serverConfigArgs) {
 //		if (descCodebase == null || policy == null || classpath == null
 //				|| implClassName == null)
 //			throw new NullPointerException("Codebase, policy, classpath, and "
 //					+ "implementation cannot be null");
-        if (descCodebase != null && descCodebase.indexOf("http://") < 0) {
+        String protocol = useHttps ? "https" : "http";
+        if (descCodebase != null && !descCodebase.contains(protocol + "://")) {
             String[] jars = Booter.toArray(descCodebase);
             try {
                 if (address == null)
-                    this.codebase = Booter.getCodebase(jars, "" + Booter.getPort());
+                    this.codebase = Booter.getCodebase(jars, "" + Booter.getPort(), useHttps);
                 else
-                    this.codebase = Booter.getCodebase(jars, address, "" + Booter.getPort());
+                    this.codebase = Booter.getCodebase(jars, address, "" + Booter.getPort(), useHttps);
             } catch (UnknownHostException e) {
                 logger.error("Cannot getValue hostname for: " + codebase);
             }
-        } else
+        } else {
             this.codebase = descCodebase;
+        }
+        if (logger.isDebugEnabled()) {
+            StringBuilder b = new StringBuilder();
+            b.append("descCodebase:     ").append(descCodebase).append("\n");
+            b.append("codebase:         ").append(codebase).append("\n");
+            b.append("policy:           ").append(policy).append("\n");
+            b.append("classpath:        ").append(classpath).append("\n");
+            b.append("implClassName:    ").append(implClassName).append("\n");
+            b.append("address:          ").append(address).append("\n");
+            b.append("useHttps:         ").append(useHttps).append("\n");
+            b.append("lifeCycle:        ").append(lifeCycle).append("\n");
+            b.append("serverConfigArgs: ").append(Arrays.toString(serverConfigArgs)).append("\n");
+            b.append("protocol:         ").append(protocol).append("\n");
+            logger.debug("\n{}", b.toString());
+        }
         this.policy = policy;
         this.classpath = classpath;/*setClasspath(classpath);*/
         this.implClassName = implClassName;
@@ -174,7 +191,15 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
                                    String classpath, String implClassName,
                                    // Optional Args
                                    LifeCycle lifeCycle, String... serverConfigArgs) {
-        this(descCodebase, policy, classpath, implClassName, null, lifeCycle, serverConfigArgs);
+        this(descCodebase, policy, classpath, implClassName, null, false, lifeCycle, serverConfigArgs);
+    }
+
+    public SorcerServiceDescriptor(String descCodebase, String policy,
+                                   String classpath, String implClassName,
+                                   // Optional Args
+                                   boolean useHttps,
+                                   LifeCycle lifeCycle, String... serverConfigArgs) {
+        this(descCodebase, policy, classpath, implClassName, null, useHttps, lifeCycle, serverConfigArgs);
     }
 
     /**
@@ -196,7 +221,30 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
                                    String classpath, String implClassName,
                                    // Optional Args
                                    String... serverConfigArgs) {
-        this(codebase, policy, classpath, implClassName, null, serverConfigArgs);
+        this(codebase, policy, classpath, implClassName, false, null, serverConfigArgs);
+    }
+
+    /**
+     * Create a SorcerServiceDescriptor. Equivalent to calling the other
+     * overloaded constructor with <code>null</code> for the
+     * <code>LifeCycle</code> reference.
+     *
+     * @param codebase         location where clients can download required service-related
+     *                         classes (for example, stubs, proxies, etc.). Codebase
+     *                         components must be separated by spaces in which each component
+     *                         is in <code>URL</code> format.
+     * @param policy           server policy filename or URL
+     * @param classpath        location where server implementation classes can be found.
+     *                         Classpath components must be separated by contextReturn separators.
+     * @param implClassName    key of server implementation class
+     * @param serverConfigArgs service configuration arguments
+     */
+    public SorcerServiceDescriptor(String codebase, String policy,
+                                   String classpath, String implClassName,
+                                   // Optional Args
+                                   boolean useHttps,
+                                   String... serverConfigArgs) {
+        this(codebase, policy, classpath, implClassName, useHttps, null, serverConfigArgs);
     }
 
     /**
@@ -267,10 +315,12 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
      */
     public Object create(Configuration config) throws Exception {
         ensureSecurityManager();
-        Object proxy = null;
+        Object proxy;
 
 		/* Warn user of inaccessible codebase(s) */
-        HTTPDStatus.httpdWarning(getCodebase());
+        /*if (codebase != null && codebase.startsWith("http:")) {
+            HTTPDStatus.httpdWarning(getCodebase());
+        }*/
 
 		/* Set common JARs to the CommonClassLoader */
         String defaultDir = null;
@@ -283,7 +333,7 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
         }
 
         PlatformLoader platformLoader = new PlatformLoader();
-        List<URL> urlList = new ArrayList<URL>();
+        List<URL> urlList = new ArrayList<>();
         PlatformLoader.Capability[] caps = platformLoader.getDefaultPlatform();
         for (PlatformLoader.Capability cap : caps) {
             URL[] urls = cap.getClasspathURLs();
@@ -353,8 +403,7 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
                 globalPolicy = new AggregatePolicyProvider(initialGlobalPolicy);
                 Policy.setPolicy(globalPolicy);
                 if (logger.isTraceEnabled())
-                    logger.trace("Global policy set: {0}",
-                               globalPolicy);
+                    logger.trace("Global policy set: {}", globalPolicy);
             }
             DynamicPolicyProvider service_policy = new DynamicPolicyProvider(new PolicyFileProvider(getPolicy()));
             LoaderSplitPolicyProvider splitServicePolicy = new LoaderSplitPolicyProvider(jsbCL,
@@ -371,12 +420,11 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
         }
         Object impl;
         try {
-            Class implClass;
+            Class<?> implClass;
             implClass = Class.forName(getImplClassName(), false, jsbCL);
             if (logger.isTraceEnabled())
                 logger.trace("Attempting to getValue implementation constructor");
-            Constructor constructor = implClass
-                                          .getDeclaredConstructor(actTypes);
+            Constructor<?> constructor = implClass.getDeclaredConstructor(actTypes);
             if (logger.isTraceEnabled())
                 logger.trace("Obtained implementation constructor: {}",constructor);
             constructor.setAccessible(true);
@@ -395,9 +443,9 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
                 proxy = servicePreparer.prepareProxy(proxy);
             }
             if (logger.isTraceEnabled())
-                logger.trace("Proxy =  {0}", proxy);
+                logger.trace("Proxy =  {}", proxy);
             //currentThread.setContextClassLoader(currentClassLoader);
-            proxy = (new MarshalledObject(proxy)).get();
+            proxy = (new MarshalledObject<>(proxy)).get();
         } finally {
             currentThread.setContextClassLoader(currentClassLoader);
         }
