@@ -29,7 +29,9 @@ import net.jini.jeri.tcp.TcpServerEndpoint;
 import net.jini.lease.LeaseRenewalManager;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.rioproject.security.SecureEnv;
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.core.monitor.MonitorEvent;
 import sorcer.core.monitor.MonitoringManagement;
@@ -54,6 +56,12 @@ import static sorcer.so.operator.exert;
 public class ExertMonitorEventTest {
     LeaseRenewalManager leaseRenewalManager;
     ExertMonitorListener monitorListener;
+
+    @BeforeClass
+    public static void setup() throws Exception {
+        SecureEnv.setup();
+    }
+
     @Before
     public void init() {
         Accessor.create();
