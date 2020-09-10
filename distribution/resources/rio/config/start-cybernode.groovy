@@ -28,9 +28,10 @@ import org.rioproject.util.ServiceDescriptorUtil
 
 @Component('org.rioproject.start')
 class StartCybernodeConfig {
+    final boolean useHttps
 
     StartCybernodeConfig() {
-        SecureEnv.setup()
+        useHttps = SecureEnv.setup()
     }
 
     String[] getConfigArgs(String rioHome) {
@@ -79,7 +80,7 @@ class StartCybernodeConfig {
                                                  websterRoots(),
                                                  System.properties['sorcer.data.dir'] as String),*/
                 ServiceDescriptorUtil.getJetty('0', websterRoots() as String[],
-                        System.properties['sorcer.data.dir'] as String),
+                        System.properties['sorcer.data.dir'] as String, useHttps),
                 ServiceDescriptorUtil.getCybernode(policyFile, getConfigArgs(rioHome))
         ]
         return (ServiceDescriptor[]) serviceDescriptors

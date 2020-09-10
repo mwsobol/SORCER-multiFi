@@ -165,10 +165,9 @@ gradle.taskGraph.whenReady { graph ->
                         excludeCategories 'org.sorcer.test.TestsRequiringRio'
                     }
                 } else {
-                    ext {
-                        websterUrl = "https://${websterAddress}:${websterPort}"
-                    }
-                    systemProperty "org.rioproject.keystore", "${rioHome}/config/security/rio-cert.ks"
+                   if (useHttps()) {
+                       systemProperty "org.rioproject.keystore", "${rioHome}/config/security/rio-cert.ks"
+                   }
                 }
             }
         }

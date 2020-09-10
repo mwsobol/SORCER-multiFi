@@ -52,6 +52,7 @@ task bootSorcerNoHttpd(type: Exec) {
         args << "/C"
     }
     args << "ant"
+    args << "-verbose"
     args << "-f"
     args << "${file("${sorcerDistHome}").path}/bin/sorcer/bin/boot-sorcer-noHttpd.xml"
     args << "run"
@@ -66,23 +67,26 @@ bootSorcerNoHttpd.onlyIf {
  * Start Sorcer using Rio
  */
 task bootSorcerRio(type: Exec) {
-    if (useHttps()) {
-        dependsOn("jetty")
-    } else {
-        dependsOn("webster")
-    }
+
     description = 'Starts SORCER OS Services with Rio services for service provisioning.'
     def args = []
-    if(System.properties['os.name'].contains("Windows")) {
+    if (System.properties['os.name'].contains("Windows")) {
         args << "cmd.exe"
         args << "/C"
     }
     args << "ant"
     args << "-f"
     args << "${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"
+    if (useHttps()) {
+        dependsOn("jetty")
+        environment("ANT_OPTS" : "-Dorg.rioproject.keystore=${rioHome}/config/security/rio-cert.ks")
+        args << "useHttps"
+    } else {
+        dependsOn("webster")
+    }
     args << "sorcer.boot.nofork"
     //if(System.properties['sorcer.lite']==null) {
-        environment "sorcer.start.all": true
+        environment "sorcer.start.all" : true
         environment "RIO_HOME" : "${rioHome}"
     //}
     commandLine args
@@ -208,9 +212,4 @@ static def jps() {
     }
     s.append("jps -lm")
     s.toString()
-}
-
-static boolean useHttps() {
-    def set = System.getProperties().stringPropertyNames()
-    "https" in set
 }

@@ -29,9 +29,10 @@ import org.rioproject.util.ServiceDescriptorUtil
 
 @Component('org.rioproject.start')
 class StartMonitorConfig {
+    final boolean useHttps
 
     StartMonitorConfig() {
-        SecureEnv.setup()
+        useHttps = SecureEnv.setup()
     }
 
     static String[] getMonitorConfigArgs(String rioHome) {
@@ -79,7 +80,7 @@ class StartMonitorConfig {
 
         def serviceDescriptors = [
             //ServiceDescriptorUtil.getWebster(policyFile, '0', websterRoots as String[]),
-            ServiceDescriptorUtil.getJetty('0', websterRoots as String[]),
+            ServiceDescriptorUtil.getJetty('0', websterRoots as String[], useHttps),
             ServiceDescriptorUtil.getLookup(policyFile, getLookupConfigArgs(rioHome)),
             ServiceDescriptorUtil.getMonitor(policyFile, getMonitorConfigArgs(rioHome))
         ]

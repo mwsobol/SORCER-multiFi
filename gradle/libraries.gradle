@@ -69,8 +69,12 @@ ext {
     } else {
         websterAddress = sorcerEnv.provider.webster.interface
     }
-    def set = System.getProperties().stringPropertyNames()
-    if ("https" in set) {
+    useHttps = {
+        def set = System.getProperties().stringPropertyNames()
+        "https" in set
+    }
+
+    if (useHttps()) {
         websterUrl = "https://${websterAddress}:${websterPort}"
     } else {
         websterUrl = "http://${websterAddress}:${websterPort}"
