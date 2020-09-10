@@ -87,7 +87,7 @@ def repoPath() {
 bootme {
     description = 'Starts up a service provider'
     starterConfig = file("${projectDir.path}/configs/StartCoffeeMakerConfig.groovy")
-    systemProperties = ["relative.repo.path" : repoPath()]
+    systemProperties = ["relative.repo.path" : repoPath(), "webster.url" : websterUrl]
 //    spawn = false
 //    debug = true
 }
@@ -137,10 +137,12 @@ test {
     systemProperty "java.rmi.server.codebase",
             "${websterUrl}/${repoPath()}/coffeemaker-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
+    println "===> ${project.name}: websterUrl: $websterUrl"
+
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
     }
-//    dependsOn([install])
+    //dependsOn([install])
     dependsOn([install, bootme])
     finalizedBy(haltme)
 }

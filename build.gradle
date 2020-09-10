@@ -165,6 +165,9 @@ gradle.taskGraph.whenReady { graph ->
                         excludeCategories 'org.sorcer.test.TestsRequiringRio'
                     }
                 } else {
+                    ext {
+                        websterUrl = "https://${websterAddress}:${websterPort}"
+                    }
                     systemProperty "org.rioproject.keystore", "${rioHome}/config/security/rio-cert.ks"
                 }
             }
@@ -173,7 +176,7 @@ gradle.taskGraph.whenReady { graph ->
 }
 
 task tests(type: TestReport, dependsOn: "bootSorcer") {
-    description = "Aggregate test runner, runs tests that don't require RIO in the project."
+    description = "Aggregate test runner, runs tests that don't require Rio in the project."
     destinationDir = file("$buildDir/reports/tests")
 
     project.subprojects { project ->

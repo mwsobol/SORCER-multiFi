@@ -37,6 +37,8 @@ class StartAll {
         String riverVersion = System.getProperty("river.version")
         String sorcerVersion = System.getProperty("sorcer.version")
         String policy = System.getProperty("java.security.policy")
+        String websterUrl = System.getProperty("webster.url")
+        boolean useHttps = websterUrl.startsWith("https")
 
         String relativeRepoPath = System.getProperty("local.repo.path")
         String projectBuildDir = System.getProperty("project.dir")
@@ -57,12 +59,14 @@ class StartAll {
                         policy,
                         "${buildLibPath}/worker-${sorcerVersion}-prv.jar",
                         "sorcer.core.provider.ServiceTasker",
+                        useHttps,
                         configArg as String[])
             else
                 descriptors << new SorcerServiceDescriptor(codebase,
                         policy,
                         "${buildLibPath}/worker-${sorcerVersion}-prv.jar",
                         "sorcer.worker.provider.impl.WorkerProvider",
+                        useHttps,
                         configArg as String[])
         }
         return descriptors as ServiceDescriptor[]

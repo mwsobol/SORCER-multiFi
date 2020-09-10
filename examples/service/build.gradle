@@ -95,7 +95,9 @@ bootme {
     description = 'Starts up a service provider'
     if (!file("logs").exists()) file("logs").mkdir()
     starterConfig = file("${projectDir.path}/configs/StartAdderConfig.groovy")
-    systemProperties = ["relative.repo.path" : repoPath(), "java.util.logging.config.file" : "${projectDir.path}/configs/sorcer-prv.logging"]
+    systemProperties = ["relative.repo.path" : repoPath(),
+                        "java.util.logging.config.file" : "${projectDir.path}/configs/sorcer-prv.logging",
+                        "webster.url" : websterUrl]
     spawn = true
 //    debug = true
 }

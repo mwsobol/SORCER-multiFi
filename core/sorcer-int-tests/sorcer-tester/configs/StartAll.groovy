@@ -36,6 +36,8 @@ class StartAll {
         String riverVersion = System.getProperty("river.version")
         String sorcerVersion = System.getProperty("sorcer.version")
         String policy = System.getProperty("java.security.policy")
+        String websterUrl = System.getProperty("webster.url")
+        boolean useHttps = websterUrl.startsWith("https")
 
         String relativeRepoPath = System.getProperty("relative.repo.path")
         String projectBuildDir = System.getProperty("project.build.dir")
@@ -43,7 +45,7 @@ class StartAll {
         String configPath = "${projectBuildDir}/../configs"
 
         def descriptors = []
-        ["adder", "multiplier", "divider", "subtractor", "averager", "exerter", "contexter", "entmodel"].each { provider ->
+        ["adder", "multiplier", "divider", "subtractor", "averager", "exerter", "contexter"/*, "entmodel"*/].each { provider ->
             def configArg = ["${configPath}/${provider}-prv.config"]
             def codebase = "${relativeRepoPath}/sorcer-tester-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
@@ -51,6 +53,7 @@ class StartAll {
                                                        policy,
                                                        "${buildLibPath}/sorcer-tester-${sorcerVersion}.jar",
                                                        "sorcer.core.provider.ServiceTasker",
+                                                       useHttps,
                                                        configArg as String[])
         }
         return descriptors as ServiceDescriptor[]

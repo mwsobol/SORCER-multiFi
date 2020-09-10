@@ -17,6 +17,7 @@ package examples.coffeemaker
 
 import com.sun.jini.start.ServiceDescriptor
 import org.rioproject.config.Component
+import org.rioproject.security.SecureEnv
 import sorcer.provider.boot.SorcerServiceDescriptor
 
 /**
@@ -25,9 +26,15 @@ import sorcer.provider.boot.SorcerServiceDescriptor
 @Component("com.sun.jini.start")
 class StartAll {
 
+    StartAll() {
+        SecureEnv.setup()
+    }
+
     ServiceDescriptor[] getServiceDescriptors() {
         String riverVersion = System.getProperty("river.version")
         String sorcerVersion = System.getProperty("sorcer.version")
+        String websterUrl = System.getProperty("webster.url")
+        boolean useHttps = websterUrl.startsWith("https")
         String policy = System.getProperty("java.security.policy")
 
         String relativeRepoPath = System.getProperty("relative.repo.path")
@@ -40,10 +47,12 @@ class StartAll {
             def configArg = ["${configPath}/${provider}-prv.config"]
             def codebase = "${relativeRepoPath}/coffeemaker-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
+            println "===> useHttps: $useHttps"
             descriptors << new SorcerServiceDescriptor(codebase,
                     policy,
                     "${buildLibPath}/coffeemaker-${sorcerVersion}-prv.jar",
                     "sorcer.core.provider.ServiceTasker",
+                    useHttps,
                     configArg as String[])
         }
         return descriptors as ServiceDescriptor[]
