@@ -34,6 +34,8 @@ class StartAll {
         String riverVersion = System.getProperty("river.version")
         String sorcerVersion = System.getProperty("sorcer.version")
         String policy = System.getProperty("java.security.policy")
+        String websterUrl = System.getProperty("webster.url")
+        boolean useHttps = websterUrl.startsWith("https")
 
         String relativeRepoPath = System.getProperty("relative.repo.path")
         String projectBuildDir = System.getProperty("project.build.dir")
@@ -48,6 +50,7 @@ class StartAll {
                                                    policy,
                                                    "${buildLibPath}/adder-${sorcerVersion}-prv.jar${File.pathSeparator}${buildLibPath}/adder-${sorcerVersion}-ui.jar",
                                                    "sorcer.core.provider.ServiceTasker",
+                                                   useHttps,
                                                    configArg as String[])
 
         configArg = ["${configPath}/adder-session-bean.config"]
@@ -55,6 +58,7 @@ class StartAll {
                 policy,
                 "${buildLibPath}/adder-${sorcerVersion}-prv.jar${File.pathSeparator}${buildLibPath}/adder-${sorcerVersion}-ui.jar",
                 "sorcer.core.provider.SessionProvider",
+                useHttps,
                 configArg as String[])
 
         return descriptors as ServiceDescriptor[]
