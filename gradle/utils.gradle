@@ -65,7 +65,12 @@ bootSorcerNoHttpd.onlyIf {
 /*
  * Start Sorcer using Rio
  */
-task bootSorcerRio(type: Exec, dependsOn: /*"jetty"*/"webster") {
+task bootSorcerRio(type: Exec) {
+    if (useHttps()) {
+        dependsOn("jetty")
+    } else {
+        dependsOn("webster")
+    }
     description = 'Starts SORCER OS Services with Rio services for service provisioning.'
     def args = []
     if(System.properties['os.name'].contains("Windows")) {
@@ -163,9 +168,6 @@ task webster(type: Exec) {
 */
     args << "${sorcerDistHome}/bin/webster/bin/webster.groovy"
     commandLine args
-    doLast {
-        println "Webster URL: ${websterUrl}"
-    }
 }
 
 webster.onlyIf {
@@ -197,10 +199,6 @@ task jetty(type: Exec) {
 
     args << "${sorcerDistHome}/bin/webster/bin/jetty.groovy"
     commandLine args
-    doLast {
-        websterUrl = websterUrl.replace("http:", "https:")
-        println "Webster URL: ${websterUrl}"
-    }
 }
 
 static def jps() {
@@ -210,4 +208,9 @@ static def jps() {
     }
     s.append("jps -lm")
     s.toString()
+}
+
+static boolean useHttps() {
+    def set = System.getProperties().stringPropertyNames()
+    "https" in set
 }

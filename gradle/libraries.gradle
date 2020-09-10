@@ -69,7 +69,13 @@ ext {
     } else {
         websterAddress = sorcerEnv.provider.webster.interface
     }
-    websterUrl = "http://${websterAddress}:${websterPort}"
+    def set = System.getProperties().stringPropertyNames()
+    if ("https" in set) {
+        websterUrl = "https://${websterAddress}:${websterPort}"
+    } else {
+        websterUrl = "http://${websterAddress}:${websterPort}"
+    }
+
     println "Webster URL: ${websterUrl}"
 
     startClassPath = files("${rioHome}/lib/groovy-all-${groovyVersion}.jar",
