@@ -368,7 +368,7 @@ public class Signatures {
 
 		// request the remote service
 		Service as = task("as", sig("add", mmtFi(mtFi("singleton", Adder.class),
-			mtFi("two", Adder.class, MikeAdder.class))),
+			mtFi("duo", Adder.class, MikeAdder.class))),
 			context("add",
 				inVal("arg/x1", 20.0),
 				inVal("arg/x2", 80.0),
@@ -376,7 +376,7 @@ public class Signatures {
 
 //		assertEquals(100.0, exec(as));
 
-		assertEquals(100.0, exec(as, mtFi("two")));
+		assertEquals(100.0, exec(as, mtFi("duo")));
 
 	}
 
