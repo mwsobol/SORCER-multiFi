@@ -201,7 +201,7 @@ public class Signatures {
 	public void multiFiLocalSigService() throws Exception {
 
 		// request the local service
-		Signature mfs = mfSig(sig("add", AdderImpl.class),
+		Signature mfs = mFiSig(sig("add", AdderImpl.class),
 				sig("multiply", MultiplierImpl.class));
 		setContext(mfs, context("mfs",
 				inVal("arg/x1", 20.0),
@@ -354,12 +354,29 @@ public class Signatures {
 
 		// request the remote service
 		Service as = task("as", sig("add", Adder.class, MikeAdder.class),
-				context("add",
-						inVal("arg/x1", 20.0),
-						inVal("arg/x2", 80.0),
-						result("result/y")));
+			context("add",
+				inVal("arg/x1", 20.0),
+				inVal("arg/x2", 80.0),
+				result("result/y")));
 
 		assertEquals(100.0, exec(as));
+
+	}
+
+	@Test
+	public void referencingRemoteProviderWithMultitypes3() throws Exception {
+
+		// request the remote service
+		Service as = task("as", sig("add", mmtFi(mtFi("singleton", Adder.class),
+			mtFi("two", Adder.class, MikeAdder.class))),
+			context("add",
+				inVal("arg/x1", 20.0),
+				inVal("arg/x2", 80.0),
+				result("result/y")));
+
+//		assertEquals(100.0, exec(as));
+
+		assertEquals(100.0, exec(as, mtFi("two")));
 
 	}
 

@@ -7,6 +7,7 @@ import sorcer.service.modeling.fi;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -196,7 +197,12 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 		this.selects = selects;
 	}
 
-    public List<String> getSelectNames() {
+	public void setSelects(T[] selects) {
+		List<T> lselects = Arrays.asList(selects);
+		this.selects = lselects;
+	}
+
+	public List<String> getSelectNames() {
         List<String> names = new ArrayList<>(selects.size());
         for (T item : selects) {
             names.add(((Identifiable)item).getName());

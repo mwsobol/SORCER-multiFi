@@ -71,7 +71,6 @@ import java.util.Collections;
 import static sorcer.co.operator.path;
 import static sorcer.co.operator.*;
 import static sorcer.mo.operator.*;
-import static sorcer.ent.operator.req;
 
 /**
  * Operators defined for the Service Modeling Language (SML).
@@ -1050,7 +1049,7 @@ operator extends Operator {
         return new SignatureDeployer(builders);
     }
 
-    public static MultiFiSignature mfSig(Signature... signatures)
+    public static MultiFiSignature mFiSig(Signature... signatures)
             throws SignatureException {
         MultiFiSignature mfi = new MultiFiSignature(signatures);
         return mfi;
@@ -1059,6 +1058,13 @@ operator extends Operator {
     public static ServiceSignature sig(String operation, Class serviceType)
         throws SignatureException {
         return sig(operation, serviceType, new Object[]{});
+    }
+
+    public static ServiceSignature sig(String operation, ServiceFidelity serviceFi)
+        throws SignatureException {
+        ServiceSignature signture = (ServiceSignature) sig(operation, serviceFi.getSelect());
+        signture.setMultiFi(serviceFi);
+        return signture;
     }
 
     public static Signature trgSig(String operation, Class serviceType, Class target)
@@ -1972,9 +1978,42 @@ operator extends Operator {
         return fi;
     }
 
+    // multineuronFi
     public static ServiceFidelity mnFi(Activator... activations) {
         ServiceFidelity fi = new ServiceFidelity(activations);
         fi.fiType = Fi.Type.ANE;
+        return fi;
+    }
+
+    // multitypeFi
+    public static Fidelity mtFi(String fiName, Class... types) {
+        Fidelity fi = new Fidelity(fiName);
+        fi.setSelects(types);
+        fi.fiType = Fi.Type.MTF;
+        return fi;
+    }
+
+    public static Fidelity mtFi(String name) {
+        Fidelity fi = new Fidelity(name);
+        fi.fiType = Fi.Type.MMTF;
+        return fi;
+    }
+
+    public static Fidelity mtFi(String name, String path) {
+        Fidelity fi = new Fidelity(name, path);
+        fi.fiType = Fi.Type.MMTF;
+        return fi;
+    }
+
+    // multimultityprFi
+    public static ServiceFidelity mmtFi(Fidelity... fidelities) {
+        return mmtFi(null,  fidelities);
+    }
+
+    public static ServiceFidelity mmtFi(String fiName, Fidelity... fidelities) {
+        ServiceFidelity fi = new ServiceFidelity(fiName, fidelities);
+        fi.setSelect(fidelities[0]);
+        fi.fiType = Fi.Type.MMTF;
         return fi;
     }
 
@@ -2250,7 +2289,14 @@ operator extends Operator {
 
     public static Signature sig(String operation, Object object)
         throws SignatureException {
-        return sig(operation, object, null, null, null);
+        if (object instanceof Fidelity) {
+            List list =  ((Fidelity)object).getSelects();
+            Class[] types = new Class[list.size()];
+            list.toArray(types);
+            return sig(operation, types[0],  (String)null, types);
+        } else {
+            return sig(operation, object, null, null, null);
+        }
     }
 
     public static Signature sig(String operation, Object object,

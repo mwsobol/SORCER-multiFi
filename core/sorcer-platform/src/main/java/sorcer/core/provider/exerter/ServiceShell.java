@@ -42,10 +42,7 @@ import sorcer.core.exertion.ObjectTask;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.*;
-import sorcer.core.signature.RemoteSignature;
-import sorcer.core.signature.NetletSignature;
-import sorcer.core.signature.LocalSignature;
-import sorcer.core.signature.ServiceSignature;
+import sorcer.core.signature.*;
 import sorcer.jini.lookup.ProviderID;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
@@ -57,6 +54,7 @@ import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.ProviderLocator;
 import sorcer.util.Sorcer;
 
+import javax.print.attribute.standard.Fidelity;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -722,12 +720,21 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		Context.Return rPath = null;
 		for (Arg a : args) {
 			if (a instanceof Context.Return) {
-				rPath = (Context.Return) a;
-				break;
+				xrt.getDataContext().setContextReturn((Context.Return) a);
+			} else if (a instanceof Fi && ((Fi)a).getFiType().equals(Fi.Type.MMTF)) {
+				try {
+					// select the both a signature fidelity and a multitype fidelity
+					if (xrt.getProcessSignature() instanceof MultiFiSignature) {
+						xrt.getProcessSignature().getMultiFi().setSelect(((Fi)a).getPath());
+						xrt.getProcessSignature().getMultiFi().selectSelect(a.getName());
+					} else {
+						xrt.getProcessSignature().getMultiFi().selectSelect(a.getName());
+					}
+				} catch (ConfigurationException e) {
+					throw new ContextException(e);
+				}
 			}
 		}
-		if (rPath != null)
-			((ServiceContext)xrt.getDataContext()).setContextReturn(rPath);
 		return xrt;
 	}
 
