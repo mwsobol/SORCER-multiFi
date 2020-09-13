@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.service.Exerter;
 import sorcer.core.provider.ProviderName;
 import sorcer.core.provider.ServiceName;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.service.Service;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
@@ -335,7 +335,7 @@ public class ProviderLocator {
 			if (pn instanceof  ServiceName) {
 				locators = ((ServiceName) pn).getLocators();
 			}
-			if (((NetSignature)signature).isUnicast() || locators != null) {
+			if (((RemoteSignature)signature).isUnicast() || locators != null) {
 				if (locators == null)
 					locators = SorcerEnv.getLookupLocators();
 				for (String locator : locators) {

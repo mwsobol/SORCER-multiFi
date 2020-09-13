@@ -55,7 +55,7 @@ def repoPath() {
 
 bootme {
 	starterConfig = file("${projectDir.path}/configs/StartAll.groovy")
-	systemProperties = ["local.repo.path" : repoPath()]
+	systemProperties = ["local.repo.path" : repoPath(), "webster.url" : websterUrl]
 //	spawn = false
 //	debug = true
 }

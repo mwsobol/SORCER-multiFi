@@ -22,7 +22,7 @@ import net.jini.id.UuidFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
@@ -214,7 +214,7 @@ public class Mograms implements SorcerConstants {
 
 		ExertionEnvelop eenv = ExertionEnvelop.getTemplate();
 		try {
-			eenv.serviceType = ((NetSignature) ex.getProcessSignature()).getServiceType();
+			eenv.serviceType = ((RemoteSignature) ex.getProcessSignature()).getServiceType();
 		} catch (SignatureException e) {
 			throw new RoutineException(e);
 		}

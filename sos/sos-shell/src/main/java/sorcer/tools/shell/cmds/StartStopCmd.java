@@ -24,7 +24,7 @@ import java.util.Iterator;
 import net.jini.admin.Administrable;
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.discovery.LookupDiscovery;
-import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.ServiceShell;
 import sorcer.tools.shell.ShellCmd;
 
 import com.sun.jini.admin.DestroyAdmin;
@@ -51,23 +51,23 @@ public class StartStopCmd extends ShellCmd {
 	}
 
 	public void execute(String... args) throws Throwable {
-		out = NetworkShell.getShellOutputStream();
-		LookupDiscovery ld = NetworkShell.getDisco();
-		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
+		out = ServiceShell.getShellOutputStream();
+		LookupDiscovery ld = ServiceShell.getDisco();
+		WhitespaceTokenizer myTk = ServiceShell.getShellTokenizer();
 		input = shell.getCmd();
 		if (out == null)
 			throw new NullPointerException("Must have an output PrintStream");
 		if (input.startsWith("start")) {
 			String app = myTk.nextToken();
-			if (NetworkShell.getAppMap().containsKey(app)) {
-				String path = NetworkShell.getAppMap().get(app);
-				NetworkShell.startApplication(path);
+			if (ServiceShell.getAppMap().containsKey(app)) {
+				String path = ServiceShell.getAppMap().get(app);
+				ServiceShell.startApplication(path);
 			} else {
 				out.print("No such application " + app);
 			}
 		} else {
 			// pass in a clone of list - command may modify it
-			ArrayList<ServiceRegistrar> registrars = new ArrayList<ServiceRegistrar>(NetworkShell.getRegistrars());
+			ArrayList<ServiceRegistrar> registrars = new ArrayList<ServiceRegistrar>(ServiceShell.getRegistrars());
 			String nxtToken;
 			if (myTk.hasMoreTokens()) {
 				nxtToken = myTk.nextToken();

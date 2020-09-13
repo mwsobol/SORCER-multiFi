@@ -23,7 +23,7 @@ import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.DatabaseStorer.Store;
 import sorcer.jini.lookup.AttributesUtil;
 import sorcer.service.*;
-import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.ServiceShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.tools.shell.WhitespaceTokenizer;
 import sorcer.util.bdb.objects.ObjectInfo;
@@ -71,8 +71,8 @@ public class DataStorageCmd extends ShellCmd {
 	}
 
 	public void execute(String... args) throws RemoteException, MonitorException, ServiceException {
-		out = NetworkShell.getShellOutputStream();
-		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
+		out = ServiceShell.getShellOutputStream();
+		WhitespaceTokenizer myTk = ServiceShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
 		int myIdx = 0;
 		String next = null;
@@ -160,10 +160,10 @@ public class DataStorageCmd extends ShellCmd {
 		Routine xrt = null;
 		if (selectedDataStorer >= 0) {
 			xrt = ((MonitorUIManagement) dataStorers[selectedDataStorer].service)
-					.getMonitorableExertion(id, NetworkShell.getPrincipal());
+					.getMonitorableExertion(id, ServiceShell.getPrincipal());
 		} else {
 			xrt = ((MonitorUIManagement) dataStorerMap.get(id).service)
-					.getMonitorableExertion(id, NetworkShell.getPrincipal());
+					.getMonitorableExertion(id, ServiceShell.getPrincipal());
 		}
 
 		out.println("--------- STORAGE RECORD # " + selectedRecord + " ---------");
@@ -185,7 +185,7 @@ public class DataStorageCmd extends ShellCmd {
 						.getHostName(dataStorers[selectedDataStorer].attributeSets));
 //			all = ((StorageManagement) dataStorers[selectedDataStorer].service)
 //					.getMonitorableExertionInfo(fiType,
-//							NetworkShell.getPrincipal());
+//							ServiceShell.getPrincipal());
 
 				Context cxt = null;
 
@@ -214,7 +214,7 @@ public class DataStorageCmd extends ShellCmd {
 
 					DatabaseStorer emx = (DatabaseStorer) dataStorers[i].service;
 //					ri = emx.getMonitorableExertionInfo(fiType,
-//						NetworkShell.getPrincipal());
+//						ServiceShell.getPrincipal());
 					if (ri != null && ri.size() > 0) {
 						all.putAll(ri);
 					}
@@ -271,11 +271,11 @@ public class DataStorageCmd extends ShellCmd {
 	
 	public static void printCurrentStorer() {
 		if (selectedDataStorer >= 0) {
-			NetworkShell.shellOutput.println("Current data storage service: ");
+			ServiceShell.shellOutput.println("Current data storage service: ");
 			describeStorer(selectedDataStorer);
 		}
 		else {
-			NetworkShell.shellOutput.println("No selected data storage, use 'ds -s' to list and select with 'ds #'");
+			ServiceShell.shellOutput.println("No selected data storage, use 'ds -s' to list and select with 'ds #'");
 		}
 	}
 
@@ -335,7 +335,7 @@ public class DataStorageCmd extends ShellCmd {
 //				new Class[] { StorageManagement.class }, null);
 //		dataStorers = ServiceAccessor.getServiceItems(st, null,
 //		// DiscoveryGroupManagement.ALL_GROUPS);
-//				NetworkShell.getGroups());
+//				ServiceShell.getGroups());
 //		return dataStorers;
 //	}
 

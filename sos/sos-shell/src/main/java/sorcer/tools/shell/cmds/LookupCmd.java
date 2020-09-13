@@ -34,7 +34,7 @@ import net.jini.core.lookup.ServiceTemplate;
 import net.jini.lookup.entry.Name;
 import sorcer.service.Exerter;
 import sorcer.jini.lookup.AttributesUtil;
-import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.ServiceShell;
 import sorcer.tools.shell.ShellCmd;
 
 import com.sun.jini.admin.DestroyAdmin;
@@ -76,8 +76,8 @@ public class LookupCmd extends ShellCmd {
 	}
 
 	public void execute(String... args) throws IOException, ClassNotFoundException {
-		out = NetworkShell.getShellOutputStream();
-		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
+		out = ServiceShell.getShellOutputStream();
+		WhitespaceTokenizer myTk = ServiceShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
 		int index = DiscoCmd.selectedRegistrar;
 		String next = null;
@@ -189,7 +189,7 @@ public class LookupCmd extends ShellCmd {
 	@SuppressWarnings("unchecked")
 	private void lookup(int index, String option, String attributeValue, String serviceType) {
 		// pass in a clone of list - command may modify it
-		ArrayList<ServiceRegistrar> registrars = new ArrayList<ServiceRegistrar>(NetworkShell.getRegistrars());
+		ArrayList<ServiceRegistrar> registrars = new ArrayList<ServiceRegistrar>(ServiceShell.getRegistrars());
 		if (index < registrars.size()) {
 			ServiceRegistrar myReg = (ServiceRegistrar) registrars.get(index);
 			if (myReg != null) {
@@ -309,7 +309,7 @@ public class LookupCmd extends ShellCmd {
 		printCodebaseURL(serviceItems.get(index));
 		Entry[] attributeSets = serviceItems.get(index).attributeSets;
 		if (attributeSets != null && attributeSets.length > 0) {
-				NetworkShell.printLookupAttributes(attributeSets);
+				ServiceShell.printLookupAttributes(attributeSets);
 				// for (int i = 0; i < attributeSets.length - 1; i++) {
 				// out.println("  - " + attributeSets[i]);
 				// }
@@ -341,10 +341,10 @@ public class LookupCmd extends ShellCmd {
 	public static void printCurrentService() throws IOException,
 			ClassNotFoundException {
 		if (selectedServiceItem >= 0) {
-			NetworkShell.shellOutput.println("Selected service provider: ");
+			ServiceShell.shellOutput.println("Selected service provider: ");
 			printService(selectedServiceItem, "");
 		} else {
-			NetworkShell.shellOutput.println("No selected service provider, use 'lup' command");
+			ServiceShell.shellOutput.println("No selected service provider, use 'lup' command");
 		}
 	}
 	

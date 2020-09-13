@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.*;
 import sorcer.core.context.model.req.RequestModel;
 import sorcer.core.provider.Modeler;
-import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -77,7 +77,7 @@ public class ServiceModeler extends SorcerExerterBean implements Modeler {
             if (dataContext instanceof Model) {
                 result = ((ServiceContext)dataContext).getResponse(args);
                 if (builder != null) {
-                    model = (Model) ((ObjectSignature)builder).newInstance();
+                    model = (Model) ((LocalSignature)builder).newInstance();
                 }
                 if (model != null) {
                     model.substitute((Arg) result);

@@ -21,7 +21,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 
 import net.jini.discovery.LookupDiscovery;
-import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.ServiceShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.tools.shell.WhitespaceTokenizer;
 
@@ -43,8 +43,8 @@ public class GroupsCmd extends ShellCmd {
 	}
 
 	public void execute(String... args) throws Throwable {
-		out = NetworkShell.getShellOutputStream();
-		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
+		out = ServiceShell.getShellOutputStream();
+		WhitespaceTokenizer myTk = ServiceShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
 		if (numTokens == 0) {
 			printShellGroups();
@@ -59,18 +59,18 @@ public class GroupsCmd extends ShellCmd {
 	}
 	
 	private void printShellGroups() throws Throwable {
-		String[] groups = NetworkShell.getGroups();
+		String[] groups = ServiceShell.getGroups();
 		if (groups == null) {
 			out.println("This nsh shell groups: all groups");
 		} else if (groups.length == 0) {
 			out.println("This nsh shell groups: no groups");
 		} else
 			out.println("This nsh shell groups: " 
-					+ Arrays.toString(NetworkShell.getGroups()));
+					+ Arrays.toString(ServiceShell.getGroups()));
 	}
 	
 	private void printLookupDiscoveryGroups() throws Throwable {
-		LookupDiscovery ld = NetworkShell.getDisco();
+		LookupDiscovery ld = ServiceShell.getDisco();
 		String[] ldGroups = ld.getGroups();
 		if (ldGroups == null) {
 			out.println("Lookup discovery groups: all groups");

@@ -1,5 +1,6 @@
 /*
- * Copyright 2015 Sorcersoft.com S.A.
+ * Copyright 2020 the original author or authors.
+ * Copyright 2020 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package sorcer.service;
 
-package sorcer.tools.shell;
+public interface ManagedRequest extends CombinedRequest {
 
-/**
- * @author Rafał Krupiński
- */
-public interface IShellCmdFactory {
-    void instantiateCommands(INetworkShell shell);
 }

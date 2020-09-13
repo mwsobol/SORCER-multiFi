@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.plexus.FiMap;
-import sorcer.core.service.Projection;
+import sorcer.service.Projection;
 import sorcer.service.*;
 import sorcer.util.ModelTable;
 import sorcer.util.DataTable;
@@ -29,11 +29,11 @@ public class FidelityTest {
 	@Test
 	public void projectionOfToString() {
 
-		Projection fl1 = po(fi("x1", "atX"));
+		Projection fl1 = prj(fi("x1", "atX"));
 		logger.info("as String: " + fl1);
 		assertEquals(fl1.toString(), "fis(fi(\"x1\", \"atX\"))");
 
-		Projection fl2 = po(fi("x1", "atX"), fi("y2", "atY"));
+		Projection fl2 = prj(fi("x1", "atX"), fi("y2", "atY"));
 		logger.info("as String: " + fl2);
 		assertEquals(fl2.toString(), "fis(fi(\"x1\", \"atX\"), fi(\"y2\", \"atY\"))");
 
@@ -147,11 +147,11 @@ public class FidelityTest {
 
 	@Test
 	public void getProjection() throws EvaluationException {
-		String fis = "po(fi('astros', 'tip/displacement'))";
+		String fis = "prj(fi('astros', 'tip/displacement'))";
 
 		Projection fl = (Projection) eval(expr(fis));
 		logger.info("fi map populated: " + fl);
-		assertTrue(fl.equals(po(fi("astros", "tip/displacement"))));
+		assertTrue(fl.equals(prj(fi("astros", "tip/displacement"))));
 	}
 
 	@Test
@@ -165,13 +165,13 @@ public class FidelityTest {
 		Metafidelity sFi3 = metaFi("job3", fi("net", "j1/j2"),
 			fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"), sFi1, sFi2);
 
-		Projection p1 = po(sFi1);
+		Projection p1 = prj(sFi1);
 		logger.info("projection: " + p1);
 
-		Projection p2 = po(sFi2);
+		Projection p2 = prj(sFi2);
 		logger.info("projection: " + p2);
 
-		Projection p3 = po(sFi3);
+		Projection p3 = prj(sFi3);
 		logger.info("projection: " + p3);
 
 		List<Fidelity> job1Fis1 = p1.getFidelities("job1");

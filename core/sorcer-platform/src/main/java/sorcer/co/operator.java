@@ -30,8 +30,8 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.provider.DatabaseStorer;
+import sorcer.core.signature.LocalSignature;
 import sorcer.core.signature.NetletSignature;
-import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
@@ -75,12 +75,12 @@ public class operator extends Operator {
 		return new Tuple2<T1,T2>( x1, x2 );
 	}
 
-	public static <K,Oobject> Slot<K, Object> slot(K x1) {
-		return new Slot<K,Object>( x1 );
+	public static <String,Oobject> Slot<String, Object> slot(String x1) {
+		return new Slot<String,Object>( x1 );
 	}
 
-	public static <K,O> Slot<K,O> slot(K x1, O x2 ){
-		return new Slot<K,O>( x1, x2 );
+	public static <String,O> Slot<String,O> slot(String x1, O x2 ){
+		return new Slot<String,O>(x1, x2 );
 	}
 
 	public static <T1,T2,T3> Tuple3<T1,T2,T3> x(T1 x1, T2 x2, T3 x3 ){
@@ -529,6 +529,31 @@ public class operator extends Operator {
 		return ent;
 	}
 
+	public static <T> Value<T> depVal(String path, String domain, T value) {
+		Value ent = new Value<T>(path, value);
+		ent.setDomain(domain);
+		ent.setType(Type.DOMAIN_DEP);
+		return ent;
+	}
+
+	public static <T> Value<T> depVal(String domainPath, T value) {
+		String pn = domainPath;
+		String domain = null;
+		if (domainPath.indexOf("$") > 0) {
+			int ind = domainPath.indexOf("$");
+			pn = domainPath.substring(0, ind);
+			domain = domainPath.substring(ind + 1);
+		}
+		Value ent = null;
+		if (domain != null) {
+			ent = depVal(pn, domain, value);
+		} else {
+			ent = new Value<T>(pn, value);
+			ent.setType(Type.DEP);
+		}
+		return ent;
+	}
+
 	public static <T> Value<T> val(String path, String domain, T value) {
 		Value ent = new Value<T>(path, value);
 		ent.setDomain(domain);
@@ -873,6 +898,14 @@ public class operator extends Operator {
 
 	public static <T> InputValue<T> inVal(String path, T value) {
 		return new InputValue(path, value, 0);
+	}
+
+	public static <T> InputValue<T> inVal(Fidelity<Path> multiFipath, T value) {
+		InputValue mpe = new InputValue(multiFipath.getSelect().getName(), value, 0);
+		mpe.setMultiFiPath(multiFipath);
+		multiFipath.setName(multiFipath.getSelect().path);
+		multiFipath.setPath(mpe.getName());
+		return mpe;
 	}
 
 	public static <T> InputValue<T> dbInVal(String path, T value, String annotation) {
@@ -1561,15 +1594,15 @@ public class operator extends Operator {
 	}
 
     public static List<Evaluation>  mdlDeps(ContextDomain model) {
-        return ((ServiceContext)model).getMogramStrategy().getModelDependers();
+        return ((ServiceContext)model).getDomainStrategy().getModelDependers();
     }
 
     public static Map<String, List<ExecDependency>> domDeps(ContextDomain model) {
-        return ((ServiceContext)model).getMogramStrategy().getDependentDomains();
+        return ((ServiceContext)model).getDomainStrategy().getDependentDomains();
     }
 
     public static Map<String, List<ExecDependency>> deps(ContextDomain model) {
-         return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
+         return ((ServiceContext)model).getDomainStrategy().getDependentPaths();
     }
 
     public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
@@ -1647,7 +1680,7 @@ public class operator extends Operator {
         }
 
         if (dependers.length > 0 && dependers[0] instanceof ExecDependency) {
-            Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Contextion) dependee).getMogramStrategy()).getDependentDomains();
+            Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Contextion) dependee).getDomainStrategy()).getDependentDomains();
             for (Evaluation e : dependers) {
                 if (e != null) {
                     path = ((Identifiable) e).getName();
@@ -1716,7 +1749,7 @@ public class operator extends Operator {
 		}
 
 		if (dependee instanceof ContextDomain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
-			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((ContextDomain) dependee).getMogramStrategy()).getDependentPaths();
+			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((ContextDomain) dependee).getDomainStrategy()).getDependentPaths();
 			for (Evaluation e : dependers) {
 				if (e != null && ((Functionality)e).getType() != Type.MODEL) {
 					path = ((Identifiable)e).getName();
@@ -1852,20 +1885,20 @@ public class operator extends Operator {
 	 * @return object created
 	 * @throws SignatureException
 	 */
-	public static Object instance(ObjectSignature signature, Context context)
+	public static Object instance(LocalSignature signature, Context context)
 			throws SignatureException {
 		return signature.build(context);
 	}
 
-	public static Object instance(ObjectSignature signature)
+	public static Object instance(LocalSignature signature)
 		throws SignatureException {
 		return signature.build();
 	}
 
 	public static Contextion instance(String domainName, Signature signature)
 		throws SignatureException {
-		if (signature instanceof ObjectSignature) {
-			Object obj = ((ObjectSignature) signature).build();
+		if (signature instanceof LocalSignature) {
+			Object obj = ((LocalSignature) signature).build();
 			if (obj instanceof Contextion) {
 				((Contextion) obj).setName(domainName);
 				return (Contextion) obj;
@@ -1902,13 +1935,13 @@ public class operator extends Operator {
 				throw new SignatureException("missing netlet filename");
 			}
 		} else if ((signature.getSelector() == null
-				&& ((ObjectSignature) signature).getInitSelector() == null)
+				&& ((LocalSignature) signature).getInitSelector() == null)
 				|| (signature.getSelector() != null && signature.getSelector().equals("new"))
-				|| (((ObjectSignature) signature).getInitSelector() != null
-				&& ((ObjectSignature) signature).getInitSelector().equals("new")))
-			return ((ObjectSignature) signature).newInstance();
+				|| (((LocalSignature) signature).getInitSelector() != null
+				&& ((LocalSignature) signature).getInitSelector().equals("new")))
+			return ((LocalSignature) signature).newInstance();
 		else
-			return ((ObjectSignature) signature).initInstance();
+			return ((LocalSignature) signature).initInstance();
 	}
 
 	public static Object instance(Signature signature, Fidelity fidefity) throws SignatureException {

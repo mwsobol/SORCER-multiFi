@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-package sorcer.core.service;
-
-import sorcer.service.*;
+package sorcer.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -127,7 +125,7 @@ public class Projection extends ServiceFidelity {
 			}
 			sb.append(")");
 		} else {
-			sb.append("po(");
+			sb.append("proj(");
 			sb.append(super.toString());
 			sb.append(")");
 		}
@@ -158,6 +156,33 @@ public class Projection extends ServiceFidelity {
 			}
 		}
 		return out;
+	}
+
+	public Fidelity getContextFidelity() {
+		for (Object item : selects) {
+			if (item instanceof Fidelity && ((Fidelity) item).fiType.equals(Type.CONTEXT)) {
+				return (Fidelity) item;
+			}
+		}
+		return null;
+	}
+
+	public Projection getInPathProjection() {
+		for (Object item : selects) {
+			if (item instanceof Projection && ((Projection) item).fiType.equals(Type.IN_PATH)) {
+				return (Projection) item;
+			}
+		}
+		return null;
+	}
+
+	public Projection getOutPathProjection() {
+		for (Object item : selects) {
+			if (item instanceof Projection && ((Projection) item).fiType.equals(Type.OUT_PATH)) {
+				return (Projection) item;
+			}
+		}
+		return null;
 	}
 
 //	public static List<Fidelity> selectFidelities(Service[] entries) {

@@ -24,7 +24,7 @@ import net.jini.admin.Administrable;
 import net.jini.admin.JoinAdmin;
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.discovery.DiscoveryGroupManagement;
-import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.ServiceShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.tools.shell.WhitespaceTokenizer;
 
@@ -46,11 +46,11 @@ public class ChgrpCmd extends ShellCmd {
 	}
 
 	public void execute(String... args) throws Throwable {
-		out = NetworkShell.getShellOutputStream();
-		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
+		out = ServiceShell.getShellOutputStream();
+		WhitespaceTokenizer myTk = ServiceShell.getShellTokenizer();
 		// pass in a clone of list - command may modify it
 		@SuppressWarnings("unchecked")
-		ArrayList<ServiceRegistrar> registrars = new ArrayList<ServiceRegistrar>(NetworkShell
+		ArrayList<ServiceRegistrar> registrars = new ArrayList<ServiceRegistrar>(ServiceShell
 				.getRegistrars());
 		int numTokens = myTk.countTokens();
 		String[] groups = null; // matches all
@@ -58,7 +58,7 @@ public class ChgrpCmd extends ShellCmd {
 		if (next.indexOf("-") != 0) {
 			if (numTokens == 1) {
 				if (next.indexOf(",") > 0) {
-					groups = NetworkShell.toArray(next, ",");
+					groups = ServiceShell.toArray(next, ",");
 				} else {
 					groups = new String[] { next };
 				}
@@ -74,15 +74,15 @@ public class ChgrpCmd extends ShellCmd {
 					break;
 				}
 			}
-			NetworkShell.setGroups(groups);
-			NetworkShell.getDisco().terminate();
-			NetworkShell.getRegistrars().clear();
+			ServiceShell.setGroups(groups);
+			ServiceShell.getDisco().terminate();
+			ServiceShell.getRegistrars().clear();
 			DiscoCmd.selectedRegistrar = 0;
-			NetworkShell.setLookupDiscovery(groups);
+			ServiceShell.setLookupDiscovery(groups);
 		} else if (next.equals("-r")) {
 			int myIdx = Integer.parseInt(myTk.nextToken());
 			if (numTokens == 2) {
-				groups = NetworkShell.getGroups();
+				groups = ServiceShell.getGroups();
 			} else if (numTokens > 2) {
 				groups = getGroupArray(myTk, numTokens - 2);
 			}

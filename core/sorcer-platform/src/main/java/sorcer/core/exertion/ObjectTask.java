@@ -21,8 +21,8 @@ package sorcer.core.exertion;
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.Exerter;
-import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -49,7 +49,7 @@ public class ObjectTask extends Task {
 	public ObjectTask(String name, Signature... signatures) {
 		this(name);
 		for (Signature s : signatures) {
-			if (s instanceof ObjectSignature)
+			if (s instanceof LocalSignature)
 				addSignature(s);
 		}
 	}
@@ -57,14 +57,14 @@ public class ObjectTask extends Task {
 	public ObjectTask(String name, String description, Signature signature)
 			throws SignatureException {
 		this(name);
-		if (signature instanceof ObjectSignature)
+		if (signature instanceof LocalSignature)
 			addSignature(signature);
 		else
-			throw new SignatureException("Object task requires ObjectSignature: "
+			throw new SignatureException("Object task requires LocalSignature: "
 					+ signature);
-		if (((ObjectSignature)signature).getEvaluator() == null)
+		if (((LocalSignature)signature).getEvaluator() == null)
 			try {
-				((ObjectSignature)signature).createEvaluator();
+				((LocalSignature)signature).createEvaluator();
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new SignatureException(e);
@@ -91,8 +91,8 @@ public class ObjectTask extends Task {
 		}
 
 		MethodInvoker evaluator = null;
-		ObjectSignature os = (ObjectSignature) getProcessSignature();
-		dataContext.getMogramStrategy().setCurrentSelector(os.getSelector());
+		LocalSignature os = (LocalSignature) getProcessSignature();
+		dataContext.getDomainStrategy().setCurrentSelector(os.getSelector());
 		dataContext.setCurrentPrefix(os.getPrefix());
 		try {
 			Context.Return rt = getProcessSignature().getContextReturn();
@@ -117,7 +117,7 @@ public class ObjectTask extends Task {
 				os.setArgs(dataContext.getArgs());
 			if (dataContext.getParameterTypes() != null)
 				os.setParameterTypes(dataContext.getParameterTypes());
-			evaluator = ((ObjectSignature) getProcessSignature())
+			evaluator = ((LocalSignature) getProcessSignature())
 					.getEvaluator();
 			Object result = null;
 			if (evaluator == null) {
@@ -125,7 +125,7 @@ public class ObjectTask extends Task {
 				Object prv = null;
 				if (os.getInitSelector() == null) {
 					if (os.getTargetSignature() != null) {
-						prv = ((ObjectSignature)os.getTargetSignature()).getProviderType().newInstance();
+						prv = ((LocalSignature)os.getTargetSignature()).getProviderType().newInstance();
 					} else {
 						prv = os.getProviderType().newInstance();
 					}
@@ -216,7 +216,7 @@ public class ObjectTask extends Task {
 		return this;
 	}
 
-	private Object invokeMethod(Method method, ObjectSignature os)
+	private Object invokeMethod(Method method, LocalSignature os)
 			throws IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException, ContextException, SignatureException {
 		Object[] args = os.getArgs();

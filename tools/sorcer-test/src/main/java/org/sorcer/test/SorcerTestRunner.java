@@ -15,9 +15,11 @@
  */
 package org.sorcer.test;
 
+import org.junit.BeforeClass;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
+import org.rioproject.security.SecureEnv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.service.Accessor;
@@ -47,8 +49,15 @@ public class SorcerTestRunner extends BlockJUnit4ClassRunner {
             }
 
         });
-        if(System.getSecurityManager()==null)
+        if(System.getSecurityManager()==null) {
             System.setSecurityManager(new SecurityManager());
+        }
+
+        try {
+            SecureEnv.setup();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     private static final Logger logger = LoggerFactory.getLogger(SorcerTestRunner.class.getName());
 

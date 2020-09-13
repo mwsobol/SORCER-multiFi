@@ -38,7 +38,7 @@ public class MuiltidisciplinaryBuilder {
 				value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
 		Discipline morphDis = dsc("morphModelDisc",
-			ctxFi("cxtn1", sig("cxtn1", MuiltidisciplinaryBuilder.class, "getMorphingModel")),
+			cxtnFi("cxtn1", sig("cxtn1", MuiltidisciplinaryBuilder.class, "getMorphingModel")),
 			dspFi("dspt1", mdlDispatch));
 
 		return morphDis;
@@ -155,12 +155,12 @@ public class MuiltidisciplinaryBuilder {
 
 		Discipline plDisc = dsc("plDisc",
 			dscFi("plDisc1",
-				ctxFi("cxtn1", sig("getPipeline1",  MuiltidisciplinaryBuilder.class)),
+				cxtnFi("cxtn1", sig("getPipeline1",  MuiltidisciplinaryBuilder.class)),
 				cxtFi("cxt1", cxt1),
 				dspFi("dspt1", evalTask)),
 
 			dscFi("plDisc2",
-				ctxFi("cxtn2", sig("getPipeline2",  MuiltidisciplinaryBuilder.class)),
+				cxtnFi("cxtn2", sig("getPipeline2",  MuiltidisciplinaryBuilder.class)),
 				cxtFi("cxt2", cxt2),
 				dspFi("dspt2", blockDispatch)));
 

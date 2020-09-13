@@ -39,7 +39,7 @@ import java.security.PrivilegedAction;
  */
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvoking<T> {
+public class MethodInvoker<T> extends ServiceInvoker<T> {
 
 	private static final long serialVersionUID = -1158778636907725414L;
 
@@ -282,7 +282,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 				}
 			}
 			if (context != null)
-				((ServiceContext)context).getMogramStrategy().setCurrentSelector(selector);
+				((ServiceContext)context).getDomainStrategy().setCurrentSelector(selector);
 			val = m.invoke(target, parameters);
 		} catch (Exception e) {
 			StringBuilder message = new StringBuilder();

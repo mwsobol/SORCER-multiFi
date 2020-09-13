@@ -34,7 +34,7 @@ import static sorcer.so.operator.*;
  * @author Mike Sobolewski
  */
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/cml")
+@ProjectContext("examples/pml")
 public class EntryModels {
 
 	private final static Logger logger = LoggerFactory.getLogger(EntryModels.class.getName());

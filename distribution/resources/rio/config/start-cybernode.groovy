@@ -19,14 +19,20 @@
  */
 
 import com.sun.jini.start.ServiceDescriptor
+import org.rioproject.config.Component
+import org.rioproject.resolver.maven2.Repository
+import org.rioproject.security.SecureEnv
 import org.rioproject.util.FileHelper
 import org.rioproject.util.RioHome
 import org.rioproject.util.ServiceDescriptorUtil
-import org.rioproject.config.Component
-import org.rioproject.resolver.maven2.Repository
 
 @Component('org.rioproject.start')
 class StartCybernodeConfig {
+    final boolean useHttps
+
+    StartCybernodeConfig() {
+        useHttps = SecureEnv.setup()
+    }
 
     String[] getConfigArgs(String rioHome) {
         ServiceDescriptorUtil.checkForLoopback()
@@ -69,10 +75,12 @@ class StartCybernodeConfig {
         String rioHome = RioHome.get()
         String policyFile = rioHome + '/policy/policy.all'
         def serviceDescriptors = [
-                ServiceDescriptorUtil.getWebster(policyFile,
+                /*ServiceDescriptorUtil.getWebster(policyFile,
                                                  '0',
                                                  websterRoots(),
-                                                 System.properties['sorcer.data.dir'] as String),
+                                                 System.properties['sorcer.data.dir'] as String),*/
+                ServiceDescriptorUtil.getJetty('0', websterRoots() as String[],
+                        System.properties['sorcer.data.dir'] as String, useHttps),
                 ServiceDescriptorUtil.getCybernode(policyFile, getConfigArgs(rioHome))
         ]
         return (ServiceDescriptor[]) serviceDescriptors

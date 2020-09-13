@@ -11,12 +11,11 @@
                 <pathelement location="${lib}/river/jsk-platform-${river.version}.jar" />
                 <pathelement location="${lib}/river/jsk-lib-${river.version}.jar" />
                 <pathelement location="${sorcer.lib}/sorcer-platform-${sorcer.version}.jar" />
-                <pathelement location="${sorcer.lib}/sorcer-resolving-loader-${sorcer.version}.jar" />
+                <!--<pathelement location="${sorcer.lib}/sorcer-resolving-loader-${sorcer.version}.jar" />-->
                 <path refid="rio.path" />
-                <pathelement location="${rio.home}/lib-dl/rio-api-${rio.version}.jar" />
                 <pathelement location="${rio.home}/lib/rio-lib-${rio.version}.jar" />
-                <pathelement location="${rio.home}/lib-dl/cybernode-api-${rio.version}.jar" />
-                <pathelement location="${rio.home}/lib-dl/monitor-api-${rio.version}.jar" />
+                <pathelement location="${rio.home}/lib-dl/cybernode-proxy-${rio.version}.jar" />
+                <pathelement location="${rio.home}/lib-dl/monitor-proxy-${rio.version}.jar" />
                 <pathelement location="${rio.lib}/logging/slf4j-api-${slf4j.version}.jar" />
                 <pathelement location="${rio.lib}/logging/logback-core-${logback.version}.jar" />
                 <pathelement location="${rio.lib}/logging/jul-to-slf4j-${slf4j.version}.jar" />

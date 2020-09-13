@@ -19,7 +19,7 @@ version = sorcerVersion
 dependencies {
 	compile project(":sorcer-dl")
 	compile "org.rioproject:rio-lib:${rioVersion}"
-	testCompile "org.sorcer:sorcer-test:${sorcerVersion}"
+	testCompile project(":sorcer-test")
 	testCompile ("org.rioproject:rio-test:${rioVersion}") {
 		exclude group: "org.junit"
 		exclude group: "junit"

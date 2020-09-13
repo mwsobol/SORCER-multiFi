@@ -33,6 +33,7 @@
                 <pathelement location="${lib}/river/start-${river.version}.jar"/>
                 <pathelement location="${sorcer.lib}/sorcer-boot-${sorcer.version}.jar"/>
 				<pathelement location="${sorcer.lib}/sorcer-resolving-loader-${sorcer.version}.jar" />
+				<pathelement location="${lib}/common/groovy/groovy-all-${groovy.version}.jar"/>
 				<pathelement location="${lib}/common/guava-${guava.version}.jar" />
                 <pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />
                 <pathelement location="${rio.lib}/rio-start-${rio.version}.jar" />

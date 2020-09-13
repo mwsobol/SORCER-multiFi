@@ -39,11 +39,11 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.Cataloger;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.service.Exerter;
 import sorcer.core.provider.ServiceExerter;
 import sorcer.core.provider.cataloger.ServiceCataloger.CatalogerInfo.InterfaceList;
 import sorcer.core.provider.cataloger.ui.CatalogerUI;
-import sorcer.core.signature.NetSignature;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.service.Context;
 import sorcer.service.Service;
@@ -1036,7 +1036,7 @@ public class ServiceCataloger extends ServiceExerter implements Cataloger {
 							logger.info("service is a provider!");
 							try {
 								Exerter temp = (Exerter) service;
-								NetSignature method = new NetSignature(
+								RemoteSignature method = new RemoteSignature(
 										methodName, serviceType);
 								Task task = new NetTask(serviceType
 										+ methodName, method);

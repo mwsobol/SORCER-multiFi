@@ -42,10 +42,7 @@ import sorcer.core.exertion.ObjectTask;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.*;
-import sorcer.core.signature.NetSignature;
-import sorcer.core.signature.NetletSignature;
-import sorcer.core.signature.ObjectSignature;
-import sorcer.core.signature.ServiceSignature;
+import sorcer.core.signature.*;
 import sorcer.jini.lookup.ProviderID;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
@@ -57,6 +54,7 @@ import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.ProviderLocator;
 import sorcer.util.Sorcer;
 
+import javax.print.attribute.standard.Fidelity;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -68,6 +66,7 @@ import java.util.concurrent.TimeUnit;
 
 import static sorcer.eo.operator.*;
 import static sorcer.so.operator.eval;
+import static sorcer.so.operator.exertionResponse;
 
 /**
  * @author Mike Sobolewski
@@ -182,14 +181,29 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		try {
 			if (mogram instanceof Routine) {
 				Subroutine exertion = (Subroutine)mogram;
-				exertion.selectFidelity(entries);
-				Mogram out = exerting(txn, providerName, entries);
+                mogram.setValid(false);
+                exertion.selectFidelity(entries);
+                Mogram out = exerting(txn, providerName, entries);
+
+				ServiceContext cxt = (ServiceContext) mogram.getContext();
 				if (out instanceof Routine) {
 					if(out.getStatus()==Exec.ERROR || out.getStatus()==Exec.FAILED) {
 						return (T) out;
 					}
 					postProcessExertion(out);
 				}
+				mogram.setValid(true);
+				if (cxt.getMorpher() != null) {
+					((ServiceMogram)mogram).getContextFidelityManager().morph();
+				}
+				if (exertion.getInPathProjection() != null) {
+					((ServiceContext)exertion.getContext()).remap(exertion.getInPathProjection());
+				}
+				if (exertion.getOutPathProjection() != null) {
+					((ServiceContext)out.getContext()).setMultiFiPaths(((ServiceContext)mogram.getContext()).getMultiFiPaths());
+					((ServiceContext)out.getContext()).remap(exertion.getOutPathProjection());
+				}
+
 				if (exertion.isProxy()) {
 					Routine xrt = (Routine) out;
 					exertion.setContext(xrt.getDataContext());
@@ -373,7 +387,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			}
 
 			// exert object tasks and jobs
-			if (!(signature instanceof NetSignature)) {
+			if (!(signature instanceof RemoteSignature)) {
 				if (exertion instanceof Task) {
 					if (exertion.getSelectedFidelity() == null
 							|| exertion.getSelectedFidelity().getSelects().size() == 1) {
@@ -417,9 +431,9 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 				if (signature.getProviderName() instanceof ServiceName) {
 					srvName =  signature.getProviderName().getName();
 				}
-				signature = new NetSignature("exert", Spacer.class, srvName);
+				signature = new RemoteSignature("exert", Spacer.class, srvName);
 			}
-			provider = ((NetSignature) signature).getProvider();
+			provider = ((RemoteSignature) signature).getProvider();
 			if (provider == null) {
                 // check proxy cache and ping with a provider key
 				try {
@@ -454,13 +468,13 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		if (provider != null) {
 			if (provider instanceof Exerter) {
 				// cache the provider for the signature
-				((NetSignature) signature).setProvider((Exerter) provider);
+				((RemoteSignature) signature).setProvider((Exerter) provider);
 //				if (proxies != null)
 //					proxies.put(signature, provider);
 			} else if (exertion instanceof Task){
 				// exert smart proxy as an object task delegate
 				try {
-					ObjectSignature sig = new ObjectSignature();
+					LocalSignature sig = new LocalSignature();
 					sig.setSelector(signature.getSelector());
 					sig.setTarget(provider);
 					Context cxt = exertion.getContext();
@@ -580,7 +594,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 					&& !mogram.getProcessSignature().getServiceType()
 					.isAssignableFrom(Spacer.class)) {
 				sig.setServiceType(Spacer.class);
-				((NetSignature) sig).setSelector("exert");
+				((RemoteSignature) sig).setSelector("exert");
 				sig.getProviderName().setName(SorcerConstants.ANY);
 				sig.setType(Signature.Type.PROC);
 				exertion.getControlContext().setAccessType(access);
@@ -589,14 +603,14 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 					.isAssignableFrom(Jobber.class)) {
 				if (sig.getServiceType().isAssignableFrom(Spacer.class)) {
 					sig.setServiceType(Jobber.class);
-					((NetSignature) sig).setSelector("exert");
+					((RemoteSignature) sig).setSelector("exert");
 					sig.getProviderName().setName(SorcerConstants.ANY);
 					sig.setType(Signature.Type.PROC);
 					exertion.getControlContext().setAccessType(access);
 				}
 			}
 		} else {
-			sig = new NetSignature("exert", Jobber.class);
+			sig = new RemoteSignature("exert", Jobber.class);
 		}
 		return sig;
 	}
@@ -706,12 +720,21 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		Context.Return rPath = null;
 		for (Arg a : args) {
 			if (a instanceof Context.Return) {
-				rPath = (Context.Return) a;
-				break;
+				xrt.getDataContext().setContextReturn((Context.Return) a);
+			} else if (a instanceof Fi && ((Fi)a).getFiType().equals(Fi.Type.MMTF)) {
+				try {
+					// select the both a signature fidelity and a multitype fidelity
+					if (xrt.getProcessSignature() instanceof MultiFiSignature) {
+						xrt.getProcessSignature().getMultiFi().setSelect(((Fi)a).getPath());
+						xrt.getProcessSignature().getMultiFi().selectSelect(a.getName());
+					} else {
+						xrt.getProcessSignature().getMultiFi().selectSelect(a.getName());
+					}
+				} catch (ConfigurationException e) {
+					throw new ContextException(e);
+				}
 			}
 		}
-		if (rPath != null)
-			((ServiceContext)xrt.getDataContext()).setContextReturn(rPath);
 		return xrt;
 	}
 
@@ -870,7 +893,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			((Mogram) service).setScope(cxt);
 			return (T) exert((Mogram) service);
 		} else try {
-			if (service instanceof NetSignature
+			if (service instanceof RemoteSignature
                     && ((Signature) service).getServiceType() == RemoteServiceShell.class) {
                 Exerter prv = (Exerter) Accessor.get().getService((Signature) service);
                 return (T) prv.exert(mogram, txn).getContext();

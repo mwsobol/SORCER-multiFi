@@ -22,14 +22,13 @@ import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.Concatenator;
 import sorcer.core.provider.exerter.ServiceShell;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.security.util.Auth;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.service.Signature.Type;
 
 import java.rmi.RemoteException;
-import java.util.Map;
 
 public class NetBlock extends Block implements Invocation<Object> {
 
@@ -40,7 +39,7 @@ public class NetBlock extends Block implements Invocation<Object> {
 	}
 
 	public NetBlock(String name) throws SignatureException {
-		super(name, new NetSignature("exert", Concatenator.class, Type.PROC));
+		super(name, new RemoteSignature("exert", Concatenator.class, Type.PROC));
 	}
 	
 	public NetBlock(String name, Context context)

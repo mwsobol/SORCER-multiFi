@@ -60,7 +60,7 @@ rioHome.eachFileRecurse (FileType.FILES) { file ->
        file.name.startsWith("jsk-lib") ||
        file.name.startsWith("jsk-dl") ||
        file.name.startsWith("serviceui") ||
-       file.name.startsWith("rio-api") ||
+       file.name.startsWith("rio-lib") ||
        file.name.startsWith("rio-logging-support") ||
        file.name.startsWith("slf4j-api") ||
        file.name.startsWith("logback")) {

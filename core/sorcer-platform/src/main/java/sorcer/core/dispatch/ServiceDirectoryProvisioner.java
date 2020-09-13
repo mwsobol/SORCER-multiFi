@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.Tuple2;
 import sorcer.co.tuple.Tuple3;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.ext.Provisioner;
 import sorcer.ext.ProvisioningException;
 import sorcer.jini.lookup.AttributesUtil;
@@ -91,7 +91,7 @@ public class ServiceDirectoryProvisioner implements Provisioner {
             throw new ProvisioningException(e);
         }
         String name = (sig.getProviderName()!=null ? sig.getProviderName().getName() : "*");
-        String version = ((sig instanceof NetSignature) ? ((NetSignature)sig).getVersion() : null);
+        String version = ((sig instanceof RemoteSignature) ? ((RemoteSignature)sig).getVersion() : null);
         logger.warn("called provision {} {} {}", typeName, version, name);
         Tuple3 provT = new Tuple3(typeName, (version!=null ? version : "NULL"), (name!=null ? name : "NULL"));
         if (!provisioningQueue.contains(provT)) {

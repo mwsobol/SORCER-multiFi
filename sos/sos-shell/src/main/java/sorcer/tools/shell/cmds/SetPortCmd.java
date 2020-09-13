@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import net.jini.admin.Administrable;
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.lookup.DiscoveryAdmin;
-import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.ServiceShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.tools.shell.WhitespaceTokenizer;
 
@@ -44,10 +44,10 @@ public class SetPortCmd extends ShellCmd {
 	}
 
 	public void execute(String... args) {
-		out = NetworkShell.getShellOutputStream();
-		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
+		out = ServiceShell.getShellOutputStream();
+		WhitespaceTokenizer myTk = ServiceShell.getShellTokenizer();
 		// pass in a clone of list - command may modify it
-		ArrayList<ServiceRegistrar> registrars = new ArrayList<ServiceRegistrar>(NetworkShell.getRegistrars());
+		ArrayList<ServiceRegistrar> registrars = new ArrayList<ServiceRegistrar>(ServiceShell.getRegistrars());
 		int numTokens = myTk.countTokens();
 		if (numTokens < 2) {
 			out.println(COMMAND_USAGE);

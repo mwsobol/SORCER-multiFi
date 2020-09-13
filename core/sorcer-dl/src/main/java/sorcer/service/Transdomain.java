@@ -21,13 +21,14 @@ import sorcer.service.modeling.cxtn;
 
 import java.util.Map;
 
-public interface Transdomain extends Contextion, CombinedRequest, cxtn {
+public interface Transdomain extends Contextion, ManagedRequest, cxtn {
 
     public Map<String, Domain> getChildren();
+
+    public Fidelity<Analysis> getAnalyzerFi();
 
     public Mogram getChild(String name);
 
     public Object get(String path$domain);
 
-    public Fidelity<Analysis> getAnalyzerFi();
 }

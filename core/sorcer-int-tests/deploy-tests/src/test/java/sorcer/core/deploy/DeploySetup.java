@@ -13,17 +13,18 @@ import java.rmi.RemoteException;
 
 class DeploySetup {
     static ProvisionMonitor monitor;
+    static final String SORCER_OPSTRING = "Sorcer OS";
 
     static void verifySorcerRunning() throws Exception {
         long t0 = System.currentTimeMillis();
-        monitor = ServiceUtil.waitForService(ProvisionMonitor.class, 20);
+        monitor = getProvisionMonitor();
         Assert.assertNotNull(monitor);
         System.out.println("Waited "+(System.currentTimeMillis()-t0)+" millis for ProvisionMonitor discovery");
         DeployAdmin deployAdmin = (DeployAdmin) monitor.getAdmin();
         OperationalStringManager manager = null;
         while(manager==null) {
             try {
-                manager = deployAdmin.getOperationalStringManager("Sorcer OS");
+                manager = deployAdmin.getOperationalStringManager(SORCER_OPSTRING);
             } catch(OperationalStringException e) {
                 Thread.sleep(500);
             }
@@ -39,6 +40,13 @@ class DeploySetup {
 
     static void undeploy(String s) throws RemoteException, OperationalStringException {
         undeploy((DeployAdmin) monitor.getAdmin(), s);
+    }
+
+    static ProvisionMonitor getProvisionMonitor() throws Exception {
+        if (monitor == null) {
+            monitor = ServiceUtil.waitForService(ProvisionMonitor.class, 20);
+        }
+        return monitor;
     }
 
     static void undeploy(DeployAdmin deployAdmin, String s) throws RemoteException, OperationalStringException {

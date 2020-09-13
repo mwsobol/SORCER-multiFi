@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.Dispatcher;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.*;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 
@@ -114,10 +114,10 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         int maxTries = 6;
         int tried=0;
         try {
-            if (((NetSignature) task.getProcessSignature()).getService()!=null) {
+            if (((RemoteSignature) task.getProcessSignature()).getService()!=null) {
                 logger.info("\n*** service is set in signature testing if it is the same provider ***\n");
                 try {
-                    if (((NetSignature) task.getProcessSignature()).getService().equals(provider)) {
+                    if (((RemoteSignature) task.getProcessSignature()).getService().equals(provider)) {
                         logger.info("\n*** getting result from delegate of "
                                 + provider.getProviderName() + "... ***\n");
                         result = ((ServiceExerter) provider).getDelegate().doTask(
@@ -133,7 +133,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                 }
             }
 
-            NetSignature sig = (NetSignature) task.getProcessSignature();
+            RemoteSignature sig = (RemoteSignature) task.getProcessSignature();
             // Catalog lookup or use Lookup Service for the particular
             // service
             Service service = (Service) Accessor.get().getService(sig);

@@ -20,7 +20,7 @@ import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.Strategy.*;
@@ -61,7 +61,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void providerAcessorTest() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Object provider = Accessor.get().getService(new NetSignature(Averager.class));
+		Object provider = Accessor.get().getService(new RemoteSignature(Averager.class));
 		logger.info("INTERFACES: " + Arrays.toString(provider.getClass().getInterfaces()));
 		assertTrue(Arrays.asList(provider.getClass().getInterfaces()).contains(Averager.class));
 //		logger.info("Accessor provider: " + provider);
@@ -82,7 +82,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		context.putInValue("arg2/eval", 80.0);
 		// We know that the output is gonna be placed in this path
 		context.putOutValue("out/eval", 0);
-		Signature method = new NetSignature("add", Adder.class);
+		Signature method = new RemoteSignature("add", Adder.class);
 		Task task = new NetTask("add", method);
 		task.setContext(context);
 		return task;
@@ -94,7 +94,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		context.putInValue("arg2/eval", 50.0);
 		// We know that the output is gonna be placed in this path
 		context.putOutValue("out/eval", 0);
-		Signature method = new NetSignature("multiply", Multiplier.class);
+		Signature method = new RemoteSignature("multiply", Multiplier.class);
 		Task task = new NetTask("multiply", method);
 		task.setContext(context);
 		return task;
@@ -106,7 +106,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		context.putInValueAt("arg1/eval", 0.0, 1);
 		// We want to stick in the result of add in here
 		context.putInValueAt("arg2/eval", 0.0, 2);
-		Signature method = new NetSignature("subtract", Subtractor.class);
+		Signature method = new RemoteSignature("subtract", Subtractor.class);
 		Task task = new NetTask("subtract",
 				"processing results from two previous tasks", method);
 		task.setContext(context);
@@ -392,7 +392,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void arithmeticApiExerter() throws Exception {
 		// getValue the current eval of the exertlet
-		NetSignature signature = new NetSignature("exert", Exertion.class,
+		RemoteSignature signature = new RemoteSignature("exert", Exertion.class,
 				Sorcer.getActualName("Arithmetic Exerter"));
 		Task task = new NetTask("eval", signature);
 		Task result = task.exert();
@@ -414,7 +414,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		invokeContext.putLink("t5", addContext, "");
 		invokeContext.putLink("t4", multiplyContext, "");
 
-		signature = new NetSignature("invoke", Invocation.class,
+		signature = new RemoteSignature("invoke", Invocation.class,
 				Sorcer.getActualName("Arithmetic Exerter"));
 
 		task = new NetTask("invoke", signature, invokeContext);
@@ -436,7 +436,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		invokeContext.putLink("t5", addContext, "");
 		invokeContext.putLink("t4", multiplyContext, "");
 
-		signature = new NetSignature("invoke", Invocation.class,
+		signature = new RemoteSignature("invoke", Invocation.class,
 				Sorcer.getActualName("Arithmetic Exerter"));
 
 		task = new NetTask("invoke", signature, invokeContext);
@@ -459,7 +459,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		invokeContext.putLink("t5", addContext, "");
 		invokeContext.putLink("t4", multiplyContext, "");
 
-		signature = new NetSignature("invoke", Invocation.class,
+		signature = new RemoteSignature("invoke", Invocation.class,
 				Sorcer.getActualName("Arithmetic Exerter"));
 
 		task = new NetTask("invoke", signature, invokeContext);

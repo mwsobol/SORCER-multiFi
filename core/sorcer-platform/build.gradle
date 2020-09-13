@@ -21,12 +21,14 @@ dependencies {
     compile "net.jini:jsk-lib:${riverVersion}"
     compile "org.apache.river:start:${riverVersion}"
     compile "org.rioproject:rio-lib:${rioVersion}"
-    compile "org.rioproject.monitor:monitor-api:${rioVersion}"
-    compile "org.rioproject.cybernode:cybernode-api:${rioVersion}"
+    compile "org.rioproject.monitor:monitor-proxy:${rioVersion}"
+    compile "org.rioproject.cybernode:cybernode-proxy:${rioVersion}"
+    compile "org.rioproject:webster:${rioVersion}"
     compile "com.sleepycat:je:${jeVersion}"
     compile "org.dancres:lockmgr:${lockmgrVersion}"
     compile "javax.inject:javax.inject:1"
     compile "com.google.guava:guava:${guavaVersion}"
+    compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
     compile "org.codehaus.plexus:plexus-utils:${plexusVersion}"
     compile "commons-io:commons-io:${commonsIoVersion}"
     compile "org.apache.commons:commons-exec:${commonsExecVersion}"
@@ -53,6 +55,11 @@ jar {
         include "org/rioproject/impl/jmx/MBeanServerFactory.class"
         include "org/rioproject/event/RemoteServiceEvent.class"
         include "org/rioproject/resolver/ResolverException.class"
+        include "org/eclipse/jetty/**"
+        include "javax/servlet/**"
+        include "org/rioproject/web/**"
+        include "org/rioproject/tools/jetty/**"
+        include "org/rioproject/security/**"
     }
     manifest {
         attributes("Implementation-Title": "SORCER Platform",

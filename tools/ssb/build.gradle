@@ -5,7 +5,7 @@ jar {
 	manifest {
 		attributes("Implementation-Title": "SORCER Service Browser (SSB)", "Implementation-Version": version)
 	}
-	from sourceSets.main.output.classesDir include "**"
+	from sourceSets.main.output.classesDirs.filter { include "**" }
 	from sourceSets.main.resources 
 	include "html/**"
 	from sourceSets.main.resources 

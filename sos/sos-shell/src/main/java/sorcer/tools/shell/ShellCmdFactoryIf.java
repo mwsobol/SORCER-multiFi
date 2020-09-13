@@ -1,6 +1,5 @@
 /*
- * Copyright 2019 the original author or authors.
- * Copyright 2019 SorcerSoft.org.
+ * Copyright 2015 Sorcersoft.com S.A.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +14,11 @@
  * limitations under the License.
  */
 
-package sorcer.service;
-
+package sorcer.tools.shell;
 
 /**
- * An top-level interface for all collaborations in SORCER.
- *
- * @author Mike Sobolewski
+ * @author Rafał Krupiński
  */
-public interface Assembly extends Contextion {
-
+public interface ShellCmdFactoryIf {
+    void instantiateCommands(ServiceShellIf shell);
 }

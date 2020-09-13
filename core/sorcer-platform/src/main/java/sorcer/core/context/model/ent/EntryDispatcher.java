@@ -18,7 +18,7 @@
 package sorcer.core.context.model.ent;
 
 import sorcer.core.service.Collaboration;
-import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
 
@@ -81,7 +81,7 @@ public class EntryDispatcher extends Entry<Dispatch> implements Dispatch {
                     out = ((Dispatch) impl).dispatch(context, args);
                 }
             } else if (signature != null) {
-                impl = ((ObjectSignature) signature).initInstance();
+                impl = ((LocalSignature) signature).initInstance();
                 out = ((Dispatch) impl).dispatch(context);
             } else if (impl == null) {
                 throw new InvocationException("No dispatcher available!");

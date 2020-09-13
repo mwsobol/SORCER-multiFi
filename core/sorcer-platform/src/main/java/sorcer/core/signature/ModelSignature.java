@@ -59,7 +59,7 @@ public class ModelSignature extends ServiceSignature implements sig {
 	public ModelSignature(String selector, Signature innerSignature, Arg... paramters) {
 		super(selector, selector);
 		this.innerSignature = innerSignature;
-		if (innerSignature instanceof NetSignature)
+		if (innerSignature instanceof RemoteSignature)
 			providerName = innerSignature.getProviderName();
 		for (Arg p : paramters) {
 			if (p instanceof Context.Return) {

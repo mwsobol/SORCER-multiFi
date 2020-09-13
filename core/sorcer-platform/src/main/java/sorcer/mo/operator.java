@@ -21,10 +21,8 @@ import sorcer.co.tuple.ExecDependency;
 import sorcer.co.tuple.InoutValue;
 import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
-import sorcer.core.context.Connector;
-import sorcer.core.context.ModelStrategy;
-import sorcer.core.context.PositionalContext;
-import sorcer.core.context.ServiceContext;
+import sorcer.core.context.*;
+import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.service.Analysis;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.EntryModel;
@@ -199,8 +197,8 @@ public class operator {
 
                 if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
                     out = (T) context.getEvaluatedValue(path);
-                } else if (context instanceof Model && context.getMogramStrategy().getOutcome() != null) {
-                    context.getMogramStrategy().getOutcome().putValue(path, out);
+                } else if (context instanceof Model && context.getDomainStrategy().getOutcome() != null) {
+                    context.getDomainStrategy().getOutcome().putValue(path, out);
                 } else {
                     if (obj instanceof Getter) {
                     out = (T) ((Getter) obj).getValue(args);
@@ -347,47 +345,47 @@ public class operator {
     }
 
     public static Model inConn(Model model, Context inConnector) {
-        ((ServiceContext)model).getMogramStrategy().setInConnector(inConnector);
+        ((ServiceContext)model).getDomainStrategy().setInConnector(inConnector);
         if (inConnector instanceof Connector)
             ((Connector)inConnector).direction =  Connector.Direction.IN;
         return model;
     }
 
     public static Model outConn(Model model, Context outConnector) {
-        ((ServiceContext) model).getMogramStrategy().setOutConnector(outConnector);
+        ((ServiceContext) model).getDomainStrategy().setOutConnector(outConnector);
         if (outConnector instanceof Connector)
             ((Connector)outConnector).direction = Connector.Direction.OUT;
         return model;
     }
 
     public static Model responseClear(Model model) throws ContextException {
-            ((ServiceContext)model).getMogramStrategy().getResponsePaths().clear();
+            ((ServiceContext)model).getDomainStrategy().getResponsePaths().clear();
         return model;
     }
 
     public static Mogram responseUp(Mogram mogram, String... responsePaths) throws ContextException {
         if (responsePaths == null || responsePaths.length == 0) {
-            ((ServiceContext) mogram).getMogramStrategy().getResponsePaths().clear();
-            ((ServiceContext) mogram).getMogramStrategy().getResponsePaths().addAll(((ServiceContext) mogram).getOutPaths());
+            ((ServiceContext) mogram).getDomainStrategy().getResponsePaths().clear();
+            ((ServiceContext) mogram).getDomainStrategy().getResponsePaths().addAll(((ServiceContext) mogram).getOutPaths());
         } else {
             for (String path : responsePaths) {
-                ((ServiceContext) mogram).getMogramStrategy().getResponsePaths().add(new Path(path));
+                ((ServiceContext) mogram).getDomainStrategy().getResponsePaths().add(new Path(path));
             }
         }
         return mogram;
     }
 
     public static ContextDomain clearResponse(ContextDomain model) throws ContextException {
-        ((ServiceContext) model).getMogramStrategy().getResponsePaths().clear();
+        ((ServiceContext) model).getDomainStrategy().getResponsePaths().clear();
         return model;
     }
 
     public static Mogram responseDown(Mogram mogram, String... responsePaths) throws ContextException {
         if (responsePaths == null || responsePaths.length == 0) {
-            ((ServiceContext) mogram).getMogramStrategy().getResponsePaths().clear();
+            ((ServiceContext) mogram).getDomainStrategy().getResponsePaths().clear();
         } else {
             for (String path : responsePaths) {
-                ((ServiceContext) mogram).getMogramStrategy().getResponsePaths().remove(new Path(path));
+                ((ServiceContext) mogram).getDomainStrategy().getResponsePaths().remove(new Path(path));
             }
         }
         return mogram;
@@ -407,7 +405,7 @@ public class operator {
 
     public static ServiceContext result(Mogram mogram) throws ContextException {
         if (mogram instanceof ContextDomain) {
-            return (ServiceContext)((ServiceContext) mogram).getMogramStrategy().getOutcome();
+            return (ServiceContext)((ServiceContext) mogram).getDomainStrategy().getOutcome();
         } else if (mogram instanceof Routine) {
             return (ServiceContext)mogram.getContext();
         }
@@ -420,7 +418,7 @@ public class operator {
 
     public static Object result(Mogram mogram, String path) throws ContextException {
         if (mogram instanceof ContextDomain) {
-            return ((ServiceContext) mogram).getMogramStrategy().getOutcome().asis(path);
+            return ((ServiceContext) mogram).getDomainStrategy().getOutcome().asis(path);
         } else if (mogram instanceof Routine) {
             try {
                 return mogram.getContext().getValue(path);
@@ -431,7 +429,7 @@ public class operator {
         return null;
     }
 
-    public static Object get(ContextDomain model, String path) throws ConfigurationException {
+    public static Object get(ContextDomain model, String path) {
         return model.get(path);
     }
 
@@ -474,7 +472,7 @@ public class operator {
 
     public static Mogram setResponse(Mogram mogram, Path... mogramPaths) throws ContextException {
         List<Path> paths = Arrays.asList(mogramPaths);
-        mogram.getMogramStrategy().setResponsePaths(paths);
+        mogram.getDomainStrategy().setResponsePaths(paths);
         return mogram;
     }
 
@@ -483,13 +481,13 @@ public class operator {
         for (String ps : mogramPaths) {
             paths.add(new Path(ps));
         }
-        mogram.getMogramStrategy().setResponsePaths(paths);
+        mogram.getDomainStrategy().setResponsePaths(paths);
         return mogram;
     }
 
     public static void init(ContextDomain model, Arg... args) throws ContextException {
         // initialize a model
-        Map<String, List<ExecDependency>> depMap = ((ModelStrategy)model.getMogramStrategy()).getDependentPaths();
+        Map<String, List<ExecDependency>> depMap = ((ModelStrategy)model.getDomainStrategy()).getDependentPaths();
         Paths paths = Arg.selectPaths(args);
         if (paths != null) {
             model.getDependers().add(new ExecDependency(paths));
@@ -510,7 +508,7 @@ public class operator {
         } if (contextion instanceof Governance) {
             return (ServiceContext) ((Governance)contextion).getOutput();
         } else {
-            return (ServiceContext) contextion.getMogramStrategy().getOutcome();
+            return (ServiceContext) contextion.getDomainStrategy().getOutcome();
         }
     }
 
@@ -694,9 +692,9 @@ public class operator {
                 }
             }
             if (responsePaths != null) {
-                mo.getMogramStrategy().setResponsePaths(responsePaths.getSelects());
+                mo.getDomainStrategy().setResponsePaths(responsePaths.getSelects());
             }
-            ((ModelStrategy)mo.getMogramStrategy()).setOutcome(new ServiceContext(name + "-Output)"));
+            ((ModelStrategy)mo.getDomainStrategy()).setOutcome(new ServiceContext(name + "-Output)"));
             return mo;
         }
         throw new ModelException("do not know what model to create");
@@ -931,6 +929,10 @@ public class operator {
         List<Metafidelity> metaFis = new ArrayList<>();
         List<Req> morphFiEnts = new ArrayList();
         List<Fidelity> fis = new ArrayList<>();
+        Projection inPathPrj = null;
+        Projection outPathPrj = null;
+        List<Projection> cxtPrjs = new ArrayList<>();
+        Context fiContext = null;
         for (Object item : items) {
             if (item instanceof sorcer.eo.operator.Complement) {
                 complement = (sorcer.eo.operator.Complement)item;
@@ -938,6 +940,16 @@ public class operator {
                 model = ((RequestModel)item);
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
+            } else if (item instanceof Context && ((ServiceContext)item).getType().equals(Functionality.Type.MFI_CONTEXT)) {
+                fiContext = (Context) item;
+            } else if (item instanceof Projection) {
+                if (((Projection)item).getFiType().equals(Fi.Type.IN_PATH)){
+                    inPathPrj = (Projection)item;
+                } else if (((Projection)item).getFiType().equals(Fi.Type.OUT_PATH)){
+                    outPathPrj = (Projection)item;
+                } else  if (((Projection)item).getFiType().equals(Fi.Type.CXT_PRJ)){
+                    cxtPrjs.add((Projection)item);
+                }
             } else if (item instanceof Req && ((Req)item).getImpl() instanceof MorphFidelity) {
                 morphFiEnts.add((Req)item);
             } else if (item instanceof Fidelity) {
@@ -962,7 +974,29 @@ public class operator {
             newModel = true;
         }
 
-        if (morphFiEnts != null || metaFis != null || fis != null) {
+        if (inPathPrj != null) {
+            model.setInPathProjection(inPathPrj);
+        }
+        if (outPathPrj != null) {
+            model.setOutPathProjection(outPathPrj);
+        }
+        ContextFidelityManager cxtMgr = null;
+        if (cxtPrjs.size() > 0) {
+            cxtMgr = new ContextFidelityManager(model);
+            Map<String, Fidelity> fiMap = new HashMap();
+            for (Projection p : cxtPrjs) {
+                fiMap.put(p.getName(), p);
+            }
+            cxtMgr.setFidelities(fiMap);
+            if (fiContext != null) {
+                cxtMgr.setDataContext(fiContext);
+            }
+            model.append((Context) fiContext.getMultiFi().getSelect());
+            model.setContextFidelityManager(cxtMgr);
+            model.setContextProjection(cxtPrjs.get(0));
+        }
+
+        if (morphFiEnts.size() > 0 || metaFis.size() > 0 || fis.size() > 0) {
            if (fiManager == null)
                fiManager = new FidelityManager(model);
         }
@@ -989,7 +1023,7 @@ public class operator {
         }
 
         if (responsePaths != null) {
-            model.getMogramStrategy().setResponsePaths(responsePaths.getSelects());
+            model.getDomainStrategy().setResponsePaths(responsePaths.getSelects());
         }
         if (complement != null) {
             model.setSubject(complement.getName(), complement.getId());
@@ -999,9 +1033,9 @@ public class operator {
             Object[] dest = new Object[items.length + 1];
             System.arraycopy(items, 0, dest, 1, items.length);
             dest[0] = model;
-            return (Model)context(dest);
+            return (Model) domainContext(dest);
         }
-        return (Model)context(items);
+        return (Model)domainContext(items);
     }
 
     public static void update(Mogram mogram, Setup... entries) throws ContextException {
@@ -1205,6 +1239,17 @@ public class operator {
 
 //        collab.setExplorer(new Explorer(collab));
         return collab;
+    }
+
+    public static ContextList componentContexts(String name, Context... data) throws ContextException {
+        ContextList contextList = new ContextList(data);
+        contextList.setName(name);
+        return contextList;
+    }
+
+    public static ContextList componentContexts(Context... data) throws ContextException {
+        ContextList contextList = new ContextList(data);
+        return contextList;
     }
 
     public static Governance gov(Object... data) throws ContextException {

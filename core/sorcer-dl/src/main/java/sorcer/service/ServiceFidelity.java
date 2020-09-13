@@ -127,10 +127,14 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 		}
 		if (selected != null) {
 			select = (Service) selected;
-			return select;
+            return select;
+		} if (selects.size() == 1) {
+			select = selects.get(0);
+            return select;
 		} else {
 			throw new ConfigurationException("no such fidelity: " + fiName);
 		}
+
 	}
 
 	public String getPath(String fidelityName) {

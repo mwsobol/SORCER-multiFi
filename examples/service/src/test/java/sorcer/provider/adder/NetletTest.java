@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.tools.shell.NetworkShell;
 import sorcer.util.Sorcer;
 import sorcer.util.StringUtils;
 import sorcer.util.exec.ExecUtils;

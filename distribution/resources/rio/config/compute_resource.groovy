@@ -43,7 +43,7 @@ class ComputeResourceConfig {
      * the @link ResourceCapability.
      * */
     long getReportInterval() {
-        return 60000
+        60000
     }
 
     /*
@@ -57,7 +57,7 @@ class ComputeResourceConfig {
      * relocate to a different host, or simply not be allocated to this machine.
      */
     double getSystemThreshold() {
-        return Runtime.getRuntime().availableProcessors()
+        Runtime.getRuntime().availableProcessors()
     }
 }
 
@@ -69,24 +69,24 @@ class ComputeResourceConfig {
 class BasicMeasurable {
     /* Report every 3 seconds */
     long getReportRate() {
-        return 5000
+        5000
     }
 
     /* Include a single metric in the set of samples used to produce a result */
     int getSampleSize() {
-        return 1
+        1
     }
 
     /* Maintain a collection size of 50 calculables */
     int getCollectionSize() {
-        return 50
+        50
     }
 
     /*
      * Low threshold of 0, high threshold of 1 (100%)
      */
     ThresholdValues getThresholdValues() {
-        return new ThresholdValues(0.0, 1.0)
+        new ThresholdValues(0.0, 1.0)
     }
 }
 
@@ -99,9 +99,9 @@ class BasicMeasurable {
 class MeasurableCPU extends BasicMeasurable {
     MeasurableMonitor getMonitor() {
         if(OperatingSystemType.isLinux())
-            return new LinuxHandler()
+            return new LinuxHandler() as MeasurableMonitor
         else
-            return new SystemCPUHandler();
+            return new SystemCPUHandler() as MeasurableMonitor
     }
     /*
      * High threshold is the number of CPUs on the system
@@ -109,7 +109,7 @@ class MeasurableCPU extends BasicMeasurable {
     @Override
     ThresholdValues getThresholdValues() {
         int numCPUs = Runtime.getRuntime().availableProcessors()
-        return new ThresholdValues(0.0, numCPUs);
+        new ThresholdValues(0.0, numCPUs);
     }
 
 }
@@ -143,7 +143,7 @@ class MeasurableMemory extends BasicMeasurable {
      */
     @Override
     ThresholdValues getThresholdValues() {
-        return new ThresholdValues(0.0, 0.80);
+        new ThresholdValues(0.0, 0.80);
     }
 }
 
@@ -156,9 +156,9 @@ class MeasurableSystemMemory extends BasicMeasurable {
 
     MeasurableMonitor getMonitor() {
         if(OperatingSystemType.isLinux())
-            return new MemInfoMonitor()
+            return new MemInfoMonitor() as MeasurableMonitor
         else
-            return new SystemMemoryMonitor();
+            return new SystemMemoryMonitor() as MeasurableMonitor
     }
 
     /*
@@ -166,7 +166,7 @@ class MeasurableSystemMemory extends BasicMeasurable {
      */
     @Override
     ThresholdValues getThresholdValues() {
-        return new ThresholdValues(0.0, 0.999);
+        new ThresholdValues(0.0, 0.999);
     }
 }
 

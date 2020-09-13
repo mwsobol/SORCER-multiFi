@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.ent.operator;
 import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
@@ -47,26 +46,27 @@ public class SmlOperators {
 
 		// Evaluators
 		evr ev1 = expr("exprssionToExecute");
+		evr ev2 = gvy("exprssionToExecute", args("x1", "x2", "x3"));
 
 		// Entries
 		val v1 = val("x2", 10.6);
 		func p1 = prc("x3", ev1);
-		func s1 = operator.req(op1);
-		func f1 = lmb("s1", args("v1", "f1"));
-		func f2 = snr("x6", 1.0);
+		func n2 = snr("x6", 1.0);
+		func r0 = req(op1);
+		func r1 = fxn("s1", args("v1", "f1"));
 
 		// ent - generic operator for all entries
 		ent e1 = ent(sig("s1", Class.class));
 		ent e2 = ent("x3", ev1);
 
 		// Data Contexts
-		cxt c1 = context(v1, val("x4", 10.8), execEnt(p1), execEnt(f2));
+		cxt c1 = context(v1, val("x4", 10.8), execEnt(p1), execEnt(n2));
 
 		// Contextions
 		cxtn pl1 = pl("name");
 		dmn t1 = task(op1, c1);
 		dmn t2 = task(op1, op2, c1);
-		dmn m1 = model(v1, p1, f1, f2);
+		dmn m1 = model(v1, p1, r1, n2);
 		dmn ex1 = block(t1, t2, m1);
 		mog ex2 = job(t1, job(t2, m1));
 		dmn m2 = model(m1, op1, t1, ex2);
@@ -77,7 +77,7 @@ public class SmlOperators {
 
 		// Object outputs
 		Object o1 = exec(op1);
-		Object o2 = exec(f1);
+		Object o2 = exec(r1);
 		Object o3 = exec(e1);
 		Object o4 = exec(t1);
 		Object o5 = exec(block());
@@ -90,10 +90,11 @@ public class SmlOperators {
 		Object o10 = value(context(), "path");
 		Object o11 = exec(model(), "path");
 		Object o12 = exec(model(), "path", "domain");
+		Object o13 = exec(dsc(), cxt());
 
 		// Entries for results of exec
 		ent e3 = execEnt(v1);
-		ent e4 = execEnt(f1);
+		ent e4 = execEnt(r1);
 		ent e5 = execEnt(job());
 		ent e6 = execEnt(model());;
 		ent e7 = execEnt(model(), "path");
@@ -109,15 +110,16 @@ public class SmlOperators {
 
 		// Evaluate domains
 		cxt c4 = eval(model());
-		cxt c5 = eval(ex2);
+		Context c5 = eval(ex2, context());
+		cxt c6 = eval(dsc(), cxt());
 		// Domain results
 		cxt out1 = result(model());
 		cxt out2 = result(job());
 
 		// Evaluate specific models
 		// Context, Table, row is rsp (Response)
-		rsp r1 = eval(model());
-		rsp r2 = row(c2);
+		rsp out3 = eval(model());
+		rsp out4 = row(c2);
 
 		// clear service
 		clear(ex2);

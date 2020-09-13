@@ -8,6 +8,7 @@ import net.jini.lookup.entry.Name;
 import net.jini.space.JavaSpace05;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.rioproject.security.SecureEnv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.service.*;
@@ -22,6 +23,8 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.list;
+import static sorcer.co.operator.loop;
+import static sorcer.co.operator.names;
 
 /**
  * @author Mike Sobolewski
@@ -32,7 +35,8 @@ public class UtilTest {
 	private final static Logger logger = LoggerFactory.getLogger(UtilTest.class);
 
 	@BeforeClass
-	public static void init() {
+	public static void init() throws Exception {
+		SecureEnv.setup();
 		Accessor.create();
 	}
 
@@ -165,6 +169,22 @@ public class UtilTest {
 //		logger.info("r2:\n" + r2);
 		assertTrue(r1.compareTo(r2, 0.005));
 
+	}
+
+	@Test
+	public void iterateNames() {
+		String[] ns = names("xyz", 20, 1);
+
+		assertTrue(ns[0].equals("xyz1"));
+		assertTrue(ns[19].equals("xyz20"));
+	}
+
+	@Test
+	public void loopNames() {
+		List<String> ns = names(loop(1, 20), "xyz");
+
+		assertTrue(ns.get(0).equals("xyz1"));
+		assertTrue(ns.get(19).equals("xyz20"));
 	}
 }
 

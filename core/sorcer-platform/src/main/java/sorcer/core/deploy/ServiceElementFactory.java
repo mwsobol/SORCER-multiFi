@@ -25,7 +25,6 @@ import org.rioproject.opstring.ClassBundle;
 import org.rioproject.opstring.ServiceBeanConfig;
 import org.rioproject.opstring.ServiceElement;
 import org.rioproject.resolver.Artifact;
-import org.rioproject.resolver.ResolverException;
 import org.rioproject.sla.ServiceLevelAgreements;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
 import org.rioproject.system.capability.platform.OperatingSystem;
@@ -39,8 +38,6 @@ import sorcer.util.Sorcer;
 import sorcer.util.SorcerEnv;
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -52,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class ServiceElementFactory  {
     private static final Logger logger = LoggerFactory.getLogger(ServiceElementFactory.class.getName());
     /* The default provider codebase jars */
-    private static final List<String> commonDLJars = Collections.singletonList("rio-api-" +RioVersion.VERSION +".jar");
+    private static final List<String> commonDLJars = Collections.singletonList("rio-lib-" +RioVersion.VERSION +".jar");
     private static final Map<File, ServiceElement> serviceElementsCreated = new ConcurrentHashMap<>();
 
     private ServiceElementFactory(){}
@@ -66,10 +63,7 @@ public final class ServiceElementFactory  {
      *
      * @throws ConfigurationException if there are problem reading the configuration
      */
-    public static ServiceElement create(final ServiceSignature signature, File configFile) throws IOException,
-        ConfigurationException,
-        ResolverException,
-        URISyntaxException {
+    public static ServiceElement create(final ServiceSignature signature, File configFile) throws ConfigurationException {
         return create(signature.getDeployment(), configFile);
     }
 
@@ -82,10 +76,7 @@ public final class ServiceElementFactory  {
      *
      * @throws ConfigurationException if there are problem reading the configuration
      */
-    public static ServiceElement create(final ServiceDeployment deployment, File configFile) throws IOException,
-        ConfigurationException,
-        ResolverException,
-        URISyntaxException {
+    public static ServiceElement create(final ServiceDeployment deployment, File configFile) throws ConfigurationException {
         if(configFile==null) {
             return create(deployment, deployment.getConfig());
         }
@@ -99,7 +90,7 @@ public final class ServiceElementFactory  {
     }
 
     private static ServiceElement create(ServiceDeployment deployment,
-                                         String configurationFilePath) throws ConfigurationException, IOException {
+                                         String configurationFilePath) throws ConfigurationException {
         logger.debug("Loading {}", configurationFilePath);
         Configuration configuration = Configuration.getInstance(configurationFilePath);
         String component = "sorcer.core.provider.ServiceExerter";
@@ -233,7 +224,7 @@ public final class ServiceElementFactory  {
     }
 
     private static ServiceElement create(final ServiceDetails serviceDetails,
-                                         final ServiceDeployment deployment) throws IOException {
+                                         final ServiceDeployment deployment) {
         ServiceElement service = new ServiceElement();
 
         String websterUrl;
@@ -257,7 +248,7 @@ public final class ServiceElementFactory  {
             if(serviceDetails.codebaseJars.length==1 && Artifact.isArtifact(serviceDetails.codebaseJars[0])) {
                 export.setArtifact(serviceDetails.codebaseJars[0]);
             } else {
-                export.setJARs(appendJars(commonDLJars, serviceDetails.codebaseJars));
+                export.setJARs(appendJars(serviceDetails.codebaseJars));
                 export.setCodebase(websterUrl);
             }
             exports.add(export);
@@ -274,7 +265,7 @@ public final class ServiceElementFactory  {
 
 		/* Set ClassBundles to ServiceElement */
         service.setComponentBundle(main);
-        service.setExportBundles(exports.toArray(new ClassBundle[exports.size()]));
+        service.setExportBundles(exports.toArray(new ClassBundle[0]));
 
         String serviceName = serviceDetails.name;
 
@@ -353,7 +344,7 @@ public final class ServiceElementFactory  {
             }
             machineAddresses.add(machineAddress);
         }
-        return machineAddresses.toArray(new SystemComponent[machineAddresses.size()]);
+        return machineAddresses.toArray(new SystemComponent[0]);
     }
 
     private static String checkAndMaybeFixOpSys(final String opSys) {
@@ -368,16 +359,15 @@ public final class ServiceElementFactory  {
         return fixed;
     }
 
-    private static String[] appendJars(final List<String> base, final String... jars) {
-        List<String> jarList = new ArrayList<>();
-        jarList.addAll(base);
+    private static String[] appendJars(final String... jars) {
+        List<String> jarList = new ArrayList<>(ServiceElementFactory.commonDLJars);
         for(String jar : jars) {
             if(jarList.contains(jar)) {
                 continue;
             }
             jarList.add(jar);
         }
-        return jarList.toArray(new String[jarList.size()]);
+        return jarList.toArray(new String[0]);
     }
 
     static boolean isIpAddress(String ip) {
@@ -394,89 +384,6 @@ public final class ServiceElementFactory  {
         }
         return true;
     }
-
-    private static String getConfigurationAsString(final String configArg) throws IOException {
-        if(configArg.equalsIgnoreCase("-")) {
-            return configArg;
-        }
-        StringBuilder stringBuilder = new StringBuilder();
-        String line;
-        String ls = System.getProperty("line.separator");
-        if(configArg.startsWith("http")) {
-            URL oracle = new URL(configArg);
-            BufferedReader in = new BufferedReader(new InputStreamReader(oracle.openStream()));
-            while ((line = in.readLine()) != null) {
-                stringBuilder.append(line);
-                stringBuilder.append(ls);
-            }
-            in.close();
-        } else {
-            File configFile = new File(configArg);
-            try (BufferedReader reader = new BufferedReader(new FileReader(configFile))) {
-                while ((line = reader.readLine()) != null) {
-                    stringBuilder.append(line);
-                    stringBuilder.append(ls);
-                }
-            }
-        }
-        return stringBuilder.toString();
-    }
-
-    /*private static class ResolveRequest {
-        String artifactConfig;
-        ResolverFutureTask resolverFutureTask;
-        ServiceDeployment deployment;
-
-        ResolveRequest(String artifactConfig, ServiceDeployment deployment, ResolverFutureTask resolverFutureTask) {
-            this.artifactConfig = artifactConfig;
-            this.resolverFutureTask = resolverFutureTask;
-            this.deployment = deployment;
-        }
-    }
-
-    private static class ResolverFutureTask implements Callable<ServiceElement> {
-        ServiceElement serviceElement;
-        private CountDownLatch counter = new CountDownLatch(1);
-
-        void setServiceElement(ServiceElement serviceElement) {
-            this.serviceElement = serviceElement;
-            counter.countDown();
-        }
-
-        public ServiceElement prc() throws InterruptedException, IOException, ClassNotFoundException {
-            counter.await();
-            return new MarshalledObject<>(serviceElement).getValue();
-        }
-    }
-
-    private static class ResolverRunner implements Runnable {
-
-        @Override public void run() {
-            try {
-                Resolver resolver = ResolverHelper.getResolver();
-                while (true) {
-                    try {
-                        ResolveRequest resolveRequest = resolverQueue.take();
-                        ServiceElement serviceElement = serviceElementsCreated.getValue(resolveRequest.artifactConfig);
-                        if(serviceElement==null) {
-                            logger.debug("Resolve {}", resolveRequest.artifactConfig);
-                            Artifact artifact = new Artifact(resolveRequest.artifactConfig);
-                            URL configLocation = resolver.getLocation(artifact.getGAV(), artifact.getType());
-                            String configurationFilePath = new File(configLocation.toURI()).getContextReturn();
-                            serviceElement = create(resolveRequest.deployment, configurationFilePath);
-                            serviceElementsCreated.put(resolveRequest.artifactConfig, serviceElement);
-                        }
-                        resolveRequest.resolverFutureTask.setServiceElement(serviceElement);
-                    } catch (InterruptedException | ResolverException | URISyntaxException | ConfigurationException | IOException e) {
-                        logger.error("Unable to resolve artifact", e);
-                    }
-                }
-            } catch(ResolverException e) {
-                logger.error("Unable to getValue Resolver", e);
-            }
-
-        }
-    }*/
 
     static void clear() {
         serviceElementsCreated.clear();

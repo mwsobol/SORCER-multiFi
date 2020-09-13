@@ -22,8 +22,8 @@ IF NOT DEFINED NSH_CONF SET NSH_CONF=%SORCER_HOME%\configs\shell\configs\nsh-sta
 rem Use the user nsh start-config file if exists.
 IF EXIST "%HOMEDRIVE%%HOMEPATH%\.nsh\configs\nsh-start.config" SET NSH_CONF=%HOMEDRIVE%%HOMEPATH%\.nsh\configs\nsh-start.config
 
-set STARTER_MAIN_CLASS=sorcer.tools.shell.NetworkShell
-set SHELL_CLASS=sorcer.tools.shell.NetworkShell
+set STARTER_MAIN_CLASS=sorcer.tools.shell.ServiceShell
+set SHELL_CLASS=sorcer.tools.shell.ServiceShell
 rem echo "SORC_HOME: " %SORCER_HOME%
 CALL java %JAVA_OPTS% -classpath "%SHELL_CLASSPATH%" -Djava.security.policy="%SORCER_HOME%\bin\shell\policy\shell.policy" -Dsorcer.tools.shell.logDir="%SORCER_HOME%\logs" -Dprogram.name=NSH -Dnsh.starter.config="%NSH_CONF%" -Djava.util.logging.config.file="%SORCER_HOME%\bin\shell\configs\sorcer.logging" %STARTER_MAIN_CLASS% %*
 rem --classpath "%CP%"

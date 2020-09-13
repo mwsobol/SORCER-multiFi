@@ -60,7 +60,7 @@ public class Governor implements Service, Supervision {
     }
 
     public void execDependencies(String path, Arg... args) throws ContextException {
-        Map<String, List<ExecDependency>> dpm = ((ModelStrategy) governance.getMogramStrategy()).getDependentDomains();
+        Map<String, List<ExecDependency>> dpm = ((ModelStrategy) governance.getDomainStrategy()).getDependentDomains();
         if (dpm != null && dpm.get(path) != null) {
             List<ExecDependency> del = dpm.get(path);
             if (del != null && del.size() > 0) {

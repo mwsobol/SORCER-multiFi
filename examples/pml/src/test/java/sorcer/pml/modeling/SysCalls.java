@@ -169,7 +169,7 @@ public class SysCalls {
 				prc("add", invoker("x + y", args("x", "y"))),
 				result("cylinder/volume"),
 				req("volume", sig("exec", SysCaller.class,
-//				req("volume", sig("exec", SysCallerProvider.class,
+//				fxn("volume", sig("exec", SysCallerProvider.class,
 						cxt(val("cmd", "java -cp  " + cp + Volume.class.getName()),
 								inVal("cylinder"),
 								outVal("cylinder/volume"), outVal("cylinder/radius"), outVal("cylinder/height")))));
@@ -209,7 +209,7 @@ public class SysCalls {
 				ent("add", invoker("x + y", args("x", "y"))),
 				result("cylinder/volume"),
 				req("volume", sig("exec", SysCallerProvider.class,
-//				req("volume", sig("exec", SysCaller.class,
+//				fxn("volume", sig("exec", SysCaller.class,
 						cxt(val("cmd", "java -cp  " + cp + Volume.class.getName()),
 								inVal("cylinder", Arg.class),
 								outVal("cylinder/volume", double.class),

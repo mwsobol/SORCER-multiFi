@@ -16,7 +16,6 @@ import java.util.Set;
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.ent.operator.ent;
-import static sorcer.so.operator.eval;
 
 /**
  * @author Mike Sobolewski
@@ -56,7 +55,7 @@ public class CollectionOperatorsTest {
 		
 		// keys and values of args
 		String k = key(val("key", "Mike"));
-		Double v = sorcer.co.operator.get(val("height", 174.0));
+		Double v = get(val("height", 174.0));
 		assertEquals(k, "key");
 		assertTrue(v.equals(174.0));
 		

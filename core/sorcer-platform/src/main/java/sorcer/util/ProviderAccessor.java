@@ -30,9 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Cataloger;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.service.Exerter;
 import sorcer.core.provider.ServiceName;
-import sorcer.core.signature.NetSignature;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.river.Filters;
 import sorcer.service.Accessor;
@@ -110,7 +110,7 @@ public class ProviderAccessor extends ServiceAccessor {
      * @return a SORCER provider service
      */
     public Exerter getProvider(Class serviceType) throws SignatureException {
-		return getProvider(new NetSignature(serviceType));
+		return getProvider(new RemoteSignature(serviceType));
 	}
 
     /**

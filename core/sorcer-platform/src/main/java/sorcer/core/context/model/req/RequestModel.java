@@ -31,7 +31,7 @@ import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.rendezvous.ServiceModeler;
-import sorcer.core.service.Projection;
+import sorcer.service.Projection;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.service.*;
@@ -69,7 +69,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
         super();
         key = SRV_MODEL;
         setSignature();
-        setSubject("req/model", new Date());
+        setSubject("fxn/model", new Date());
         isRevaluable = true;
     }
 

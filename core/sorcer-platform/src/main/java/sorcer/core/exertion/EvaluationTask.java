@@ -96,7 +96,7 @@ public class EvaluationTask extends Task {
 	 */
 	@Override
 	public Task doTask(Transaction txn, Arg... args) throws EvaluationException {
-		dataContext.getMogramStrategy().setCurrentSelector(getProcessSignature().getSelector());
+		dataContext.getDomainStrategy().setCurrentSelector(getProcessSignature().getSelector());
 		dataContext.setCurrentPrefix(getProcessSignature().getPrefix());
 
 		if (((ServiceFidelity)multiFi.getSelect()).getSelects().size() > 1) {

@@ -813,7 +813,7 @@ public class Contexts implements SorcerConstants {
 
 	public static List getNamedInPaths(Context cntxt) throws ContextException {
 		// getValue all the in and inout paths
-		String cs = ((ServiceContext)cntxt).getMogramStrategy().getCurrentSelector();
+		String cs = ((ServiceContext)cntxt).getDomainStrategy().getCurrentSelector();
 		if (cs != null)
 			return getPrefixedInPaths(cntxt, cs);
 		else
@@ -876,7 +876,7 @@ public class Contexts implements SorcerConstants {
 
 	public static List getNamedOutPaths(Context cntxt) throws ContextException {
 		// getValue all the in and out paths
-		return getPrefixedOutPaths(cntxt, ((ServiceContext)cntxt).getMogramStrategy().getCurrentSelector());
+		return getPrefixedOutPaths(cntxt, ((ServiceContext)cntxt).getDomainStrategy().getCurrentSelector());
 	}
 	
 	public static List getPrefixedOutPaths(Context cntxt) throws ContextException {

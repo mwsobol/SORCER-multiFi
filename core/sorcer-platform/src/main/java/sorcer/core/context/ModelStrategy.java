@@ -16,7 +16,7 @@ import java.util.*;
 /**
  * Created by Mike Sobolewski
  */
-public class ModelStrategy implements MogramStrategy, Serializable {
+public class ModelStrategy implements ServiceStrategy, Serializable {
 
     protected List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
 
@@ -39,6 +39,8 @@ public class ModelStrategy implements MogramStrategy, Serializable {
     private List<Signature> signatures = new ArrayList<Signature>();
 
     private  Map<String, Service> freeServices;
+
+    private Context strategyContext;
 
     protected transient FileURLHandler dataService;
 
@@ -344,6 +346,14 @@ public class ModelStrategy implements MogramStrategy, Serializable {
 
     public void setExecState(Exec.State state) {
         execState = state;
+    }
+
+    public Context getStrategyContext() {
+        return strategyContext;
+    }
+
+    public void setStrategyContext(Context strategyContext) {
+        this.strategyContext = strategyContext;
     }
 
 }

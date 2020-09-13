@@ -89,7 +89,7 @@ public class Disciplines {
                 value(cxt, "lambdaOut") < 500.0), pipeline("cxtn1")));
 
         Discipline plDis = dsc(
-            ctxFi("cxtn1", opspl),
+            cxtnFi("cxtn1", opspl),
             dspFi("dspt1", plDispatch));
 
         setContext(opspl, context("mfprc",

@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski on 8/2/15.
  */
-public interface MogramStrategy {
+public interface ServiceStrategy {
 
     public boolean isMonitorable();
 

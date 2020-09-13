@@ -19,6 +19,10 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
 
     private List<Opservice> opservices = new ArrayList<>();
 
+    protected Projection inPathProjection;
+
+    protected Projection outPathProjection;
+
     public Pipeline(Opservice... opservices) {
         this(null, opservices);
     }
@@ -240,6 +244,24 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
     }
 
     @Override
+    public Projection getInPathProjection() {
+        return inPathProjection;
+    }
+
+    public void setInPathProjection(Projection inPathProjection) {
+        this.inPathProjection = inPathProjection;
+    }
+
+    @Override
+    public Projection getOutPathProjection() {
+        return outPathProjection;
+    }
+
+    public void setOutPathProjection(Projection outPathProjection) {
+        this.outPathProjection = outPathProjection;
+    }
+
+    @Override
     public Context appendContext(Context context) throws ContextException, RemoteException {
         return invokeContext.appendContext(context);
     }
@@ -260,7 +282,7 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
     }
 
     @Override
-    public MogramStrategy getMogramStrategy() {
+    public ServiceStrategy getDomainStrategy() {
         return null;
     }
 

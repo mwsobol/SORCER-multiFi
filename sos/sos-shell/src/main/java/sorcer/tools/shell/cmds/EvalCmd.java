@@ -31,8 +31,8 @@ import sorcer.core.provider.logger.RemoteLoggerListener;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.tools.shell.INetworkShell;
-import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.ServiceShellIf;
+import sorcer.tools.shell.ServiceShell;
 import sorcer.tools.shell.ShellCmd;
 
 import java.io.*;
@@ -73,31 +73,31 @@ public class EvalCmd extends ShellCmd {
 
 	private String script;
 
-    private INetworkShell shell;
+    private ServiceShellIf shell;
 
 	public EvalCmd() {
 	}
 
 	public void execute(String... args) throws Throwable {
-		out = NetworkShell.getShellOutputStream();
-		shell = NetworkShell.getInstance();
-		serviceScripter = new ServiceScripter(out, null, NetworkShell.getWebsterUrl(), shell.isDebug());
+		out = ServiceShell.getShellOutputStream();
+		shell = ServiceShell.getInstance();
+		serviceScripter = new ServiceScripter(out, null, ServiceShell.getWebsterUrl(), shell.isDebug());
 		shell.setServiceShell(serviceScripter.getServiceShell());
 		serviceScripter.setConfig(config);
 		input = shell.getCmd();
 		if (out == null)
 			throw new NullPointerException("Must have an output PrintStream");
 
-		File cdir = NetworkShell.getInstance().getCurrentDir();
+		File cdir = ServiceShell.getInstance().getCurrentDir();
 		String scriptFilename = null;
 		boolean ifEvaluation = false;
 		boolean ifOutPersisted = false;
 		boolean ifMogramControl = false;
 		boolean ifMarshalled = false;
-		boolean commandLine = NetworkShell.isInteractive();
+		boolean commandLine = ServiceShell.isInteractive();
 
 //		List<String> argsList = WhitespaceTokenizer.tokenize(input);
-		List<String> argsList = NetworkShell.getShellTokenizer().getTokens();
+		List<String> argsList = ServiceShell.getShellTokenizer().getTokens();
 
 //       Pattern p = Pattern.compile("(\"[^\"]*\"|[^\"^\\s]+)(\\s+|$)", Pattern.MULTILINE);
 //       Matcher m = p.matcher(input);
@@ -152,9 +152,9 @@ public class EvalCmd extends ShellCmd {
 			serviceScripter.readScriptWithHeaders(script);
 		} else if (scriptFilename != null) {
 			if ((new File(scriptFilename)).isAbsolute()) {
-				scriptFile = NetworkShell.huntForTheScriptFile(scriptFilename);
+				scriptFile = ServiceShell.huntForTheScriptFile(scriptFilename);
 			} else {
-				scriptFile = NetworkShell.huntForTheScriptFile("" + cdir
+				scriptFile = ServiceShell.huntForTheScriptFile("" + cdir
 						+ File.separator + scriptFilename);
 			}
 			try {
@@ -198,7 +198,7 @@ public class EvalCmd extends ShellCmd {
 			}
 		}
 
-//		if (NetworkShell.getInstance().isDebug()) out.println("Starting exert netlet!");
+//		if (ServiceShell.getInstance().isDebug()) out.println("Starting exert netlet!");
 		Object result = serviceScripter.execute();
 //		out.println(">>>>>>>>>>> ServiceScripter.execute result: " + result);
 		if (result != null) {
@@ -250,7 +250,7 @@ public class EvalCmd extends ShellCmd {
 				}
 				if (ifMogramControl) {
 					out.println("\n---> OUTPUT STRATEGY --->");
-					out.println(((Model) out).getMogramStrategy());
+					out.println(((Model) out).getDomainStrategy());
 				}
 			} else {
 				out.println("\n---> EVALUATION RESULT --->");

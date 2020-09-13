@@ -7,7 +7,7 @@
 	<import file="${sorcer.basedir}/bin/common-run.xml" />
 
 	<target name="SORCER Shell">
-		<java classname="sorcer.tools.shell.NetworkShell" fork="no">
+		<java classname="sorcer.tools.shell.ServiceShell" fork="no">
 			<!--jvmarg value="-Xdock:name=SORCER Service Browser" /-->
 			<classpath>
 				<pathelement location="${lib}/common/groovy/groovy-all-${groovy.version}.jar"/>

@@ -19,26 +19,33 @@
  * a Lookup Service
  */
 
-import org.rioproject.config.Component
-import org.rioproject.util.RioHome
-import org.rioproject.util.ServiceDescriptorUtil;
 import com.sun.jini.start.ServiceDescriptor
+import org.rioproject.config.Component
 import org.rioproject.resolver.maven2.Repository
+import org.rioproject.security.SecureEnv
+import org.rioproject.util.RioHome
+import org.rioproject.util.ServiceDescriptorUtil
+
 
 @Component('org.rioproject.start')
 class StartMonitorConfig {
+    final boolean useHttps
 
-    String[] getMonitorConfigArgs(String rioHome) {
+    StartMonitorConfig() {
+        useHttps = SecureEnv.setup()
+    }
+
+    static String[] getMonitorConfigArgs(String rioHome) {
         def configArgs = [rioHome+'/config/common.groovy', rioHome+'/config/monitor.groovy']
         return configArgs as String[]
     }
 
-    String[] getLookupConfigArgs(String rioHome) {
+    static String[] getLookupConfigArgs(String rioHome) {
         def configArgs = [rioHome+'/config/common.groovy', rioHome+'/config/reggie.groovy']
         return configArgs as String[]
     }
 
-    void sorcerData() {
+    static void sorcerData() {
         String user = System.properties['user.name']
         String tmpDir = System.getenv("TMPDIR")==null?System.properties['java.io.tmpdir']:System.getenv("TMPDIR")
         File sorcerDataDir = new File("${tmpDir}/sorcer-${user}/data")
@@ -72,7 +79,8 @@ class StartMonitorConfig {
         String policyFile = rioHome+'/policy/policy.all'
 
         def serviceDescriptors = [
-            ServiceDescriptorUtil.getWebster(policyFile, '0', websterRoots as String[]),
+            //ServiceDescriptorUtil.getWebster(policyFile, '0', websterRoots as String[]),
+            ServiceDescriptorUtil.getJetty('0', websterRoots as String[], useHttps),
             ServiceDescriptorUtil.getLookup(policyFile, getLookupConfigArgs(rioHome)),
             ServiceDescriptorUtil.getMonitor(policyFile, getMonitorConfigArgs(rioHome))
         ]

@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
  */
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ExertInvoker extends ServiceInvoker implements Invocation {
+public class RoutineInvoker extends ServiceInvoker implements Invocation {
 	private static final long serialVersionUID = -8257643691945276788L;
 	private Routine exertion;
 	private String path;
@@ -41,18 +41,18 @@ public class ExertInvoker extends ServiceInvoker implements Invocation {
 		defaultName = "xrtInvoker-";
 	}
 	
-	public ExertInvoker(String name, Routine exertion, String path, Prc... callEntries) {
+	public RoutineInvoker(String name, Routine exertion, String path, Prc... callEntries) {
 		super(name);
 		this.path = path;
 		this.exertion = exertion;
 		this.args = new ArgSet(callEntries);
 	}
 
-	public ExertInvoker(Routine exertion, String path, Prc... callEntries) {
+	public RoutineInvoker(Routine exertion, String path, Prc... callEntries) {
 		this(exertion.getName(), exertion, path, callEntries);
 	}
 	
-	public ExertInvoker(Routine exertion, Prc... callEntries) {
+	public RoutineInvoker(Routine exertion, Prc... callEntries) {
 		this(null, exertion, null, callEntries);
 	}
 

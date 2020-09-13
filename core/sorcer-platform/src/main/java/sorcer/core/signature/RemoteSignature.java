@@ -37,11 +37,11 @@ import java.util.List;
 import static sorcer.eo.operator.*;
 
 /**
- * Represents a handle to network service provider.
+ * Represents a handle to remote service provider.
  *
  * Created by Mike Sobolewski
  */
-public class NetSignature extends ObjectSignature implements sig {
+public class RemoteSignature extends LocalSignature implements sig {
 
 	private static final long serialVersionUID = 1L;
 
@@ -66,13 +66,13 @@ public class NetSignature extends ObjectSignature implements sig {
 	protected List<Entry> attributes;
 
     protected String version;
-    private static Logger logger = LoggerFactory.getLogger(ObjectSignature.class);
+    private static Logger logger = LoggerFactory.getLogger(LocalSignature.class);
 
-	public NetSignature() {
+	public RemoteSignature() {
 		providerName = new ProviderName();
 	}
 
-	public NetSignature(ServiceSignature signature) throws SignatureException {
+	public RemoteSignature(ServiceSignature signature) throws SignatureException {
 		this.name = signature.name;
 		this.operation = signature.operation;
 		this.providerName =  signature.providerName;
@@ -81,49 +81,49 @@ public class NetSignature extends ObjectSignature implements sig {
 		this.contextReturn = signature.contextReturn;
 	}
 
-	public NetSignature(Class serviceType) {
+	public RemoteSignature(Class serviceType) {
 		this("none", serviceType, ANY);
 	}
 	
-	public NetSignature(String selector, Class serviceType) {
+	public RemoteSignature(String selector, Class serviceType) {
 		this(selector, serviceType, ANY);
 	}
 
 
-	public NetSignature(String selector, Class serviceType, ProviderName providerName) {
+	public RemoteSignature(String selector, Class serviceType, ProviderName providerName) {
 		this(selector, serviceType);
 		this.providerName =  providerName;
 		execType = Type.PROC;
 	}
 
 
-	public NetSignature(String selector, Class serviceType,
-			String providerName) {
+	public RemoteSignature(String selector, Class serviceType,
+						   String providerName) {
 		this(selector, serviceType, providerName, (Type) null);
 	}
 
-	public NetSignature(String selector, Class serviceType,
-			Type methodType) throws SignatureException {
+	public RemoteSignature(String selector, Class serviceType,
+						   Type methodType) throws SignatureException {
 		this(selector, serviceType);
 		this.execType = methodType;
 	}
 
-	public NetSignature(String selector, Class serviceType,
-			List<Entry> attributes, Type methodType)
+	public RemoteSignature(String selector, Class serviceType,
+						   List<Entry> attributes, Type methodType)
 			throws SignatureException {
 		this(selector, serviceType);
 		this.execType = methodType;
 		this.attributes = attributes;
 	}
 
-	public NetSignature(String selector, Class serviceType,
-						String providerName, Type methodType) {
+	public RemoteSignature(String selector, Class serviceType,
+						   String providerName, Type methodType) {
 
 		this(selector, serviceType, providerName, methodType, null);
 	}
 
-	public NetSignature(String selector, Class serviceType,
-						String providerName, Type methodType, Version version) {
+	public RemoteSignature(String selector, Class serviceType,
+						   String providerName, Type methodType, Version version) {
 		this.version = version!=null ? version.getName() : null;
 		this.multitype.providerType = serviceType;
         if (serviceType != null && version == null)
@@ -143,25 +143,25 @@ public class NetSignature extends ObjectSignature implements sig {
     /**
     String version of constructor - required i.e. when running from Scilab
     */
-    public NetSignature(String selector, String strServiceType) {
+    public RemoteSignature(String selector, String strServiceType) {
         try {
             Class serviceType = Class.forName(strServiceType);
             this.multitype.providerType = serviceType;
             if (serviceType!=null) this.version = MavenUtil.findVersion(serviceType);
             setSelector(selector);
         } catch (ClassNotFoundException e) {
-            logger.error("Problem creating NetSignature: " + e.getMessage());
+            logger.error("Problem creating RemoteSignature: " + e.getMessage());
         }
     }
 
-    public NetSignature(String selector, Class<?> serviceType, String version,
-                        String providerName, Type methodType) {
+    public RemoteSignature(String selector, Class<?> serviceType, String version,
+						   String providerName, Type methodType) {
         this(selector, serviceType, providerName, methodType);
         if (version!=null) this.version = version;
     }
 
-    public NetSignature(String selector, Class serviceType, String version,
-                        String providerName) {
+    public RemoteSignature(String selector, Class serviceType, String version,
+						   String providerName) {
         this(selector, serviceType, version, providerName, null);
     }
 

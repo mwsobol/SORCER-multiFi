@@ -19,7 +19,7 @@ package sorcer.service;
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
-import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Model;
 
@@ -50,9 +50,9 @@ public class FreeMogram extends ServiceMogram implements FreeService {
     public void bind(Object object) throws ConfigurationException {
         if (object instanceof Mogram) {
             mogram = (Mogram) object;
-        } else if (object instanceof ObjectSignature) {
+        } else if (object instanceof LocalSignature) {
             try {
-                mogram = (Mogram) ((ObjectSignature) object).build();
+                mogram = (Mogram) ((LocalSignature) object).build();
                 builder = (Signature) object;
                 mogram.setBuilder(builder);
             } catch (SignatureException | MogramException e) {

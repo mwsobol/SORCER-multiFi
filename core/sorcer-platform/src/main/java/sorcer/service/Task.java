@@ -24,8 +24,8 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.provider.ControlFlowManager;
-import sorcer.core.signature.NetSignature;
-import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.LocalSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.ServiceSignature;
 
 import java.rmi.RemoteException;
@@ -144,7 +144,7 @@ public class Task extends Subroutine implements ElementaryRequest {
 					((ServiceFidelity)multiFi.getSelect()).getSelects().remove(ts);
 					ts = createSignature(ts);
 				}
-				if (ts instanceof NetSignature) {
+				if (ts instanceof RemoteSignature) {
 					delegate = new NetTask(key, ts);
 				} else {
 					delegate = new ObjectTask(key, ts);
@@ -165,9 +165,9 @@ public class Task extends Subroutine implements ElementaryRequest {
 	private ServiceSignature createSignature(ServiceSignature signature) throws SignatureException {
 		ServiceSignature sig;
 		if (signature.getServiceType().isInterface()) {
-			sig = new NetSignature(signature);
+			sig = new RemoteSignature(signature);
 		} else {
-			sig = new ObjectSignature(signature);
+			sig = new LocalSignature(signature);
 		}
 		return sig;
 	}
@@ -212,7 +212,7 @@ public class Task extends Subroutine implements ElementaryRequest {
 		List<Service> ls = ((ServiceFidelity)multiFi.getSelect()).getSelects();
 		if (ls != null)
 			for (int i = 0; i < ls.size(); i++)
-				((NetSignature) ls.get(i)).setOwnerId(oid);
+				((RemoteSignature) ls.get(i)).setOwnerId(oid);
 		// Util.debug("Context : "+ context);
 		if (dataContext != null)
 			dataContext.setOwnerId(oid);
@@ -448,7 +448,7 @@ public class Task extends Subroutine implements ElementaryRequest {
 		List<Service> alls = ((ServiceFidelity)multiFi.getSelect()).getSelects();
 		if (alls.size() > 1) {
 			Signature lastSig = (Signature) alls.get(alls.size() - 1);
-			if (alls.size() > 1 && this.isBatch() && !(lastSig instanceof NetSignature)) {
+			if (alls.size() > 1 && this.isBatch() && !(lastSig instanceof RemoteSignature)) {
 				boolean allSrvType = true;
 				for (Service sig : alls) {
 					if (!((Signature)sig).getExecType().equals(Signature.SRV)) {

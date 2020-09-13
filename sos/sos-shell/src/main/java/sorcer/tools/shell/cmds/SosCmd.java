@@ -17,7 +17,7 @@
 
 package sorcer.tools.shell.cmds;
 
-import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.ServiceShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.tools.shell.WhitespaceTokenizer;
 import sorcer.util.Sorcer;
@@ -43,8 +43,8 @@ public class SosCmd extends ShellCmd {
 	}
 
 	public void execute(String... args) throws Throwable {
-		out = NetworkShell.getShellOutputStream();
-		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
+		out = ServiceShell.getShellOutputStream();
+		WhitespaceTokenizer myTk = ServiceShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
 		if (numTokens == 0) {
 			out.println("SORCER_HOME: " + Sorcer.getHome());
@@ -56,30 +56,30 @@ public class SosCmd extends ShellCmd {
 		}
 
 		if (option.equals("-h")) {
-			NetworkShell.setRequest("cd " + Sorcer.getHome());
-			ShellCmd cmd = NetworkShell.getCommandTable().get("ls");
+			ServiceShell.setRequest("cd " + Sorcer.getHome());
+			ShellCmd cmd = ServiceShell.getCommandTable().get("ls");
 			cmd.execute();
 		} else if (option.equals("-r")) {
-			NetworkShell.setRequest("cd " + getSosRootDir());
-			ShellCmd cmd = NetworkShell.getCommandTable().get("ls");
+			ServiceShell.setRequest("cd " + getSosRootDir());
+			ShellCmd cmd = ServiceShell.getCommandTable().get("ls");
 			cmd.execute();
 		} else if (option.equals("-n")) {
-			NetworkShell.setRequest("cd " + getSosRootDir()  + File.separator + "examples"
+			ServiceShell.setRequest("cd " + getSosRootDir()  + File.separator + "examples"
 					+ File.separator + "sml" + File.separator + "src" + File.separator + "main"
 					+ File.separator + "netlets");
-			ShellCmd cmd = NetworkShell.getCommandTable().get("ls");
+			ShellCmd cmd = ServiceShell.getCommandTable().get("ls");
 			cmd.execute();
 		} else if (option.equals("-d")) {
-			NetworkShell.setRequest("cd " + Sorcer.getHome()
+			ServiceShell.setRequest("cd " + Sorcer.getHome()
 					+ File.separator + "data");
-			ShellCmd cmd = NetworkShell.getCommandTable().get("ls");
+			ShellCmd cmd = ServiceShell.getCommandTable().get("ls");
 			cmd.execute();
 		} else if (option.equals("~")) {
-			NetworkShell.setRequest("cd " + System.getProperty("user.home"));
-			ShellCmd cmd = NetworkShell.getCommandTable().get("ls");
+			ServiceShell.setRequest("cd " + System.getProperty("user.home"));
+			ShellCmd cmd = ServiceShell.getCommandTable().get("ls");
 			cmd.execute();
 		} else if (option.equals("-v") || option.equals("-version")) {
-			NetworkShell.shellOutput.println("SOS version: " + getSosVersion());
+			ServiceShell.shellOutput.println("SOS version: " + getSosVersion());
 		}
 	}
 

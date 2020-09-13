@@ -64,9 +64,9 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
     // active disciplnes
     protected Paths disciplnePaths = new Paths();
 
-	protected Fidelity<EntrySupervisor> supervisorFi;
+	protected Fidelity<Supervision> supervisorFi;
 
-	protected Fidelity<EntryAnalyzer> analyzerFi;
+	protected Fidelity<Analysis> analyzerFi;
 
 	protected ServiceFidelity contextMultiFi;
 
@@ -79,7 +79,7 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 
 	private FidelityManager fiManager;
 
-	protected MogramStrategy mogramStrategy;
+	protected ServiceStrategy serviceStrategy;
 
 	// context input connector
 	protected Context inConnector;
@@ -88,6 +88,10 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 	protected Context outConnector;
 
 	protected Context scope;
+
+	protected Projection inPathProjection;
+
+	protected Projection outPathProjection;
 
     public Governance() {
         this(null);
@@ -99,7 +103,7 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
         } else {
             this.name = name;
         }
-		mogramStrategy = new ModelStrategy(this);
+		serviceStrategy = new ModelStrategy(this);
 		governor = new Governor(this);
     }
 
@@ -241,11 +245,11 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 		return name;
 	}
 
-	public Fidelity<EntryAnalyzer> getAnalyzerFi() {
+	public Fidelity<Analysis> getAnalyzerFi() {
 		return analyzerFi;
 	}
 
-	public void setAnalyzerFi(Fidelity<EntryAnalyzer> analyzerFi) {
+	public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
 		this.analyzerFi = analyzerFi;
 	}
 
@@ -259,7 +263,7 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 		return discList;
 	}
 
-	public Fidelity<EntryAnalyzer> setAnalyzerFi(Context context) throws ConfigurationException {
+	public Fidelity<Analysis> setAnalyzerFi(Context context) throws ConfigurationException {
 		if(analyzerFi == null) {
 			Object mdaComponent = context.get(Context.MDA_PATH);
 			if (mdaComponent != null) {
@@ -273,14 +277,14 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 				}
 			}
 		}
-		((ServiceContext)context).getMogramStrategy().setExecState(Exec.State.INITIAL);
+		((ServiceContext)context).getDomainStrategy().setExecState(Exec.State.INITIAL);
 		if (output == null) {
 			output = new ServiceContext(name);
 		}
 		return analyzerFi;
 	}
 
-	public Fidelity<EntrySupervisor> setSupervisorFi(Context context) throws ConfigurationException {
+	public Fidelity<Supervision> setSupervisorFi(Context context) throws ConfigurationException {
 		if(supervisorFi == null) {
 			Object supComponent = context.get(Context.MDA_PATH);
 			if (supComponent != null) {
@@ -294,7 +298,7 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 				}
 			}
 		}
-		((ServiceContext)context).getMogramStrategy().setExecState(Exec.State.INITIAL);
+		((ServiceContext)context).getDomainStrategy().setExecState(Exec.State.INITIAL);
 		if (output == null) {
 			output = new ServiceContext(name);
 		}
@@ -325,12 +329,12 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 		this.fiManager = fiManager;
 	}
 
-	public MogramStrategy getMogramStrategy() {
-		return mogramStrategy;
+	public ServiceStrategy getDomainStrategy() {
+		return serviceStrategy;
 	}
 
-	public void setModelStrategy(MogramStrategy strategy) {
-		mogramStrategy = strategy;
+	public void setModelStrategy(ServiceStrategy strategy) {
+		serviceStrategy = strategy;
 	}
 
 	@Override
@@ -362,10 +366,10 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 				setSupervisorFi(cxt);
 			}
 
-			ModelStrategy strategy = ((ModelStrategy) cxt.getMogramStrategy());
+			ModelStrategy strategy = ((ModelStrategy) cxt.getDomainStrategy());
 			strategy.setExecState(Exec.State.RUNNING);
 			governor.supervise(cxt, args);
-			((ModelStrategy)mogramStrategy).setOutcome(output);
+			((ModelStrategy) serviceStrategy).setOutcome(output);
 			strategy.setExecState(Exec.State.DONE);
 		} catch (SuperviseException | ConfigurationException e) {
 			throw new EvaluationException(e);
@@ -378,31 +382,31 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 		return evaluate(input, args);
 	}
 
-	public Fidelity<EntrySupervisor> getSupervisorFi() {
+	public Fidelity<Supervision> getSupervisorFi() {
 		return supervisorFi;
 	}
 
-	public void setSupervisorFi(Fidelity<EntrySupervisor> supervisorFi) {
+	public void setSupervisorFi(Fidelity<Supervision> supervisorFi) {
 		this.supervisorFi = supervisorFi;
 	}
 
 	public void reportException(String message, Throwable t) {
-		mogramStrategy.addException(t);
+		serviceStrategy.addException(t);
 	}
 
 	public void reportException(String message, Throwable t, ProviderInfo info) {
 		// reimplement in sublasses
-		mogramStrategy.addException(t);
+		serviceStrategy.addException(t);
 	}
 
 	public void reportException(String message, Throwable t, Exerter provider) {
 		// reimplement in sublasses
-		mogramStrategy.addException(t);
+		serviceStrategy.addException(t);
 	}
 
 	public void reportException(String message, Throwable t, Exerter provider, ProviderInfo info) {
 		// reimplement in sublasses
-		mogramStrategy.addException(t);
+		serviceStrategy.addException(t);
 	}
 
 	public Governance addDepender(Evaluation depender) {
@@ -443,6 +447,24 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 	@Override
 	public void setScope(Context scope) {
 		this.scope = scope;
+	}
+
+	@Override
+	public Projection getInPathProjection() {
+		return inPathProjection;
+	}
+
+	public void setInPathProjection(Projection inPathProjection) {
+		this.inPathProjection = inPathProjection;
+	}
+
+	@Override
+	public Projection getOutPathProjection() {
+		return outPathProjection;
+	}
+
+	public void setOutPathProjection(Projection outPathProjection) {
+		this.outPathProjection = outPathProjection;
 	}
 
 	@Override

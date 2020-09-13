@@ -161,7 +161,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
         } else if(mogram instanceof Block)
             return Mograms.isSpaceBlock((Block)mogram);
         else  if(mogram instanceof Model) {
-            MogramStrategy ms = mogram.getMogramStrategy();
+            ServiceStrategy ms = mogram.getDomainStrategy();
             return ms.getAccessType() == Strategy.Access.PULL &&  ms.getFlowType() == Strategy.Flow.SEQ;
         }
         return false;

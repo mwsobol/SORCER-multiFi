@@ -31,8 +31,8 @@ import org.slf4j.LoggerFactory;
 
 import sorcer.netlet.util.NetletClassLoader;
 import sorcer.netlet.util.ScripterThread;
-import sorcer.tools.shell.INetworkShell;
-import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.ServiceShellIf;
+import sorcer.tools.shell.ServiceShell;
 import sorcer.tools.shell.ShellCmd;
 
 public class GroovyCmd extends ShellCmd {
@@ -70,14 +70,14 @@ public class GroovyCmd extends ShellCmd {
 	}
 
 	public void execute(String... args) throws Throwable {
-		INetworkShell shell = NetworkShell.getInstance();
-		BufferedReader br = NetworkShell.getShellInputStream();
-		out = NetworkShell.getShellOutputStream();
+		ServiceShellIf shell = ServiceShell.getInstance();
+		BufferedReader br = ServiceShell.getShellInputStream();
+		out = ServiceShell.getShellOutputStream();
 		input = shell.getCmd();
 		if (out == null)
 			throw new NullPointerException("Must have an output PrintStream");
 
-		File d = NetworkShell.getInstance().getCurrentDir();
+		File d = ServiceShell.getInstance().getCurrentDir();
 		String nextToken = null;
 		String scriptFilename = null;
 		boolean outPersisted = false;
@@ -102,9 +102,9 @@ public class GroovyCmd extends ShellCmd {
 			sb.append(script);
 		} else if (scriptFilename != null) {
 			if ((new File(scriptFilename)).isAbsolute()) {
-				scriptFile = NetworkShell.huntForTheScriptFile(scriptFilename);
+				scriptFile = ServiceShell.huntForTheScriptFile(scriptFilename);
 			} else {
-				scriptFile = NetworkShell.huntForTheScriptFile("" + d
+				scriptFile = ServiceShell.huntForTheScriptFile("" + d
 						+ File.separator + scriptFilename);
 			}
 			sb = new StringBuilder(staticImports.toString());

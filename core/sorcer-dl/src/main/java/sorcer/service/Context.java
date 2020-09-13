@@ -185,8 +185,10 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 	final static String ANALYZER_PATH = "domain" + SorcerConstants.CPS + "analysis"
 		+ SorcerConstants.CPS + "component";
 
+	final static String COMPONENT_CONTEXT_PATH = "domain" + SorcerConstants.CPS + "componentContexts";
+
 	final static String MDA_PATH = "domain" + SorcerConstants.CPS + "mda"
-			+ SorcerConstants.CPS + "component";
+		+ SorcerConstants.CPS + "component";
 
 	final static String EXPLORER_PATH = "domain" + SorcerConstants.CPS + "explorer"
 		+ SorcerConstants.CPS + "component";

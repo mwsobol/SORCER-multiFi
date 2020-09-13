@@ -21,7 +21,7 @@ import net.jini.core.entry.Entry;
 import net.jini.id.Uuid;
 import net.jini.lookup.entry.Name;
 import sorcer.core.context.ThrowableTrace;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.service.Exec;
 import sorcer.service.Routine;
 import sorcer.service.Subroutine;
@@ -107,7 +107,7 @@ public class ExertionEnvelop implements Entry {
 			return null;
 
 		ExertionEnvelop ee = getTemplate();
-		NetSignature ss = (NetSignature) ex.getProcessSignature();
+		RemoteSignature ss = (RemoteSignature) ex.getProcessSignature();
 		
 		ee.exertion = ex;
 		ee.serviceType = ss.getServiceType();

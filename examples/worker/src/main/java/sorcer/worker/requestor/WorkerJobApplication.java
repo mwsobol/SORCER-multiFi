@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.NetTask;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.service.Context;
 import sorcer.service.Routine;
 import sorcer.service.Job;
@@ -74,9 +74,9 @@ public class WorkerJobApplication {
         context3.putValue("to/provider/key", pn3);
         context3.putValue("consumer/work", Works.work3);
 
-		NetSignature signature1 = new NetSignature("doWork", Worker.class, pn1);
-		NetSignature signature2 = new NetSignature("doWork", Worker.class, pn2);
-		NetSignature signature3 = new NetSignature("doWork", Worker.class, pn3);
+		RemoteSignature signature1 = new RemoteSignature("doWork", Worker.class, pn1);
+		RemoteSignature signature2 = new RemoteSignature("doWork", Worker.class, pn2);
+		RemoteSignature signature3 = new RemoteSignature("doWork", Worker.class, pn3);
 		
 		Task task1 = new NetTask("work1", signature1, context1);
 		Task task2 = new NetTask("work2", signature2, context2);

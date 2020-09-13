@@ -27,18 +27,16 @@ import sorcer.core.context.FidelityContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Function;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.ObjectJob;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.Spacer;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.signature.NetSignature;
-import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.LocalSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.security.util.Auth;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Strategy.Access;
-import sorcer.service.modeling.Functionality;
 import sorcer.util.SorcerUtil;
 
 import javax.security.auth.Subject;
@@ -121,9 +119,9 @@ public class Job extends Transroutine {
 		super.init();
 		Signature sig;
 		if (this instanceof ObjectJob) {
-			sig = new ObjectSignature("exert", ServiceJobber.class);
+			sig = new LocalSignature("exert", ServiceJobber.class);
 		} else {
-			sig = new NetSignature("exert", Jobber.class);
+			sig = new RemoteSignature("exert", Jobber.class);
 		}
 		sig.getProviderName().setName(null);
 		sig.setType(Signature.Type.PROC);
@@ -190,7 +188,7 @@ public class Job extends Transroutine {
         if (delegate == null) {
             if (delegate == null) {
                 Signature ps = (Signature) ((ServiceFidelity)multiFi.getSelect()).getSelect();
-                if (ps instanceof NetSignature) {
+                if (ps instanceof RemoteSignature) {
                     delegate = new NetJob(key);
                 } else {
                     delegate = new ObjectJob(key);
@@ -362,8 +360,8 @@ public class Job extends Transroutine {
 	}
 
 	public Context finalizeOutDataContext() throws ContextException {
-		if (dataContext.getMogramStrategy().getOutConnector() != null) {
-			updateContextWith(dataContext.getMogramStrategy().getOutConnector());
+		if (dataContext.getDomainStrategy().getOutConnector() != null) {
+			updateContextWith(dataContext.getDomainStrategy().getOutConnector());
 		}
 		return dataContext;
 	}

@@ -18,7 +18,6 @@
 package sorcer.core.signature;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
@@ -26,7 +25,6 @@ import sorcer.core.exertion.ObjectTask;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
-import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Modeling;
 import sorcer.service.modeling.sig;
 
@@ -38,7 +36,14 @@ import java.rmi.RemoteException;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.task;
 
-public class ObjectSignature extends ServiceSignature implements sig {
+/**
+ * Represents a handle to local service provider.
+ * A service provider can be explicitly provided or created at runtime.
+ *
+ * Created by Mike Sobolewski
+ */
+
+public class LocalSignature extends ServiceSignature implements sig {
 
 	static final long serialVersionUID = 8042346568722803852L;
 
@@ -55,13 +60,13 @@ public class ObjectSignature extends ServiceSignature implements sig {
 
 	private Class<?>[] argTypes;
 
-	private static Logger logger = LoggerFactory.getLogger(ObjectSignature.class);
+	private static Logger logger = LoggerFactory.getLogger(LocalSignature.class);
 
-	public ObjectSignature() {
+	public LocalSignature() {
 		this.multitype.providerType = Object.class;
 	}
 
-	public ObjectSignature(ServiceSignature signature) throws SignatureException {
+	public LocalSignature(ServiceSignature signature) throws SignatureException {
         this.name = signature.name;
         this.operation = signature.operation;
         this.providerName =  signature.providerName;
@@ -70,26 +75,26 @@ public class ObjectSignature extends ServiceSignature implements sig {
         this.contextReturn = signature.contextReturn;
 	}
 
-	public ObjectSignature(String selector, Object object, Class<?>[] argTypes,
-						   Object... args) throws InstantiationException,
+	public LocalSignature(String selector, Object object, Class<?>[] argTypes,
+						  Object... args) throws InstantiationException,
 			IllegalAccessException {
 		this(selector, object, null, argTypes, args);
 	}
 
-	public ObjectSignature(Object object, String initSelector, Class<?>[] argTypes,
-						   Object... args) throws InstantiationException,
+	public LocalSignature(Object object, String initSelector, Class<?>[] argTypes,
+						  Object... args) throws InstantiationException,
 			IllegalAccessException {
 		this(null, object, initSelector, argTypes, args);
 	}
 
-	public ObjectSignature(Class<?> clazz, String initSelector) throws InstantiationException,
+	public LocalSignature(Class<?> clazz, String initSelector) throws InstantiationException,
 			IllegalAccessException {
 		this.multitype.providerType = clazz;
 		setInitSelector(initSelector);
 	}
 
-	public ObjectSignature(String selector, Object object, String initSelector, Class<?>[] argTypes,
-						   Object... args) throws InstantiationException,
+	public LocalSignature(String selector, Object object, String initSelector, Class<?>[] argTypes,
+						  Object... args) throws InstantiationException,
 			IllegalAccessException {
 		this();
 		if (object instanceof Class) {
@@ -108,12 +113,12 @@ public class ObjectSignature extends ServiceSignature implements sig {
 			this.args = args;
 	}
 
-	public ObjectSignature(String selector, Class<?> providerClass) {
+	public LocalSignature(String selector, Class<?> providerClass) {
 		this.multitype.providerType = providerClass;
 		setSelector(selector);
 	}
 
-	public ObjectSignature(Class<?> providerClass) {
+	public LocalSignature(Class<?> providerClass) {
 		this(null, providerClass);
 	}
 

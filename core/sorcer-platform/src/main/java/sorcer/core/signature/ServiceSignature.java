@@ -602,6 +602,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 
 	public void setDeployment(ServiceDeployment deployment) {
 		this.deployment = deployment;
+		operation.isProvisionable = deployment.isProvisionable();
 	}
 
 	/* (non-Javadoc)
@@ -628,7 +629,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		if (mogram instanceof Context) {
 			cxt = (Context)mogram;
 		} else {
-			cxt = context(exert(mogram, txn, args));
+			cxt = (Context) context(exert(mogram, txn, args));
 		}
 		Task out = null;
 		out = task(this, cxt);
@@ -736,6 +737,10 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	@Override
 	public Fi getMultiFi() {
 		return multiFi;
+	}
+
+	public void setMultiFi(ServiceFidelity multiFi) {
+		this.multiFi = multiFi;
 	}
 
 	@Override

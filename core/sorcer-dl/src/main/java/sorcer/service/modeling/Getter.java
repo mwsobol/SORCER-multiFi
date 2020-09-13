@@ -34,7 +34,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Getter<T>  extends Opservice {
+public interface Getter<T>  extends Opservice, EvaluationComponent, SupportComponent {
 
     public T getValue(Arg... args) throws ContextException;
 }

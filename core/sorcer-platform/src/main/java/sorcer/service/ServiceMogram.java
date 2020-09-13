@@ -16,12 +16,12 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryAnalyzer;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.monitor.MonitoringSession;
+import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.provider.ServiceBean;
 import sorcer.core.provider.ServiceExerter;
-import sorcer.core.service.Projection;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.modeling.Data;
@@ -63,12 +63,16 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected String domainName;
     protected String subdomainName;
     protected FidelityManagement fiManager;
-    protected Projection projection;
+    protected ContextFidelityManager contextFidelityManager;
+    protected Projection inPathProjection;
+    protected Projection outPathProjection;
     // the last morphed projection
-    protected String[] metaFiNames;
+    protected Projection projection;
+    protected Projection contextProjection;
     // list of fidelities of this mogram
+    protected String[] metaFiNames;
     protected String[] profile;
-    protected MogramStrategy mogramStrategy;
+    protected ServiceStrategy domainStrategy;
     protected Differentiator differentiator;
     protected Differentiator fdDifferentiator;
     protected Differentiator globalDifferentiator;
@@ -252,7 +256,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public void setService(Service provider) {
-        NetSignature ps = (NetSignature) getProcessSignature();
+        RemoteSignature ps = (RemoteSignature) getProcessSignature();
         ps.setProvider(provider);
     }
 
@@ -807,6 +811,18 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return fiManager;
     }
 
+    public void setFidelityManager(FidelityManagement fiManager) {
+        this.fiManager = fiManager;
+    }
+
+    public ContextFidelityManager getContextFidelityManager() {
+        return contextFidelityManager;
+    }
+
+    public void setContextFidelityManager(ContextFidelityManager contextFidelityManager) {
+        this.contextFidelityManager = contextFidelityManager;
+    }
+
     public FidelityManagement getRemoteFidelityManager() throws RemoteException {
         return getFidelityManager();
     }
@@ -814,10 +830,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     @Override
     public boolean isMonitorable() throws RemoteException {
         return false;
-    }
-
-    public void setFidelityManager(FidelityManagement fiManager) {
-        this.fiManager = fiManager;
     }
 
     public Projection getProjection() {
@@ -838,21 +850,54 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public Fidelity selectFidelity(Arg... entries) throws ConfigurationException {
         Fidelity fi = null;
-        if (entries != null && entries.length > 0) {
-            for (Arg a : entries)
-                if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.SELECT) {
-                    Mogram mog = null;
-                    if (((Fidelity) a).getPath() != null && ((Fidelity) a).getPath().length() > 0) {
-                        mog = this.getComponentMogram(((Fidelity) a).getPath());
-                    } else {
-                        mog = this;
+        try {
+            if (entries != null && entries.length > 0) {
+                for (Arg a : entries)
+                    if (a instanceof Projection) {
+                        if (((Projection)a).fiType.equals((Fi.Type.CXT_PRJ))) {
+                            Projection inPrj = ((Projection)a).getInPathProjection();
+                            Projection outPrj = ((Projection)a).getOutPathProjection();
+                            Fidelity cxtFi = ((Projection)a).getContextFidelity();
+                            if (inPrj != null) {
+                                inPathProjection = inPrj;
+                            }
+                            if (outPrj != null) {
+                                outPathProjection = outPrj;
+                            }
+                            if (cxtFi != null) {
+                                dataContext.selectFidelity(cxtFi.getName());
+                            }
+                        }
+                    } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.SELECT) {
+                        Mogram mog = null;
+                        if (((Fidelity) a).getPath() != null && ((Fidelity) a).getPath().length() > 0) {
+                            mog = this.getComponentMogram(((Fidelity) a).getPath());
+                        } else {
+                            mog = this;
+                        }
+                        if (mog != null) {
+                            fi = mog.selectFidelity(a.getName());
+                        }
+                    } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.META) {
+                        fi = selectMetafidelity((Fidelity) a);
+                    } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.CONTEXT) {
+                        if (contextFidelityManager == null) {
+                            dataContext.selectFidelity(a.getName());
+                        } else {
+                            contextFidelityManager.reconfigure((Fidelity)a);
+                        }
+                    } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.PROJECTION) {{
+                            contextFidelityManager.morph(a.getName());
+                        }
+
                     }
-                    if (mog != null) {
-                        fi = mog.selectFidelity(a.getName());
-                    }
-                } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.META) {
-                    fi = selectMetafidelity((Fidelity) a);
-                }
+            }
+            ServiceContext cxt = (ServiceContext) getContext();
+            if (cxt.getMorpher() != null) {
+                contextFidelityManager.morph();
+            }
+        } catch (ContextException e) {
+            throw new ConfigurationException(e);
         }
         return fi;
     }
@@ -921,12 +966,12 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public MogramStrategy getMogramStrategy() {
-        return mogramStrategy;
+    public ServiceStrategy getDomainStrategy() {
+        return domainStrategy;
     }
 
-    public void setModelStrategy(MogramStrategy strategy) {
-        mogramStrategy = strategy;
+    public void setModelStrategy(ServiceStrategy strategy) {
+        domainStrategy = strategy;
     }
 
     public boolean isBatch() {
@@ -1084,25 +1129,25 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     @Override
     public void reportException(String message, Throwable t) {
-        mogramStrategy.addException(t);
+        domainStrategy.addException(t);
     }
 
     @Override
     public void reportException(String message, Throwable t, ProviderInfo info) {
         // reimplement in sublasses
-        mogramStrategy.addException(t);
+        domainStrategy.addException(t);
     }
 
     @Override
     public void reportException(String message, Throwable t, Exerter provider) {
         // reimplement in sublasses
-        mogramStrategy.addException(t);
+        domainStrategy.addException(t);
     }
 
     @Override
     public void reportException(String message, Throwable t, Exerter provider, ProviderInfo info) {
         // reimplement in sublasses
-        mogramStrategy.addException(t);
+        domainStrategy.addException(t);
     }
 
     @Override
@@ -1197,8 +1242,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public Mogram clear() throws MogramException {
-        if (mogramStrategy != null) {
-            mogramStrategy.getOutcome().clear();
+        if (domainStrategy != null) {
+            domainStrategy.getOutcome().clear();
         }
         isValid = false;
         isChanged = true;
@@ -1239,5 +1284,90 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public void execDependencies(String path, Arg... args) throws ContextException {
         // implement in subclasses
+    }
+
+    public Projection getContextProjection() {
+        return contextProjection;
+    }
+
+    public void setContextProjection(Projection contextProjection) {
+        this.contextProjection = contextProjection;
+    }
+
+    @Override
+    public Projection getInPathProjection() {
+        return inPathProjection;
+    }
+
+    public void setInPathProjection(Projection inPathProjection) {
+        this.inPathProjection = inPathProjection;
+    }
+
+    @Override
+    public Projection getOutPathProjection() {
+        return outPathProjection;
+    }
+
+    public void setOutPathProjection(Projection outPathProjection) {
+        this.outPathProjection = outPathProjection;
+    }
+
+    public ServiceMogram copyFrom(ServiceMogram mogram) {
+        super.copyFrom(mogram);
+
+        // properties from ServiceMogram
+        this.multiMetaFi = mogram.multiMetaFi;
+        this.mogramId = mogram.mogramId;
+        this.parentId = mogram.parentId;
+        this.parent = mogram.parent;
+        this.parentPath = mogram.parentPath;
+        this.execPath = mogram.execPath;
+        this.sessionId = mogram.sessionId;
+        this.subjectId = mogram.subjectId;
+        this.subject = mogram.subject;
+        this.ownerId = mogram.ownerId;
+        this.runtimeId = mogram.runtimeId;
+        this.lsbId = mogram.lsbId;
+        this.msbId = mogram.msbId;
+        this.domainId = mogram.domainId;
+        this.subdomainId = mogram.subdomainId;
+        this.domainName = mogram.domainName;
+        this.subdomainName = mogram.subdomainName;
+        this.fiManager = mogram.fiManager;
+        this.projection = mogram.projection;
+        this.metaFiNames = mogram.metaFiNames;
+        this.profile = mogram.profile;
+        this.domainStrategy = mogram.domainStrategy;
+        this.differentiator = mogram.differentiator;
+        this.fdDifferentiator = mogram.fdDifferentiator;
+        this.globalDifferentiator = mogram.globalDifferentiator;
+        this.mdaFi = mogram.mdaFi;
+        this.couplings = mogram.couplings;
+        this.contextSelector = mogram.contextSelector;
+        this.status = mogram.status;
+        this.priority = mogram.priority;
+        this.description = mogram.description;
+        this.projectName = mogram.projectName;
+        this.isRevaluable = mogram.isRevaluable;
+        this.isSuper = mogram.isSuper;
+        this.isInitializable = mogram.isInitializable;
+        this.dbUrl = mogram.dbUrl;
+        this.multiMetaFi = mogram.multiMetaFi;
+        this.serviceMorphFidelity = mogram.serviceMorphFidelity;
+        this.principal = mogram.principal;
+        this.serviceFidelitySelector = mogram.serviceFidelitySelector;
+        this.creationDate = mogram.creationDate;
+        this.lastUpdateDate = mogram.lastUpdateDate;
+        this.goodUntilDate = mogram.goodUntilDate;
+        this.accessClass = mogram.accessClass;
+        this.isExportControlled = mogram.isExportControlled;
+        this.monitorSession = mogram.monitorSession;
+        this.builder = mogram.builder;
+        this.configFilename = mogram.configFilename;
+        this.dataContext = mogram.dataContext;
+        this.provider = mogram.provider;
+        this.isEvaluated = mogram.isEvaluated;
+
+        return this;
     }
 }

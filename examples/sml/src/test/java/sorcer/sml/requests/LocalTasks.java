@@ -33,7 +33,7 @@ public class LocalTasks {
 	public void exertTask() throws Exception  {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
+			cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
@@ -43,7 +43,7 @@ public class LocalTasks {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
-				value(cxt, outPaths("result/eval", "arg/x1"))));
+			value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
 
@@ -51,7 +51,7 @@ public class LocalTasks {
 	public void exertOpTask() throws Exception  {
 
 		Task t5 = task(sig(AdderImpl.class), op("add"),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
+			cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
@@ -65,7 +65,7 @@ public class LocalTasks {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
-				value(cxt, outPaths("result/eval", "arg/x1"))));
+			value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
 

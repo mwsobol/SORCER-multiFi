@@ -155,7 +155,7 @@ public class ServiceConsumer implements Consumer, SorcerConstants {
 				tokens = toArray(roots);
 			try {
 				InternalWebster.startWebster(null, tokens);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -341,7 +341,7 @@ public class ServiceConsumer implements Consumer, SorcerConstants {
     public static Webster prepareCodebase(String[] artifactCoords) {
         try {
             return InternalWebster.startWebster(artifactCoords);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

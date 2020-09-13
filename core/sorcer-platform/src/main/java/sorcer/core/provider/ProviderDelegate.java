@@ -57,7 +57,7 @@ import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.proxy.Partnership;
 import sorcer.core.proxy.ProviderProxy;
 import sorcer.core.service.Configurer;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.jini.jeri.RecordingInvocationDispatcher;
 import sorcer.jini.jeri.SorcerILFactory;
@@ -919,7 +919,7 @@ public class ProviderDelegate {
 						task.setService(provider);
 					}
 					// service processing
-					NetSignature tsig = (NetSignature) task
+					RemoteSignature tsig = (RemoteSignature) task
 						.getProcessSignature();
 
 					tsig.setProvider(provider);
@@ -1091,7 +1091,7 @@ public class ProviderDelegate {
 //					logger.trace("Executing service bean method: {} by: {} isContextual: {}",
 //								 m, config.getProviderName(), isContextual);
 //				task.getContext().setRoutine(task);
-//				((ServiceContext) task.getContext()).getMogramStrategy().setCurrentSelector(selector);
+//				((ServiceContext) task.getContext()).getDomainStrategy().setCurrentSelector(selector);
 //				String pf = task.getProcessSignature().getPrefix();
 //				if (pf != null)
 //					((ServiceContext) task.getContext()).setCurrentPrefix(pf);
@@ -1164,7 +1164,7 @@ public class ProviderDelegate {
 					logger.trace("Executing service bean method: {} by: {} isContextual: {}",
 						m, config.getProviderName(), isContextual);
 				task.getContext().setRoutine(task);
-				((ServiceContext) task.getContext()).getMogramStrategy().setCurrentSelector(selector);
+				((ServiceContext) task.getContext()).getDomainStrategy().setCurrentSelector(selector);
 				String pf = task.getProcessSignature().getPrefix();
 				if (pf != null)
 					((ServiceContext) task.getContext()).setCurrentPrefix(pf);
@@ -1224,7 +1224,7 @@ public class ProviderDelegate {
 			result = (Context) m.invoke(impl, new Object[] { pars[0], args });
 		} else {
 			logger.debug("getProviderName: {} invoking: {}" + getProviderName(), m);
-			logger.debug("imp: {} args: {}" + impl, Arrays.toString(pars));
+			logger.debug("imp: {} args: {}", impl, Arrays.toString(pars));
 			result = (Context) m.invoke(impl, pars);
 			logger.debug("result: {}", result);
 		}
@@ -1276,7 +1276,7 @@ public class ProviderDelegate {
 		// check if we do not look with the same exertion
 		Service recipient = null;
 		String prvName = task.getProcessSignature().getProviderName().getName();
-		NetSignature fm = (NetSignature) task.getProcessSignature();
+		RemoteSignature fm = (RemoteSignature) task.getProcessSignature();
 		ServiceID serviceID = fm.getServiceID();
 		Class prvType = fm.getServiceType();
 		logger.info("ProviderDelegate#forwardTask \nprvType: {}\nprvName = {}", prvType, prvName);
@@ -1392,14 +1392,14 @@ public class ProviderDelegate {
 				if (sig.getContextReturn() != null)
 					cxt.setContextReturn(sig.getContextReturn());
 
-				cxt.getMogramStrategy().setCurrentSelector(sig.getSelector());
+				cxt.getDomainStrategy().setCurrentSelector(sig.getSelector());
 				cxt.setCurrentPrefix(sig.getPrefix());
 
 				cxt.setRoutine(task);
 				task.setService(provider);
 
-				if (sig instanceof NetSignature)
-					((NetSignature) sig).setProvider(provider);
+				if (sig instanceof RemoteSignature)
+					((RemoteSignature) sig).setProvider(provider);
 				task.setStatus(Exec.FAILED);
 				logger.debug("DELEGATE EXECUTING TASK: " + task + " by sig: "
 					+ task.getProcessSignature() + " for context: " + cxt);

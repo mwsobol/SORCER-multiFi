@@ -27,11 +27,11 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Prc;
 import sorcer.core.deploy.DeploymentIdFactory;
 import sorcer.core.deploy.ServiceDeployment;
-import sorcer.core.invoker.ExertInvoker;
+import sorcer.core.invoker.RoutineInvoker;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.ServiceShell;
-import sorcer.core.signature.NetSignature;
-import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.LocalSignature;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Strategy.Access;
@@ -96,7 +96,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         Contextion cxtn = null;
         if (service != null && service instanceof Contextion) {
             cxtn = (Contextion)service;
-        } else if (service instanceof ObjectSignature) {
+        } else if (service instanceof LocalSignature) {
             if (controlContext.getFreeServices().get(((Signature) service).getName()) != null) {
                 FreeService  fsrv = ((FreeService)controlContext.getFreeServices().get(((Signature) service).getName()));
                 if (fsrv != null && fsrv instanceof FreeMogram) {
@@ -104,7 +104,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
                     return;
                 } else {
                     try {
-                        cxtn = (Contextion)((ObjectSignature) service).build();
+                        cxtn = (Contextion)((LocalSignature) service).build();
                         cxtn.setName(((Signature)service).getName());
                         cxtn.setContext(dataContext);
                     } catch (SignatureException | ContextException e) {
@@ -380,7 +380,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     public Service getService() throws SignatureException {
-        NetSignature ps = (NetSignature) getProcessSignature();
+        RemoteSignature ps = (RemoteSignature) getProcessSignature();
         return ps.getService();
     }
 
@@ -512,7 +512,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         return controlContext;
     }
 
-    public ControlContext getMogramStrategy() {
+    public ControlContext getDomainStrategy() {
         return controlContext;
     }
 
@@ -578,8 +578,8 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
             throws ContextException;
 
     public Context finalizeOutDataContext() throws ContextException {
-        if (dataContext.getMogramStrategy().getOutConnector() != null) {
-            dataContext.updateContextWith(dataContext.getMogramStrategy().getOutConnector());
+        if (dataContext.getDomainStrategy().getOutConnector() != null) {
+            dataContext.updateContextWith(dataContext.getDomainStrategy().getOutConnector());
         }
         return dataContext;
     }
@@ -597,12 +597,12 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         controlContext.addException(et);
     }
 
-    public ExertInvoker getInoker() {
-        return new ExertInvoker(this);
+    public RoutineInvoker getInoker() {
+        return new RoutineInvoker(this);
     }
 
-    public ExertInvoker getInvoker(String name) {
-        ExertInvoker invoker = new ExertInvoker(this);
+    public RoutineInvoker getInvoker(String name) {
+        RoutineInvoker invoker = new RoutineInvoker(this);
         invoker.setName(name);
         return invoker;
     }
@@ -770,7 +770,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         List<Signature> allSigs = getAllSignatures();
         List<Signature> netSignatures = new ArrayList<Signature>();
         for (Signature s : allSigs) {
-            if (s instanceof NetSignature)
+            if (s instanceof RemoteSignature)
                 netSignatures.add(s);
         }
         Collections.sort(netSignatures);
@@ -782,7 +782,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         List<Signature> allSigs = getAllTaskSignatures();
         List<Signature> netSignatures = new ArrayList<Signature>();
         for (Signature s : allSigs) {
-            if (s instanceof NetSignature)
+            if (s instanceof RemoteSignature)
                 netSignatures.add(s);
         }
         Collections.sort(netSignatures);
@@ -895,7 +895,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
                     && !getProcessSignature().getServiceType()
                     .isAssignableFrom(Spacer.class)) {
                 sig.setServiceType(Spacer.class);
-                ((NetSignature) sig).setSelector("exert");
+                ((RemoteSignature) sig).setSelector("exert");
                 sig.getProviderName().setName(ANY);
                 sig.setType(Signature.Type.PROC);
                 getControlContext().setAccessType(access);
@@ -904,7 +904,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
                     .isAssignableFrom(Jobber.class)) {
                 if (sig.getServiceType().isAssignableFrom(Spacer.class)) {
                     sig.setServiceType(Jobber.class);
-                    ((NetSignature) sig).setSelector("exert");
+                    ((RemoteSignature) sig).setSelector("exert");
                     sig.getProviderName().setName(ANY);
                     sig.setType(Signature.Type.PROC);
                     getControlContext().setAccessType(access);

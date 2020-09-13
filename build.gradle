@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
+plugins {
+    id 'org.owasp.dependencycheck' version '5.2.2' apply false
+}
+
 /* Grab the current branch from git and append to version */
 String ref = new File(rootProject.projectDir, ".git/HEAD").text
 int ndx = ref.lastIndexOf("/")
 String branch = ref.substring(ndx+1).trim()
 String branchRef = branch.equals("master")?"":"-$branch"
 
-version = "8.7.14$branchRef"
+version = "8.8.2.6$branchRef"
 
 apply plugin: 'idea'
 idea {
@@ -77,6 +81,8 @@ allprojects {
 }
 
 subprojects {
+    apply from: "${rootDir}/gradle/cve.gradle"
+
     if (project.name != "examples" && project.name != "sorcer-int-tests") {
         apply plugin: "maven"
         apply plugin: "maven-publish"
@@ -122,22 +128,22 @@ subprojects {
         repositories {
             mavenLocal()
             if (!enclave) {
+                maven { url "https://dl.bintray.com/dreedyman/maven"}
                 maven { url "http://www.rio-project.org/maven2" }
-                maven { url"http://pol.sytes.net/repository/public/" }
+                //maven { url"http://pol.sytes.net/repository/public/" }
                 mavenCentral()
             } else {
                 maven { url "http://$enclaveRepo" }
             }
         }
     }
-
 }
 
-def isAnAggregateTest(graph) {
+static def isAnAggregateTest(graph) {
     return (graph.hasTask(":tests") || graph.hasTask(":allTests"))
 }
 
-def isAnAllTest(graph, name) {
+static def isAnAllTest(graph, name) {
     return (graph.hasTask(":allTests") || graph.hasTask("${name}:allTest"))
 }
 
@@ -152,12 +158,16 @@ gradle.taskGraph.whenReady { graph ->
         project.subprojects { project ->
             tasks.withType(Test) {
                 if(isAnAggregateTest(graph))
-                    reports.html.enabled = false
+                    reports.html.enabled = true
                 // to debug Rio tests with InteliJ comment 159-163
                 if(!isAnAllTest(graph, project.path)) {
                     useJUnit {
                         excludeCategories 'org.sorcer.test.TestsRequiringRio'
                     }
+                } else {
+                   if (useHttps()) {
+                       systemProperty "org.rioproject.keystore", "${rioHome}/config/security/rio-cert.ks"
+                   }
                 }
             }
         }
@@ -165,7 +175,7 @@ gradle.taskGraph.whenReady { graph ->
 }
 
 task tests(type: TestReport, dependsOn: "bootSorcer") {
-    description = "Aggregate test runner, runs tests that don't require RIO in the project."
+    description = "Aggregate test runner, runs tests that don't require Rio in the project."
     destinationDir = file("$buildDir/reports/tests")
 
     project.subprojects { project ->

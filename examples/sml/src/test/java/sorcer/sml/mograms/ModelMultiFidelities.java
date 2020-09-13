@@ -570,11 +570,11 @@ public class ModelMultiFidelities {
         sig divide = sig("divide", Divider.class,
             result("y5", inPaths("arg/x1", "arg/x2")));
 
-        mog t4 = task("t4",
+        cxtn t4 = task("t4",
             sig("multiply", MultiplierImpl.class,
                 result("result/y", inPaths("arg/x1", "arg/x2"))));
 
-        mog t5 = task("t5",
+        cxtn t5 = task("t5",
             sig("add", AdderImpl.class,
                 result("result/y", inPaths("arg/x1", "arg/x2"))));
 
@@ -729,14 +729,12 @@ public class ModelMultiFidelities {
                 value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
         Discipline morphDis = dsc(
-            ctxFi("cxtn1", sig("cxtn1", ModelMultiFidelities.class, "getMorphingModel")),
+            cxtnFi("cxtn1", sig("cxtn1", ModelMultiFidelities.class, "getMorphingModel")),
             dspFi("dspt1", mdlDispatch));
 
         // out is the discipline output
         Context out  = eval(morphDis, fi("cxtn1", "dspt1"));
 
         assertTrue(value(out, "morpher3").equals(920.0));
-
-
     }
 }

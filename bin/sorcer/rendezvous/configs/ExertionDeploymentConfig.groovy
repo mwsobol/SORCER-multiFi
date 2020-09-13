@@ -10,7 +10,7 @@ import sorcer.util.Sorcer
 class ExertionDeploymentConfig {
 	
 	def appendJars(def dlJars) {
-		def commonDLJars = ["sorcer-prv-dl.jar", "jsk-dl.jar", "rio-api.jar", "serviceui.jar", "jmx-lookup.jar"]
+		def commonDLJars = ["sorcer-prv-dl.jar", "jsk-dl.jar", "serviceui.jar", "jmx-lookup.jar"]
 		dlJars.addAll(commonDLJars)
 		return dlJars as String[]
 	}

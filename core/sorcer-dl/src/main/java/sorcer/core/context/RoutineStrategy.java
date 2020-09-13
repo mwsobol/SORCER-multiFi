@@ -17,9 +17,9 @@
 package sorcer.core.context;
 
 import sorcer.service.Context;
-import sorcer.service.MogramStrategy;
+import sorcer.service.ServiceStrategy;
 import sorcer.service.Strategy;
 
-public interface RoutineStrategy extends MogramStrategy, Context<Object>, Strategy {
+public interface RoutineStrategy extends ServiceStrategy, Context<Object>, Strategy {
 
 }

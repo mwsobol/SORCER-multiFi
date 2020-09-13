@@ -27,13 +27,15 @@ import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.req.Req;
+import sorcer.core.context.model.req.RequestModel;
 import sorcer.core.context.model.req.Transmodel;
+import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.service.Governance;
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.Exertion;
 import sorcer.core.provider.exerter.ServiceShell;
-import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
 import sorcer.service.Discipline;
@@ -159,7 +161,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Context eval(Request request, Context context)
+    public static ServiceContext eval(Request request, Context context)
             throws ContextException {
         Context rc = null;
         try {
@@ -179,7 +181,7 @@ public class operator extends Operator {
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
-        return rc;
+        return (ServiceContext)rc;
     }
 
     public static void clear(Discipline discipline) throws MogramException {
@@ -190,7 +192,7 @@ public class operator extends Operator {
         throws ContextException {
         Context out = null;
         try {
-            Object target = ((ObjectSignature) signature).build();
+            Object target = ((LocalSignature) signature).build();
 
             if (target instanceof Discipline) {
                 out = (Context) ((Discipline) target).execute(args);
@@ -274,7 +276,7 @@ public class operator extends Operator {
         if (request instanceof DataContext) {
             return value((Context)request, path$domain);
         } else {
-            return response((Model)request, path$domain);
+            return response((Context)request, path$domain);
         }
     }
 
@@ -356,6 +358,10 @@ public class operator extends Operator {
         try {
             List<Arg> argl = new ArrayList();
             List<Path> paths = new ArrayList();;
+            FidelityList pthFis = new FidelityList();;
+            Fidelity prjFi = null;
+            Fidelity cxtFi = null;
+            Projection cxtPrj = null;
             for (Object item : items) {
                 if (item instanceof Path) {
                     paths.add((Path) item);
@@ -367,12 +373,58 @@ public class operator extends Operator {
                         && ((List) item).size() > 0
                         && ((List) item).get(0) instanceof Path) {
                     paths.addAll((List<Path>) item);
+                } else if (item instanceof Projection) {
+                    cxtPrj = (Projection)item;
+                } else if (item instanceof Fidelity) {
+                    Fidelity fi = (Fidelity)item;
+                    if (fi.getFiType().equals(Fi.Type.FROM_TO)) {
+                        pthFis.add((Fidelity) item);
+                    } else if (fi.getFiType().equals(Fi.Type.CONTEXT)) {
+                        cxtFi = fi;
+                    } else if (fi.getFiType().equals(Fi.Type.PROJECTION)) {
+                        prjFi = fi;
+                    } else {
+                        argl.add((Arg) item);
+                    }
                 } else if (item instanceof Arg) {
                     argl.add((Arg) item);
                 }
             }
+            if (pthFis.size() > 0) {
+                ((ServiceContext)model).remap(new Projection(pthFis));
+            }
             if (paths != null && paths.size() > 0) {
-                model.getMogramStrategy().setResponsePaths(paths);
+                model.getDomainStrategy().setResponsePaths(paths);
+            }
+            ContextFidelityManager cfmgr = ((ServiceContext)model).getContextFidelityManager();
+            if (cxtFi != null) {
+                ServiceContext dcxt = (ServiceContext) cfmgr.getDataContext();
+                if (dcxt != null) {
+                    dcxt.selectFidelity(cxtFi.getName());
+                    ((ServiceContext) model).append(dcxt);
+                }
+            }
+            if (prjFi != null) {
+                Projection prj = (Projection) cfmgr.getFidelity(prjFi.getName());
+                if (prj != null) {
+                    if (model.getInPathProjection() != null) {
+                        ((ServiceContext)cfmgr.getDataContext()).remap(model.getInPathProjection());
+                    }
+                    if (model.getOutPathProjection() != null) {
+                        ((ServiceContext)cfmgr.getDataContext()).setMultiFiPaths(((ServiceContext)model.getContext()).getMultiFiPaths());
+                        ((ServiceContext)cfmgr.getDataContext()).remap(model.getOutPathProjection());
+                    }
+                    cfmgr.morph(prj.getName());
+                }
+            }
+            if (cxtPrj != null) {
+                Fidelity fi = cxtPrj.getContextFidelity();
+                if (fi != null) {
+                    ServiceContext dcxt = (ServiceContext) cfmgr.getDataContext();
+                    dcxt.selectFidelity(cxtFi.getName());
+                    ((ServiceContext) model).append((Context) dcxt.getMultiFi().getSelect());
+                }
+                ((ServiceContext) model).setProjection(cxtPrj);
             }
             Arg[] args = new Arg[argl.size()];
             argl.toArray(args);
@@ -384,8 +436,17 @@ public class operator extends Operator {
                 }
             }
             model.substitute(args);
-            return (ServiceContext) model.getResponse(args);
-        } catch (RemoteException e) {
+            model.setValid(false);
+            if (cfmgr != null && cfmgr.getDataContext().getMorpher() != null) {
+                ((ServiceContext)model).getContextFidelityManager().morph();
+            }
+            ServiceContext out = (ServiceContext) model.getResponse(args);
+            model.setValid(true);
+            if (cfmgr != null && cfmgr.getDataContext().getMorpher() != null) {
+                ((ServiceContext)model).getContextFidelityManager().morph();
+            }
+            return out;
+        } catch (RemoteException | ConfigurationException e) {
             throw new ContextException(e);
         }
     }
@@ -410,7 +471,7 @@ public class operator extends Operator {
                 }
             }
             if (paths != null && paths.size() > 0) {
-                exertion.getMogramStrategy().setResponsePaths(paths);
+                exertion.getDomainStrategy().setResponsePaths(paths);
             }
             Arg[] args = new Arg[argl.size()];
             argl.toArray(args);

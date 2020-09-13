@@ -42,7 +42,7 @@ import static sorcer.core.SorcerConstants.*;
  * @author Dennis Reedy
  */
 public class ScratchManagerSupport implements ScratchManager, Serializable {
-    static final long serialVersionUID = 1l;
+    static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(ScratchManagerSupport.class);
     private final AtomicReference<DataService> dataServiceRef = new AtomicReference<>();
     private Properties properties;
@@ -162,7 +162,7 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
         if(System.getProperty("os.name").startsWith("Windows"))
             sdf  = new SimpleDateFormat("MM-dd-HH-mm");
         else
-            sdf = new SimpleDateFormat("MM-dd-HH-mm-SSS");
+            sdf = new SimpleDateFormat("MM-dd-HH-mm-sss");
         Calendar c = Calendar.getInstance();
         long time = c.getTime().getTime();
 

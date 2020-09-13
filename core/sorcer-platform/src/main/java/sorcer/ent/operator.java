@@ -143,6 +143,9 @@ public class operator extends Operator {
 	}
 
 	public static Req req(String name, MorphFidelity fidelity) {
+		fidelity.setPath(name);
+		fidelity.getFidelity().setPath(name);
+		fidelity.getFidelity().setName(name);
 		Req service = new Req(name, fidelity);
 		return service;
 	}
@@ -546,6 +549,9 @@ public class operator extends Operator {
 		return 	invoker(expression, args);
 		}
 
+	public static ServiceInvoker gvy(String expression, Args args) {
+		return new GroovyInvoker(expression, args.args());
+	}
 	public static ServiceInvoker invoker(String expression, Args args) {
 		return new GroovyInvoker(expression, args.args());
 	}
@@ -573,7 +579,7 @@ public class operator extends Operator {
 	}
 
 	public static ServiceInvoker invoker(Routine exertion) {
-        return new ExertInvoker(exertion);
+        return new RoutineInvoker(exertion);
     }
 
     public static ServiceInvoker invoker(Args args) {
@@ -652,16 +658,16 @@ public class operator extends Operator {
 		return mi;
 	}
 
-	public static ExertInvoker exertInvoker(String name, Routine exertion, String path, Prc... callEntries) {
-		return new ExertInvoker(name, exertion, path, callEntries);
+	public static RoutineInvoker exertInvoker(String name, Routine exertion, String path, Prc... callEntries) {
+		return new RoutineInvoker(name, exertion, path, callEntries);
 	}
 
-	public static ExertInvoker exertInvoker(Routine exertion, String path, Prc... callEntries) {
-		return new ExertInvoker(exertion, path, callEntries);
+	public static RoutineInvoker exertInvoker(Routine exertion, String path, Prc... callEntries) {
+		return new RoutineInvoker(exertion, path, callEntries);
 	}
 
-	public static ExertInvoker exertInvoker(Routine exertion, Prc... callEntries) {
-		return new ExertInvoker(exertion, callEntries);
+	public static RoutineInvoker exertInvoker(Routine exertion, Prc... callEntries) {
+		return new RoutineInvoker(exertion, callEntries);
 	}
 
 	public static CmdInvoker cmdInvoker(String name, String cmd, Prc... callEntries) {
@@ -788,7 +794,7 @@ public class operator extends Operator {
 		return entry;
 	}
 
-	public static Entry inv(Entry ent) {
+	public static Entry cached(Entry ent) {
 		ent.setCached(true);
 		return ent;
 	}
@@ -807,6 +813,14 @@ public class operator extends Operator {
 	public static Entry ent(Identifiable object) {
 		return new Entry(object.getName(), object);
 	}
+
+    public static Entry ent(Fidelity<Path> multiFipath, Object value, Arg... args) {
+	    Entry mpe = ent(multiFipath.getSelect().getName(), value, args);
+	    mpe.setMultiFiPath(multiFipath);
+		multiFipath.setName(multiFipath.getSelect().path);
+		multiFipath.setPath(mpe.getName());
+		return mpe;
+    }
 
     public static Entry ent(String path, Object value, Arg... args) {
 		Entry entry = null;
@@ -878,7 +892,7 @@ public class operator extends Operator {
 						entry.setScope(cxt);
 					}
 				} else if (args.length == 1 && args[0] instanceof Function) {
-					entry.setScope(context((Function) args[0]));
+					entry.setScope((Context) context((Function) args[0]));
 				} else if (args.length == 1 && args[0] instanceof Service) {
 					entry = new Prc(path, value, args[0]);
 				}
@@ -894,7 +908,7 @@ public class operator extends Operator {
 		return req(sig);
 	}
 
-	public static Slot<Fidelity, Service> ent(Fidelity selectFi, Service service) throws ConfigurationException {
+	public static Slot<Fidelity, Service> slot(Fidelity selectFi, Service service) throws ConfigurationException {
 		Slot<Fidelity, Service> assoc = new Slot(selectFi, service);
 		if (service instanceof Fidelity) {
 			Fidelity fi = (Fidelity)service;
@@ -976,68 +990,74 @@ public class operator extends Operator {
 		return ie;
 	}
 
-    public static Req lmb(String path, Args args) {
+
+    public static Req fxn(String path, Args args) {
         Req srv = new Req(path, path);
         srv.setType(Functionality.Type.LAMBDA);
         return srv;
     }
 
-    public static Req lmb(String path, Service service, Args args) {
-        Req srv = new Req(path, path, service, args.getNameArray());
-        srv.setType(Functionality.Type.LAMBDA);
-        return srv;
-    }
 
-    public static Req lambda(String path, Service service, Args args) {
+    public static Req fxn(String path, Service service, Args args) {
 		Req srv = new Req(path, path, service, args.getNameArray());
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static Req lambda(String path, Service service, String name, Args args) {
+	public static Req fxn(String path, Service service, String name, Args args) {
 		Req srv = new Req(name, path, service,  args.getNameArray());
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static Req lambda(String name, String path, Client client) {
+	public static Req fxn(String name, String path, Client client) {
 		Req srv = new Req(name, path, client);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> Req lambda(String path, Callable<T> call) {
+	public static <T> Req fxn(String path, Callable<T> call) {
 		Req srv = new Req(path, call);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> Req lambda(String path, ValueCallable<T> call) {
+	public static <T> Req fxn(String path, ValueCallable<T> call) {
 		Req srv = new Req(path, call);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> Req lambda(String path, ValueCallable<T> call, Args args) {
+	public static <T> Req fxn(String path, ValueCallable<T> call, Args args) {
 		Req srv = new Req(path, call, args.getNameArray());
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> Req lambda(String path, ValueCallable<T> lambda, Context context, Args args)
+	public static <T> Req fxn(String path, ValueCallable<T> lambda, Context context, Args args)
 			throws InvocationException {
 		Req srv = new Req(path, invoker(lambda, context, args));
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> Req lambda(String path, EntryCollable call) {
+    public static <T> Req fxn(Fidelity<Path> multiFipath, EntryCollable call) {
+		Req srv = new Req(multiFipath.getSelect().getName(), call);
+        srv.setMultiFiPath(multiFipath);
+		multiFipath.setName(multiFipath.getSelect().path);
+		multiFipath.setPath(srv.getName());
+		srv.setType(Functionality.Type.LAMBDA);
+        srv.setMultiFiPath(multiFipath);
+        return srv;
+    }
+
+	public static <T> Req fxn(String path, EntryCollable call) {
 		Req srv = new Req(path, call);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
-	public static <T> Req lambda(String path, ValueCallable<T> call, Context.Return returnPath) {
+	public static <T> Req fxn(String path, ValueCallable<T> call, Context.Return returnPath) {
 		Req srv = new Req(path, call, returnPath);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;

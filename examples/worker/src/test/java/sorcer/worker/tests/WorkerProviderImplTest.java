@@ -46,8 +46,8 @@ public class WorkerProviderImplTest {
 			private static final long serialVersionUID = 1L;
 
 			public Context<Integer> exec(Context cxt) throws InvalidWork, ContextException {
-				int arg1 = (Integer)value(cxt, "req/arg/1");
-				int arg2 = (Integer)value(cxt, "req/arg/2");
+				int arg1 = (Integer)value(cxt, "fxn/arg/1");
+				int arg2 = (Integer)value(cxt, "fxn/arg/2");
 				int result =  arg1 * arg2;
 				put(cxt, "prv/result", result);
 				cxt.setReturnValue(result);
@@ -56,10 +56,10 @@ public class WorkerProviderImplTest {
 		};
 
 		context = context("work", 
-				operator.ent("req/key", hostname),
-				operator.ent("req/arg/1", 11),
-				operator.ent("req/arg/2", 101),
-				operator.ent("req/work", work),
+				operator.ent("fxn/key", hostname),
+				operator.ent("fxn/arg/1", 11),
+				operator.ent("fxn/arg/2", 101),
+				operator.ent("fxn/work", work),
 				operator.ent("to/prv/key", "Worker Provider"));
 	}
 

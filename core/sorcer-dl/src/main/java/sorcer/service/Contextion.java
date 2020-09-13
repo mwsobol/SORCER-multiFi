@@ -19,7 +19,6 @@ package sorcer.service;
 
 
 import net.jini.core.transaction.Transaction;
-import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -118,7 +117,11 @@ public interface Contextion extends Request, Scopable {
 	 */
 	public Context.Return getContextReturn();
 
-	public MogramStrategy getMogramStrategy();
+	public ServiceStrategy getDomainStrategy();
+
+	public Projection getInPathProjection();
+
+	public Projection getOutPathProjection();
 
 	public List<Contextion> getContextions(List<Contextion> contextionList);
 

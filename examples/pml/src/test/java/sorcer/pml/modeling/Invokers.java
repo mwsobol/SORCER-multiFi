@@ -35,7 +35,7 @@ import static sorcer.so.operator.*;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/cml")
+@ProjectContext("examples/pml")
 public class Invokers {
 	private final static Logger logger = LoggerFactory.getLogger(Invokers.class);
 
@@ -77,11 +77,11 @@ public class Invokers {
 	public void lambdaInvoker() throws Exception {
 
 		Model mo = model(val("x", 10.0), val("y", 20.0),
-				ent(invoker("lambda",
+				ent(invoker("fxn",
 					(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
 					args("x", "y"))));
-//		logger.info("invoke eval: " + eval(mo, "lambda"));
-		assertEquals(exec(mo, "lambda"), 60.0);
+//		logger.info("invoke eval: " + eval(mo, "fxn"));
+		assertEquals(exec(mo, "fxn"), 60.0);
 	}
 
 	@Test
@@ -154,7 +154,7 @@ public class Invokers {
     public void multiFiEvaluator() throws Exception {
 
         Evaluator mfeval = mfEval(
-                invoker("lambda",
+                invoker("fxn",
                         (Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
                         args("x", "y")),
                 invoker("expr", "x - y", args("x", "y")));
@@ -164,7 +164,7 @@ public class Invokers {
                 inVal("y", 80.0),
                 result("result/z")));
 
-//        logger.info("lambda: " + exec(mfeval));
+//        logger.info("fxn: " + exec(mfeval));
         assertEquals(130.0, exec(mfeval));
         // change signature fidelity
 //        logger.info("expr: " + exec(mfeval, fi("expr")));
@@ -196,7 +196,7 @@ public class Invokers {
 	public void multiFiProcedure() throws Exception {
 
 		Prc mfprc = mfPrc(
-			invoker("lambda",
+			invoker("fxn",
 				(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
 				args("x", "y")),
 			invoker("expr", "x - y", args("x", "y")));

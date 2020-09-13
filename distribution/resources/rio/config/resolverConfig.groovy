@@ -28,7 +28,7 @@
 String hostName = InetAddress.getLocalHost().getHostName()
 String address = InetAddress.getLocalHost().getHostAddress()
 boolean onEnclave = (hostName.endsWith("wpafb.af.mil") || address.startsWith("10.131"))
-	
+
 resolver {
     jar = "${rioHome()}/lib/resolver/resolver-aether-<%rio.version%>.jar"
 
@@ -36,8 +36,9 @@ resolver {
         if (onEnclave) {
             remote = ["repo": "http://10.131.7.138:7001"]
         } else {
-            remote = ["rio"    : "http://www.rio-project.org/maven2",
-                      "central": "http://repo1.maven.org/maven2"]
+            remote = ["bintray": "https://dl.bintray.com/dreedyman/Rio",
+                      "rio"    : "http://www.rio-project.org/maven2",
+                      "central": "https://repo1.maven.org/maven2"]
         }
         flatDirs = [new File(sorcerHome() as String, "lib/sorcer/lib"),
                     new File(sorcerHome() as String, "lib/sorcer/lib-dl"),
@@ -46,13 +47,13 @@ resolver {
                     new File(rioHome() as String, "lib-dl"),
                     new File(rioHome() as String, "config/poms"),
                     new File(rioHome() as String, "lib")]
-    }   
+    }
 }
 
-def sorcerHome() {
+static def sorcerHome() {
     return System.getProperty("sorcer.home")
 }
 
-def rioHome() {
+static def rioHome() {
     return System.getProperty("rio.home")
 }

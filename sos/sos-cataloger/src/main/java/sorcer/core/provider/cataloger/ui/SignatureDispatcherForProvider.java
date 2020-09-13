@@ -23,8 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetTask;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.service.Exerter;
-import sorcer.core.signature.NetSignature;
 import sorcer.service.Context;
 import sorcer.service.ContextManagement;
 import sorcer.service.Task;
@@ -448,7 +448,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 	public Context exertService(Context theContext) {
 
 		try {
-			NetSignature method = new NetSignature(model
+			RemoteSignature method = new RemoteSignature(model
 					.getSelectedMethod(), model.getSelectedInterface());
 			Task task = new NetTask(model.getSelectedInterfaceName()
 					+ model.getSelectedMethod(), method);
