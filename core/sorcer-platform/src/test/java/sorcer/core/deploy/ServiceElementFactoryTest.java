@@ -103,7 +103,7 @@ public class ServiceElementFactoryTest {
     }
 
     @Test
-    public void testConfigurationAsHTTP() throws IOException, ConfigurationException {
+    public void testConfigurationAsHTTP() throws Exception {
         String configDirToServe = getConfigDir();
         Webster webster = new Webster(0, configDirToServe, null);
         try {

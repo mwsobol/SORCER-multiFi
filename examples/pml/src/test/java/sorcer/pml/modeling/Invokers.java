@@ -35,7 +35,7 @@ import static sorcer.so.operator.*;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/cml")
+@ProjectContext("examples/pml")
 public class Invokers {
 	private final static Logger logger = LoggerFactory.getLogger(Invokers.class);
 

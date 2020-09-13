@@ -59,7 +59,7 @@ public class StartSorcerBrowser {
 				tokens = toArray(roots);
 			try {
 				InternalWebster.startWebster(tokens);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

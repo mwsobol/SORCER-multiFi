@@ -24,11 +24,13 @@ import javax.security.auth.login.LoginContext;
 
 import net.jini.config.Configuration;
 import net.jini.config.ConfigurationProvider;
+import org.rioproject.security.SecureEnv;
 import sorcer.ssb.jini.studio.CodeServer;
 
 public class StartBrowser {
 	public static void main(String[] args) {
 		try {
+			SecureEnv.setup();
 			if (args.length > 0) {
 				final Configuration config = ConfigurationProvider.getInstance(args);
 				ServiceBrowserUI._config = config;
@@ -40,11 +42,9 @@ public class StartBrowser {
 					login.login();
 					ServiceBrowserUI.LOGGED_IN = true;
 				}
-				PrivilegedExceptionAction action = new PrivilegedExceptionAction() {
-					public Object run() throws Exception {
-						ServiceBrowser.start(null, false, config);
-						return null;
-					}
+				PrivilegedExceptionAction<?> action = () -> {
+					ServiceBrowser.start(null, false, config);
+					return null;
 				};
 				if (login != null) {
 					CodeServer.useHttpmd();

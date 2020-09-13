@@ -22,7 +22,7 @@ import static sorcer.so.operator.*;
  * @author Mike Sobolewski
  */
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/cml")
+@ProjectContext("examples/pml")
 public class EntryModelServices {
 	private final static Logger logger = LoggerFactory.getLogger(EntryModelServices.class
 			.getName());

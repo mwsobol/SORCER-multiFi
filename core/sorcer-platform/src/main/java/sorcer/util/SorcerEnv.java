@@ -682,7 +682,8 @@ public class SorcerEnv extends SOS {
 	 * @return the current URL for the SORCER class server.
 	 */
 	public static String getWebsterUrl() {
-		return "http://" + getWebsterInterface() + ':' + getWebsterPort();
+		String protocol = useHttps() ? "https" : "http";
+		return protocol + "://" + getWebsterInterface() + ':' + getWebsterPort();
 	}
 
 	/**
@@ -692,6 +693,11 @@ public class SorcerEnv extends SOS {
 	 */
 	public static String getDataServerUrl() {
 		return "http://" + getDataServerInterface() + ':' + getDataServerPort();
+	}
+
+	public static boolean useHttps() {
+		String useHttps = System.getProperty("org.rioproject.keystore");
+		return useHttps != null;
 	}
 
 	/**

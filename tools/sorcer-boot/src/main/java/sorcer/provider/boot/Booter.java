@@ -41,7 +41,7 @@ import java.util.*;
  */
 public class Booter implements SorcerConstants {
 	private static final String COMPONENT = "sorcer.provider.boot";
-	private static Logger logger = LoggerFactory.getLogger(COMPONENT);
+	private static final Logger logger = LoggerFactory.getLogger(COMPONENT);
 
 	/**
 	 * Code server (wester) port
@@ -63,7 +63,7 @@ public class Booter implements SorcerConstants {
 	/**
 	 * All the properties from sorcer.env.
 	 */
-	private static Properties props = new Properties();
+	private static final Properties props = new Properties();
 
 	static {
 		try {
@@ -111,9 +111,9 @@ public class Booter implements SorcerConstants {
 	 * @throws java.net.UnknownHostException
 	 *             if no IP address for the local host could be found.
 	 */
-	public static String getCodebase(String jar, String port)
+	public static String getCodebase(String jar, String port, boolean useHttps)
 			throws java.net.UnknownHostException {
-		return (getCodebase(jar, getHostAddress(), port));
+		return (getCodebase(jar, getHostAddress(), port, useHttps));
 	}
 
 	/**
@@ -131,9 +131,9 @@ public class Booter implements SorcerConstants {
 	 * @throws java.net.UnknownHostException
 	 *             if no IP address for the local host could be found.
 	 */
-	public static String getCodebase(String[] jars, String port)
+	public static String getCodebase(String[] jars, String port, boolean useHttps)
 			throws java.net.UnknownHostException {
-		return (getCodebase(jars, getHostAddress(), port));
+		return (getCodebase(jars, getHostAddress(), port, useHttps));
 	}
 
 	/**
@@ -148,7 +148,23 @@ public class Booter implements SorcerConstants {
 	 * @return the codebase for the JAR
 	 */
 	public static String getCodebase(String jar, String address, String port) {
-		return (com.sun.jini.config.ConfigUtil.concat(new Object[]{"http://",
+		return getCodebase(jar, address, port, false);
+	}
+
+	/**
+	 * Return the codebase for the provided JAR key, port and address
+	 *
+	 * @param jar
+	 *            The JAR to use
+	 * @param address
+	 *            The address to use when constructing the codebase
+	 * @param port
+	 *            The port to use when constructing the codebase
+	 * @return the codebase for the JAR
+	 */
+	public static String getCodebase(String jar, String address, String port, boolean useHttps) {
+		String protocol = useHttps ? "https" : "http";
+		return (com.sun.jini.config.ConfigUtil.concat(new Object[]{protocol + "://",
 				address, ":", port, "/" + jar}));
 	}
 
@@ -164,15 +180,31 @@ public class Booter implements SorcerConstants {
 	 * @return the codebase for the JAR
 	 */
 	public static String getCodebase(String[] jars, String address, String port) {
+		return getCodebase(jars, address, port, false);
+	}
+
+	/**
+	 * Return the codebase for the provided JAR names, port and address
+	 *
+	 * @param jars
+	 *            Array of JAR names
+	 * @param address
+	 *            The address to use when constructing the codebase
+	 * @param port
+	 *            The port to use when constructing the codebase
+	 * @return the codebase for the JAR
+	 */
+	public static String getCodebase(String[] jars, String address, String port, boolean useHttps) {
 		int p = new Integer(port);
 		if (p <= 0)
 			Booter.port = getPort();
 
+		String protocol = useHttps ? "https" : "http";
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < jars.length; i++) {
 			if (i > 0)
 				buffer.append(" ");
-			buffer.append("http://").append(address).append(":")
+			buffer.append(protocol).append("://").append(address).append(":")
 					.append(Booter.port).append("/").append(jars[i]);
 		}
 		return (buffer.toString());

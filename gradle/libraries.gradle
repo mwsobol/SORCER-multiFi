@@ -22,7 +22,7 @@ ext {
 	sorcerVersion = version
 
 	groovyVersion = "2.4.19"
-	rioVersion = "5.13.0"
+	rioVersion = "5.14.0"
 	riverVersion = "2.2.2"
 	slf4jVersion = "1.7.25"
 	blitzVersion = "2.1.7"
@@ -69,7 +69,17 @@ ext {
     } else {
         websterAddress = sorcerEnv.provider.webster.interface
     }
-    websterUrl = "http://${websterAddress}:${websterPort}"
+    useHttps = {
+        def set = System.getProperties().stringPropertyNames()
+        "https" in set
+    }
+
+    if (useHttps()) {
+        websterUrl = "https://${websterAddress}:${websterPort}"
+    } else {
+        websterUrl = "http://${websterAddress}:${websterPort}"
+    }
+
     println "Webster URL: ${websterUrl}"
 
     startClassPath = files("${rioHome}/lib/groovy-all-${groovyVersion}.jar",

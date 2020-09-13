@@ -70,6 +70,7 @@ dependencies {
     compile project(':sorcer-lib')
     compile project(':sos-db-prv')
     testCompile project(':sorcer-test')
+    testRuntime "org.rioproject:webster:${rioVersion}"
     testRuntime libs.slf4j
     testRuntime libs.logback
 }
@@ -86,7 +87,7 @@ def repoPath() {
 bootme {
     description = 'Starts up a service provider'
     starterConfig = file("${projectDir.path}/configs/StartCoffeeMakerConfig.groovy")
-    systemProperties = ["relative.repo.path" : repoPath()]
+    systemProperties = ["relative.repo.path" : repoPath(), "webster.url" : websterUrl]
 //    spawn = false
 //    debug = true
 }
@@ -139,7 +140,7 @@ test {
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
     }
-//    dependsOn([install])
+    //dependsOn([install])
     dependsOn([install, bootme])
     finalizedBy(haltme)
 }

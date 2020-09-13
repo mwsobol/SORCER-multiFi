@@ -61,6 +61,10 @@ class BootMe extends DefaultTask {
         args << "-Dproject.id=${project.name}"
         args << '-Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.url|org.rioproject.url"'
 
+        def projTestProps = ((Test)project.getTasks().getByName("test")).getSystemProperties()
+        if(projTestProps.get("org.rioproject.keystore") != null) {
+            args << "-Dorg.rioproject.keystore=${projTestProps.get("org.rioproject.keystore")}"
+        }
         // use distribution or project specific java.util.logging.config.file
         if (System.getProperty("java.util.logging.config.file") != null)
             args << "-Djava.util.logging.config.file=${System.getProperty("java.util.logging.config.file")}"

@@ -44,7 +44,7 @@ public class ServiceUtil {
                                                                               InterruptedException,
                                                                               TimeoutException {
         OperationalString opstring  = mgr.getOperationalString();
-        Map<ServiceElement, Integer> deploy = new HashMap<ServiceElement, Integer>();
+        Map<ServiceElement, Integer> deploy = new HashMap<>();
         int total = 0;
         for (ServiceElement elem: opstring.getServices()) {
             deploy.put(elem, 0);
@@ -52,7 +52,7 @@ public class ServiceUtil {
         }
         int deployed = 0;
         long sleptFor = 0;
-        List<String> deployedServices = new ArrayList<String>();
+        List<String> deployedServices = new ArrayList<>();
         while (deployed < total && sleptFor< MAX_TIMEOUT) {
             deployed = 0;
             for (Map.Entry<ServiceElement, Integer> entry: deploy.entrySet()) {
@@ -98,7 +98,7 @@ public class ServiceUtil {
         Listener listener = new Listener(serviceType);
         client.getDiscoveryManager().addDiscoveryListener(listener);
 
-        while(listener.monitor.get()==null && waited < timeout) {
+        while (listener.monitor.get()==null && waited < timeout) {
             listener.lookup();
             Thread.sleep(500);
             waited++;
@@ -107,9 +107,9 @@ public class ServiceUtil {
     }
 
     static class Listener implements DiscoveryListener {
-        final AtomicReference<Object> monitor = new AtomicReference<Object>();
-        private Class<?> serviceType;
-        private final List<ServiceRegistrar> lookups = new ArrayList<ServiceRegistrar>();
+        final AtomicReference<Object> monitor = new AtomicReference<>();
+        private final Class<?> serviceType;
+        private final List<ServiceRegistrar> lookups = new ArrayList<>();
 
         public Listener(Class<?> providerInterface) {
             serviceType = providerInterface;
