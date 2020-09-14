@@ -1221,7 +1221,7 @@ public class ProviderDelegate {
 		} else if (impl instanceof ContextDomain && selector.equals("evaluate")) {
 			result = ((ContextDomain)m.invoke(impl, new Object[] { pars[0], args })).getContext();
 		} else if (impl instanceof Exploration && selector.equals("explore")) {
-			result = (Context) m.invoke(impl, new Object[] { pars[0], args });
+			result = (Context) m.invoke(impl, new Object[] { pars[0] });
 		} else {
 			logger.debug("getProviderName: {} invoking: {}" + getProviderName(), m);
 			logger.debug("imp: {} args: {}", impl, Arrays.toString(pars));
