@@ -739,6 +739,10 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		return multiFi;
 	}
 
+	public void setMultiFi(ServiceFidelity multiFi) {
+		this.multiFi = multiFi;
+	}
+
 	@Override
 	public Morpher getMorpher() {
 		return morpher;
