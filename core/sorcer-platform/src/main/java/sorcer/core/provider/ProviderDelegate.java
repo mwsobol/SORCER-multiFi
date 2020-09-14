@@ -1262,7 +1262,7 @@ public class ProviderDelegate {
 			}
 			result.setReturnValue(obj);
 		} else if (selector.equals("explore") && impl instanceof Exploration) {
-			obj = m.invoke(impl, new Object[] { pars[0], args });
+			obj = m.invoke(impl, new Object[] { pars[0] });
 			result.setReturnValue(obj);
 		} else {
 			result.setReturnValue(m.invoke(impl, pars));
