@@ -1155,7 +1155,7 @@ public class ProviderDelegate {
 					m = bean.getClass().getMethod(selector, Arg[].class);
 					isContextual = false;
 				} else if (selector.equals("explore") && bean instanceof Exploration) {
-					m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
+					m = bean.getClass().getMethod(selector, Context.class);
 					isContextual = true;
 				} else {
 					m = bean.getClass().getMethod(selector, argTypes);
