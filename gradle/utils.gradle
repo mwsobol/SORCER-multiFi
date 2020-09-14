@@ -79,7 +79,6 @@ task bootSorcerRio(type: Exec) {
     args << "${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"
     if (useHttps()) {
         dependsOn("jetty")
-        environment("ANT_OPTS" : "-Dorg.rioproject.keystore=${rioHome}/config/security/rio-cert.ks")
         args << "useHttps"
     } else {
         dependsOn("webster")
