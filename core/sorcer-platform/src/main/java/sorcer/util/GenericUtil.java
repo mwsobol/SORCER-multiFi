@@ -347,8 +347,7 @@ public class GenericUtil {
 	 *            Destination file
 	 * @throws IOException
 	 */
-	public static void download(URL sourceUrl, File destinationFile)
-			throws IOException {
+	public static void download(URL sourceUrl, File destinationFile) throws IOException {
 
 		int maxTries = 10;
 		int tryNum = 0;
@@ -359,7 +358,6 @@ public class GenericUtil {
 				writeUrlToFile(sourceUrl, destinationFile);
 				isSuccessful = true;
 			} catch (Exception e) {
-				isSuccessful = false;
 				logger.warn("download failed, trying again: url = " + sourceUrl + "; destination = "
 						+ destinationFile + "; exception = " + e.toString());
 				try {
@@ -369,8 +367,9 @@ public class GenericUtil {
 				}
 			}
 		}
-		if (!isSuccessful) throw new IOException("download failed; url = " + sourceUrl + "; destination = "
-				+ destinationFile);
+		if (!isSuccessful) {
+			throw new IOException("download failed; url = " + sourceUrl + "; destination = " + destinationFile);
+		}
 	}
 
 	/**
@@ -2729,17 +2728,15 @@ public class GenericUtil {
 	 *            File path
 	 * @throws IOException
 	 */
-	public static void writeUrlToFile(URL inputUrl, File localInputFile)
-			throws Exception {
-        InputStream is = null;
-        try {
-            is = inputUrl.openStream();
+	public static void writeUrlToFile(URL inputUrl, File localInputFile) throws IOException {
+		URLConnection connection = inputUrl.openConnection();
+		if (logger.isDebugEnabled()) {
+			int contentLength = connection.getContentLength();
+			logger.debug("Copy {} bytes from {} to {}",
+					contentLength, inputUrl.toExternalForm(), localInputFile.getPath());
+		}
+        try (InputStream is = connection.getInputStream()){
             redirectInputStream2File(is, localInputFile);
-        } catch (Exception e) {
-            if (is != null) is.close();
-            throw(e);
-        } finally {
-            if (is != null) is.close();
         }
 	}
 
