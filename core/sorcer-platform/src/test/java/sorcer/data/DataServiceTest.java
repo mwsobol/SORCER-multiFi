@@ -24,6 +24,8 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -104,7 +106,7 @@ public class DataServiceTest {
     }
 
     @Test
-    public void testPlatformDataService() throws UnknownHostException {
+    public void testPlatformDataService() {
         System.clearProperty(DataService.DATA_URL);
         File dataDir = new File(DataService.getDataDir());
         if(!dataDir.exists())
@@ -126,6 +128,29 @@ public class DataServiceTest {
         URL url = dataService.getDataURL(f1);
         File f2 = dataService.getDataFile(url);
         assertTrue(f2.getPath().equals(f1.getPath()));
+        File f3 = new File(root, "foo.baz");
+        f3.createNewFile();
+        f3.deleteOnExit();
+        dataService.download(url, f3);
+    }
+
+    @Test
+    public void testDownloadFromURL() throws IOException {
+        File root = new File(System.getProperty("java.io.tmpdir"), "mstc-eng-test");
+        root.mkdirs();
+        DataService dataService = new DataService(root.getPath());
+        dataService.start();
+        File f1 = new File(root, "foo.bar");
+        Files.write(f1.toPath(), "POTATO".getBytes());
+        f1.deleteOnExit();
+        System.out.println("Created " + f1.getPath());
+        URL url = dataService.getDataURL(f1);
+        File f2 = new File(root, "foo.baz");
+        f2.deleteOnExit();
+        dataService.download(url, f2);
+        String orig = new String(Files.readAllBytes(f1.toPath()));
+        String copy = new String(Files.readAllBytes(f2.toPath()));
+        assertEquals(orig, copy);
     }
 
     @Test(expected=FileNotFoundException.class)
