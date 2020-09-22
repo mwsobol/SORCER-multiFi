@@ -191,20 +191,21 @@ public class DataServiceTest {
         try {
             tempDir.mkdirs();
             DataService dataService = new DataService(0, tempDir.getPath()).start();
-            List<URL> dataURLs = new ArrayList<URL>();
+            List<URL> dataURLs = new ArrayList<>();
             for (int i = 0; i < 50; i++) {
                 File dir = new File(tempDir, Integer.toString(i));
                 dir.mkdirs();
                 File data = new File(dir, "data-"+i);
                 data.createNewFile();
-                write(data);
+                String content = write(data);
+                System.out.println("Wrote " + data.getPath() + ": " + content);
                 dataURLs.add(dataService.getDataURL(data));
             }
             System.out.println("Created " + dataURLs.size() + " data URLs");
-            List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
+            List<Future<Boolean>> futures = new ArrayList<>();
             for (URL dataURL : dataURLs) {
                 Callable<Boolean> urlVerifier = new URLVerifier(dataURL);
-                FutureTask<Boolean> task = new FutureTask<Boolean>(urlVerifier);
+                FutureTask<Boolean> task = new FutureTask<>(urlVerifier);
                 futures.add(task);
                 new Thread(task).start();
             }
@@ -212,8 +213,9 @@ public class DataServiceTest {
                 assertTrue(future.get());
             }
         } finally {
-            if(FileUtils.remove(tempDir))
-                System.out.println("Removed "+tempDir.getPath());
+            /*if (FileUtils.remove(tempDir)) {
+                System.out.println("Removed " + tempDir.getPath());
+            }*/
         }
     }
 
@@ -229,18 +231,12 @@ public class DataServiceTest {
         assertEquals(dataDirName, DataService.getDataDir());
     }
 
-    void write(File f) throws IOException {
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new FileWriter(f));
-            writer.write(String.format("Hello world /%s/%s", f.getParentFile().getName(), f.getName()));
-        } finally {
-            try {
-                // Close the writer regardless of what happens...
-                writer.close();
-            } catch (Exception e) {
-            }
+    String write(File f) throws IOException {
+        String content = String.format("Hello world /%s/%s", f.getParentFile().getName(), f.getName());
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(f))) {
+            writer.write(content);
         }
+        return content;
     }
 
     boolean verify(URL url) {
@@ -254,6 +250,7 @@ public class DataServiceTest {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            assert connection != null;
             connection.disconnect();
         }
         return verified;
@@ -261,16 +258,11 @@ public class DataServiceTest {
 
     String getContent(URL url) throws IOException {
         StringBuilder content = new StringBuilder();
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new InputStreamReader(url.openStream()));
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
                 content.append(inputLine);
             }
-        } finally {
-            if(in!=null)
-                in.close();
         }
         return content.toString();
     }
