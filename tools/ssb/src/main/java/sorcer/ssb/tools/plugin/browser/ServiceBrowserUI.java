@@ -1710,19 +1710,20 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 								if (index != -1 && index < name.length() - 1) {
 									name = name.substring(index + 1);
 								}
-								final Object factory = desc.getUIFactory(proxy
-										.getClass().getClassLoader());								
+								final Object factory = desc.getUIFactory(proxy.getClass().getClassLoader());
 								if (factory instanceof JComponentFactory) {
-									JComponentFactory jcf = (JComponentFactory) factory;
-									JComponent comp = jcf.getJComponent(sn
-											.getServiceItem());
-									
+									try {
+										JComponentFactory jcf = (JComponentFactory) factory;
+										JComponent comp = jcf.getJComponent(sn.getServiceItem());
 										name = addAccessibleName(name, comp);
-										contentPane.add(comp, BorderLayout.CENTER);		
+										contentPane.add(comp, BorderLayout.CENTER);
 										added = true;
 										tp.add(name, contentPane);
 										tp.setIconAt(tp.getComponentCount() - 1,
-												TreeRenderer._serviceUIIcon);
+													 TreeRenderer._serviceUIIcon);
+									} catch (IllegalArgumentException e) {
+										e.printStackTrace();
+									}
 								}
 								if (factory instanceof JFrameFactory) {
 									String windowName = "New Window";
