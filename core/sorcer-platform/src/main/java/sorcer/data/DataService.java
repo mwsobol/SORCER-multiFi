@@ -418,7 +418,8 @@ public class DataService implements FileURLHandler {
     }
 
     static String getDefaultDataDir() {
-        String tmpDir = System.getenv("TMPDIR")==null?System.getProperty("java.io.tmpdir"):System.getenv("TMPDIR");
+        String tmpDir = System.getenv("TMPDIR") == null
+                ? System.getProperty("java.io.tmpdir") : System.getenv("TMPDIR");
         return new File(String.format("%s%ssorcer-%s%sdata",
                                       tmpDir,
                                       File.separator,
