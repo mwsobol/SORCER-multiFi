@@ -85,11 +85,11 @@ public class ArithmeticMograms {
 
 		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			ent("add/x1", 20.0), ent("add/x2", 80.0),
-			operator.fxn("add", (Context <Double> model) ->
+			fxn("add", (Context <Double> model) ->
 				value(model, "add/x1") + value(model, "add/x2"), args("add/x1", "add/x2")),
-			operator.fxn("multiply", (Context <Double> model) ->
+			fxn("multiply", (Context <Double> model) ->
 				value(model, "multiply/x1") * value(model, "multiply/x2"), args("multiply/x1", "multiply/x2")),
-			operator.fxn("subtract", (Context <Double> model) ->
+			fxn("subtract", (Context <Double> model) ->
 				value(model, "multiply") - value(model, "add"), result("add/out",
 				inPaths("multiply", "add"))),
 			response("subtract", "multiply", "add"));
@@ -107,13 +107,13 @@ public class ArithmeticMograms {
 
 		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			ent("add/x1", 20.0), ent("add/x2", 80.0),
-			operator.fxn("add", (Context <Double> model) ->
+			fxn("add", (Context <Double> model) ->
 				value(model, "add/x1") + value(model, "add/x2")),
-			operator.fxn("multiply", (Context <Double> model) ->
+			fxn("multiply", (Context <Double> model) ->
 				value(model, "multiply/x1") * value(model, "multiply/x2")),
-			operator.fxn("subtract", (Context <Double> model) ->
+			fxn("subtract", (Context <Double> model) ->
 				value(model, "multiply") - value(model, "add")),
-			operator.fxn("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
+			fxn("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
 				double out = (double)exec(entry, scope);
 				if (out > 400) {
 					putValue(scope, "multiply/x1", 20.0);
@@ -148,15 +148,15 @@ public class ArithmeticMograms {
 		Model mdl = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			ent("add/x1", 20.0), ent("add/x2", 80.0),
 			ent("arg/x1", 30.0), ent("arg/x2", 90.0),
-			operator.fxn("add", (Context <Double> model) ->
+			fxn("add", (Context <Double> model) ->
 					value(model, "add/x1") + value(model, "add/x2"),
 				result("add/out",
 					inPaths("add/x1", "add/x2"))),
-			operator.fxn("multiply", (Context <Double> model) ->
+			fxn("multiply", (Context <Double> model) ->
 					value(model, "multiply/x1") * value(model, "multiply/x2"),
 				result("multiply/out",
 					inPaths("multiply/x1", "multiply/x2"))),
-			operator.fxn("subtract", (Context <Double> model) ->
+			fxn("subtract", (Context <Double> model) ->
 					value(model, "multiply/out") - value(model, "add/out"),
 				result("model/response", inPaths("multiply/out", "add/out"))),
 			response("subtract", "multiply/out", "add/out", "model/response"));
