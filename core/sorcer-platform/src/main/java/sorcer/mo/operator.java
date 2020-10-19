@@ -1165,7 +1165,7 @@ public class operator {
             Object o = dataList.get(i);
             if (o instanceof String) {
                 name = (String) o;
-            } else if (o instanceof DataContext) {
+            } else if (o instanceof Context && !(o instanceof Model || o instanceof Routine)) {
                 collabContext = (Context)o;
             } else if (o instanceof Domain) {
                 domains.add((Domain)o);
