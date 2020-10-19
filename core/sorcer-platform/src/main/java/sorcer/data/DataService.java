@@ -239,8 +239,8 @@ public class DataService implements FileURLHandler {
         String path = file.getPath().replace('\\', '/');
         String relativePath = null;
         for(String root : roots) {
-            if (path.startsWith(root)) {
-                relativePath = path.substring(root.length());
+            if (path.startsWith(root.replace('\\', '/'))) {
+                relativePath = path.substring(root.length()).replace('\\', '/');
                 break;
             }
         }
