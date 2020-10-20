@@ -91,7 +91,13 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
             }
             if (contextion instanceof Collaboration) {
                 for (Domain domain : ((Collaboration) contextion).getDomains().values()) {
-                    Context cxt = domain.evaluate(context);
+                    Context domainCxt = sorcer.mo.operator.getDomainContext(context, domain.getName());
+                    Context cxt = null;
+                    if (domainCxt != null) {
+                        cxt = domain.evaluate(domainCxt);
+                    } else {
+                        cxt = domain.evaluate(context);
+                    }
                     out.appendContext(cxt);
                     Analysis analyzer = ((Collaboration) contextion).getAnalyzerFi().getSelect();
                     if (analyzer != null ) {

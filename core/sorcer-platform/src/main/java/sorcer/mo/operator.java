@@ -1422,4 +1422,63 @@ public class operator {
         }
         return mda;
     }
+
+    public static ContextList getDomainContexts(Context context) throws ContextException {
+        return  (ContextList)context.get(Context.COMPONENT_CONTEXT_PATH);
+    }
+
+    public static Context getDomainContext(Context context, String domain) throws ContextException {
+        if (context instanceof ServiceContext) {
+            Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
+            if (domainContexts instanceof ContextList && ((ContextList) domainContexts).size() > 0) {
+                return ((ContextList)domainContexts).select(domain);
+            }
+        }
+        return null;
+    }
+
+    public static Context addDomainContext(Context context, Context domainContext, String domainName) throws ContextException {
+        Context cxt = addDomainContext(context, domainContext);
+        cxt.setName(domainName);
+        return cxt;
+    }
+
+    public static Context addDomainContext(Context context, Context domainContext) throws ContextException {
+        if (context instanceof ServiceContext) {
+            Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
+            if (domainContexts == null) {
+                domainContexts = new ContextList();
+                ((ServiceContext)context).put(Context.COMPONENT_CONTEXT_PATH, domainContexts);
+            }
+            if (domainContexts instanceof ContextList) {
+                ((List)domainContexts).add(domainContext);
+                return domainContext;
+            }
+        }
+        return null;
+    }
+
+    public static Context setDomainContext(Context context, Context domainContext) throws ContextException {
+        if (context instanceof ServiceContext) {
+            Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
+            if (domainContexts == null) {
+                domainContexts = new ContextList();
+                ((ServiceContext)context).put(Context.COMPONENT_CONTEXT_PATH, domainContexts);
+            }
+            if (domainContexts instanceof ContextList) {
+                return  ((ContextList)domainContexts).set(domainContext);
+            }
+        }
+        return null;
+    }
+
+    public static void removeDomainContext(Context context, String domain) throws ContextException {
+        if (context instanceof ServiceContext) {
+            Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
+            if (domainContexts instanceof ContextList && ((ContextList) domainContexts).size() > 0) {
+                ((ContextList)domainContexts).remove(domain);
+            }
+        }
+    }
+
 }
