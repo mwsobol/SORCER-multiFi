@@ -38,6 +38,7 @@ import net.jini.lookup.entry.Name;
 import net.jini.security.AccessPermission;
 import net.jini.security.TrustVerifier;
 import net.jini.space.JavaSpace05;
+import org.rioproject.config.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.container.jeri.AbstractExporterFactory;
@@ -1673,7 +1674,7 @@ public class ProviderDelegate {
 			serviceType.serviceHome = Sorcer.getHome();
 			serviceType.userName = System.getProperty("user.name");
 			serviceType.repository = config.getDataDir();
-			serviceType.dataUrl = System.getProperty(DataService.DATA_URL);
+			serviceType.dataUrl = System.getProperty(DataService.DATA_URL, System.getProperty(Constants.WEBSTER));
 			serviceType.iconName = config.getIconName();
 
 			if (publishedServiceTypes == null && spaceEnabled) {
