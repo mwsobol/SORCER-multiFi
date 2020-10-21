@@ -668,6 +668,10 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
         this.scope =scope;
     }
 
+	public Context getDomainData() throws ContextException, RemoteException {
+		return invokeContext;
+	}
+
 	@Override
 	public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
 		if (mogram instanceof Mogram) {

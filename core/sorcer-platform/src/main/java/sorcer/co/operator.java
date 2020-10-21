@@ -2019,6 +2019,10 @@ public class operator extends Operator {
 		return slot;
 	}
 
+	public static Context setName(Context context, String name) {
+		context.setName(name);
+		return context;
+	}
 	public static Signature setName(Signature signature, String name) {
 		((ServiceSignature)signature).setName(name);
 		return signature;

@@ -17,6 +17,7 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.ExploreException;
 import sorcer.service.modeling.cxtn;
 import sorcer.service.modeling.dmn;
 import sorcer.service.modeling.mog;

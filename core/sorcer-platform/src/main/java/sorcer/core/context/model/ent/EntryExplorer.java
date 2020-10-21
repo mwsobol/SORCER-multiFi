@@ -17,14 +17,17 @@
 
 package sorcer.core.context.model.ent;
 
+import sorcer.core.context.ServiceContext;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.Analysis;
 import sorcer.core.service.Collaboration;
 import sorcer.service.*;
 import sorcer.service.modeling.Exploration;
+import sorcer.service.modeling.ExploreException;
 import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
+import java.util.Map;
 
 /**
  * Created by Mike Sobolewski on 01/05/20.
@@ -83,22 +86,40 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
     }
 
     @Override
-    public Context explore(Context context) throws ContextException, RemoteException {
+    public Context explore(Context context) throws ContextException, ExploreException, RemoteException {
         Context out = ((Collaboration) contextion).getOutput();
+        Map<String, Context> domainOutputs = ((Collaboration) contextion).getOutputs();
         try {
             if (disptacher != null) {
                 disptacher.dispatch(context);
             }
+            Domain domain = null;
             if (contextion instanceof Collaboration) {
-                for (Domain domain : ((Collaboration) contextion).getDomains().values()) {
+                for (Path path : ((Collaboration) contextion).getDomainPaths()) {
+                    domain = ((Collaboration) contextion).getDomain(path.path);
                     Context domainCxt = sorcer.mo.operator.getDomainContext(context, domain.getName());
+                    Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getName());
                     Context cxt = null;
                     if (domainCxt != null) {
-                        cxt = domain.evaluate(domainCxt);
+                        if (domain instanceof Dispatch) {
+                            cxt = ((Dispatch)domain).dispatch(domainCxt);
+                        } else {
+                            cxt = domain.evaluate(context);
+                        }
                     } else {
-                        cxt = domain.evaluate(context);
+                        if (domain instanceof Context && ((ServiceContext)domain).getType() == Functionality.Type.EXEC) {
+                            // eventually add argument signatures ped domain
+                            try {
+                                cxt = (Context)domain.execute();
+                            } catch (ServiceException e) {
+                                throw new ExploreException(e);
+                            }
+                        } else {
+                            cxt = domain.exert();
+                        }
                     }
-                    out.appendContext(cxt);
+                    domainOutputs.put(domain.getName(), cxt);
+                    out.append(cxt.getDomainData());
                     Analysis analyzer = ((Collaboration) contextion).getAnalyzerFi().getSelect();
                     if (analyzer != null ) {
                         out.putValue(Functionality.Type.DOMAIN.toString(), domain.getName());

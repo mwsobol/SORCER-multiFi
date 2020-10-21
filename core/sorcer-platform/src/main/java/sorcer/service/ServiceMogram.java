@@ -291,6 +291,11 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
+    public Context getDomainData() throws ContextException, RemoteException {
+        return dataContext;
+    }
+
+    @Override
     public Context getContext(Context contextTemplate) throws RemoteException, ContextException {
         return null;
     }

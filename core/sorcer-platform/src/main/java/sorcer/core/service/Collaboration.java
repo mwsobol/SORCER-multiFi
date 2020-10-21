@@ -29,6 +29,7 @@ import sorcer.core.context.model.ent.EntryExplorer;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
 import sorcer.service.Discipline;
+import sorcer.service.modeling.ExploreException;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.cxtn;
 
@@ -57,6 +58,9 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 
     // the output of this collaboration
     protected Context output;
+
+	// domain outputs
+	protected Map<String, Context> outputs = new HashMap();
 
     protected Fi multiFi;
 
@@ -166,6 +170,11 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 	@Override
 	public Context appendContext(Context context) throws ContextException, RemoteException {
 		return input.appendContext(context);
+	}
+
+	@Override
+	public Context getDomainData() throws ContextException, RemoteException {
+		return input;
 	}
 
 	@Override
@@ -359,7 +368,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 			out = explorerFi.getSelect().explore(cxt);
 			((ModelStrategy) serviceStrategy).setOutcome(output);
 			strategy.setExecState(Exec.State.DONE);
-		} catch (ConfigurationException | ContextException e) {
+		} catch (ConfigurationException | ContextException | ExploreException e) {
 			throw new EvaluationException(e);
 		}
 		return out;
@@ -497,6 +506,14 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 		}
 		contextionList.add(this);
 		return contextionList;
+	}
+
+	public Map<String, Context> getOutputs() {
+		return outputs;
+	}
+
+	public void setOutputs(Map<String, Context> outputs) {
+		this.outputs = outputs;
 	}
 
 	public Functionality.Type getDependencyType() {

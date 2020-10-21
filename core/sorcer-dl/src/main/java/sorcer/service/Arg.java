@@ -34,6 +34,14 @@ public interface Arg extends Serializable, Service {
 
 	public String getName();
 
+	public static Signature selectSignature(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Signature)
+				return (Signature) arg;
+		}
+		return null;
+	}
+
 	public static ContextDomain selectDomain(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof ContextDomain)

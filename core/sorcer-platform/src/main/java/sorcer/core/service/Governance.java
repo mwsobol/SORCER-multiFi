@@ -201,6 +201,11 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 	}
 
 	@Override
+	public Context getDomainData() throws ContextException, RemoteException {
+		return input;
+	}
+
+	@Override
 	public Context getContext(Context contextTemplate) throws RemoteException, ContextException {
 		return null;
 	}

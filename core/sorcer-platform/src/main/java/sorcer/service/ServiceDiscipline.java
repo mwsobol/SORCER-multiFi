@@ -501,6 +501,11 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
+    public Context getDomainData() throws ContextException, RemoteException {
+        return input;
+    }
+
+    @Override
     public Context getContext(Context contextTemplate) throws RemoteException, ContextException {
         return null;
     }

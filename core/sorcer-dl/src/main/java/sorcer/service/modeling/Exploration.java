@@ -29,6 +29,6 @@ import sorcer.service.Context;
 public interface Exploration {
 
     public Context explore(Context context) throws ContextException,
-            RemoteException;
+            RemoteException, ExploreException;
 
 }
