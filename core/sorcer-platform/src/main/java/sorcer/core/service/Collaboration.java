@@ -426,6 +426,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 				analyzer.analyze(domain,  collabOut);
 			}
 			((ServiceContext)collabOut).setSubject(name, this);
+			((ServiceContext)collabOut).put("collab/outputs" + name, outputs;
 			output = collabOut;
 		}
 	}
