@@ -23,6 +23,7 @@ import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ModelStrategy;
+import sorcer.core.context.ModelTask;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntryAnalyzer;
 import sorcer.core.context.model.ent.EntryExplorer;
@@ -31,6 +32,7 @@ import sorcer.service.*;
 import sorcer.service.Discipline;
 import sorcer.service.modeling.ExploreException;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.Model;
 import sorcer.service.modeling.cxtn;
 
 import java.rmi.RemoteException;
@@ -38,6 +40,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static sorcer.so.operator.exec;
+import static sorcer.so.operator.response;
 
 public class Collaboration implements Contextion, Transdomain, Dependency, cxtn {
 
@@ -372,6 +377,57 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 			throw new EvaluationException(e);
 		}
 		return out;
+	}
+
+	public void collaborate(Context context) throws ServiceException, SignatureException, DispatchException, RemoteException {
+		Context collabOut = new ServiceContext(name);
+		Domain domain = null;
+		for (Path path : domainPaths) {
+			domain = domains.get(path.path);
+			if (domain instanceof SignatureDomain) {
+				domain = ((SignatureDomain) domain).getDomain();
+				domains.put(domain.getName(), domain);
+			}
+			Context domainCxt = sorcer.mo.operator.getDomainContext(context, domain.getName());
+			Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getName());
+			Context cxt = null;
+			if (domainCxt != null) {
+				if (domain instanceof Dispatch) {
+					cxt = ((Dispatch)domain).dispatch(domainCxt);
+				} else if(dispatcher != null && dispatcher instanceof ModelTask) {
+					((ModelTask) dispatcher).setContext(domainCxt);
+					((ModelTask) dispatcher).setModel((Model) domain);
+					Response response = (Response) exec((ModelTask) dispatcher);
+					if (response instanceof Context) {
+						cxt = (Context) response;
+					} else {
+						cxt = response.toContext();
+					}
+				} else {
+					if (domain instanceof Mogram) {
+						cxt = response(domain, domainCxt);
+					} else {
+						cxt = domain.evaluate(domainCxt);
+					}
+				}
+			} else {
+				if (domain instanceof Context && ((ServiceContext)domain).getType() == Functionality.Type.EXEC) {
+					// eventually add argument signatures ped domain
+					cxt = (Context)domain.execute();
+				} else {
+					cxt = domain.exert();
+				}
+			}
+			outputs.put(domain.getName(), cxt);
+			collabOut.append(cxt.getDomainData());
+			Analysis analyzer = analyzerFi.getSelect();
+			if (analyzerFi != null ) {
+				collabOut.putValue(Functionality.Type.DOMAIN.toString(), domain.getName());
+				analyzer.analyze(domain,  collabOut);
+			}
+			((ServiceContext)collabOut).setSubject(name, this);
+			output = collabOut;
+		}
 	}
 
 	public ServiceFidelity getContextMultiFi() {

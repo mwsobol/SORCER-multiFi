@@ -94,77 +94,33 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
 
     @Override
     public Context explore(Context context) throws ContextException, ExploreException, RemoteException {
-        Context out = ((Collaboration) contextion).getOutput();
         Map<String, Context> domainOutputs = ((Collaboration) contextion).getOutputs();
+        // use output for explorer after collaboration
+        Context output = null;
         try {
             if (disptacher != null) {
                 disptacher.dispatch(context);
             }
             Domain domain = null;
             if (contextion instanceof Collaboration) {
-                for (Path path : ((Collaboration) contextion).getDomainPaths()) {
-                    domain = ((Collaboration) contextion).getDomain(path.path);
-                    if (domain instanceof SignatureDomain) {
-                        domain = ((SignatureDomain) domain).getDomain();
-                        ((Collaboration)contextion).getDomains().put(domain.getName(), domain);
-                    }
-                    Context domainCxt = sorcer.mo.operator.getDomainContext(context, domain.getName());
-                    Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getName());
-                    Context cxt = null;
-                    if (domainCxt != null) {
-                        if (domain instanceof Dispatch) {
-                            cxt = ((Dispatch)domain).dispatch(domainCxt);
-                        } else if(dispatcher != null && dispatcher instanceof ModelTask) {
-                            ((ModelTask) dispatcher).setContext(domainCxt);
-                            ((ModelTask) dispatcher).setModel((Model) domain);
-                            Response response = (Response) exec((ModelTask) dispatcher);
-                            if (response instanceof Context) {
-                                cxt = (Context) response;
-                            } else {
-                                cxt = response.toContext();
-                            }
-                        } else {
-                            if (domain instanceof Mogram) {
-                                cxt = response(domain, domainCxt);
-                            } else {
-                                cxt = domain.evaluate(domainCxt);
-                            }
-                        }
-                    } else {
-                        if (domain instanceof Context && ((ServiceContext)domain).getType() == Functionality.Type.EXEC) {
-                            // eventually add argument signatures ped domain
-                            try {
-                                cxt = (Context)domain.execute();
-                            } catch (ServiceException e) {
-                                throw new ExploreException(e);
-                            }
-                        } else {
-                            cxt = domain.exert();
-                        }
-                    }
-                    domainOutputs.put(domain.getName(), cxt);
-                    out.append(cxt.getDomainData());
-                    Analysis analyzer = ((Collaboration) contextion).getAnalyzerFi().getSelect();
-                    if (analyzer != null ) {
-                        out.putValue(Functionality.Type.DOMAIN.toString(), domain.getName());
-                        analyzer.analyze(domain,  out);
-                    }
-                }
+                ((Collaboration) contextion).collaborate(context);
             } else {
-                throw new ContextException("exploration failed for: " + contextion);
+                throw new ContextException("analysis failed for: " + contextion);
             }
-            out.putValue(Functionality.Type.COLLABORATION.toString(), contextion.getName());
+            output = ((Collaboration) contextion).getOutput();
+            output.putValue(Functionality.Type.COLLABORATION.toString(), contextion.getName());
             if (impl != null && impl instanceof Exploration) {
-                out = ((Exploration) impl).explore(out);
+                output = ((Exploration) impl).explore(output);
             } else if (signature != null) {
                 impl = ((LocalSignature)signature).initInstance();
-                out = ((Exploration)impl).explore(out);
+                output = ((Exploration)impl).explore(output);
             } else if (impl == null) {
                 throw new InvocationException("No explorer available!");
             }
         } catch (SignatureException | DispatchException | ServiceException e) {
             throw new ContextException(e);
         }
-        return out;
+        return output;
     }
+
 }

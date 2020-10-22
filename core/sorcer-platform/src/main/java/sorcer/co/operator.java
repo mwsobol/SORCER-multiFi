@@ -30,6 +30,7 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.provider.DatabaseStorer;
+import sorcer.core.service.Collaboration;
 import sorcer.core.signature.LocalSignature;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ServiceSignature;
@@ -734,6 +735,19 @@ public class operator extends Operator {
 		@Override
 		public Object execute(Arg... args) throws ServiceException, RemoteException {
 			return this;
+		}
+	}
+
+	public static Object subject(Context context) {
+		return context.getSubjectValue();
+	}
+
+	public static Collaboration collab(Context context) {
+		Object subject = context.getSubjectValue();
+		if (subject instanceof Collaboration) {
+			return (Collaboration)subject;
+		} else {
+			return null;
 		}
 	}
 

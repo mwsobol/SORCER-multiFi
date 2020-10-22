@@ -45,6 +45,7 @@ import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.consumer.ServiceConsumer;
+import sorcer.core.service.Collaboration;
 import sorcer.service.Projection;
 import sorcer.core.signature.*;
 import sorcer.netlet.ServiceScripter;
@@ -255,6 +256,24 @@ operator extends Operator {
         System.arraycopy(entries, 0, args, 1, entries.length);
         args[0] = Context.Type.SCOPE;
         return context(args);
+    }
+
+    public static Context dmnIn(Request request, String domainName) {
+        if (request instanceof Collaboration) {
+            try {
+                return ((Collaboration)request).getDomains().get(domainName).getContext();
+            } catch (ContextException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
+    }
+
+    public static Context dmnOut(Request request, String domainName) {
+        if (request instanceof Collaboration) {
+            return ((Collaboration) request).getOutputs().get(domainName);
+        }
+        return null;
     }
 
     public static Context cxt(Object... entries) throws ContextException {
