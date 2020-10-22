@@ -3036,6 +3036,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
+	@Override
+	public Context toContext() throws ContextException {
+		return this;
+	}
+
 	public Object getResponseAt(String path, Arg... entries) throws ContextException, RemoteException {
 		return getValue(path, entries);
 	}
@@ -3820,6 +3825,10 @@ public class ServiceContext<T> extends ServiceMogram implements
     public void setMultiFiPaths(Map<String, Fidelity> multiFiPaths) {
         this.multiFiPaths = multiFiPaths;
     }
+
+    public Context getDomainData() throws ContextException, RemoteException{
+    	return this;
+	}
 
     @Override
     public Fidelity selectFidelity(String selection) throws ConfigurationException {

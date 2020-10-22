@@ -22,6 +22,7 @@ import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.Index;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.service.Exerter;
 import sorcer.core.provider.StorageManagement;
@@ -79,6 +80,26 @@ public class DataTable implements ModelTable, Response, rsp {
             return getColumn(path);
         }
     }
+
+	@Override
+	public Context toContext() throws ContextException {
+		ServiceContext cxt = new ServiceContext(name);
+		List<String> cns = getRowNames();
+		if (cns != null) {
+			for (int i = 0; i < cns.size(); i++) {
+				cxt.put(cns.get(i), dataList.get(i));
+			}
+		}
+		StringBuilder columns = new StringBuilder();
+		int length = columnIdentifiers.size();
+		for (int i = 0; i < length-1; i++) {
+			columns.append(columnIdentifiers.get(i));
+			columns.append(", ");
+		}
+		columns.append(columnIdentifiers.get(length-1));
+		cxt.setName(columns.toString());
+		return cxt;
+	}
 
 	public enum LengthUnits {
 		FEET, INCH, METER

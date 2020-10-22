@@ -24,6 +24,7 @@ import sorcer.co.tuple.OutputValue;
 import sorcer.core.Dispatcher;
 import sorcer.core.context.*;
 import sorcer.core.plexus.ContextFidelityManager;
+import sorcer.core.service.SignatureDomain;
 import sorcer.service.Analysis;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.EntryModel;
@@ -1104,6 +1105,14 @@ public class operator {
 
     public static String domain(Context context) {
         return (String) context.get(Functionality.Type.DOMAIN.toString());
+    }
+
+    public static SignatureDomain domain(Signature signature) throws ContextException {
+        return new SignatureDomain(signature);
+    }
+
+    public static SignatureDomain domain(String name, Signature signature) throws ContextException {
+        return new SignatureDomain(name, signature);
     }
 
     public static Discipline dsc(Fidelity... discFis) {

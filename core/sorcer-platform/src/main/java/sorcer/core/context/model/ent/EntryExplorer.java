@@ -17,7 +17,9 @@
 
 package sorcer.core.context.model.ent;
 
+import sorcer.core.context.ModelTask;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.service.SignatureDomain;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.Analysis;
 import sorcer.core.service.Collaboration;
@@ -25,9 +27,14 @@ import sorcer.service.*;
 import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.ExploreException;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.Map;
+
+import static sorcer.mo.operator.mdaFi;
+import static sorcer.so.operator.exec;
+import static sorcer.so.operator.response;
 
 /**
  * Created by Mike Sobolewski on 01/05/20.
@@ -97,14 +104,31 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
             if (contextion instanceof Collaboration) {
                 for (Path path : ((Collaboration) contextion).getDomainPaths()) {
                     domain = ((Collaboration) contextion).getDomain(path.path);
+                    if (domain instanceof SignatureDomain) {
+                        domain = ((SignatureDomain) domain).getDomain();
+                        ((Collaboration)contextion).getDomains().put(domain.getName(), domain);
+                    }
                     Context domainCxt = sorcer.mo.operator.getDomainContext(context, domain.getName());
                     Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getName());
                     Context cxt = null;
                     if (domainCxt != null) {
                         if (domain instanceof Dispatch) {
                             cxt = ((Dispatch)domain).dispatch(domainCxt);
+                        } else if(dispatcher != null && dispatcher instanceof ModelTask) {
+                            ((ModelTask) dispatcher).setContext(domainCxt);
+                            ((ModelTask) dispatcher).setModel((Model) domain);
+                            Response response = (Response) exec((ModelTask) dispatcher);
+                            if (response instanceof Context) {
+                                cxt = (Context) response;
+                            } else {
+                                cxt = response.toContext();
+                            }
                         } else {
-                            cxt = domain.evaluate(context);
+                            if (domain instanceof Mogram) {
+                                cxt = response(domain, domainCxt);
+                            } else {
+                                cxt = domain.evaluate(domainCxt);
+                            }
                         }
                     } else {
                         if (domain instanceof Context && ((ServiceContext)domain).getType() == Functionality.Type.EXEC) {
@@ -138,7 +162,7 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
             } else if (impl == null) {
                 throw new InvocationException("No explorer available!");
             }
-        } catch (ContextException | SignatureException | DispatchException e) {
+        } catch (SignatureException | DispatchException | ServiceException e) {
             throw new ContextException(e);
         }
         return out;

@@ -28,19 +28,37 @@ import java.util.Date;
 import java.util.List;
 
 public class SignatureDomain implements Domain {
-    private Signature signature;
 
+    String name;
+    private Signature signature;
     private Domain domain;
+    protected Contextion parent;
 
     public SignatureDomain() {
 
     }
 
-    public SignatureDomain(Signature signature) {
+    public SignatureDomain(String name) {
+        this.name = name;
+    }
+
+    public SignatureDomain(String name, Signature signature) {
+        this.name = name;
         this.signature = signature;
     }
 
-    public Domain getDomain() {
+    public SignatureDomain(Signature signature) {
+        this.signature = signature;
+        this.name = signature.getName();
+    }
+
+    public Domain getDomain() throws SignatureException {
+        if (domain == null) {
+            domain = (Domain) sorcer.co.operator.instance(signature);
+            if (name != null) {
+                domain.setName(name);
+            }
+        }
         return domain;
     }
 
@@ -78,7 +96,11 @@ public class SignatureDomain implements Domain {
 
     @Override
     public void setParent(Contextion parent) {
-        domain.setParent(parent);
+        if (domain == null) {
+            this.parent = parent;
+        } else {
+            domain.setParent(parent);
+        }
     }
 
     @Override
@@ -88,11 +110,14 @@ public class SignatureDomain implements Domain {
 
     @Override
     public String getName() {
-        if (domain == null && signature != null) {
-            return signature.getName();
-        } else {
-            return domain.getName();
+        if (name != null) {
+            return name;
+        } else if (domain != null) {
+            name = domain.getName();
+        } else if (signature != null) {
+            name = signature.getName();
         }
+        return name;
     }
 
     @Override
