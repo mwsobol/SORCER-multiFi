@@ -743,6 +743,18 @@ public class operator extends Operator {
 		return paths;
 	}
 
+	public static Paths domains(String... domains) {
+		Paths paths = new Paths(domains);
+		paths.type = Type.COLLABORATION;
+		return paths;
+	}
+
+	public static Paths disciplines(String... disciplines) {
+		Paths paths = new Paths(disciplines);
+		paths.type = Type.DISCIPLINE;
+		return paths;
+	}
+
 	public static ExecDeps deps(ExecDependency... deps) {
 		return new ExecDeps(deps);
 	}
