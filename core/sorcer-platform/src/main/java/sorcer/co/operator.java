@@ -1291,7 +1291,11 @@ public class operator extends Operator {
 
 	public static Request setValue(Request request, String path, Object value) throws ContextException {
 		if (request instanceof Contextion) {
-			((Contextion)request).getOutput().putValue(path, value);
+			if (request instanceof Context) {
+				((Context)request).putValue(path, value);
+			} else {
+				((Contextion) request).getOutput().putValue(path, value);
+			}
 		}
 		return request;
 	}

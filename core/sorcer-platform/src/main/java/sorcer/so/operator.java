@@ -313,6 +313,16 @@ public class operator extends Operator {
         }
     }
 
+    public static ServiceContext response(Signature signature, Object... items) throws ContextException {
+        Mogram mogram = null;
+        try {
+            mogram = (Mogram) ((LocalSignature)signature).initInstance();
+        } catch (SignatureException e) {
+            e.printStackTrace();
+        }
+        return response(mogram, items);
+    }
+
     public static ServiceContext response(Mogram mogram, Object... items) throws ContextException {
         if (mogram instanceof Routine) {
             return exertionResponse((Routine) mogram, items);

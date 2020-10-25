@@ -56,23 +56,24 @@ public class Collaborations {
                     if (clbName.equals("domainCollab")) {
                         z1 = (double)value(cxt, "z1");
                         z2 = (double)value(cxt, "z2");
-                        operator.setValue(cxt, "ratio", z2/z1);
+                        setValue(cxt, "ratio", z2/z1);
                     }
                     return cxt;
                 })),
             mdaFi("analyzer",
                 (mda("analyzer1",
                     (Request collab, Context cxt) -> {
-                        double y1, y2, y3, y4;
+                        double y1, y2, y3;
                         String dmnName = dmn(cxt);
                         if (dmnName.equals("srvBlock")) {
                             y1 = (double)value(cxt, "arg/x1");
                             y2 = (double)value(cxt, "arg/x2");
                             y3 = (double)value(cxt, "arg/t5");
-                            setValue(collab, "z1", (y3 * y2) / y1);
+                            setValue(cxt, "z1", (y3 * y2) / y1);
                         } else if (dmnName.equals("entModel")) {
-                            y4 = (double)value(cxt, "result");
-                            setValue(collab, "z2", y4 * 2.4);
+                            y1 = (double)value(cxt, "y1");
+                            y2 = (double)value(cxt, "y2");
+                            setValue(cxt, "z2", (y1 + y2) / 2.4);
                         }
                     }))));
 
@@ -86,7 +87,7 @@ public class Collaborations {
 
         Context out = eval(collab, collabCxt);
         logger.info("domainCollab out: " + out);
-        assertEquals(1.92, value(out, "ratio"));
+        assertEquals(0.5, value(out, "ratio"));
     }
 
     @Test
@@ -103,7 +104,7 @@ public class Collaborations {
 
         Context out = eval(collab);
         logger.info("domainCollab out: " + out);
-        assertEquals(1.92, value(out, "ratio"));
+        assertEquals(0.5, value(out, "ratio"));
     }
 
 }

@@ -415,7 +415,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 					// eventually add argument signatures ped domain
 					cxt = (Context)domain.execute();
 				} else {
-					cxt = domain.exert();
+					cxt = response(domain);;
 				}
 			}
 			outputs.put(domain.getName(), cxt);
@@ -426,7 +426,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 				analyzer.analyze(domain,  collabOut);
 			}
 			((ServiceContext)collabOut).setSubject(name, this);
-			((ServiceContext)collabOut).put("collab/outputs" + name, outputs;
+			((ServiceContext)collabOut).put("collab/outputs" + name, outputs);
 			output = collabOut;
 		}
 	}

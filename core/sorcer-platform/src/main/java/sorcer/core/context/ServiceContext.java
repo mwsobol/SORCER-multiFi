@@ -3118,8 +3118,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (args != null) {
 				substitute((Arg[]) args);
 			}
-			Context inputs = inputContext.getInputs();
-			setValues(this, inputs);
+//			Context inputs = inputContext.getInputs();
+//			setValues(this, inputs);
+			append(inputContext);
 			return getResponse();
 		} catch (ContextException e) {
 			throw new EvaluationException(e);

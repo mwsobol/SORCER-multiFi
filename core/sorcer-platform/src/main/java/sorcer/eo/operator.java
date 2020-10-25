@@ -1646,6 +1646,12 @@ operator extends Operator {
         return new ServiceSignature(selector);
     }
 
+    public static Signature dspSig(String selector) throws SignatureException {
+        LocalSignature local = new LocalSignature();
+        local.setSelector(selector);
+        return local;
+    }
+
     public static Signature sig(String name, String selector)
         throws SignatureException {
         return new ServiceSignature(name, selector);

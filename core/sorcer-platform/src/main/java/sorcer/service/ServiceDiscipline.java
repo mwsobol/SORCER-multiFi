@@ -22,10 +22,13 @@ import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.signature.LocalSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Getter;
+import sorcer.service.modeling.Model;
 
+import java.io.ObjectStreamClass;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -346,6 +349,20 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             out = this.getContextion();
             if (out != null) {
                 xrt.dispatch(out);
+            }
+            // realize  contextion if not dispatched
+            if (out instanceof LocalSignature && cxt != null) {
+                try {
+                    out = (Contextion) ((LocalSignature)out).initInstance();
+                    if (out instanceof Model) {
+                    xrt.setContext(cxt);
+                        if (xrt.getProcessSignature() instanceof LocalSignature) {
+                            ((LocalSignature) xrt.getProcessSignature()).setTarget(out);
+                        }
+                    }
+                } catch (SignatureException e) {
+                    throw new ConfigurationException(e);
+                }
             }
             outDispatcher = xrt.exert();
 

@@ -463,7 +463,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		}
 	}
 
-	public Functionality getVar(String name) throws ContextException {
+	public Functionality getFunc(String name) throws ContextException {
 		String key;
 		Object val = null;
 		Iterator e = keyIterator();
@@ -562,7 +562,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	 * @return enumeration of marked variable nodes.
 	 * @throws ContextException
 	 */
-	public Enumeration getVarPaths(Functionality var) throws ContextException {
+	public Enumeration getFuncPaths(Functionality var) throws ContextException {
 		String assoc = VAR_NODE_TYPE + APS + var.getName() + APS + var.getType();
 		String[] paths = Contexts.getMarkedPaths(this, assoc);
 		Vector outpaths = new Vector();
