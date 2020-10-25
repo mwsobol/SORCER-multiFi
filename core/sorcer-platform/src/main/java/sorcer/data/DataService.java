@@ -239,8 +239,8 @@ public class DataService implements FileURLHandler {
         String path = file.getPath().replace('\\', '/');
         String relativePath = null;
         for(String root : roots) {
-            if (path.startsWith(root)) {
-                relativePath = path.substring(root.length());
+            if (path.startsWith(root.replace('\\', '/'))) {
+                relativePath = path.substring(root.length()).replace('\\', '/');
                 break;
             }
         }
@@ -418,7 +418,8 @@ public class DataService implements FileURLHandler {
     }
 
     static String getDefaultDataDir() {
-        String tmpDir = System.getenv("TMPDIR")==null?System.getProperty("java.io.tmpdir"):System.getenv("TMPDIR");
+        String tmpDir = System.getenv("TMPDIR") == null
+                ? System.getProperty("java.io.tmpdir") : System.getenv("TMPDIR");
         return new File(String.format("%s%ssorcer-%s%sdata",
                                       tmpDir,
                                       File.separator,

@@ -38,6 +38,7 @@ import net.jini.lookup.entry.Name;
 import net.jini.security.AccessPermission;
 import net.jini.security.TrustVerifier;
 import net.jini.space.JavaSpace05;
+import org.rioproject.config.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.container.jeri.AbstractExporterFactory;
@@ -59,6 +60,7 @@ import sorcer.core.proxy.ProviderProxy;
 import sorcer.core.service.Configurer;
 import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.ServiceSignature;
+import sorcer.data.DataService;
 import sorcer.jini.jeri.RecordingInvocationDispatcher;
 import sorcer.jini.jeri.SorcerILFactory;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
@@ -1238,7 +1240,7 @@ public class ProviderDelegate {
 		String selector = task.getProcessSignature().getSelector();
 		Class[] argTypes = ((ServiceContext)result).getParameterTypes();
 		Object[] pars = ((ServiceContext)result).getArgs();
-		Object obj = null;
+		Object obj;
 		if (selector.equals("exert") && impl instanceof ServiceShell) {
 			Routine xrt = null;
 			if (pars.length == 1) {
@@ -1373,18 +1375,17 @@ public class ProviderDelegate {
 		}
 	}
 
-	public boolean isValidMethod(String name) throws RemoteException {
+	public boolean isValidMethod(String name) {
 		// modify key for SORCER providers
 		Method[] methods = provider.getClass().getMethods();
-		for (int i = 0; i < methods.length; i++) {
-			if (methods[i].getName().equals(name))
+		for (Method method : methods) {
+			if (method.getName().equals(name))
 				return true;
 		}
 		return false;
 	}
 
-	public Task execTask(Task task) throws ContextException, RoutineException,
-		SignatureException, RemoteException {
+	public Task execTask(Task task) throws ContextException, RoutineException, RemoteException {
 		ServiceContext cxt = (ServiceContext) task.getContext();
 		try {
 			if (cxt.isValid(task.getProcessSignature())) {
@@ -1553,10 +1554,9 @@ public class ProviderDelegate {
 	}
 
 	public List<Object> getProperties() {
-		List<Object> allAttributes = new ArrayList<Object>();
+		List<Object> allAttributes = new ArrayList<>();
 		Entry[] attributes = getAttributes();
-		for (Entry entry : attributes)
-			allAttributes.add(entry);
+		Collections.addAll(allAttributes, attributes);
 		allAttributes.add(config.getProviderProperties());
 		allAttributes.add(Sorcer.getProperties());
 		return allAttributes;
@@ -1578,7 +1578,7 @@ public class ProviderDelegate {
 	 * @throws ConfigurationException
 	 */
 	public Entry[] getAttributes() {
-		final List<Entry> attrVec = new ArrayList<Entry>();
+		final List<Entry> attrVec = new ArrayList<>();
 
 		try {
 			// key of the provider suffixed in loadJiniConfiguration
@@ -1598,13 +1598,13 @@ public class ProviderDelegate {
 			Entry[] miscEntries = (Entry[]) config.jiniConfig.getEntry(
 				ServiceExerter.COMPONENT, "args", Entry[].class,
 				new Entry[] {});
-			for (int i = 0; i < miscEntries.length; i++) {
-				attrVec.add(miscEntries[i]);
+			for (Entry miscEntry : miscEntries) {
+				attrVec.add(miscEntry);
 				// transfer location from args if not defined in
 				// SorcerServiceInfo
-				if (miscEntries[i] instanceof Location
-					&& ((SorcerServiceInfo) sst).location == null) {
-					((SorcerServiceInfo) sst).location = "" + miscEntries[i];
+				if (miscEntry instanceof Location
+						&& ((SorcerServiceInfo) sst).location == null) {
+					((SorcerServiceInfo) sst).location = "" + miscEntry;
 				}
 			}
 
@@ -1674,6 +1674,7 @@ public class ProviderDelegate {
 			serviceType.serviceHome = Sorcer.getHome();
 			serviceType.userName = System.getProperty("user.name");
 			serviceType.repository = config.getDataDir();
+			serviceType.dataUrl = System.getProperty(DataService.DATA_URL, System.getProperty(Constants.WEBSTER));
 			serviceType.iconName = config.getIconName();
 
 			if (publishedServiceTypes == null && spaceEnabled) {
@@ -1704,7 +1705,6 @@ public class ProviderDelegate {
 
 		if (hostAddress != null) {
 			serviceType.hostAddress = hostAddress;
-			;
 		} else {
 			logger.warn("Host address is null!!");
 		}
