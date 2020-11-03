@@ -383,7 +383,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 				}
 			}
 			out = explorerFi.getSelect().explore(input);
-			((ModelStrategy) serviceStrategy).setOutcome(output);
+			((ModelStrategy) serviceStrategy).setOutcome(out);
 			strategy.setExecState(Exec.State.DONE);
 		} catch (ConfigurationException | ContextException | ExploreException | SignatureException e) {
 			throw new EvaluationException(e);

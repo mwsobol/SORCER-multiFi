@@ -512,13 +512,17 @@ public class operator {
 
     public static ServiceContext out(Contextion contextion) throws ServiceException {
         if (contextion instanceof Discipline) {
-            return (ServiceContext) ((Discipline) contextion).getOutput();
+            return (ServiceContext) contextion.getOutput();
         }
         if (contextion instanceof Governance) {
             return (ServiceContext) ((Governance) contextion).getOutput();
         } else {
             return (ServiceContext) contextion.getDomainStrategy().getOutcome();
         }
+    }
+
+    public static Context out(Collaboration collab, String domain) throws ContextException {
+        return collab.getOutputs().get(domain);
     }
 
     public static void traced(Mogram mogram, boolean isTraced) throws ContextException {
