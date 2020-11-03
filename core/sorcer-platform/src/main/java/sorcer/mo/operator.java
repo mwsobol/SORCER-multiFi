@@ -21,7 +21,6 @@ import sorcer.co.tuple.ExecDependency;
 import sorcer.co.tuple.InoutValue;
 import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
-import sorcer.core.Dispatcher;
 import sorcer.core.context.*;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.service.SignatureDomain;
@@ -242,20 +241,22 @@ public class operator {
         throws ContextException {
         try {
             Object entry = model.get(entName);
-
             if (entry == null) {
-                model.add(sorcer.ent.operator.ent(entName, value));
+                if (model.getClass().equals(ServiceContext.class)) {
+                    ((ServiceContext)model).put(entName, value);
+                } else {
+                    model.add(sorcer.ent.operator.ent(entName, value));
+                }
             } else if (entry instanceof Entry) {
                 ((Entry) entry).setValue(value);
             } else if (entry instanceof Setter) {
                 ((Setter) entry).setValue(value);
-            } else {
-                ((ServiceContext) model).put(entName, value);
-            }
-            if (entry instanceof Prc) {
+            } else if (entry instanceof Prc) {
                 Prc call = (Prc) entry;
                 if (call.getScope() != null)
                     call.getScope().putValue(call.getName(), value);
+            } else{
+                ((ServiceContext) model).put(entName, value);
             }
         } catch (RemoteException e) {
             throw new ContextException(e);
@@ -438,6 +439,11 @@ public class operator {
     public static ServiceContext substitute(ServiceContext model, Function... entries) throws ContextException {
         model.substitute(entries);
         return model;
+    }
+
+    public static Context substitute(Context target, Context update) throws ContextException {
+        ((ServiceContext)target).substitute(update);
+        return target;
     }
 
     public static Context ins(ContextDomain model) throws ContextException {
@@ -1091,15 +1097,98 @@ public class operator {
         return (String) context.get(Functionality.Type.DISCIPLINE.toString());
     }
 
+
+    public static void analyze(Collaboration collab, Context context) throws ContextException {
+        collab.analyze(context);
+    }
+
+    public static Context dmnCxt(Request request, String domainName) {
+        if (request instanceof Context) {
+            try {
+                return getDomainContext((Context)request, domainName);
+            } catch (ContextException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
+    }
+
+    public static Context setDmnCxt(Request request, String domainName, Context contest) {
+        if (request instanceof Context) {
+            try {
+                return addDomainContext((Context)request, contest, domainName);
+            } catch (ContextException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
+    }
+
+    public static Context dmnIn(Request request, String domainName) {
+        if (request instanceof Collaboration) {
+            try {
+                Context cxt = ((Collaboration)request).getDomains().get(domainName).getContext();
+                if (cxt instanceof Model) {
+                    try {
+                        return cxt.getInputs();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    return ((Collaboration) request).getDomains().get(domainName).getContext();
+                }
+            } catch (ContextException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
+    }
+
+    public static Context dmnOut(Request request, String domainName) {
+        if (request instanceof Collaboration) {
+            return ((Collaboration) request).getOutputs().get(domainName);
+        } else if (request instanceof Context) {
+            return ((Map<String, Context>)((Context)request).get(Context.COLAB_DOMAIN_OUTPUTS_PATH)).get(domainName);
+        }
+        return null;
+    }
+
+    public static void setDmnOut(Request request, String domainName, Context context) {
+        if (request instanceof Collaboration) {
+            ((Collaboration) request).getOutputs().put(domainName, context);
+        }
+    }
+
     public static Domain dmn(Collaboration collab, String name) {
         return collab.getDomain(name);
     }
 
-    public static String dmn(Context context) {
+    public static String dmnName(Context context) {
         return (String) context.get(Functionality.Type.DOMAIN.toString());
     }
 
-    public static String clb(Context context) {
+    public static boolean isExec(Domain domain)  {
+        return domain.isExec();
+    }
+
+    public static Domain notExec(Domain domain)  {
+        domain.setExec(false);
+        return domain;
+    }
+    public static Domain setExec(Domain domain)  {
+        domain.setExec(true);
+        return domain;
+    }
+
+    public static Collaboration clb(Context context) {
+        Object subject = context.getSubjectValue();
+        if (subject instanceof Collaboration) {
+            return (Collaboration)subject;
+        }
+        return null;
+    }
+
+    public static String clbName(Context context) {
         return (String) context.get(Functionality.Type.COLLABORATION.toString());
     }
 
@@ -1189,7 +1278,7 @@ public class operator {
                 execDeps = (ExecDeps) o;
             } else if (o instanceof ServiceFidelity) {
                 discFis.add((ServiceFidelity) o);
-            } else if (o instanceof Paths && ((Paths) o).type.equals(Functionality.Type.DOMAIN)) {
+            } else if (o instanceof Paths && ((Paths) o).type.equals(Functionality.Type.COLLABORATION)) {
                 domainPaths = (Paths) o;
             }
         }

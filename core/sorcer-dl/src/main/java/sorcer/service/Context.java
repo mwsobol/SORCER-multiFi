@@ -199,6 +199,8 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 	final static String DSD_PATH = "domain" + SorcerConstants.CPS + "specific"
 			+ SorcerConstants.CPS + "data";
 
+	final static String COLAB_DOMAIN_OUTPUTS_PATH = "collab" + SorcerConstants.CPS + "domain" + SorcerConstants.CPS + "outputs";
+
 	/**
 	 * An object to specify no context execute.
 	 */

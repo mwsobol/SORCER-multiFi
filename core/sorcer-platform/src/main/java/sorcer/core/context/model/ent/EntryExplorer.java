@@ -17,17 +17,12 @@
 
 package sorcer.core.context.model.ent;
 
-import sorcer.core.context.ModelTask;
-import sorcer.core.context.ServiceContext;
-import sorcer.core.service.SignatureDomain;
 import sorcer.core.signature.LocalSignature;
-import sorcer.service.Analysis;
 import sorcer.core.service.Collaboration;
 import sorcer.service.*;
 import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.ExploreException;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -101,9 +96,8 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
             if (disptacher != null) {
                 disptacher.dispatch(context);
             }
-            Domain domain = null;
             if (contextion instanceof Collaboration) {
-                ((Collaboration) contextion).collaborate(context);
+                ((Collaboration) contextion).analyze(context);
             } else {
                 throw new ContextException("analysis failed for: " + contextion);
             }

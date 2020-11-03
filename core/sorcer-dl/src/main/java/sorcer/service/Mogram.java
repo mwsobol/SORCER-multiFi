@@ -392,4 +392,10 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
 	 */
 	public boolean isCompound();
 
+    /**
+     * Returns true if this exertion is executable in Collaboration
+     */
+    public boolean isExec();
+
+    public void setExec(boolean exec);
 }

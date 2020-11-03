@@ -79,7 +79,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected Fidelity<EntryAnalyzer> mdaFi;
     protected List<Coupling> couplings;
     protected ContextSelector contextSelector;
-
+    protected boolean isExec = true;
     /**
      * execution status: INITIAL|DONE|RUNNING|SUSPENDED|HALTED
      */
@@ -1317,6 +1317,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.outPathProjection = outPathProjection;
     }
 
+    public boolean isExec() {
+        return isExec;
+    }
+
+    public void setExec(boolean exec) {
+        isExec = exec;
+    }
+
     public ServiceMogram copyFrom(ServiceMogram mogram) {
         super.copyFrom(mogram);
 
@@ -1372,6 +1380,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.dataContext = mogram.dataContext;
         this.provider = mogram.provider;
         this.isEvaluated = mogram.isEvaluated;
+        this.isExec = mogram.isExec;
 
         return this;
     }

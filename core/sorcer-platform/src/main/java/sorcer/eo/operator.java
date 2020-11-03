@@ -258,24 +258,6 @@ operator extends Operator {
         return context(args);
     }
 
-    public static Context dmnIn(Request request, String domainName) {
-        if (request instanceof Collaboration) {
-            try {
-                return ((Collaboration)request).getDomains().get(domainName).getContext();
-            } catch (ContextException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return null;
-    }
-
-    public static Context dmnOut(Request request, String domainName) {
-        if (request instanceof Collaboration) {
-            return ((Collaboration) request).getOutputs().get(domainName);
-        }
-        return null;
-    }
-
     public static Context cxt(Object... entries) throws ContextException {
         return context(entries);
     }

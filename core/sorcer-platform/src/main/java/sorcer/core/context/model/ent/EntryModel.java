@@ -36,6 +36,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.mo.operator.setValues;
+import static sorcer.so.operator.eval;
 import static sorcer.so.operator.exec;
 
 /*
@@ -632,4 +633,13 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				+ "\n" + super.toString();
 	}
 
+	@Override
+	public Context getResponse(Context context, Arg... args) throws ContextException {
+		try {
+			evaluate(context, args);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
+		return getOutput(args);
+	}
 }

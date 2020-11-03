@@ -33,7 +33,7 @@ public class SignatureDomain implements Domain {
     private Signature signature;
     private Domain domain;
     protected Contextion parent;
-
+    protected boolean isExec = true;
     public SignatureDomain() {
 
     }
@@ -460,6 +460,14 @@ public class SignatureDomain implements Domain {
         return domain.isCompound();
     }
 
+    @Override
+    public boolean isExec() {
+        return isExec;
+    }
+
+    public void setExec(boolean exec) {
+        this.isExec = exec;
+    }
     @Override
     public void execDependencies(String path, Arg... args) throws ContextException {
         domain.execDependencies(path, args);

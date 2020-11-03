@@ -335,12 +335,14 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 	@Override
 	public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
 		Context out = null;
-		Context cxt = context;
 		try {
-			if (cxt == null) {
-				cxt = getInput();
+			input = getInput();
+			if (input == null) {
+				input = context;
+			} else {
+				input.append(context);
 			}
-			ModelStrategy strategy = ((ModelStrategy) cxt.getDomainStrategy());
+			ModelStrategy strategy = ((ModelStrategy) input.getDomainStrategy());
 			List<Fidelity> fis = Arg.selectFidelities(args);
 			if (analyzerFi != null) {
 				strategy.setExecState(Exec.State.RUNNING);
@@ -364,70 +366,91 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 			}
 
 			if (analyzerFi == null) {
-				setAnalyzerFi(cxt);
+				setAnalyzerFi(input);
 			}
 			if (explorerFi == null) {
-				setExplorerFi(cxt);
+				setExplorerFi(input);
 			}
 
-			out = explorerFi.getSelect().explore(cxt);
+			// initialize domains specified by builder signatures
+			for (Path path : domainPaths) {
+				Domain domain = domains.get(path.path);
+				if (domain instanceof SignatureDomain) {
+					boolean isExec = domain.isExec();
+					domain = ((SignatureDomain) domain).getDomain();
+					domains.put(domain.getName(), domain);
+					domain.setExec(isExec);
+				}
+			}
+			out = explorerFi.getSelect().explore(input);
 			((ModelStrategy) serviceStrategy).setOutcome(output);
 			strategy.setExecState(Exec.State.DONE);
-		} catch (ConfigurationException | ContextException | ExploreException e) {
+		} catch (ConfigurationException | ContextException | ExploreException | SignatureException e) {
 			throw new EvaluationException(e);
 		}
 		return out;
 	}
 
-	public void collaborate(Context context) throws ServiceException, SignatureException, DispatchException, RemoteException {
+	public void analyze(Context context) throws ContextException {
 		Context collabOut = new ServiceContext(name);
 		Domain domain = null;
-		for (Path path : domainPaths) {
-			domain = domains.get(path.path);
-			if (domain instanceof SignatureDomain) {
-				domain = ((SignatureDomain) domain).getDomain();
-				domains.put(domain.getName(), domain);
-			}
-			Context domainCxt = sorcer.mo.operator.getDomainContext(context, domain.getName());
-			Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getName());
-			Context cxt = null;
-			if (domainCxt != null) {
-				if (domain instanceof Dispatch) {
-					cxt = ((Dispatch)domain).dispatch(domainCxt);
-				} else if(dispatcher != null && dispatcher instanceof ModelTask) {
-					((ModelTask) dispatcher).setContext(domainCxt);
-					((ModelTask) dispatcher).setModel((Model) domain);
-					Response response = (Response) exec((ModelTask) dispatcher);
-					if (response instanceof Context) {
-						cxt = (Context) response;
-					} else {
-						cxt = response.toContext();
-					}
-				} else {
-					if (domain instanceof Mogram) {
-						cxt = response(domain, domainCxt);
-					} else {
-						cxt = domain.evaluate(domainCxt);
-					}
+		try {
+			for (Path path : domainPaths) {
+				domain = domains.get(path.path);
+				if (domain instanceof SignatureDomain) {
+					domain = ((SignatureDomain) domain).getDomain();
+					domains.put(domain.getName(), domain);
 				}
-			} else {
-				if (domain instanceof Context && ((ServiceContext)domain).getType() == Functionality.Type.EXEC) {
-					// eventually add argument signatures ped domain
-					cxt = (Context)domain.execute();
+				Context domainCxt = sorcer.mo.operator.getDomainContext(context, domain.getName());
+				Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getName());
+				Context cxt = null;
+				if (domainCxt != null) {
+					if (domain instanceof Dispatch) {
+						cxt = ((Dispatch) domain).dispatch(domainCxt);
+					} else if (dispatcher != null && dispatcher instanceof ModelTask) {
+						((ModelTask) dispatcher).setContext(domainCxt);
+						((ModelTask) dispatcher).setModel((Model) domain);
+						Response response = (Response) exec((ModelTask) dispatcher);
+						if (response instanceof Context) {
+							cxt = (Context) response;
+						} else {
+							cxt = response.toContext();
+						}
+					} else if (domain.isExec()) {
+						if (domain instanceof Mogram) {
+							cxt = response(domain, domainCxt);
+						} else {
+							cxt = domain.evaluate(domainCxt);
+						}
+					} else {
+						collabOut = input;
+					}
+				} else if (domain.isExec()) {
+					if (domain instanceof Context && ((ServiceContext) domain).getType() == Functionality.Type.EXEC) {
+						// eventually add argument signatures ped domain
+						cxt = (Context) domain.execute();
+					} else {
+						cxt = response(domain);
+						;
+					}
+					outputs.put(domain.getName(), cxt);
+					collabOut.append(cxt.getDomainData());
 				} else {
-					cxt = response(domain);;
+					collabOut = input;
 				}
+
+				Analysis analyzer = analyzerFi.getSelect();
+				if (analyzerFi != null) {
+					collabOut.putValue(Functionality.Type.DOMAIN.toString(), domain.getName());
+					analyzer.analyze(domain, collabOut);
+				}
+
+				collabOut.setSubject(name, this);
+				((ServiceContext) collabOut).put(Context.COLAB_DOMAIN_OUTPUTS_PATH, outputs);
+				output = collabOut;
 			}
-			outputs.put(domain.getName(), cxt);
-			collabOut.append(cxt.getDomainData());
-			Analysis analyzer = analyzerFi.getSelect();
-			if (analyzerFi != null ) {
-				collabOut.putValue(Functionality.Type.DOMAIN.toString(), domain.getName());
-				analyzer.analyze(domain,  collabOut);
-			}
-			((ServiceContext)collabOut).setSubject(name, this);
-			((ServiceContext)collabOut).put("collab/outputs" + name, outputs);
-			output = collabOut;
+		} catch (ServiceException | SignatureException | RemoteException | DispatchException e) {
+			throw new ContextException(e);
 		}
 	}
 

@@ -122,7 +122,7 @@ public class Transmodels {
             mda("analyzer",
                 (Request req, Context cxt) -> {
                     double x1, x2, x3;
-                    String dmnName = dmn(cxt);
+                    String dmnName = dmnName(cxt);
                     if (dmnName.equals("model1")) {
                         x1 = (double)value(cxt, "y1");
                         x2 = (double)value(cxt, "y2");

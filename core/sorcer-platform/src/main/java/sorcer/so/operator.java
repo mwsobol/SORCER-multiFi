@@ -46,6 +46,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static sorcer.co.operator.get;
+import static sorcer.mo.operator.routine;
 import static sorcer.mo.operator.value;
 
 /**
@@ -321,6 +322,16 @@ public class operator extends Operator {
             e.printStackTrace();
         }
         return response(mogram, items);
+    }
+
+    public static Context outcome(Contextion domain, Context context, Arg... args) throws ContextException {
+        if (domain instanceof Model) {
+            return ((Model) domain).getResponse(context, args);
+        } else if (domain instanceof Routine) {
+            ((Routine)domain).getDataContext().append(context);
+            return exertionResponse((Routine) domain, (Object[])args);
+        }
+        return ((Mogram)domain).getDataContext().append(context);
     }
 
     public static ServiceContext response(Mogram mogram, Object... items) throws ContextException {

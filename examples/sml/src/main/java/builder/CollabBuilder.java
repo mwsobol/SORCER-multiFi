@@ -136,7 +136,7 @@ public class CollabBuilder {
 			expl("explorer1",
 				(Context cxt) -> {
 					double z1, z2;
-					String clbName = clb(cxt);
+					String clbName = clbName(cxt);
 					if (clbName.equals("domainCollab")) {
 						z1 = (double)value(cxt, "z1");
 						z2 = (double)value(cxt, "z2");
@@ -148,7 +148,7 @@ public class CollabBuilder {
 				(mda("analyzer1",
 					(Request collab, Context cxt) -> {
 						double y1, y2, y3;
-						String dmnName = dmn(cxt);
+						String dmnName = dmnName(cxt);
 						if (dmnName.equals("srvBlock")) {
 							y1 = (double)value(cxt, "arg/x1");
 							y2 = (double)value(cxt, "arg/x2");
@@ -159,7 +159,8 @@ public class CollabBuilder {
 							y2 = (double)value(cxt, "y2");
 							setValue(cxt, "z2", (y1 + y2) / 2.4);
 						}
-					}))));
+					}
+					))));
 
 		Collaboration collab = clb("domainCollab",
 			instance(sig("getEntryModel", CollabBuilder.class)),
