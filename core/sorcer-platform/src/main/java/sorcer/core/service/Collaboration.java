@@ -30,10 +30,7 @@ import sorcer.core.context.model.ent.EntryExplorer;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
 import sorcer.service.Discipline;
-import sorcer.service.modeling.ExploreException;
-import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Model;
-import sorcer.service.modeling.cxtn;
+import sorcer.service.modeling.*;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -339,7 +336,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 			input = getInput();
 			if (input == null) {
 				input = context;
-			} else {
+			} else if (context != null){
 				input.append(context);
 			}
 			ModelStrategy strategy = ((ModelStrategy) input.getDomainStrategy());
@@ -373,15 +370,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 			}
 
 			// initialize domains specified by builder signatures
-			for (Path path : domainPaths) {
-				Domain domain = domains.get(path.path);
-				if (domain instanceof SignatureDomain) {
-					boolean isExec = domain.isExec();
-					domain = ((SignatureDomain) domain).getDomain();
-					domains.put(domain.getName(), domain);
-					domain.setExec(isExec);
-				}
-			}
+			initializeDomains();
 			out = explorerFi.getSelect().explore(input);
 			((ModelStrategy) serviceStrategy).setOutcome(out);
 			strategy.setExecState(Exec.State.DONE);
@@ -452,6 +441,27 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 		} catch (ServiceException | SignatureException | RemoteException | DispatchException e) {
 			throw new ContextException(e);
 		}
+	}
+
+	public void initializeDomains() throws SignatureException {
+		// initialize domains specified by builder signatures
+		for (Domain domain : domains.values()) {
+			if (domain instanceof SignatureDomain) {
+				boolean isExec = domain.isExec();
+				domain = ((SignatureDomain) domain).getDomain();
+				domains.put(domain.getName(), domain);
+				domain.setExec(isExec);
+			}
+		}
+	}
+
+	public OptimizationModeling getOptimizationDomain() {
+		for (Domain domain : domains.values()) {
+			if (domain instanceof OptimizationModeling) {
+				return (OptimizationModeling) domain;
+			}
+		}
+		return null;
 	}
 
 	public ServiceFidelity getContextMultiFi() {

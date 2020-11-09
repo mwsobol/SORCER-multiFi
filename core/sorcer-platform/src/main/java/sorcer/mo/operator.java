@@ -521,8 +521,16 @@ public class operator {
         }
     }
 
+    public static ServiceContext in(Contextion contextion) throws ServiceException {
+        return (ServiceContext) contextion.getOutput();
+    }
+
     public static Context out(Collaboration collab, String domain) throws ContextException {
         return collab.getOutputs().get(domain);
+    }
+
+    public static Context in(Collaboration collab, Context in) throws ContextException {
+        return collab.setInput(in);
     }
 
     public static void traced(Mogram mogram, boolean isTraced) throws ContextException {

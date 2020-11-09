@@ -23,6 +23,7 @@ import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.req.Req;
 import sorcer.core.invoker.ServiceInvoker;
+import sorcer.core.service.Collaboration;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
 import sorcer.service.modeling.Model;
@@ -70,6 +71,9 @@ import static sorcer.so.operator.exec;
 public class EntryModel extends PositionalContext<Object> implements Model, Invocation<Object> {
 
     private static final long serialVersionUID = -6932730998474298653L;
+
+    // model supporting collaboration
+	protected Collaboration collaboration;
 
 	public static EntryModel instance(Signature builder) throws SignatureException {
 		EntryModel model = (EntryModel) sorcer.co.operator.instance(builder);
@@ -625,6 +629,14 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			}
 		}
 		return this;
+	}
+
+	public Collaboration getCollaboration() {
+		return collaboration;
+	}
+
+	public void setCollaboration(Collaboration collaboration) {
+		this.collaboration = collaboration;
 	}
 
 	@Override
