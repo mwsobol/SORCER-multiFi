@@ -2762,7 +2762,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return null;
 	}
 
-	public void substituteInputs(Context context) throws SetterException {
+	public void substituteInputs(Context context, String... names) throws SetterException {
 		try {
 			getInputs().append(context);
 		} catch (ContextException | RemoteException e) {
