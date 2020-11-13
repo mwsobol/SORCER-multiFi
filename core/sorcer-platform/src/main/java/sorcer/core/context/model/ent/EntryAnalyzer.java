@@ -72,7 +72,7 @@ public class EntryAnalyzer extends Entry<Analysis> implements Analysis {
     public void analyze(Request request, Context context) throws EvaluationException {
         try {
             if (impl != null && impl instanceof Analysis) {
-                if (contextion == null) {
+                if (contextion == null || context == contextion) {
                     ((Analysis) impl).analyze(request, context);
                 } else {
                     ((Analysis) impl).analyze(contextion, context);
