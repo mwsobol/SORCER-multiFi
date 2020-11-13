@@ -44,6 +44,8 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
 
     private Signature signature;
 
+    private Fidelity<Analysis> analyzerFi;
+
     public EntryExplorer(String name, Exploration explorer)  {
         this.key = name;
         this.impl = explorer;
@@ -87,6 +89,14 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
         return signature;
     }
 
+    public Fidelity<Analysis> getAnalyzerFi() {
+        return analyzerFi;
+    }
+
+    public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
+        this.analyzerFi = analyzerFi;
+    }
+
     @Override
     public Context explore(Context context) throws ContextException, ExploreException, RemoteException {
         Map<String, Context> domainOutputs = ((Collaboration) contextion).getOutputs();
@@ -96,13 +106,16 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
             if (disptacher != null) {
                 disptacher.dispatch(context);
             }
+
             if (contextion instanceof Collaboration) {
                 ((Collaboration) contextion).analyze(context);
-            } else {
-                throw new ContextException("analysis failed for: " + contextion);
+                output = ((Collaboration) contextion).getOutput();
+                output.putValue(Functionality.Type.COLLABORATION.toString(), contextion.getName());
+            } else if (analyzerFi != null) {
+                Analysis analyzer = analyzerFi.getSelect();
+                analyzer.analyze(contextion, context);
             }
-            output = ((Collaboration) contextion).getOutput();
-            output.putValue(Functionality.Type.COLLABORATION.toString(), contextion.getName());
+
             if (impl != null && impl instanceof Exploration) {
                 output = ((Exploration) impl).explore(output);
             } else if (signature != null) {
