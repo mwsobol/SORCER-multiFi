@@ -1356,7 +1356,11 @@ public class operator {
                 sorcer.co.operator.dependsOn(collab, execDeps.deps);
             }
         }
-
+        try {
+            collab.initializeDomains();
+        } catch (SignatureException e) {
+            throw new ContextException(e);
+        }
 //        collab.setExplorer(new Explorer(collab));
         return collab;
     }
