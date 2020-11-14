@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ModelTask;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Coupling;
 import sorcer.core.context.model.ent.EntryAnalyzer;
 import sorcer.core.context.model.ent.EntryExplorer;
 import sorcer.core.plexus.FidelityManager;
@@ -73,6 +74,8 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 	protected Fidelity<EntryExplorer> explorerFi;
 
 	protected Map<String, Domain> domains = new HashMap<>();
+
+	protected List<Coupling> couplings;
 
 	// active disciplnes
 	protected Paths domainPaths;
@@ -609,8 +612,16 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 	public Functionality.Type getDependencyType() {
 		return Functionality.Type.COLLABORATION;
 	}
+
 	@Override
 	public void selectFidelity(Fidelity fi) throws ConfigurationException {
+	}
 
+	public List<Coupling> getCouplings() {
+		return couplings;
+	}
+
+	public void setCouplings(List<Coupling> couplings) {
+		this.couplings = couplings;
 	}
 }
