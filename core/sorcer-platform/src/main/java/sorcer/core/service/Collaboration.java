@@ -420,7 +420,6 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 						cxt = (Context) domain.execute();
 					} else {
 						cxt = response(domain);
-						;
 					}
 					outputs.put(domain.getName(), cxt);
 					collabOut.append(cxt.getDomainData());

@@ -510,19 +510,26 @@ public class operator {
         return mogram;
     }
 
-    public static ServiceContext out(Contextion contextion) throws ServiceException {
+    public static ServiceContext out(Contextion contextion) throws ContextException {
         if (contextion instanceof Discipline) {
             return (ServiceContext) contextion.getOutput();
-        }
-        if (contextion instanceof Governance) {
+        } else if (contextion instanceof Governance) {
             return (ServiceContext) ((Governance) contextion).getOutput();
         } else {
             return (ServiceContext) contextion.getDomainStrategy().getOutcome();
         }
     }
 
-    public static ServiceContext in(Contextion contextion) throws ServiceException {
-        return (ServiceContext) contextion.getOutput();
+    public static ServiceContext in(Contextion contextion) throws ContextException {
+        if (contextion instanceof Discipline) {
+            return (ServiceContext) ((ServiceDiscipline) contextion).getInput();
+        } else if (contextion instanceof Collaboration) {
+            return (ServiceContext) ((Collaboration) contextion).getInput();
+        } else if (contextion instanceof Governance) {
+            return (ServiceContext) ((Governance) contextion).getInput();
+        } else {
+            return ((ServiceMogram) contextion).getDataContext();
+        }
     }
 
     public static Context out(Collaboration collab, String domain) throws ContextException {
@@ -1520,6 +1527,18 @@ public class operator {
     public static EntryExplorer expl(String name, Exploration explorer)
         throws EvaluationException {
         return new EntryExplorer(name, explorer);
+    }
+
+    public static EntryExplorer expl(String name, Signature signature)
+        throws EvaluationException {
+        EntryExplorer mde = new EntryExplorer(name, signature);
+        mde.setType(Functionality.Type.EXPLORER);
+        try {
+            mde.setValue(signature);
+        } catch (SetterException | RemoteException e) {
+            throw new EvaluationException(e);
+        }
+        return mde;
     }
 
     public static EntryAnalyzer mdaInstace(String name, Signature signature)
