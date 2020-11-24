@@ -21,12 +21,12 @@ import java.util.Map;
 
 public interface Transdiscipline extends Contextion, ManagedRequest {
 
-    public Map<String, Discipline> getChildren();
+    public Map<String, Region> getChildren();
 
     public Fidelity<Analysis> getAnalyzerFi();
 
     public Fidelity<Supervision> getSupervisorFi();
 
-    public Discipline getChild(String name);
+    public Region getChild(String name);
 
 }

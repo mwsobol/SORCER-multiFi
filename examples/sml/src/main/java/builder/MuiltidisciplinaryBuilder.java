@@ -8,6 +8,7 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.invoker.Pipeline;
 import sorcer.core.service.Governance;
+import sorcer.mo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.fi;
 import sorcer.service.modeling.mog;
@@ -30,14 +31,14 @@ public class MuiltidisciplinaryBuilder {
 	private final static Logger logger = LoggerFactory.getLogger(MuiltidisciplinaryBuilder.class);
 
 
-	public static Discipline getMorphModelDiscipline() throws Exception {
+	public static Region getMorphModelDiscipline() throws Exception {
 
 		// cxtn1 is a free contextion for a discipline dispatcher
 		Block mdlDispatch = block(
 			loop(condition(cxt -> (double)
 				value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
-		Discipline morphDis = dsc("morphModelDisc",
+		Region morphDis = operator.rgn("morphModelDisc",
 			cxtnFi("cxtn1", sig("cxtn1", MuiltidisciplinaryBuilder.class, "getMorphingModel")),
 			dspFi("dspt1", mdlDispatch));
 
@@ -132,7 +133,7 @@ public class MuiltidisciplinaryBuilder {
 		return mdl;
 	}
 
-	static public Discipline getMultiFiPipelineDiscipline() throws Exception {
+	static public Region getMultiFiPipelineDiscipline() throws Exception {
 
 		// evalTask dispatches the contextion Fi cxtn1
 		// evaluator("cxtn1") is FreeEvaluator to be bound to Fi cxtn1
@@ -153,7 +154,7 @@ public class MuiltidisciplinaryBuilder {
 			loop(condition(cxt -> (double)
 				value(cxt, "lambdaOut") < 500.0), pipeline("cxtn2")));
 
-		Discipline plDisc = dsc("plDisc",
+		Region plDisc = operator.rgn("plDisc",
 			dscFi("plDisc1",
 				cxtnFi("cxtn1", sig("getPipeline1",  MuiltidisciplinaryBuilder.class)),
 				cxtFi("cxt1", cxt1),
@@ -218,7 +219,7 @@ public class MuiltidisciplinaryBuilder {
 			mda("analyzer",
 				(Request gov, Context cxt) -> {
 					double x1, x2, x3;
-					String discName = dsc(cxt);
+					String discName = rgn(cxt);
 					if (discName.equals("morphModelDisc")) {
 						setValue(gov, "m1", value(cxt, "morpher3"));
 					} else if (discName.equals("plDisc")) {

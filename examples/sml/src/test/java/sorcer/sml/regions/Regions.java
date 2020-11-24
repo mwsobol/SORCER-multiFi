@@ -1,4 +1,4 @@
-package sorcer.sml.diciplines;
+package sorcer.sml.regions;
 
 import builder.MuiltidisciplinaryBuilder;
 import org.junit.Test;
@@ -10,6 +10,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.invoker.Pipeline;
 import sorcer.core.service.Governance;
+import sorcer.mo.operator;
 import sorcer.service.*;
 
 import static org.junit.Assert.assertEquals;
@@ -33,9 +34,9 @@ import static sorcer.so.operator.*;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class Disciplines {
+public class Regions {
 
-    private final static Logger logger = LoggerFactory.getLogger(Disciplines.class);
+    private final static Logger logger = LoggerFactory.getLogger(Regions.class);
 
     @Test
     public void opservicePipeline() throws Exception {
@@ -88,7 +89,7 @@ public class Disciplines {
             loop(condition(cxt -> (double)
                 value(cxt, "lambdaOut") < 500.0), pipeline("cxtn1")));
 
-        Discipline plDis = dsc(
+        Region plDis = operator.rgn(
             cxtnFi("cxtn1", opspl),
             dspFi("dspt1", plDispatch));
 
@@ -160,7 +161,7 @@ public class Disciplines {
             mda("analyzer",
                 (Request gov, Context cxt) -> {
                     double x1, x2, x3;
-                    String discName = dsc(cxt);
+                    String discName = rgn(cxt);
                     if (discName.equals("morphModelDisc")) {
                         setValue(gov, "m1", value(cxt, "morpher3"));
                     } else if (discName.equals("plDisc")) {
@@ -179,14 +180,14 @@ public class Disciplines {
         Governance gov = (Governance) instance(
             sig("getMultidiscGovernance1", MuiltidisciplinaryBuilder.class));
 
-        logger.info("discipline morphModelDisc name: " + dsc(gov, "morphModelDisc").getName());
-        logger.info("discipline plDisc name: " + dsc(gov, "plDisc").getName());
-        assertEquals(dsc(gov, "morphModelDisc").getName(), "morphModelDisc");
-        assertEquals(dsc(gov, "plDisc").getName(), "plDisc");
+        logger.info("discipline morphModelDisc name: " + operator.rgn(gov, "morphModelDisc").getName());
+        logger.info("discipline plDisc name: " + operator.rgn(gov, "plDisc").getName());
+        assertEquals(operator.rgn(gov, "morphModelDisc").getName(), "morphModelDisc");
+        assertEquals(operator.rgn(gov, "plDisc").getName(), "plDisc");
 
         Context out = eval(gov, govCxt);
-        logger.info("gov morphModelDisc out: " + out(dsc(gov, "morphModelDisc")));
-        logger.info("gov plDisc out: " + out(dsc(gov, "plDisc")));
+        logger.info("gov morphModelDisc out: " + out(operator.rgn(gov, "morphModelDisc")));
+        logger.info("gov plDisc out: " + out(operator.rgn(gov, "plDisc")));
         logger.info("gov out: " + out);
 
         assertEquals(0.092, value(out(gov), "g1"));
@@ -200,14 +201,14 @@ public class Disciplines {
         Governance gov = (Governance) instance(
             sig("getMultidiscGovernance2", MuiltidisciplinaryBuilder.class));
 
-        logger.info("discipline morphModelDisc name: " + dsc(gov, "morphModelDisc").getName());
-        logger.info("discipline plDisc name: " + dsc(gov, "plDisc").getName());
-        assertEquals(dsc(gov, "morphModelDisc").getName(), "morphModelDisc");
-        assertEquals(dsc(gov, "plDisc").getName(), "plDisc");
+        logger.info("discipline morphModelDisc name: " + operator.rgn(gov, "morphModelDisc").getName());
+        logger.info("discipline plDisc name: " + operator.rgn(gov, "plDisc").getName());
+        assertEquals(operator.rgn(gov, "morphModelDisc").getName(), "morphModelDisc");
+        assertEquals(operator.rgn(gov, "plDisc").getName(), "plDisc");
 
         Context out = eval(gov);
-        logger.info("gov morphModelDisc out: " + out(dsc(gov, "morphModelDisc")));
-        logger.info("gov plDisc out: " + out(dsc(gov, "plDisc")));
+        logger.info("gov morphModelDisc out: " + out(operator.rgn(gov, "morphModelDisc")));
+        logger.info("gov plDisc out: " + out(operator.rgn(gov, "plDisc")));
         logger.info("gov out: " + out);
 
         assertEquals(0.092, value(out(gov), "g1"));

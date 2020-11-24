@@ -27,7 +27,6 @@ import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.req.Req;
-import sorcer.core.context.model.req.RequestModel;
 import sorcer.core.context.model.req.Transmodel;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.plexus.FidelityManager;
@@ -38,7 +37,7 @@ import sorcer.service.Exertion;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
-import sorcer.service.Discipline;
+import sorcer.service.Region;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -46,7 +45,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static sorcer.co.operator.get;
-import static sorcer.mo.operator.routine;
 import static sorcer.mo.operator.value;
 
 /**
@@ -185,8 +183,8 @@ public class operator extends Operator {
         return (ServiceContext)rc;
     }
 
-    public static void clear(Discipline discipline) throws MogramException {
-        ((ServiceDiscipline)discipline).clear();
+    public static void clear(Region region) throws MogramException {
+        ((ServiceRegion) region).clear();
     }
 
     public static Context eval(Signature signature, Arg... args)
@@ -195,8 +193,8 @@ public class operator extends Operator {
         try {
             Object target = ((LocalSignature) signature).build();
 
-            if (target instanceof Discipline) {
-                out = (Context) ((Discipline) target).execute(args);
+            if (target instanceof Region) {
+                out = (Context) ((Region) target).execute(args);
             } else if (target instanceof Model) {
                 Context cxt = Arg.selectContext(args);
                 out = ((Model)target).evaluate(cxt);
@@ -207,33 +205,33 @@ public class operator extends Operator {
         return out;
     }
 
-    public static Context eval(Discipline discipline, Arg... args)
+    public static Context eval(Region region, Arg... args)
         throws ContextException {
         try {
-            return (Context) discipline.execute(args);
+            return (Context) region.execute(args);
         } catch (ServiceException | RemoteException e) {
             throw new ContextException(e);
         }
     }
 
-    public static Context dscOut(Discipline discipline) throws ContextException {
-        return discipline.getOutput();
+    public static Context dscOut(Region region) throws ContextException {
+        return region.getOutput();
     }
 
-    public static Context dspOut(Discipline discipline) throws ContextException {
-        return ((ServiceDiscipline)discipline).getOutDispatcher().getContext();
+    public static Context dspOut(Region region) throws ContextException {
+        return ((ServiceRegion) region).getOutDispatcher().getContext();
     }
 
     public static Context out(Governance governance) {
         return governance.getOutput();
     }
 
-    public static Context result(Discipline discipline) throws ContextException {
-        return ((Routine)discipline.getOutDispatcher()).getContext();
+    public static Context result(Region region) throws ContextException {
+        return ((Routine) region.getOutDispatcher()).getContext();
     }
 
-    public static Dispatch dispatcher(Discipline discipline) {
-        return discipline.getOutDispatcher();
+    public static Dispatch dispatcher(Region region) {
+        return region.getOutDispatcher();
     }
 
     public static Response query(Mogram mogram, Arg... args) throws ContextException {
@@ -562,7 +560,7 @@ public class operator extends Operator {
             } else if (service instanceof Mogram) {
                 if (service instanceof DataContext || service instanceof MultiFiMogram) {
                     return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
-                } else if (service instanceof Discipline) {
+                } else if (service instanceof Region) {
                     return service.execute(args);
                 } else {
                     return execMogram((Mogram) service, args);

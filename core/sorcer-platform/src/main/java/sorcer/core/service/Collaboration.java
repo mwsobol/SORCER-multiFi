@@ -30,7 +30,7 @@ import sorcer.core.context.model.ent.EntryAnalyzer;
 import sorcer.core.context.model.ent.EntryExplorer;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
-import sorcer.service.Discipline;
+import sorcer.service.Region;
 import sorcer.service.modeling.*;
 
 import java.rmi.RemoteException;
@@ -238,7 +238,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 	public List<Domain> getDisciplineList() {
 		List<Domain> domainList = new ArrayList<>();
 		for (Domain disc : domains.values()) {
-			if (disc instanceof Discipline) {
+			if (disc instanceof Region) {
 				domainList.add(disc);
 			}
 		}

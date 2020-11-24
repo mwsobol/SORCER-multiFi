@@ -765,7 +765,7 @@ public class operator extends Operator {
 
 	public static Paths disciplines(String... disciplines) {
 		Paths paths = new Paths(disciplines);
-		paths.type = Type.DISCIPLINE;
+		paths.type = Type.REGION;
 		return paths;
 	}
 

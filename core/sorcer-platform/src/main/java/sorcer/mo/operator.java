@@ -43,7 +43,7 @@ import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
 import sorcer.service.modeling.*;
-import sorcer.service.Discipline;
+import sorcer.service.Region;
 import sorcer.util.DataTable;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -415,8 +415,8 @@ public class operator {
         return null;
     }
 
-    public static Context result(Discipline discipline) throws ServiceException {
-        return discipline.getOutput();
+    public static Context result(Region region) throws ServiceException {
+        return region.getOutput();
     }
 
     public static Object result(Mogram mogram, String path) throws ContextException {
@@ -511,7 +511,7 @@ public class operator {
     }
 
     public static ServiceContext out(Contextion contextion) throws ContextException {
-        if (contextion instanceof Discipline) {
+        if (contextion instanceof Region) {
             return (ServiceContext) contextion.getOutput();
         } else if (contextion instanceof Governance) {
             return (ServiceContext) ((Governance) contextion).getOutput();
@@ -521,8 +521,8 @@ public class operator {
     }
 
     public static ServiceContext in(Contextion contextion) throws ContextException {
-        if (contextion instanceof Discipline) {
-            return (ServiceContext) ((ServiceDiscipline) contextion).getInput();
+        if (contextion instanceof Region) {
+            return (ServiceContext) ((ServiceRegion) contextion).getInput();
         } else if (contextion instanceof Collaboration) {
             return (ServiceContext) ((Collaboration) contextion).getInput();
         } else if (contextion instanceof Governance) {
@@ -1096,24 +1096,25 @@ public class operator {
         return servers;
     }
 
-    public static Discipline dsc(Service server, Routine consumer) {
-        return new ServiceDiscipline(server, consumer);
+    public static Region rgn(Service server, Routine consumer) {
+        return new ServiceRegion(server, consumer);
     }
 
-    public static Discipline dsc(Service[] servers, Routine[] clients) {
-        return new ServiceDiscipline(servers, clients);
+    public static Region rgn(Service[] servers, Routine[] clients) {
+        return new ServiceRegion(servers, clients);
     }
 
-    public static Discipline dsc(List<Service> servers, List<Routine> clients) {
-        return new ServiceDiscipline(servers, clients);
+    public static Region rgn(List<Service> servers,
+                             List<Routine> clients) {
+        return new ServiceRegion(servers, clients);
     }
 
-    public static Discipline dsc(Governance multidisc, String name) {
+    public static Region rgn(Governance multidisc, String name) {
         return multidisc.getDiscipline(name);
     }
 
-    public static String dsc(Context context) {
-        return (String) context.get(Functionality.Type.DISCIPLINE.toString());
+    public static String rgn(Context context) {
+        return (String) context.get(Functionality.Type.REGION.toString());
     }
 
 
@@ -1223,25 +1224,25 @@ public class operator {
         return new SignatureDomain(name, signature);
     }
 
-    public static Discipline dsc(Fidelity... discFis) {
-        return dsc((String) null, discFis);
+    public static Region rgn(Fidelity... discFis) {
+        return rgn((String) null, discFis);
     }
 
-    public static Discipline dsc(String name, Fidelity... discFis) {
-        ServiceDiscipline srvDisc = null;
-        if (discFis[0] instanceof DisciplineFidelity) {
-            srvDisc = new ServiceDiscipline(((DisciplineFidelity) discFis[0]).getContextionFi(),
-                ((DisciplineFidelity) discFis[0]).getDispatcherFi(),
-                ((DisciplineFidelity) discFis[0]).getContextFi());
-            srvDisc.getDisciplineFidelities().put(discFis[0].getName(), (DisciplineFidelity) discFis[0]);
+    public static Region rgn(String name, Fidelity... discFis) {
+        ServiceRegion srvDisc = null;
+        if (discFis[0] instanceof RegionFidelity) {
+            srvDisc = new ServiceRegion(((RegionFidelity) discFis[0]).getContextionFi(),
+                ((RegionFidelity) discFis[0]).getDispatcherFi(),
+                ((RegionFidelity) discFis[0]).getContextFi());
+            srvDisc.getDisciplineFidelities().put(discFis[0].getName(), (RegionFidelity) discFis[0]);
             for (int i = 1; i < discFis.length; i++) {
-                srvDisc.add(((DisciplineFidelity) discFis[i]).getContextionFi(),
-                    ((DisciplineFidelity) discFis[i]).getDispatcherFi(),
-                    ((DisciplineFidelity) discFis[i]).getContextFi());
-                srvDisc.getDisciplineFidelities().put(discFis[i].getName(), (DisciplineFidelity) discFis[i]);
+                srvDisc.add(((RegionFidelity) discFis[i]).getContextionFi(),
+                    ((RegionFidelity) discFis[i]).getDispatcherFi(),
+                    ((RegionFidelity) discFis[i]).getContextFi());
+                srvDisc.getDisciplineFidelities().put(discFis[i].getName(), (RegionFidelity) discFis[i]);
             }
         } else {
-            srvDisc = new ServiceDiscipline(discFis[0], discFis[1]);
+            srvDisc = new ServiceRegion(discFis[0], discFis[1]);
         }
         if (name != null) {
             srvDisc.setName(name);
@@ -1249,22 +1250,22 @@ public class operator {
         return srvDisc;
     }
 
-    public static Discipline add(Discipline disciplne, Service server, Routine client) {
+    public static Region add(Region disciplne, Service server, Routine client) {
         disciplne.add(server, client, null);
         return disciplne;
     }
 
-    public static Discipline add(Discipline disciplne, Fidelity providerFi, Fidelity clientFi) {
+    public static Region add(Region disciplne, Fidelity providerFi, Fidelity clientFi) {
         disciplne.add(providerFi, clientFi, null);
         return disciplne;
     }
 
-    public static Discipline add(Discipline disciplne, Service server, Routine client, Context context) {
+    public static Region add(Region disciplne, Service server, Routine client, Context context) {
         disciplne.add(server, client, context);
         return disciplne;
     }
 
-    public static Discipline add(Discipline disciplne, Fidelity providerFi, Fidelity clientFi, Fidelity contextFi) {
+    public static Region add(Region disciplne, Fidelity providerFi, Fidelity clientFi, Fidelity contextFi) {
         disciplne.add(providerFi, clientFi, contextFi);
         return disciplne;
     }
@@ -1385,7 +1386,7 @@ public class operator {
 
     public static Governance gov(Object... data) throws ContextException {
         String name = getUnknown();
-        List<Discipline> disciplines = new ArrayList<>();
+        List<Region> regions = new ArrayList<>();
         List<ServiceFidelity> discFis = new ArrayList<>();
         Dependency dependency = null;
         ExecDeps execDeps = null;
@@ -1400,8 +1401,8 @@ public class operator {
             Object o = dataList.get(i);
             if (o instanceof String) {
                 name = (String) o;
-            } else if (o instanceof Discipline) {
-                disciplines.add((Discipline) o);
+            } else if (o instanceof Region) {
+                regions.add((Region) o);
             } else if (o instanceof DataContext) {
                 govContext = (Context) o;
             } else if (o instanceof Dependency) {
@@ -1410,20 +1411,20 @@ public class operator {
                 execDeps = (ExecDeps) o;
             } else if (o instanceof ServiceFidelity) {
                 discFis.add((ServiceFidelity) o);
-            } else if (o instanceof Paths && ((Paths) o).type.equals(Functionality.Type.DISCIPLINE)) {
+            } else if (o instanceof Paths && ((Paths) o).type.equals(Functionality.Type.REGION)) {
                 disciplinePaths = (Paths) o;
             }
         }
 
-        Governance gov = new Governance(name, disciplines);
+        Governance gov = new Governance(name, regions);
         if (govContext != null) {
             gov.setInput(govContext);
         }
-        Object[] names = new Object[disciplines.size()];
+        Object[] names = new Object[regions.size()];
 
-        for (int i = 0; i < disciplines.size(); i++) {
-            ((ServiceDiscipline) disciplines.get(i)).setParent(gov);
-            names[i] = disciplines.get(i).getName();
+        for (int i = 0; i < regions.size(); i++) {
+            ((ServiceRegion) regions.get(i)).setParent(gov);
+            names[i] = regions.get(i).getName();
         }
 
         if (discFis.size() > 0) {
@@ -1431,7 +1432,7 @@ public class operator {
             Map<String, ServiceFidelity> fis = new HashMap<>();
             for (ServiceFidelity discFi : discFis) {
                 fis.put(discFi.getName(), discFi);
-                gov.getDisciplines().put(discFi.getName(), (Discipline) discFi.getSelect());
+                gov.getDisciplines().put(discFi.getName(), (Region) discFi.getSelect());
             }
             fiManager.setFidelities(fis);
             gov.setFiManager(fiManager);
@@ -1467,7 +1468,7 @@ public class operator {
 
             if (execDeps.getType().equals(Functionality.Type.FUNCTION)) {
                 sorcer.co.operator.dependsOn(gov, execDeps.deps);
-            } else if (execDeps.getType().equals(Functionality.Type.DISCIPLINE)) {
+            } else if (execDeps.getType().equals(Functionality.Type.REGION)) {
                 sorcer.co.operator.dependsOn(gov, execDeps.deps);
             }
         }

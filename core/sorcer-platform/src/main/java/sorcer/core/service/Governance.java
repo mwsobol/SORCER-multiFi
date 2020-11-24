@@ -28,7 +28,7 @@ import sorcer.core.context.model.ent.EntryAnalyzer;
 import sorcer.core.context.model.ent.EntrySupervisor;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
-import sorcer.service.Discipline;
+import sorcer.service.Region;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.SuperviseException;
 import sorcer.service.modeling.cxtn;
@@ -70,7 +70,7 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 
 	protected ServiceFidelity contextMultiFi;
 
-	protected Map<String, Discipline> disciplines = new HashMap<>();
+	protected Map<String, Region> disciplines = new HashMap<>();
 
 	private Governor governor;
 
@@ -107,17 +107,17 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 		governor = new Governor(this);
     }
 
-    public Governance(String name, Discipline[] disciplines) {
+    public Governance(String name, Region[] regions) {
         this(name);
-        for (Discipline disc : disciplines) {
+        for (Region disc : regions) {
                 this.disciplines.put(disc.getName(), disc);
 				disciplnePaths.add(new Path(disc.getName()));
         }
     }
 
-	public Governance(String name, List<Discipline> disciplines) {
+	public Governance(String name, List<Region> regions) {
 		this(name);
-		for (Discipline disc : disciplines) {
+		for (Region disc : regions) {
 			this.disciplines.put(disc.getName(), disc);
 			disciplnePaths.add(new Path(disc.getName()));
 		}
@@ -139,11 +139,11 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
         this.disciplnePaths = disciplnePaths;
     }
 
-    public Map<String, Discipline> getDisciplines() {
+    public Map<String, Region> getDisciplines() {
 		return disciplines;
 	}
 
-	public Discipline getDiscipline(String name) {
+	public Region getDiscipline(String name) {
 		return disciplines.get(name);
 	}
 
@@ -258,10 +258,10 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 		this.analyzerFi = analyzerFi;
 	}
 
-	public List<Discipline> getDisciplineList() {
-		List<Discipline> discList = new ArrayList<>();
-		for (Discipline disc : disciplines.values()) {
-			if (disc instanceof Discipline) {
+	public List<Region> getDisciplineList() {
+		List<Region> discList = new ArrayList<>();
+		for (Region disc : disciplines.values()) {
+			if (disc instanceof Region) {
 				discList.add(disc);
 			}
 		}
@@ -435,12 +435,12 @@ public class Governance implements Contextion, Transdiscipline, Dependency, cxtn
 	}
 
 	@Override
-	public Map<String, Discipline> getChildren() {
+	public Map<String, Region> getChildren() {
 		return disciplines;
 	}
 
 	@Override
-	public Discipline getChild(String name) {
+	public Region getChild(String name) {
 		return disciplines.get(name);
 	}
 

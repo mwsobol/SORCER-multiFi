@@ -45,12 +45,11 @@ import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.consumer.ServiceConsumer;
-import sorcer.core.service.Collaboration;
 import sorcer.service.Projection;
 import sorcer.core.signature.*;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
-import sorcer.service.DisciplineFidelity;
+import sorcer.service.RegionFidelity;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.modeling.*;
@@ -1777,13 +1776,13 @@ operator extends Operator {
         return fi;
     }
 
-    public static DisciplineFidelity dscFi(Fidelity... fidelities) {
-        DisciplineFidelity fi = new DisciplineFidelity(fidelities);
+    public static RegionFidelity dscFi(Fidelity... fidelities) {
+        RegionFidelity fi = new RegionFidelity(fidelities);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;
     }
-    public static DisciplineFidelity dscFi(String name, Fidelity... fidelities) {
-        DisciplineFidelity fi = new DisciplineFidelity(name, fidelities);
+    public static RegionFidelity dscFi(String name, Fidelity... fidelities) {
+        RegionFidelity fi = new RegionFidelity(name, fidelities);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;
     }
