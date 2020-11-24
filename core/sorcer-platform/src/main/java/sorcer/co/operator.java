@@ -763,7 +763,7 @@ public class operator extends Operator {
 		return paths;
 	}
 
-	public static Paths disciplines(String... disciplines) {
+	public static Paths regions(String... disciplines) {
 		Paths paths = new Paths(disciplines);
 		paths.type = Type.REGION;
 		return paths;
@@ -783,6 +783,12 @@ public class operator extends Operator {
         ExecDependency de = new ExecDependency(path, condition, paths);
         de.setType(Type.CONDITION);
         return de;
+	}
+
+	public static ExecDependency idfDep(String fiName, List<Path> paths) {
+		ExecDependency de =  new ExecDependency(fiName, paths);
+		de.setType(Type.IDF);
+		return de;
 	}
 
 	public static ExecDependency fiDep(String fiName, List<Path> paths) {
