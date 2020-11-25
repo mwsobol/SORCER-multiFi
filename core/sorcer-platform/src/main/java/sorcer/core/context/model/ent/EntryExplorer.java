@@ -17,6 +17,7 @@
 
 package sorcer.core.context.model.ent;
 
+import sorcer.core.context.ServiceContext;
 import sorcer.core.signature.LocalSignature;
 import sorcer.core.service.Collaboration;
 import sorcer.service.*;
@@ -99,7 +100,6 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
 
     @Override
     public Context explore(Context context) throws ContextException, ExploreException, RemoteException {
-        Map<String, Context> domainOutputs = ((Collaboration) contextion).getOutputs();
         // use output for explorer after collaboration
         Context output = null;
         try {
@@ -111,6 +111,7 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
                 ((Collaboration) contextion).analyze(context);
                 output = ((Collaboration) contextion).getOutput();
                 output.putValue(Functionality.Type.COLLABORATION.toString(), contextion.getName());
+                ((ServiceContext)output).remove(Functionality.Type.DOMAIN.toString());
             } else if (analyzerFi != null) {
                 Analysis analyzer = analyzerFi.getSelect();
                 analyzer.analyze(contextion, context);

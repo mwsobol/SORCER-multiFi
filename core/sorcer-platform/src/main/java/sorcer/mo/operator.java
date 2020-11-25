@@ -436,6 +436,10 @@ public class operator {
         return model.get(path);
     }
 
+    public static void subIn(Context target, Context context, String... varNames) throws ContextException {
+        ((ServiceContext)target).substituteInputs(context, varNames);
+    }
+
     public static ServiceContext substitute(ServiceContext model, Function... entries) throws ContextException {
         model.substitute(entries);
         return model;
@@ -533,7 +537,7 @@ public class operator {
     }
 
     public static Context out(Collaboration collab, String domain) throws ContextException {
-        return collab.getOutputs().get(domain);
+        return collab.getOutputs().select(domain);
     }
 
     public static Context in(Collaboration collab, Context in) throws ContextException {
@@ -1133,15 +1137,18 @@ public class operator {
         return null;
     }
 
-    public static Context setDmnCxt(Request request, String domainName, Context contest) {
+    public static Context setDmnCxt(Request request, String domainName, Context context) throws ContextException {
         if (request instanceof Context) {
             try {
-                return addDomainContext((Context)request, contest, domainName);
+                return addDomainContext((Context)request, context, domainName);
             } catch (ContextException e) {
                 throw new RuntimeException(e);
             }
+        }  if (request instanceof Collaboration) {
+            context.setName(domainName);
+            addDomainContext(((Collaboration)request).getInput(), context);
         }
-        return null;
+        return context;
     }
 
     public static Context dmnIn(Request request, String domainName) {
@@ -1166,18 +1173,20 @@ public class operator {
 
     public static Context dmnOut(Request request, String domainName) {
         if (request instanceof Collaboration) {
-            return ((Collaboration) request).getOutputs().get(domainName);
+            return ((Collaboration) request).getOutputs().select(domainName);
         } else if (request instanceof Context) {
             return ((Map<String, Context>)((Context)request).get(Context.COLAB_DOMAIN_OUTPUTS_PATH)).get(domainName);
         }
         return null;
     }
 
-    public static void setDmnOut(Request request, String domainName, Context context) {
+    public static void setDmnOut(Request request, Context context) {
         if (request instanceof Collaboration) {
-            ((Collaboration) request).getOutputs().put(domainName, context);
+            ((Collaboration) request).getOutputs().set(context);
         }
     }
+
+
 
     public static Domain dmn(Collaboration collab, String name) {
         return collab.getDomain(name);

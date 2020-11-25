@@ -22,6 +22,7 @@ import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.context.ContextList;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ModelTask;
 import sorcer.core.context.ServiceContext;
@@ -63,7 +64,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
     protected Context output;
 
 	// domain outputs
-	protected Map<String, Context> outputs = new HashMap();
+	protected ContextList outputs = new ContextList();
 
     protected Fi multiFi;
 
@@ -421,7 +422,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 					} else {
 						cxt = response(domain);
 					}
-					outputs.put(domain.getName(), cxt);
+					outputs.add(cxt);
 					collabOut.append(cxt.getDomainData());
 				} else {
 					collabOut = input;
@@ -597,11 +598,11 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 		return contextionList;
 	}
 
-	public Map<String, Context> getOutputs() {
+	public ContextList getOutputs() {
 		return outputs;
 	}
 
-	public void setOutputs(Map<String, Context> outputs) {
+	public void setOutputs(ContextList outputs) {
 		this.outputs = outputs;
 	}
 
