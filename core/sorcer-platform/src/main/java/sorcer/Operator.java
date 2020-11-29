@@ -36,11 +36,14 @@ public class Operator implements Service, Activity {
 
 	@Override
 	public Object execute(Arg... args) throws ServiceException, RemoteException {
-
-		if (args.length == 1 && args[0] instanceof Signature) {
-			// consumer services
-			Signature rs = (Signature) args[0];
-			return rs.execute(rs);
+		Signature os = Arg.selectSignature(args);
+		Context cxt = Arg.selectContext(args);
+		if (os != null) {
+			if (cxt != null) {
+				return os.execute(cxt);
+			} else {
+				return os.execute(args);
+			}
 		} else {
 			throw new ServiceException("invalid service arguments");
 		}
@@ -48,12 +51,12 @@ public class Operator implements Service, Activity {
 
 	@Override
 	public Data act(Arg... args) throws ServiceException, RemoteException {
-		return null;
+		return (Data) execute(args);
 	}
 
 	@Override
 	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
-		return null;
+		return (Data) execute(args);
 	}
 
 }
