@@ -1,6 +1,6 @@
 /*
- * Copyright 2020 the original author or authors.
- * Copyright 2020 SorcerSoft.org.
+ * Copyright 2018 the original author or authors.
+ * Copyright 2018 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,5 @@
  */
 package sorcer.service;
 
-public interface ManagedRequest extends CombinedRequest {
-
+public interface Discipline extends Request {
 }

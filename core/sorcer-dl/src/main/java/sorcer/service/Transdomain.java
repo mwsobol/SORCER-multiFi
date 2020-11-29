@@ -21,7 +21,7 @@ import sorcer.service.modeling.cxtn;
 
 import java.util.Map;
 
-public interface Transdomain extends Contextion, ManagedRequest, cxtn {
+public interface Transdomain extends Contextion, Transdiscipline, cxtn {
 
     public Map<String, Domain> getChildren();
 
