@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * @author Mike Sobolewski
  */
-public interface CoupledModeling extends OptimizationModeling {
+public interface Mado extends OptimizationModeling {
 
 	public Paths getChildrenPaths() throws RemoteException;
 
