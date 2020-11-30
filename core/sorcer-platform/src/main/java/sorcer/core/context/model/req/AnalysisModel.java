@@ -21,7 +21,7 @@ import static sorcer.mo.operator.result;
 /**
  * Created by Mike Sobolewski on 12/28/2019.
  */
-public class AnalysisModel extends RequestModel implements Transmodel, Transdomain, Configurable {
+public class AnalysisModel extends RequestModel implements Transmodel, Configurable {
 
     private static final Logger logger = LoggerFactory.getLogger(Transmodel.class);
 
