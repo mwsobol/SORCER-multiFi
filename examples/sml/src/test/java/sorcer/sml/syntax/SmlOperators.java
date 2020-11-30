@@ -65,8 +65,8 @@ public class SmlOperators {
 
 		// Contextions
 		cxtn pl1 = pl("name");
-		dmn t1 = task(op1, c1);
-		dmn t2 = task(op1, op2, c1);
+		mog t1 = task(op1, c1);
+		cxtn t2 = task(op1, op2, c1);
 		dmn m1 = model(v1, p1, r1, n2);
 		dmn ex1 = block(t1, t2, m1);
 		mog ex2 = job(t1, job(t2, m1));
@@ -101,7 +101,7 @@ public class SmlOperators {
 		ent e7 = execEnt(model(), "path");
 
 		// Exerting domains
-		dmn m3 = exert(task());
+		mog m3 = exert(task());
 		cxtn m4 = exert(job());
 		cxtn m5 = exert(model());
 
