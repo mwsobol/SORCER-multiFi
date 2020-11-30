@@ -35,7 +35,7 @@ import static sorcer.so.operator.response;
 /**
  * Created by Mike Sobolewski on 01/05/20.
  */
-public class EntryExplorer extends Entry<Exploration> implements Exploration {
+public class ExplorationEntry extends Entry<Exploration> implements Exploration {
 
     private static final long serialVersionUID = 1L;
 
@@ -47,19 +47,19 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
 
     private Fidelity<Analysis> analyzerFi;
 
-    public EntryExplorer(String name, Exploration explorer)  {
+    public ExplorationEntry(String name, Exploration explorer)  {
         this.key = name;
         this.impl = explorer;
         this.type = Functionality.Type.EXPLORER;
     }
 
-    public EntryExplorer(String name, Signature signature) {
+    public ExplorationEntry(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
         this.type = Functionality.Type.EXPLORER;
     }
 
-    public EntryExplorer(String name, Exploration mda, Context context) {
+    public ExplorationEntry(String name, Exploration mda, Context context) {
         this.key = name;
         scope = context;
         this.impl = mda;

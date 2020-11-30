@@ -23,7 +23,7 @@ import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
 import sorcer.core.context.*;
 import sorcer.core.context.model.Transmodel;
-import sorcer.core.context.model.req.TransRequestModel;
+import sorcer.core.context.model.req.AnalysisModel;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.service.SignatureDomain;
 import sorcer.service.Analysis;
@@ -771,7 +771,7 @@ public class operator {
             dataList.remove(fi);
         }
 
-        Transmodel transModel = new TransRequestModel(name);
+        Transmodel transModel = new AnalysisModel(name);
         transModel.addDomains(domains);
         Object[] names = new Object[domains.size()];
         for (int i = 0; i < domains.size(); i++) {
@@ -1492,15 +1492,15 @@ public class operator {
         return fi;
     }
 
-    public static EntrySupervisor sup(String name, Supervision supervisor)
+    public static SupervisionEntry sup(String name, Supervision supervisor)
         throws EvaluationException {
-        return new EntrySupervisor(name, supervisor);
+        return new SupervisionEntry(name, supervisor);
     }
 
     public static ServiceFidelity supFi(String name, Supervision... supEntries) {
-        EntrySupervisor[] entries = new EntrySupervisor[supEntries.length];
+        SupervisionEntry[] entries = new SupervisionEntry[supEntries.length];
         for (int i = 0; i < supEntries.length; i++) {
-            entries[i] = (EntrySupervisor) supEntries[i];
+            entries[i] = (SupervisionEntry) supEntries[i];
         }
         ServiceFidelity mdaFi = new ServiceFidelity(entries);
         mdaFi.setName(name);
@@ -1508,15 +1508,15 @@ public class operator {
         return mdaFi;
     }
 
-    public static EntryAnalyzer mda(String name, Analysis mda)
+    public static AnalysisEntry mda(String name, Analysis mda)
         throws EvaluationException {
-        return new EntryAnalyzer(name, mda);
+        return new AnalysisEntry(name, mda);
     }
 
     public static ServiceFidelity mdaFi(String name, Analysis... mdaEntries) {
-        EntryAnalyzer[] entries = new EntryAnalyzer[mdaEntries.length];
+        AnalysisEntry[] entries = new AnalysisEntry[mdaEntries.length];
         for (int i = 0; i < mdaEntries.length; i++) {
-            entries[i] = (EntryAnalyzer) mdaEntries[i];
+            entries[i] = (AnalysisEntry) mdaEntries[i];
         }
         ServiceFidelity mdaFi = new ServiceFidelity(entries);
         mdaFi.setName(name);
@@ -1525,9 +1525,9 @@ public class operator {
     }
 
     public static ServiceFidelity explFi(String name, Exploration... explEntries) {
-        EntryExplorer[] entries = new EntryExplorer[explEntries.length];
+        ExplorationEntry[] entries = new ExplorationEntry[explEntries.length];
         for (int i = 0; i < explEntries.length; i++) {
-            entries[i] = (EntryExplorer) explEntries[i];
+            entries[i] = (ExplorationEntry) explEntries[i];
         }
         ServiceFidelity mdaFi = new ServiceFidelity(entries);
         mdaFi.setName(name);
@@ -1535,14 +1535,14 @@ public class operator {
         return mdaFi;
     }
 
-    public static EntryExplorer expl(String name, Exploration explorer)
+    public static ExplorationEntry expl(String name, Exploration explorer)
         throws EvaluationException {
-        return new EntryExplorer(name, explorer);
+        return new ExplorationEntry(name, explorer);
     }
 
-    public static EntryExplorer expl(String name, Signature signature)
+    public static ExplorationEntry expl(String name, Signature signature)
         throws EvaluationException {
-        EntryExplorer mde = new EntryExplorer(name, signature);
+        ExplorationEntry mde = new ExplorationEntry(name, signature);
         mde.setType(Functionality.Type.EXPLORER);
         try {
             mde.setValue(signature);
@@ -1552,9 +1552,9 @@ public class operator {
         return mde;
     }
 
-    public static EntryAnalyzer mdaInstace(String name, Signature signature)
+    public static AnalysisEntry mdaInstace(String name, Signature signature)
         throws EvaluationException {
-        EntryAnalyzer mda = new EntryAnalyzer(name, signature);
+        AnalysisEntry mda = new AnalysisEntry(name, signature);
         mda.setType(Functionality.Type.MDA);
         try {
             mda.setValue(signature);
@@ -1565,9 +1565,9 @@ public class operator {
         return mda;
     }
 
-    public static EntryAnalyzer mda(String name, Signature signature)
+    public static AnalysisEntry mda(String name, Signature signature)
         throws EvaluationException {
-        EntryAnalyzer mda = new EntryAnalyzer(name, signature);
+        AnalysisEntry mda = new AnalysisEntry(name, signature);
         mda.setType(Functionality.Type.MDA);
         try {
             mda.setValue(signature);

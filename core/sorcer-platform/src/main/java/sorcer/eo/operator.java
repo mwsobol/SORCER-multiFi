@@ -355,9 +355,9 @@ operator extends Operator {
         Context.Out outPaths = null;
         Context.In inPaths = null;
         Paths paths = null;
-        EntryAnalyzer mdaEntry = null;
+        AnalysisEntry mdaEntry = null;
         ServiceFidelity mdaFi = null;
-        EntryExplorer explEntry = null;
+        ExplorationEntry explEntry = null;
         ServiceFidelity explFi = null;
         List<Path> responsePaths = null;
         boolean autoDeps = true;
@@ -427,10 +427,10 @@ operator extends Operator {
                     } else if (((ServiceFidelity) o).getFiType().equals(Fi.Type.EXPLORER)) {
                         explFi = (ServiceFidelity) o;
                     }
-                } else if (o instanceof EntryAnalyzer) {
-                    mdaEntry = (EntryAnalyzer) o;
-                } else if (o instanceof EntryExplorer) {
-                    explEntry = (EntryExplorer) o;
+                } else if (o instanceof AnalysisEntry) {
+                    mdaEntry = (AnalysisEntry) o;
+                } else if (o instanceof ExplorationEntry) {
+                    explEntry = (ExplorationEntry) o;
                 }
             }
         }
@@ -3847,7 +3847,11 @@ operator extends Operator {
     }
 
     public static Signature dscSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(new Kind[]{Kind.DISCIPLINE, Kind.TASKER});
+        return disciplineSig(signature);
+    }
+
+    public static Signature disciplineSig(Signature signature) {
+        ((ServiceSignature)signature).addRank(new Kind[]{Kind.DISCIPLINE, Kind.MODEL, Kind.TASKER});
         return signature;
     }
 
@@ -3861,11 +3865,6 @@ operator extends Operator {
         return signature;
     }
 
-    public static Signature optiSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(Kind.OPTIMIZER, Kind.TASKER);
-        return signature;
-    }
-
     public static Signature driverSig(Signature signature) {
         ((ServiceSignature)signature).addRank(Kind.DRIVER);
         return signature;
@@ -3876,9 +3875,17 @@ operator extends Operator {
         return signature;
     }
 
+    public static Signature optiSig(Signature signature) {
+        return optimizerSig(signature);
+    }
+
     public static Signature optimizerSig(Signature signature) {
         ((ServiceSignature)signature).addRank(Kind.OPTIMIZER, Kind.TASKER);
         return signature;
+    }
+
+    public static Signature expSig(Signature signature) {
+        return explorerSig(signature);
     }
 
     public static Signature explorerSig(Signature signature) {

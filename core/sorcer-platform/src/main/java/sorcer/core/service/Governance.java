@@ -24,8 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.EntryAnalyzer;
-import sorcer.core.context.model.ent.EntrySupervisor;
+import sorcer.core.context.model.ent.AnalysisEntry;
+import sorcer.core.context.model.ent.SupervisionEntry;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
 import sorcer.service.Region;
@@ -272,10 +272,10 @@ public class Governance implements Contextion, Transregion, Dependency, cxtn {
 		if(analyzerFi == null) {
 			Object mdaComponent = context.get(Context.MDA_PATH);
 			if (mdaComponent != null) {
-				if (mdaComponent instanceof EntryAnalyzer) {
-					analyzerFi = new Fidelity(((EntryAnalyzer) mdaComponent).getName());
-					analyzerFi.addSelect((EntryAnalyzer) mdaComponent);
-					analyzerFi.setSelect((EntryAnalyzer) mdaComponent);
+				if (mdaComponent instanceof AnalysisEntry) {
+					analyzerFi = new Fidelity(((AnalysisEntry) mdaComponent).getName());
+					analyzerFi.addSelect((AnalysisEntry) mdaComponent);
+					analyzerFi.setSelect((AnalysisEntry) mdaComponent);
 				} else if (mdaComponent instanceof ServiceFidelity
 					&& ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
 					analyzerFi = (Fidelity) mdaComponent;
@@ -293,10 +293,10 @@ public class Governance implements Contextion, Transregion, Dependency, cxtn {
 		if(supervisorFi == null) {
 			Object supComponent = context.get(Context.MDA_PATH);
 			if (supComponent != null) {
-				if (supComponent instanceof EntrySupervisor) {
-					supervisorFi = new Fidelity(((EntrySupervisor) supComponent).getName());
-					supervisorFi.addSelect((EntrySupervisor) supComponent);
-					supervisorFi.setSelect((EntrySupervisor) supComponent);
+				if (supComponent instanceof SupervisionEntry) {
+					supervisorFi = new Fidelity(((SupervisionEntry) supComponent).getName());
+					supervisorFi.addSelect((SupervisionEntry) supComponent);
+					supervisorFi.setSelect((SupervisionEntry) supComponent);
 				} else if (supComponent instanceof ServiceFidelity
 					&& ((ServiceFidelity) supComponent).getFiType().equals(Fi.Type.SUP)) {
 					supervisorFi = (Fidelity) supComponent;

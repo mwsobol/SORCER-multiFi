@@ -21,7 +21,7 @@ import static sorcer.mo.operator.result;
 /**
  * Created by Mike Sobolewski on 12/28/2019.
  */
-public class TransRequestModel extends RequestModel implements Transmodel, Transdomain, Configurable {
+public class AnalysisModel extends RequestModel implements Transmodel, Transdomain, Configurable {
 
     private static final Logger logger = LoggerFactory.getLogger(Transmodel.class);
 
@@ -33,24 +33,24 @@ public class TransRequestModel extends RequestModel implements Transmodel, Trans
 
     protected Fidelity<Analysis> analyzerFi;
 
-    public TransRequestModel() {
+    public AnalysisModel() {
         super();
         type = Functionality.Type.TRANS;
     }
 
-    public TransRequestModel(String name) {
+    public AnalysisModel(String name) {
         super(name);
         type = Functionality.Type.TRANS;
     }
 
-    public static TransRequestModel instance(Signature builder) throws SignatureException {
-        TransRequestModel model = TransRequestModel.instance(null, builder);
+    public static AnalysisModel instance(Signature builder) throws SignatureException {
+        AnalysisModel model = AnalysisModel.instance(null, builder);
         model.setEvaluated(false);
         return model;
     }
 
-    public static TransRequestModel instance(String name, Signature builder) throws SignatureException {
-        TransRequestModel model = (TransRequestModel) sorcer.co.operator.instance(builder);
+    public static AnalysisModel instance(String name, Signature builder) throws SignatureException {
+        AnalysisModel model = (AnalysisModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         if (name != null) {
             model.setName(name);
@@ -59,13 +59,13 @@ public class TransRequestModel extends RequestModel implements Transmodel, Trans
         return model;
     }
 
-    public TransRequestModel(String name, List<Transmodel> models) {
+    public AnalysisModel(String name, List<Transmodel> models) {
         super(name);
         for (Transmodel vm : models)
             children.put(vm.getName(), vm);
     }
 
-    public TransRequestModel(String name, Transmodel... models) {
+    public AnalysisModel(String name, Transmodel... models) {
         super(name);
         for (Transmodel vm : models)
             children.put(vm.getName(), vm);

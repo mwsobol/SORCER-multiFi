@@ -27,8 +27,8 @@ import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ModelTask;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Coupling;
-import sorcer.core.context.model.ent.EntryAnalyzer;
-import sorcer.core.context.model.ent.EntryExplorer;
+import sorcer.core.context.model.ent.AnalysisEntry;
+import sorcer.core.context.model.ent.ExplorationEntry;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
 import sorcer.service.Region;
@@ -72,7 +72,7 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 
 	protected Fidelity<Analysis> analyzerFi;
 
-	protected Fidelity<EntryExplorer> explorerFi;
+	protected Fidelity<ExplorationEntry> explorerFi;
 
 	protected Map<String, Domain> domains = new HashMap<>();
 
@@ -152,11 +152,11 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 		return domains.get(name);
 	}
 
-	public Fidelity<EntryExplorer> getExplorerFi() {
+	public Fidelity<ExplorationEntry> getExplorerFi() {
 		return explorerFi;
 	}
 
-	public void setExplorerFi(Fidelity<EntryExplorer> explorerFi) {
+	public void setExplorerFi(Fidelity<ExplorationEntry> explorerFi) {
 		this.explorerFi = explorerFi;
 	}
 
@@ -246,15 +246,15 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 		return domainList;
 	}
 
-	public Fidelity<EntryExplorer> setExplorerFi(Context context) throws ConfigurationException {
+	public Fidelity<ExplorationEntry> setExplorerFi(Context context) throws ConfigurationException {
 		if(explorerFi == null) {
 			Object exploreComponent = context.get(Context.EXPLORER_PATH);
 			if (exploreComponent != null) {
-				if (exploreComponent instanceof EntryExplorer) {
-					explorerFi = new Fidelity(((EntryExplorer)exploreComponent).getName());
-					explorerFi.addSelect((EntryExplorer) exploreComponent);
-					explorerFi.setSelect((EntryExplorer)exploreComponent);
-					((EntryAnalyzer)exploreComponent).setContextion(this);
+				if (exploreComponent instanceof ExplorationEntry) {
+					explorerFi = new Fidelity(((ExplorationEntry)exploreComponent).getName());
+					explorerFi.addSelect((ExplorationEntry) exploreComponent);
+					explorerFi.setSelect((ExplorationEntry)exploreComponent);
+					((AnalysisEntry)exploreComponent).setContextion(this);
 				} else if (exploreComponent instanceof ServiceFidelity
 					&& ((ServiceFidelity) exploreComponent).getFiType().equals(Fi.Type.EXPLORER)) {
 					explorerFi = (Fidelity) exploreComponent;
@@ -274,15 +274,15 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 		if(analyzerFi == null) {
 			Object mdaComponent = context.get(Context.MDA_PATH);
 			if (mdaComponent != null) {
-				if (mdaComponent instanceof EntryAnalyzer) {
-					analyzerFi = new Fidelity(((EntryAnalyzer)mdaComponent).getName());
-					analyzerFi.addSelect((EntryAnalyzer) mdaComponent);
-					analyzerFi.setSelect((EntryAnalyzer)mdaComponent);
-					((EntryAnalyzer)mdaComponent).setContextion(this);
+				if (mdaComponent instanceof AnalysisEntry) {
+					analyzerFi = new Fidelity(((AnalysisEntry)mdaComponent).getName());
+					analyzerFi.addSelect((AnalysisEntry) mdaComponent);
+					analyzerFi.setSelect((AnalysisEntry)mdaComponent);
+					((AnalysisEntry)mdaComponent).setContextion(this);
 				} else if (mdaComponent instanceof ServiceFidelity
 						&& ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
 					analyzerFi = (Fidelity) mdaComponent;
-					((EntryAnalyzer)analyzerFi.getSelect()).setContextion(this);
+					((AnalysisEntry)analyzerFi.getSelect()).setContextion(this);
 				}
 			}
 		}
@@ -353,8 +353,8 @@ public class Collaboration implements Contextion, Transdomain, Dependency, cxtn 
 						analyzerFi.selectSelect(fi.getName());
 					}
 				}
-				((EntryAnalyzer)analyzerFi.getSelect()).setContextion(this);
-				logger.info("*** analyzerFi: {}", ((EntryAnalyzer)analyzerFi.getSelect()).getName());
+				((AnalysisEntry)analyzerFi.getSelect()).setContextion(this);
+				logger.info("*** analyzerFi: {}", ((AnalysisEntry)analyzerFi.getSelect()).getName());
 			}
 			if (explorerFi != null) {
 				for (Fi fi : fis) {
