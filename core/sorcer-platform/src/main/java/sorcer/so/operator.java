@@ -33,6 +33,7 @@ import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.service.Governance;
 import sorcer.core.signature.LocalSignature;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.service.Exertion;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
@@ -365,8 +366,18 @@ public class operator extends Operator {
         Context out = null;
         if (request instanceof Mogram) {
             out = response((Mogram)request, items);
-        } else if(items.length == 1 && items[0] instanceof Context) {
-            out = eval(request, (Context)items[0]);
+        } else if(items.length == 1) {
+            if (items[0] instanceof Context) {
+                out = eval(request, (Context) items[0]);
+            } else  if (items[0] instanceof Signature) {
+                //&& ((ServiceSignature)items[0]).isKindOf(Signature.Kind.CONTEXT)) {
+                try {
+                    Context cxt = (Context) ((LocalSignature)items[0]).initInstance();
+                    out = eval(request, cxt);
+                } catch (SignatureException e) {
+                    throw new ContextException(e);
+                }
+            }
         } else if(items.length == 0) {
             out = eval(request, (Context)null);
         }

@@ -257,10 +257,6 @@ operator extends Operator {
         return context(args);
     }
 
-    public static Context cxt(Object... entries) throws ContextException {
-        return context(entries);
-    }
-
     public static Context data(Object... entries) throws ContextException {
         for (Object obj : entries) {
             if (!(obj instanceof String) || !(obj instanceof Function && ((Function)obj).getType().equals(Functionality.Type.VAL))) {
@@ -274,14 +270,25 @@ operator extends Operator {
         return (Context)context((Object[])entries);
     }
 
-    public static Context strategyContext(Object... entries) throws ContextException {
-        Context scxt =  context(entries);
+    public static Context strategyContext(Object... items) throws ContextException {
+        Context scxt =  context(items);
         ((ServiceContext)scxt).setType(Functionality.Type.STRATEGY);
         return scxt;
     }
 
-    public static ServiceContext context(Object... entries) throws ContextException {
-        return (ServiceContext)domainContext(entries);
+    public static Context cxt(Object... items) throws ContextException {
+        return context(items);
+    }
+
+    public static ServiceContext context(Object... items) throws ContextException {
+        if (items.length == 1 && items[0] instanceof Signature) {
+            try {
+                return (ServiceContext) ((LocalSignature) items[0]).initInstance();
+            } catch (SignatureException e) {
+                throw new ContextException(e);
+            }
+        }
+        return (ServiceContext)domainContext(items);
     }
 
     public static ContextDomain domainContext(Object... entries) throws ContextException {
@@ -3857,6 +3864,15 @@ operator extends Operator {
 
     public static Signature modelSig(Signature signature) {
         ((ServiceSignature)signature).addRank(new Kind[]{Kind.MODEL, Kind.TASKER});
+        return signature;
+    }
+
+    public static Signature cxtSig(Signature signature) {
+        return contextSig(signature);
+    }
+
+    public static Signature contextSig(Signature signature) {
+        ((ServiceSignature)signature).addRank(new Kind[]{Kind.CONTEXT, Kind.TASKER});
         return signature;
     }
 
