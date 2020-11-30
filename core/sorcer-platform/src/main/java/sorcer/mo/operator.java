@@ -22,6 +22,8 @@ import sorcer.co.tuple.InoutValue;
 import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
 import sorcer.core.context.*;
+import sorcer.core.context.model.Transmodel;
+import sorcer.core.context.model.req.TransRequestModel;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.service.SignatureDomain;
 import sorcer.service.Analysis;
@@ -30,7 +32,6 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.req.Req;
 import sorcer.core.context.model.req.RequestModel;
-import sorcer.core.context.model.req.Transmodel;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
@@ -770,7 +771,7 @@ public class operator {
             dataList.remove(fi);
         }
 
-        Transmodel transModel = new Transmodel(name);
+        Transmodel transModel = new TransRequestModel(name);
         transModel.addDomains(domains);
         Object[] names = new Object[domains.size()];
         for (int i = 0; i < domains.size(); i++) {
@@ -786,7 +787,7 @@ public class operator {
                 transModel.getChildren().put(mdlFi.getName(), (RequestModel) mdlFi.getSelect());
             }
             fiManager.setFidelities(fis);
-            transModel.setFidelityManager(fiManager);
+            ((RequestModel)transModel).setFidelityManager(fiManager);
         }
         if (domainPaths != null) {
             domainPaths.name = transModel.getName();

@@ -24,8 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.core.context.model.Transmodel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.req.Transmodel;
+import sorcer.core.context.model.req.TransRequestModel;
 import sorcer.service.Context;
 import sorcer.service.Evaluator;
 import sorcer.service.Request;
@@ -85,7 +86,7 @@ public class Transmodels {
     @Test
     public void testArithmeticTransmodel() throws Exception {
 
-        Transmodel mdl = (Transmodel)instance(sig(Transmodels.class, "getArithmeticTransmodel"));
+        TransRequestModel mdl = (TransRequestModel)instance(sig(Transmodels.class, "getArithmeticTransmodel"));
 
         logger.info("y1: " + get(mdl, "z1"));
         Entry z1 = (Entry) get(mdl, "z1");
@@ -101,7 +102,7 @@ public class Transmodels {
     @Test
     public void evalArithmeticTransmodel() throws Exception {
 
-        Transmodel mdl = (Transmodel) instance(sig(Transmodels.class, "getArithmeticTransmodel"));
+        TransRequestModel mdl = (TransRequestModel) instance(sig(Transmodels.class, "getArithmeticTransmodel"));
 
         Context rc = eval(mdl);
 
@@ -138,7 +139,7 @@ public class Transmodels {
                 }))
         );
 
-        Transmodel mdl = (Transmodel) instance(sig(Transmodels.class, "getArithmeticTransmodel"));
+        Transmodel mdl = (TransRequestModel) instance(sig(Transmodels.class, "getArithmeticTransmodel"));
 
         Context rc = eval(mdl, mdaCxt);
 

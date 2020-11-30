@@ -18,6 +18,6 @@ package sorcer.service.modeling;
 /**
  * @author Mike Sobolewski
  */
-public interface StreamingParametricModeling extends ParametricModeling {
+public interface ParametricStreaming extends ParametricModeling {
 
 }

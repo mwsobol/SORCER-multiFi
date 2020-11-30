@@ -7,11 +7,11 @@ import sorcer.co.tuple.ExecDependency;
 import sorcer.core.context.ContextList;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.Transmodel;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -21,7 +21,7 @@ import static sorcer.mo.operator.result;
 /**
  * Created by Mike Sobolewski on 12/28/2019.
  */
-public class Transmodel extends RequestModel implements Model, Transdomain, Configurable {
+public class TransRequestModel extends RequestModel implements Transmodel, Transdomain, Configurable {
 
     private static final Logger logger = LoggerFactory.getLogger(Transmodel.class);
 
@@ -33,24 +33,24 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
 
     protected Fidelity<Analysis> analyzerFi;
 
-    public Transmodel() {
+    public TransRequestModel() {
         super();
         type = Functionality.Type.TRANS;
     }
 
-    public Transmodel(String name) {
+    public TransRequestModel(String name) {
         super(name);
         type = Functionality.Type.TRANS;
     }
 
-    public static Transmodel instance(Signature builder) throws SignatureException {
-        Transmodel model = Transmodel.instance(null, builder);
+    public static TransRequestModel instance(Signature builder) throws SignatureException {
+        TransRequestModel model = TransRequestModel.instance(null, builder);
         model.setEvaluated(false);
         return model;
     }
 
-    public static Transmodel instance(String name, Signature builder) throws SignatureException {
-        Transmodel model = (Transmodel) sorcer.co.operator.instance(builder);
+    public static TransRequestModel instance(String name, Signature builder) throws SignatureException {
+        TransRequestModel model = (TransRequestModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         if (name != null) {
             model.setName(name);
@@ -59,13 +59,13 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
         return model;
     }
 
-    public Transmodel(String name, List<Transmodel> models) {
+    public TransRequestModel(String name, List<Transmodel> models) {
         super(name);
         for (Transmodel vm : models)
             children.put(vm.getName(), vm);
     }
 
-    public Transmodel(String name, Transmodel... models) {
+    public TransRequestModel(String name, Transmodel... models) {
         super(name);
         for (Transmodel vm : models)
             children.put(vm.getName(), vm);
@@ -183,7 +183,7 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
         }
     }
 
-    protected void execDependencies(String path, Context inContext, Arg... args) throws MogramException, RemoteException, TransactionException {
+    public void execDependencies(String path, Context inContext, Arg... args) throws MogramException, RemoteException, TransactionException {
         Map<String, List<ExecDependency>> dpm = ((ModelStrategy) domainStrategy).getDependentDomains();
         if (dpm != null && dpm.get(path) != null) {
             List<Path> dpl = null;
