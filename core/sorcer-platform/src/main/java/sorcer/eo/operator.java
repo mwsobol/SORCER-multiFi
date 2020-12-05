@@ -3858,12 +3858,7 @@ operator extends Operator {
     }
 
     public static Signature disciplineSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(new Kind[]{Kind.DISCIPLINE, Kind.MODEL, Kind.TASKER});
-        return signature;
-    }
-
-    public static Signature designSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(new Kind[]{Kind.DESIGN, Kind.DISCIPLINE, Kind.MODEL, Kind.TASKER});
+        ((ServiceSignature)signature).addRank(new Kind[]{Kind.DISCIPLINE, Kind.DESIGN, Kind.MODEL, Kind.TASKER});
         return signature;
     }
 
