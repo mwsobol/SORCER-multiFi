@@ -3862,12 +3862,12 @@ operator extends Operator {
         return signature;
     }
 
-    public static Signature inContxtSig(Signature signature) {
-        return  designInputSig( signature);
+    public static Signature dscInSig(Signature signature) {
+        return  disciplineInputSig( signature);
     }
 
-    public static Signature designInputSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(new Kind[]{Kind.CONTEXT, Kind.DESIGN, Kind.TASKER});
+    public static Signature disciplineInputSig(Signature signature) {
+        ((ServiceSignature)signature).addRank(new Kind[]{Kind.CONTEXT, Kind.DISCIPLINE, Kind.DESIGN, Kind.TASKER});
         return signature;
     }
 
