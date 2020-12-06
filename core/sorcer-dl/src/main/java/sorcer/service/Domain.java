@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
  *
  * Created by Mike Sobolewski on 11/26/2019.
  */
-public interface Domain extends Discipline, Contextion, Dependency, mog, cxtn {
+public interface Domain extends Discipline, Dependency, mog, cxtn {
 
     /**
      * Returns an execute of the domain at the returnPath as is
