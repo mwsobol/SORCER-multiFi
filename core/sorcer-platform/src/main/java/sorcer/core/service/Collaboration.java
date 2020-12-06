@@ -43,7 +43,7 @@ import java.util.Map;
 import static sorcer.so.operator.exec;
 import static sorcer.so.operator.response;
 
-public class Collaboration implements Contextion, Transdomain, Dependency, cxtn {
+public class Collaboration implements Transdomain, Dependency, cxtn {
 
 	private static final long serialVersionUID = 1L;
 

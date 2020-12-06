@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Governance implements Contextion, Transregion, Dependency, cxtn {
+public class Governance implements Transregion, Dependency, cxtn {
 
 	private static final long serialVersionUID = 1L;
 

@@ -19,7 +19,7 @@ package sorcer.service;
 
 import java.util.Map;
 
-public interface Transregion extends Contextion, Transdiscipline {
+public interface Transregion extends Transdiscipline {
 
     public Map<String, Region> getChildren();
 
