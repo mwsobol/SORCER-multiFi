@@ -1375,6 +1375,49 @@ public class operator extends Operator {
 		return valuation.valuate();
 	}
 
+	public static Object get(Context context) throws ContextException,
+		RemoteException {
+		return context.getReturnValue();
+	}
+
+	public static Object get(Context context, int index)
+		throws ContextException {
+		if (context instanceof PositionalContext)
+			return ((PositionalContext) context).getValueAt(index);
+		else
+			throw new ContextException("Not PositionalContext, index: " + index);
+	}
+
+	public static Object get(Service service, String path)
+		throws ContextException {
+		Object obj = null;
+		if (service instanceof Context) {
+			obj = ((ServiceContext) service).get(path);
+			if (obj != null && obj instanceof Contextion) {
+				while (obj instanceof Contextion ||
+					(obj instanceof Reactive && ((Reactive) obj).isReactive())) {
+					try {
+						obj = ((Evaluation) obj).asis();
+					} catch (RemoteException e) {
+						throw new ContextException(e);
+					}
+				}
+			}
+		} else if (service instanceof Mogram) {
+			obj = (((Mogram) service).getContext()).asis(path);
+		}
+		return obj;
+	}
+
+	public static Object get(Routine exertion, String component, String path)
+		throws RoutineException {
+		Routine c = (Routine) exertion.getMogram(component);
+		try {
+			return get((Subroutine) c, path);
+		} catch (Exception e) {
+			throw new RoutineException(e);
+		}
+	}
 	public static Object get(Arg[] args, String path) throws EvaluationException, RemoteException {
 		for (Arg arg : args) {
 			if (arg instanceof sorcer.service.Callable && arg.getName().equals(path))
@@ -1862,7 +1905,7 @@ public class operator extends Operator {
 		return names;
 	}
 
-	private static String getUnknown() {
+	public static String getUnknown() {
 		return "unknown" + count++;
 	}
 

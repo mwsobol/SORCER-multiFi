@@ -22,7 +22,7 @@ import java.util.Date;
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.ent.operator.invoker;
-import static sorcer.eo.operator.get;
+import static sorcer.co.operator.get;
 import static sorcer.eo.operator.mog;
 import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.*;

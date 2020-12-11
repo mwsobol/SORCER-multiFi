@@ -333,6 +333,14 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 		return out;
 	}
 
+	public Context evaluateDomain(String domainName, Context context) throws ContextException {
+		return evaluateDomain(domains.get(domainName), context);
+	}
+
+	public Context evaluateDomain(Request request, Context context) throws ContextException {
+			return response((Mogram) request, context);
+	}
+
 	@Override
 	public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
 		Context out = null;
@@ -408,7 +416,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 						}
 					} else if (domain.isExec()) {
 						if (domain instanceof Mogram) {
-							cxt = response(domain, domainCxt);
+							cxt = evaluateDomain(domain, domainCxt);
 						} else {
 							cxt = domain.evaluate(domainCxt);
 						}

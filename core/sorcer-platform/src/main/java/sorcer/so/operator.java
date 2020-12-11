@@ -31,6 +31,7 @@ import sorcer.core.context.model.req.Req;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
+import sorcer.core.service.Collaboration;
 import sorcer.core.service.Governance;
 import sorcer.core.signature.LocalSignature;
 import sorcer.core.signature.ServiceSignature;
@@ -161,8 +162,15 @@ public class operator extends Operator {
         }
     }
 
-    public static ServiceContext eval(Request request, Context context)
-            throws ContextException {
+    public static Context evalDomain(Collaboration collab, Request request, Context context) throws ContextException {
+        return collab.evaluateDomain(request, context);
+    }
+
+    public static Context evalDomain(Collaboration collab, String domainName, Context context) throws ContextException {
+        return collab.evaluateDomain(domainName, context);
+    }
+
+    public static ServiceContext eval(Request request, Context context) throws ContextException {
         Context rc = null;
         try {
             if (request instanceof Contextion) {

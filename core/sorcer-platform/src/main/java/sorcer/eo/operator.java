@@ -68,7 +68,6 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.Collections;
 
-import static sorcer.co.operator.path;
 import static sorcer.co.operator.*;
 import static sorcer.mo.operator.*;
 
@@ -1783,12 +1782,12 @@ operator extends Operator {
         return fi;
     }
 
-    public static RegionFidelity dscFi(Fidelity... fidelities) {
+    public static RegionFidelity rgnFi(Fidelity... fidelities) {
         RegionFidelity fi = new RegionFidelity(fidelities);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;
     }
-    public static RegionFidelity dscFi(String name, Fidelity... fidelities) {
+    public static RegionFidelity rgnFi(String name, Fidelity... fidelities) {
         RegionFidelity fi = new RegionFidelity(name, fidelities);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;
@@ -2976,19 +2975,6 @@ operator extends Operator {
         }
     }
 
-    public static Object get(Context context) throws ContextException,
-        RemoteException {
-        return context.getReturnValue();
-    }
-
-    public static Object get(Context context, int index)
-        throws ContextException {
-        if (context instanceof PositionalContext)
-            return ((PositionalContext) context).getValueAt(index);
-        else
-            throw new ContextException("Not PositionalContext, index: " + index);
-    }
-
     public static Object returnValue(Mogram mogram) throws ContextException,
         RemoteException {
         return mogram.getContext().getReturnValue();
@@ -3026,38 +3012,6 @@ operator extends Operator {
 
     public static Mogram sub(Routine mogram, String path) {
         return mogram.getComponentMogram(path);
-    }
-
-
-    public static Object get(Service service, String path)
-        throws ContextException {
-        Object obj = null;
-        if (service instanceof Context) {
-            obj = ((ServiceContext) service).get(path);
-            if (obj != null && obj instanceof Contextion) {
-                while (obj instanceof Contextion ||
-                    (obj instanceof Reactive && ((Reactive) obj).isReactive())) {
-                    try {
-                        obj = ((Evaluation) obj).asis();
-                    } catch (RemoteException e) {
-                        throw new ContextException(e);
-                    }
-                }
-            }
-        } else if (service instanceof Mogram) {
-            obj = (((Mogram) service).getContext()).asis(path);
-        }
-        return obj;
-    }
-
-    public static Object get(Routine exertion, String component, String path)
-        throws RoutineException {
-        Routine c = (Routine) exertion.getMogram(component);
-        try {
-            return get((Subroutine) c, path);
-        } catch (Exception e) {
-            throw new RoutineException(e);
-        }
     }
 
     public static <T> T softValue(Context<T> context, String path) throws ContextException {
@@ -3245,11 +3199,6 @@ operator extends Operator {
     public static Context.Return result(String path, Class type, Path[] paths) {
         return new Context.Return(path, Direction.OUT, type, paths);
     }
-
-    public static String getUnknown() {
-        return "unknown" + count++;
-    }
-
 
     public static class Range extends Slot<Integer, Integer> {
         private static final long serialVersionUID = 1L;

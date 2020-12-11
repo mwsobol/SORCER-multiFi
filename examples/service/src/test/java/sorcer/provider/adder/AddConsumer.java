@@ -6,12 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.consumer.ServiceConsumer;
 import sorcer.requestor.adder.AdderConsumer;
 import sorcer.service.Consumer;
 import sorcer.service.Context;
 
 import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.value;
 import static sorcer.so.operator.exec;

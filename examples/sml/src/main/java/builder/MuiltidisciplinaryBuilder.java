@@ -155,12 +155,12 @@ public class MuiltidisciplinaryBuilder {
 				value(cxt, "lambdaOut") < 500.0), pipeline("cxtn2")));
 
 		Region plDisc = operator.rgn("plDisc",
-			dscFi("plDisc1",
+			rgnFi("plDisc1",
 				cxtnFi("cxtn1", sig("getPipeline1",  MuiltidisciplinaryBuilder.class)),
 				cxtFi("cxt1", cxt1),
 				dspFi("dspt1", evalTask)),
 
-			dscFi("plDisc2",
+			rgnFi("plDisc2",
 				cxtnFi("cxtn2", sig("getPipeline2",  MuiltidisciplinaryBuilder.class)),
 				cxtFi("cxt2", cxt2),
 				dspFi("dspt2", blockDispatch)));

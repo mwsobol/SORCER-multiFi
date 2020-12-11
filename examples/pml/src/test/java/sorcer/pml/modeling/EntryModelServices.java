@@ -13,6 +13,7 @@ import sorcer.service.Task;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.get;
 import static sorcer.co.operator.outPaths;
 import static sorcer.eo.operator.*;
 import static sorcer.ent.operator.invoke;

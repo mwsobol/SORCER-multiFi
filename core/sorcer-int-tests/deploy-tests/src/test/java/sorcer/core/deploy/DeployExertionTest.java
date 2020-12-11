@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.so.operator.exert;
 

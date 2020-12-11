@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.get;
+import static sorcer.co.operator.get;
 import static sorcer.eo.operator.loop;
 import static sorcer.mo.operator.*;
 import static sorcer.ent.operator.*;
