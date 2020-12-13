@@ -72,7 +72,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 
 	protected Fidelity<Analysis> analyzerFi;
 
-	protected Fidelity<ExplorationEntry> explorerFi;
+	protected Fidelity<Exploration> explorerFi;
 
 	protected Map<String, Domain> domains = new HashMap<>();
 
@@ -83,7 +83,6 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 
 	// dependency management for this collaboration
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
-
 
 	private FidelityManager fiManager;
 
@@ -152,11 +151,11 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 		return domains.get(name);
 	}
 
-	public Fidelity<ExplorationEntry> getExplorerFi() {
+	public Fidelity<Exploration> getExplorerFi() {
 		return explorerFi;
 	}
 
-	public void setExplorerFi(Fidelity<ExplorationEntry> explorerFi) {
+	public void setExplorerFi(Fidelity<Exploration> explorerFi) {
 		this.explorerFi = explorerFi;
 	}
 
@@ -246,7 +245,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 		return domainList;
 	}
 
-	public Fidelity<ExplorationEntry> setExplorerFi(Context context) throws ConfigurationException {
+	public Fidelity<Exploration> setExplorerFi(Context context) throws ConfigurationException {
 		if(explorerFi == null) {
 			Object exploreComponent = context.get(Context.EXPLORER_PATH);
 			if (exploreComponent != null) {
@@ -258,7 +257,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 				} else if (exploreComponent instanceof ServiceFidelity
 					&& ((ServiceFidelity) exploreComponent).getFiType().equals(Fi.Type.EXPLORER)) {
 					explorerFi = (Fidelity) exploreComponent;
-					explorerFi.getSelect().setContextion(this);
+					((ExplorationEntry)explorerFi.getSelect()).setContextion(this);
 				}
 
 			}
@@ -370,8 +369,8 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 						analyzerFi.selectSelect(fi.getName());
 					}
 				}
-				explorerFi.getSelect().setContextion(this);
-				logger.info("*** explorerFi: {}", explorerFi.getSelect().getName());
+				((ExplorationEntry)explorerFi.getSelect()).setContextion(this);
+				logger.info("*** explorerFi: {}", ((Identifiable)explorerFi.getSelect()).getName());
 			}
 
 			if (analyzerFi == null) {

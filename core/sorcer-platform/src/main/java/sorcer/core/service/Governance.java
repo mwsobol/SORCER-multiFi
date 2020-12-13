@@ -29,6 +29,7 @@ import sorcer.core.context.model.ent.SupervisionEntry;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
 import sorcer.service.Region;
+import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.SuperviseException;
 import sorcer.service.modeling.cxtn;
@@ -65,6 +66,8 @@ public class Governance implements Transregion, Dependency, cxtn {
     protected Paths disciplnePaths = new Paths();
 
 	protected Fidelity<Supervision> supervisorFi;
+
+	protected Fidelity<Exploration> explorerFi;
 
 	protected Fidelity<Analysis> analyzerFi;
 
@@ -248,6 +251,15 @@ public class Governance implements Transregion, Dependency, cxtn {
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public Fidelity<Exploration> getExplorerFi() {
+		return explorerFi;
+	}
+
+	public void setExplorerFi(Fidelity<Exploration> explorerFi) {
+		this.explorerFi = explorerFi;
 	}
 
 	public Fidelity<Analysis> getAnalyzerFi() {

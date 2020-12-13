@@ -11,6 +11,7 @@ import sorcer.core.context.model.Transmodel;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
+import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
@@ -32,6 +33,8 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
     protected Paths childrenPaths;
 
     protected Fidelity<Analysis> analyzerFi;
+
+    protected Fidelity<Exploration> explorerFi;
 
     public AnalysisModel() {
         super();
@@ -147,6 +150,15 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
 
     public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
         this.analyzerFi = analyzerFi;
+    }
+
+    @Override
+    public Fidelity<Exploration> getExplorerFi() {
+        return explorerFi;
+    }
+
+    public void setExplorerFi(Fidelity<Exploration> explorerFi) {
+        this.explorerFi = explorerFi;
     }
 
     public Map<String, Context> getChildrenContexts() {

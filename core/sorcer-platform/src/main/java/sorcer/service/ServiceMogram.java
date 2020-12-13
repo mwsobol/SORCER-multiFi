@@ -139,6 +139,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     protected ServiceContext dataContext;
 
+    protected Fidelity<Analysis> analyzerFi;
+
     protected transient Exerter provider;
 
     protected boolean isEvaluated = false;
@@ -1130,6 +1132,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         } else {
             return new Entry(entryName, result);
         }
+    }
+
+    public Fidelity<Analysis> getAnalyzerFi() {
+        return analyzerFi;
+    }
+
+    public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
+        this.analyzerFi = analyzerFi;
     }
 
     @Override

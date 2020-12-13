@@ -16,6 +16,10 @@
  */
 package sorcer.service;
 
+import sorcer.service.modeling.Exploration;
+
 public interface Transdiscipline extends Discipline {
+
+    public Fidelity<Exploration> getExplorerFi();
 
 }

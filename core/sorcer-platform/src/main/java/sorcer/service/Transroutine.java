@@ -20,6 +20,7 @@ package sorcer.service;
 import net.jini.id.Uuid;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.dmn;
 
 import java.rmi.RemoteException;
@@ -38,7 +39,7 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 	 */
 	protected List<Mogram> mograms = new ArrayList<Mogram>();
 
-	protected Fidelity<Analysis> analyzerFi;
+	protected Fidelity<Exploration> explorerFi;
 
 	public Transroutine() {
 		this("transroutine-" + count++);
@@ -123,6 +124,15 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 		addMogram(exertion);
 		controlContext.setPriority(exertion, priority);
 		return this;
+	}
+
+	@Override
+	public Fidelity<Exploration> getExplorerFi() {
+		return explorerFi;
+	}
+
+	public void setExplorerFi(Fidelity<Exploration> explorerFi) {
+		this.explorerFi = explorerFi;
 	}
 
 	/**
@@ -218,15 +228,6 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 			children.put(mog.getName(), (Domain) mog);
 		}
 		return children;
-	}
-
-	@Override
-	public Fidelity<Analysis> getAnalyzerFi() {
-		return analyzerFi;
-	}
-
-	public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
-		this.analyzerFi = analyzerFi;
 	}
 
 }
