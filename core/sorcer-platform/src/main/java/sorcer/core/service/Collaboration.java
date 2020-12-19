@@ -100,7 +100,9 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 
 	protected Projection outPathProjection;
 
-    public Collaboration() {
+	protected Model.Pattern pattern =  Model.Pattern.COLLAB;
+
+	public Collaboration() {
         this(null);
     }
 

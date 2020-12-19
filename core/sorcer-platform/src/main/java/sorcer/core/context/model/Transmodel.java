@@ -31,7 +31,7 @@ public interface Transmodel extends Model, Transdomain, Configurable {
 
     public void setChildrenPaths(Paths childrenPaths);
 
-    public void addDomains(List<Domain> domains);
+    public void addDomains(List<Domain> domains) throws SignatureException;
 
     public Fidelity<Analysis> getAnalyzerFi();
 

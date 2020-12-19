@@ -96,7 +96,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected Subroutine exertion;
 	protected String currentPrefix;
 	protected boolean isFinalized = false;
-	protected Functionality.Type type = Functionality.Type.CONTEXT;
+	protected Function.Type type = Function.Type.CONTEXT;
+	protected Model.Pattern pattern =  Model.Pattern.ANAL;
 	Signature.Direction direction = Signature.Direction.INOUT;
 
 	protected boolean isSoft = false;
@@ -3595,7 +3596,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return (ModelStrategy) domainStrategy;
 	}
 
-	public void settDomainStrategy(ModelStrategy domainStrategy) {
+	public void setDomainStrategy(ModelStrategy domainStrategy) {
 		this.domainStrategy = domainStrategy;
 	}
 
@@ -3852,4 +3853,12 @@ public class ServiceContext<T> extends ServiceMogram implements
         isValid = true;
         return cxtFi(selected.getName(), selected );
     }
+
+	public Model.Pattern getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(Model.Pattern pattern) {
+		this.pattern = pattern;
+	}
 }

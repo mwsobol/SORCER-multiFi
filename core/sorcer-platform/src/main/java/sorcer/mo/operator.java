@@ -770,30 +770,30 @@ public class operator {
         for (Object fi : modelFis) {
             dataList.remove(fi);
         }
-
         Transmodel transModel = new AnalysisModel(name);
-        transModel.addDomains(domains);
-        Object[] names = new Object[domains.size()];
-        for (int i = 0; i < domains.size(); i++) {
-            ((ServiceMogram) domains.get(i)).setParent(transModel);
-            names[i] = domains.get(i).getName();
-        }
-
-        if (modelFis.size() > 0) {
-            FidelityManager fiManager = new FidelityManager(transModel);
-            Map<String, ServiceFidelity> fis = new HashMap<>();
-            for (ServiceFidelity mdlFi : modelFis) {
-                fis.put(mdlFi.getName(), mdlFi);
-                transModel.getChildren().put(mdlFi.getName(), (RequestModel) mdlFi.getSelect());
-            }
-            fiManager.setFidelities(fis);
-            ((RequestModel)transModel).setFidelityManager(fiManager);
-        }
-        if (domainPaths != null) {
-            domainPaths.name = transModel.getName();
-            transModel.setChildrenPaths(domainPaths);
-        }
         try {
+            transModel.addDomains(domains);
+            Object[] names = new Object[domains.size()];
+            for (int i = 0; i < domains.size(); i++) {
+                ((ServiceMogram) domains.get(i)).setParent(transModel);
+                names[i] = domains.get(i).getName();
+            }
+
+            if (modelFis.size() > 0) {
+                FidelityManager fiManager = new FidelityManager(transModel);
+                Map<String, ServiceFidelity> fis = new HashMap<>();
+                for (ServiceFidelity mdlFi : modelFis) {
+                    fis.put(mdlFi.getName(), mdlFi);
+                    transModel.getChildren().put(mdlFi.getName(), (RequestModel) mdlFi.getSelect());
+                }
+                fiManager.setFidelities(fis);
+                ((RequestModel)transModel).setFidelityManager(fiManager);
+            }
+            if (domainPaths != null) {
+                domainPaths.name = transModel.getName();
+                transModel.setChildrenPaths(domainPaths);
+            }
+
             if (dependency == null && names.length > 0) {
                 if (domainPaths != null) {
                     sorcer.co.operator.dependsOn(transModel, ent(transModel.getName(), domainPaths));
@@ -830,7 +830,7 @@ public class operator {
                 dest[i + 1] = dataList.get(i);
             }
             reqModel(dest);
-        } catch (ContextException e) {
+        } catch (ContextException | SignatureException e) {
             throw new EvaluationException(e);
         }
         return transModel;
@@ -1210,7 +1210,23 @@ public class operator {
         return domain;
     }
 
-    public static Collaboration clb(Context context) {
+    public static Domain subject(Context context) {
+        Object subject = context.getSubjectValue();
+        if (subject instanceof Domain) {
+            return (Domain)subject;
+        }
+        return null;
+    }
+
+    public static Model model(Context context) {
+        Object subject = context.getSubjectValue();
+        if (subject instanceof Model) {
+            return (Model)subject;
+        }
+        return null;
+    }
+
+    public static Collaboration target(Context context) {
         Object subject = context.getSubjectValue();
         if (subject instanceof Collaboration) {
             return (Collaboration)subject;
@@ -1543,7 +1559,7 @@ public class operator {
     public static ExplorationEntry expl(String name, Signature signature)
         throws EvaluationException {
         ExplorationEntry mde = new ExplorationEntry(name, signature);
-        mde.setType(Functionality.Type.EXPLORER);
+        mde.setType(Functionality.Type.EXPL);
         try {
             mde.setValue(signature);
         } catch (SetterException | RemoteException e) {

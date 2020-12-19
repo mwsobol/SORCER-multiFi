@@ -28,6 +28,15 @@ import java.rmi.RemoteException;
  */
 public interface Model extends ContextDomain, mog, dmn, cxtn {
 
+    // All-at-Once (AAO),
+    // Simultaneous Analysis and Design (SAND),
+    // Individual Discipline Feasible (IDF),
+    // Multidiscipline Feasible (MDF)
+    // Analysis, Mado, Explore, Supervise
+    public enum Pattern {
+        AAO, SAND, IDF, MDF, ANAL, MDA, MADO, EXPL, SUPV, COLLAB, MADOCOLLAB
+    }
+
     /**
      * Returns a model result.
      *

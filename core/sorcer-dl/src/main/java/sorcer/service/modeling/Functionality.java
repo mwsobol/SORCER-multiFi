@@ -45,12 +45,13 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 		DOMAIN, REGION, DISCIPLINE, EXERTION, MOGRAM, SELF, CONDITION, FIDELITY, LOCATOR, ARG, PATH, CONFIG, PROXY, DISPATCH,
 		OBJECTIVE_GRADIENT, CONSTRAINT_GRADIENT, COUPLED, MADO, TRANS, CONTEXTION, COLLABORATION, SEARCH, GOVERNANCE,
 		SUPERVISOR, STRATEGY, EXEC, SCOPE,
-        // in ResponsModel transTypes
+        // in Model Pattern
         // All-at-Once (AAO),
 		// Simultaneous Analysis and Design (SAND),
 		// Individual Discipline Feasible (IDF),
 		// Multidiscipline Feasible (MDF)
-		 AAO, SAND, IDF, MDF, MDA, EXPLORER, NONE,
+		// Response, Analysis, Explore
+		 AAO, SAND, IDF, MDF, MDA, RESP, ANAL, EXPL, NONE,
 
 		// Finite Difference Functionality
 		VGD,	// var GradientDifferentiator

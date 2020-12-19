@@ -50,20 +50,20 @@ public class ExplorationEntry extends Entry<Exploration> implements Exploration 
     public ExplorationEntry(String name, Exploration explorer)  {
         this.key = name;
         this.impl = explorer;
-        this.type = Functionality.Type.EXPLORER;
+        this.type = Functionality.Type.EXPL;
     }
 
     public ExplorationEntry(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
-        this.type = Functionality.Type.EXPLORER;
+        this.type = Functionality.Type.EXPL;
     }
 
     public ExplorationEntry(String name, Exploration mda, Context context) {
         this.key = name;
         scope = context;
         this.impl = mda;
-        this.type = Functionality.Type.EXPLORER;
+        this.type = Functionality.Type.EXPL;
     }
 
     public Contextion getContextion() {
@@ -115,6 +115,9 @@ public class ExplorationEntry extends Entry<Exploration> implements Exploration 
             } else if (analyzerFi != null) {
                 Analysis analyzer = analyzerFi.getSelect();
                 analyzer.analyze(contextion, context);
+                output = context;
+            } else {
+                output = context;
             }
 
             if (impl != null && impl instanceof Exploration) {
