@@ -2829,16 +2829,13 @@ operator extends Operator {
             job = new NetJob(name, signature);
         } else if (signature instanceof LocalSignature) {
             job = new ObjectJob(name, signature);
-        } else if (signature == null) {
-            // default
-            signature = new LocalSignature("exert", ServiceJobber.class);
-            job = new ObjectJob(name, signature);
-        } else if (fis != null && fis.size() > 0) {
-            job = new Job(name);
         } else {
-            job = new NetJob(name);
+            if (fis != null && fis.size() > 0) {
+                job = new Job(name);
+            } else{
+                job = new NetJob(name);
+            }
         }
-
         if ((inPaths != null || outPaths != null) && signature.getContextReturn() == null) {
             signature.setContextReturn(new Context.Return(name));
         }
