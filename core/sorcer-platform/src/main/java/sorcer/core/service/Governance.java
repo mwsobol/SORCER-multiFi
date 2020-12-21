@@ -29,10 +29,7 @@ import sorcer.core.context.model.ent.SupervisionEntry;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
 import sorcer.service.Region;
-import sorcer.service.modeling.Exploration;
-import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.SuperviseException;
-import sorcer.service.modeling.cxtn;
+import sorcer.service.modeling.*;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -65,11 +62,13 @@ public class Governance implements Transregion, Dependency, cxtn {
     // active disciplnes
     protected Paths disciplnePaths = new Paths();
 
-	protected Fidelity<Supervision> supervisorFi;
+	protected Fidelity<Finalization> finalizerFi;
+
+	protected Fidelity<Analysis> analyzerFi;
 
 	protected Fidelity<Exploration> explorerFi;
 
-	protected Fidelity<Analysis> analyzerFi;
+	protected Fidelity<Supervision> supervisorFi;
 
 	protected ServiceFidelity contextMultiFi;
 
@@ -491,6 +490,15 @@ public class Governance implements Transregion, Dependency, cxtn {
 		}
 		contextionList.add(this);
 		return contextionList;
+	}
+
+	@Override
+	public Fidelity<Finalization> getFinalizerFi() {
+		return finalizerFi;
+	}
+
+	public void setFinalizerFi(Fidelity<Finalization> finalizerFi) {
+		this.finalizerFi = finalizerFi;
 	}
 
 	public Functionality.Type getDependencyType() {

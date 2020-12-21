@@ -23,8 +23,6 @@ public interface Transregion extends Transdiscipline {
 
     public Map<String, Region> getChildren();
 
-    public Fidelity<Analysis> getAnalyzerFi();
-
     public Fidelity<Supervision> getSupervisorFi();
 
     public Region getChild(String name);

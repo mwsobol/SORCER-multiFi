@@ -25,6 +25,7 @@ import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.modeling.Data;
+import sorcer.service.modeling.Finalization;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Model;
 import sorcer.util.GenericUtil;
@@ -139,7 +140,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     protected ServiceContext dataContext;
 
-    protected Fidelity<Analysis> analyzerFi;
+    protected Fidelity<Finalization> finalizerFi;
 
     protected transient Exerter provider;
 
@@ -1134,12 +1135,12 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         }
     }
 
-    public Fidelity<Analysis> getAnalyzerFi() {
-        return analyzerFi;
+    public Fidelity<Finalization> getFinalizerFi() {
+        return finalizerFi;
     }
 
-    public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
-        this.analyzerFi = analyzerFi;
+    public void setFinalizerFi(Fidelity<Finalization> finalizerFi) {
+        this.finalizerFi = finalizerFi;
     }
 
     @Override

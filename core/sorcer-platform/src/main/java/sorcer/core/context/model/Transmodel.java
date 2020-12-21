@@ -12,6 +12,8 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.req.RequestModel;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
+import sorcer.service.modeling.Exploration;
+import sorcer.service.modeling.Finalization;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Model;
 
@@ -31,11 +33,7 @@ public interface Transmodel extends Model, Transdomain, Configurable {
 
     public void setChildrenPaths(Paths childrenPaths);
 
-    public void addDomains(List<Domain> domains) throws SignatureException;
-
-    public Fidelity<Analysis> getAnalyzerFi();
-
-    public void setAnalyzerFi(Fidelity<Analysis> analyzerFi);
+    public void addChildren(List<Domain> domains) throws SignatureException;
 
     public Map<String, Context> getChildrenContexts();
 

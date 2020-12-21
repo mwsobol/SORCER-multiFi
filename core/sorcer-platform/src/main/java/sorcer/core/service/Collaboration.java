@@ -70,11 +70,13 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 
 	protected Morpher morpher;
 
+	protected Fidelity<Finalization> finalizerFi;
+
 	protected Fidelity<Analysis> analyzerFi;
 
 	protected Fidelity<Exploration> explorerFi;
 
-	protected Map<String, Domain> domains = new HashMap<>();
+	protected Map<String, Mogram> domains = new HashMap<>();
 
 	protected List<Coupling> couplings;
 
@@ -145,11 +147,11 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
         this.domainPaths = domainPaths;
     }
 
-    public Map<String, Domain> getDomains() {
+    public Map<String, Mogram> getDomains() {
 		return domains;
 	}
 
-	public Domain getDomain(String name) {
+	public Mogram getDomain(String name) {
 		return domains.get(name);
 	}
 
@@ -237,9 +239,9 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 		this.analyzerFi = analyzerFi;
 	}
 
-	public List<Domain> getDisciplineList() {
-		List<Domain> domainList = new ArrayList<>();
-		for (Domain disc : domains.values()) {
+	public List<Mogram> getDisciplineList() {
+		List<Mogram> domainList = new ArrayList<>();
+		for (Mogram disc : domains.values()) {
 			if (disc instanceof Region) {
 				domainList.add(disc);
 			}
@@ -392,7 +394,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 
 	public void analyze(Context context) throws ContextException {
 		Context collabOut = new ServiceContext(name);
-		Domain domain = null;
+		Mogram domain = null;
 		try {
 			for (Path path : domainPaths) {
 				domain = domains.get(path.path);
@@ -454,7 +456,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 
 	public void initializeDomains() throws SignatureException {
 		// initialize domains specified by builder signatures
-		for (Domain domain : domains.values()) {
+		for (Mogram domain : domains.values()) {
 			if (domain instanceof SignatureDomain) {
 				boolean isExec = domain.isExec();
 				domain = ((SignatureDomain) domain).getDomain();
@@ -465,7 +467,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 	}
 
 	public OptimizationModeling getOptimizationDomain() {
-		for (Domain domain : domains.values()) {
+		for (Mogram domain : domains.values()) {
 			if (domain instanceof OptimizationModeling) {
 				return (OptimizationModeling) domain;
 			}
@@ -546,7 +548,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 	}
 
 	@Override
-	public Map<String, Domain> getChildren() {
+	public Map<String, Mogram> getChildren() {
 		return domains;
 	}
 
@@ -605,6 +607,15 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 		}
 		contextionList.add(this);
 		return contextionList;
+	}
+
+	@Override
+	public Fidelity<Finalization> getFinalizerFi() {
+		return finalizerFi;
+	}
+
+	public void setFinalizerFi(Fidelity<Finalization> finalizerFi) {
+		this.finalizerFi = finalizerFi;
 	}
 
 	public ContextList getOutputs() {

@@ -17,8 +17,13 @@
 package sorcer.service;
 
 import sorcer.service.modeling.Exploration;
+import sorcer.service.modeling.Finalization;
 
 public interface Transdiscipline extends Discipline {
+
+    public Fidelity<Finalization> getFinalizerFi();
+
+    public Fidelity<Analysis> getAnalyzerFi();
 
     public Fidelity<Exploration> getExplorerFi();
 

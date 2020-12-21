@@ -18,50 +18,40 @@
 package sorcer.core.context.model.ent;
 
 import sorcer.core.signature.LocalSignature;
-import sorcer.service.Analysis;
 import sorcer.service.*;
+import sorcer.service.modeling.Finalization;
 import sorcer.service.modeling.Functionality;
 
 /**
- * Created by Mike Sobolewski on 01/05/20.
+ * Created by Mike Sobolewski on 12/19/2020.
  */
-public class AnalysisEntry extends Entry<Analysis> implements Analysis {
+public class FinalizerEntry extends Entry<Finalization> implements Finalization {
 
     private static final long serialVersionUID = 1L;
 
-    private Contextion contextion;
-
     private Signature signature;
 
-    public AnalysisEntry(String name, Analysis mda)  {
+    public FinalizerEntry(String name, Finalization finalizer)  {
         this.key = name;
-        this.impl = mda;
-        this.type = Functionality.Type.MDA;
+        this.impl = finalizer;
+        this.type = Functionality.Type.FNL;
     }
 
-    public AnalysisEntry(String name, Signature signature) {
+    public FinalizerEntry(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
-        this.type = Functionality.Type.MDA;
+        this.type = Functionality.Type.FNL;
     }
 
-    public AnalysisEntry(String name, Analysis mda, Context context) {
+    public FinalizerEntry(String name, Finalization finalizer, Context context) {
         this.key = name;
         scope = context;
-        this.impl = mda;
-        this.type = Functionality.Type.MDA;
+        this.impl = finalizer;
+        this.type = Functionality.Type.FNL;
     }
 
-    public Analysis getAnalyzer() {
-        return (Analysis) impl;
-    }
-
-    public Contextion getContextion() {
-        return contextion;
-    }
-
-    public void setContextion(Contextion contextion) {
-        this.contextion = contextion;
+    public Finalization getFinalizer() {
+        return (Finalization) impl;
     }
 
     public Signature getSignature() {
@@ -69,19 +59,15 @@ public class AnalysisEntry extends Entry<Analysis> implements Analysis {
     }
 
     @Override
-    public void analyze(Request request, Context context) throws EvaluationException {
+    public void finalize(Context context, Arg... args) throws EvaluationException {
         try {
-            if (impl != null && impl instanceof Analysis) {
-                if (contextion == null || context == contextion) {
-                    ((Analysis) impl).analyze(request, context);
-                } else {
-                    ((Analysis) impl).analyze(contextion, context);
-                }
+            if (impl != null && impl instanceof Finalization) {
+                ((Finalization) impl).finalize(context, args);
             } else if (signature != null) {
                 impl = ((LocalSignature)signature).initInstance();
-                ((Analysis)impl).analyze(request, context);
+                ((Finalization)impl).finalize(context, args);
             } else if (impl == null) {
-                throw new InvocationException("No MDA analysis available!");
+                throw new InvocationException("No Finalizer available!");
             }
         } catch (ContextException | SignatureException e) {
             throw new EvaluationException(e);

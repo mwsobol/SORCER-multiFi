@@ -575,7 +575,7 @@ public class Job extends Transroutine {
 		}
 		return exti;
 	}
-	
+
 	public void applyFidelityContext(FidelityContext fiContext) throws RoutineException {
 		Collection<ServiceFidelity> fidelities = fiContext.values();
 		Subroutine se = null;

@@ -951,7 +951,7 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 
 	public int size();
 
-	Mogram getDomain(String name) throws ContextException;
+	Mogram getChild(String name) throws ContextException;
 
 	public Return getContextReturn();
 

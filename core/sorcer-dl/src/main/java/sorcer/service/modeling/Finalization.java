@@ -1,6 +1,6 @@
 /*
- * Copyright 2019 the original author or authors.
- * Copyright 2019 SorcerSoft.org.
+ * Copyright 2020 the original author or authors.
+ * Copyright 2020 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,19 @@
  * limitations under the License.
  */
 
-package sorcer.service;
+package sorcer.service.modeling;
 
-import sorcer.service.modeling.Exploration;
-import sorcer.service.modeling.Finalization;
-import sorcer.service.modeling.cxtn;
+import sorcer.service.Arg;
+import sorcer.service.Context;
+import sorcer.service.ContextException;
+import sorcer.service.Request;
 
-import java.util.Map;
+/**
+ * Created by Mike Sobolewski on 12/19/2020.
+ */
+@FunctionalInterface
+public interface Finalization {
 
-public interface Transdomain extends Transdiscipline, cxtn {
-
-    public Map<String, Mogram> getChildren();
-
-    public Mogram getChild(String name);
-
-    public Object get(String path$domain);
+    public void finalize(Context context, Arg... args) throws ContextException;
 
 }

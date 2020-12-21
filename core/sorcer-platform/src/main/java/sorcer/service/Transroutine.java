@@ -39,6 +39,8 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 	 */
 	protected List<Mogram> mograms = new ArrayList<Mogram>();
 
+	protected Fidelity<Analysis> analyzerFi;
+
 	protected Fidelity<Exploration> explorerFi;
 
 	public Transroutine() {
@@ -222,12 +224,22 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 	}
 
 	@Override
-	public Map<String, Domain> getChildren() {
-		Map<String, Domain> children = new HashMap<>();
+	public Map<String, Mogram> getChildren() {
+		Map<String, Mogram> children = new HashMap<>();
 		for (Mogram mog : mograms) {
 			children.put(mog.getName(), (Domain) mog);
 		}
 		return children;
 	}
+
+	@Override
+	public Fidelity<Analysis> getAnalyzerFi() {
+		return analyzerFi;
+	}
+
+	public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
+		this.analyzerFi = analyzerFi;
+	}
+
 
 }

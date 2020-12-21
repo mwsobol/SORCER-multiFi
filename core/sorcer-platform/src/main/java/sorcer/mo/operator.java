@@ -124,10 +124,10 @@ public class operator {
 
     public static Object value(Context context, String path, String domain) throws ContextException {
         if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
-            return context.getDomain(domain).getEvaluatedValue(path);
+            return context.getChild(domain).getEvaluatedValue(path);
         } else {
             try {
-                return ((Context) context.getDomain(domain)).getValue(path);
+                return ((Context) context.getChild(domain)).getValue(path);
             } catch (RemoteException e) {
                 throw new ContextException(e);
             }
@@ -772,7 +772,7 @@ public class operator {
         }
         Transmodel transModel = new AnalysisModel(name);
         try {
-            transModel.addDomains(domains);
+            transModel.addChildren(domains);
             Object[] names = new Object[domains.size()];
             for (int i = 0; i < domains.size(); i++) {
                 ((ServiceMogram) domains.get(i)).setParent(transModel);
@@ -1187,10 +1187,8 @@ public class operator {
         }
     }
 
-
-
     public static Domain dmn(Collaboration collab, String name) {
-        return collab.getDomain(name);
+        return (Domain) collab.getDomain(name);
     }
 
     public static String dmnName(Context context) {

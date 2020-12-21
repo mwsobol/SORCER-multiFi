@@ -26,7 +26,7 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
 
     private static final Logger logger = LoggerFactory.getLogger(Transmodel.class);
 
-    protected Map<String, Domain> children = new HashMap<>();
+    protected Map<String, Mogram> children = new HashMap<>();
 
     protected Map<String, Context> childrenContexts = new HashMap<>();
 
@@ -82,7 +82,7 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
         this.childrenPaths = childrenPaths;
     }
 
-    public void addDomains(List<Domain> domains) {
+    public void addChildren(List<Domain> domains) {
         for (Domain vm : domains) {
             this.children.put(vm.getName(), vm);
             vm.setParent(this);
@@ -90,8 +90,12 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
     }
 
     @Override
-    public Domain getDomain(String domainName) {
-        return children.get(domainName);
+    public Fidelity<Analysis> getAnalyzerFi() {
+        return analyzerFi;
+    }
+
+    public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
+        this.analyzerFi = analyzerFi;
     }
 
     @Override
@@ -100,7 +104,7 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
     }
 
     @Override
-    public Map<String, Domain> getChildren() {
+    public Map<String, Mogram> getChildren() {
         return children;
     }
 
@@ -142,14 +146,6 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
             throw new EvaluationException(e);
         }
         return dataContext;
-    }
-
-    public Fidelity<Analysis> getAnalyzerFi() {
-        return analyzerFi;
-    }
-
-    public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
-        this.analyzerFi = analyzerFi;
     }
 
     @Override
@@ -206,7 +202,7 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
                     if (de.getName().equals(key)) {
                         dpl = de.getData();
                         for (Path p : dpl) {
-                            Domain domain = children.get(p.getName());
+                            Mogram domain = children.get(p.getName());
                             execDependencies(p.getName(), inContext, args);
                             Context cxt = null;
                             if (children.get(p.path) instanceof EntryModel) {
