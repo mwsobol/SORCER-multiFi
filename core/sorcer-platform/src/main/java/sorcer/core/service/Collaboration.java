@@ -26,6 +26,7 @@ import sorcer.core.context.ContextList;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ModelTask;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.OptimizerState;
 import sorcer.core.context.model.ent.Coupling;
 import sorcer.core.context.model.ent.AnalysisEntry;
 import sorcer.core.context.model.ent.ExplorationEntry;
@@ -54,6 +55,8 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 	protected Uuid id = UuidFactory.generate();
 
 	protected  String name;
+
+	protected  String domainName;
 
     // the input of this collaboration
     protected Context input;
@@ -120,14 +123,14 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
     public Collaboration(String name, Domain[] domains) {
         this(name);
         for (Domain domain : domains) {
-                this.domains.put(domain.getName(), domain);
+                this.domains.put(domain.getDomainName(), domain);
         }
     }
 
 	public Collaboration(String name, List<Domain> domains) {
 		this(name);
 		for (Domain domain : domains) {
-			this.domains.put(domain.getName(), domain);
+			this.domains.put(domain.getDomainName(), domain);
 		}
 	}
 
@@ -400,29 +403,36 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 				domain = domains.get(path.path);
 				if (domain instanceof SignatureDomain) {
 					domain = ((SignatureDomain) domain).getDomain();
-					domains.put(domain.getName(), domain);
+					domains.put(domain.getDomainName(), domain);
 				}
-				Context domainCxt = sorcer.mo.operator.getDomainContext(context, domain.getName());
-				Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getName());
+				Context domainCxt = sorcer.mo.operator.getDomainContext(context, domain.getDomainName());
+				Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getDomainName());
 				Context cxt = null;
 				if (domainCxt != null) {
 					if (domain instanceof Dispatch) {
 						cxt = ((Dispatch) domain).dispatch(domainCxt);
+						collabOut.append(cxt);
 					} else if (dispatcher != null && dispatcher instanceof ModelTask) {
 						((ModelTask) dispatcher).setContext(domainCxt);
 						((ModelTask) dispatcher).setModel((Model) domain);
-						Response response = (Response) exec((ModelTask) dispatcher);
+						Object response = exec((ModelTask) dispatcher);
 						if (response instanceof Context) {
 							cxt = (Context) response;
+						} else  if (response instanceof Response) {
+							cxt = ((Response)response).toContext();
+						} else if (response instanceof OptimizerState) {
+							cxt = ((OptimizerState)response).getOptiDesignContext();
 						} else {
-							cxt = response.toContext();
+							throw new ContextException("response not Context");
 						}
+						collabOut.append(cxt);
 					} else if (domain.isExec()) {
 						if (domain instanceof Mogram) {
 							cxt = evaluateDomain(domain, domainCxt);
 						} else {
 							cxt = domain.evaluate(domainCxt);
 						}
+						collabOut.append(cxt);
 					} else {
 						collabOut = input;
 					}
@@ -433,15 +443,15 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 					} else {
 						cxt = response(domain);
 					}
-					outputs.add(cxt);
 					collabOut.append(cxt.getDomainData());
 				} else {
 					collabOut = input;
 				}
+				outputs.add(cxt);
 
 				Analysis analyzer = analyzerFi.getSelect();
 				if (analyzerFi != null) {
-					collabOut.putValue(Functionality.Type.DOMAIN.toString(), domain.getName());
+					collabOut.putValue(Functionality.Type.DOMAIN.toString(), domain.getDomainName());
 					analyzer.analyze(domain, collabOut);
 				}
 
@@ -460,7 +470,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 			if (domain instanceof SignatureDomain) {
 				boolean isExec = domain.isExec();
 				domain = ((SignatureDomain) domain).getDomain();
-				domains.put(domain.getName(), domain);
+				domains.put(domain.getDomainName(), domain);
 				domain.setExec(isExec);
 			}
 		}
@@ -545,6 +555,15 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 	@Override
 	public List<Evaluation> getDependers() {
 		return dependers;
+	}
+
+	@Override
+	public String getDomainName() {
+		return domainName;
+	}
+
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
 	}
 
 	@Override

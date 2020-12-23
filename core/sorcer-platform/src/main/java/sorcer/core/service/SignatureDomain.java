@@ -19,6 +19,7 @@ package sorcer.core.service;
 import net.jini.core.transaction.Transaction;
 import net.jini.id.Uuid;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
 
@@ -54,9 +55,12 @@ public class SignatureDomain implements Domain {
 
     public Domain getDomain() throws SignatureException {
         if (domain == null) {
-            domain = (Domain) sorcer.co.operator.instance(signature);
+            domain = (Domain)((LocalSignature) signature).initInstance();
+            // domain = (Domain) sorcer.co.operator.instance(signature);
             if (name != null) {
-                domain.setName(name);
+                domain.setDomainName(name);
+            } else {
+                domain.setDomainName(domain.getName());
             }
         }
         return domain;
@@ -297,7 +301,11 @@ public class SignatureDomain implements Domain {
 
     @Override
     public String getDomainName() {
-        return domain.getDomainName();
+        if (domain != null) {
+            return domain.getDomainName();
+        } else {
+            return name;
+        }
     }
 
     @Override

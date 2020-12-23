@@ -2083,6 +2083,17 @@ public class operator extends Operator {
         return new Index(index, type);
     }
 
+	public static String dmnName(Object identifiable) {
+		String dname = null;
+		if (identifiable instanceof Domain) {
+			dname = ((Domain) identifiable).getDomainName();
+		}
+		if (dname == null) {
+			dname = ((Identifiable) identifiable).getName();
+		}
+		return dname;
+	}
+
 	public static String name(Object identifiable) {
 		if (identifiable instanceof Identifiable) {
 			return ((Identifiable) identifiable).getName();

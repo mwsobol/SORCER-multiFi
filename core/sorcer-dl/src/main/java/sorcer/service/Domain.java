@@ -29,6 +29,8 @@ import java.rmi.RemoteException;
  */
 public interface Domain extends Mogram, Discipline, Dependency, mog, cxtn {
 
+	public String getDomainName();
+
     /**
      * Returns an execute of the domain at the returnPath as is
      * (no evaluation or invocation on this object).

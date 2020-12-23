@@ -623,6 +623,9 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public String getDomainName() {
+        if (domainName == null) {
+            return key;
+        }
         return domainName;
     }
 

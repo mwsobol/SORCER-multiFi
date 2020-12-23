@@ -1328,6 +1328,7 @@ public class operator {
         }
 
         Collaboration collab = new Collaboration(name, domains);
+        collab.setDomainName(name);
         if (collabContext != null) {
             collab.setInput(collabContext);
         }

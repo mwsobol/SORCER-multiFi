@@ -25,6 +25,8 @@ import java.util.Map;
 
 public interface Transdomain extends Transdiscipline, cxtn {
 
+    public String getDomainName();
+
     public Map<String, Mogram> getChildren();
 
     public Mogram getChild(String name);
