@@ -140,7 +140,7 @@ public class operator extends Operator {
 		return ((ServiceContext)context).getOutPaths();
 	}
 
-	public static Context.Out outPaths(Object... elems) {
+	public static Context.Out outArgs(Object... elems) {
         Context.Out pl = new Context.Out(elems.length);
         for (Object o : elems) {
             if (o instanceof String) {
@@ -168,7 +168,7 @@ public class operator extends Operator {
     }
 
 	public static Context.Out outArgs(Name name, Object... elems) {
-		Context.Out out = outPaths(elems);
+		Context.Out out = outArgs(elems);
 		out.setName(name.getName());
 		return out;
 	}

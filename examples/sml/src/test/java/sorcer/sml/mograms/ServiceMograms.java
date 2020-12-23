@@ -248,7 +248,7 @@ public class ServiceMograms {
         add(outerMdl, innerMdl, inVal("arg/x1", 10.0), inVal("arg/x2", 50.0));
 
         Task mt = task("modelTask", sig("exert", ServiceModeler.class,
-                outPaths("subtract", "out")), outerMdl);
+                outArgs("subtract", "out")), outerMdl);
 
 
         Context out = context(exert(mt));
@@ -285,7 +285,7 @@ public class ServiceMograms {
         add(outerMdl, innerMdl, inVal("arg/x1", 10.0), inVal("arg/x2", 50.0));
 
         Task mt = task("modelTask", sig("exert", Modeler.class,
-                outPaths("subtract", "out")), outerMdl);
+                outArgs("subtract", "out")), outerMdl);
 
         Context out = context(exert(mt));
         logger.info("response: " + out);

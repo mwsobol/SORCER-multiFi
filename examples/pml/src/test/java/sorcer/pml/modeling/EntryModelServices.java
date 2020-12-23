@@ -14,7 +14,7 @@ import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.get;
-import static sorcer.co.operator.outPaths;
+import static sorcer.co.operator.outArgs;
 import static sorcer.eo.operator.*;
 import static sorcer.ent.operator.invoke;
 import static sorcer.so.operator.*;
@@ -42,7 +42,7 @@ public class EntryModelServices {
 
 		Model em = EntryModeler.getEntryModel();
 		Task pmt = task(sig("invoke", em),
-				context(result("invoke/result", outPaths("expr"))));
+				context(result("invoke/result", outArgs("expr"))));
 
 		assertTrue(exec(pmt).equals(60.0));
 
@@ -55,7 +55,7 @@ public class EntryModelServices {
 
 		// the provider in ex6/bin parmodel-prv-run.xml
 		Task emt = task(sig("invoke", Invocation.class, prvName("EntryModel Service")),
-				context(result("invoke/result", outPaths("expr"))));
+				context(result("invoke/result", outArgs("expr"))));
 
 		assertTrue(exec(emt).equals(60.0));
 	}

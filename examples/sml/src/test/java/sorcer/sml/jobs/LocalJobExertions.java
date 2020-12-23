@@ -152,7 +152,7 @@ public class LocalJobExertions implements SorcerConstants {
 				sig("exert", ServiceJobber.class),
 				cxt(inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						inVal("arg/y1", 20.0), inVal("arg/y2", 80.0),
-						result("job/result", outPaths("j1/t3/result/y"))),
+						result("job/result", outArgs("j1/t3/result/y"))),
 				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/z1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/z2")));
@@ -186,7 +186,7 @@ public class LocalJobExertions implements SorcerConstants {
 				sig("exert", ServiceJobber.class),
 				cxt(inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						inVal("arg/y1", 20.0), inVal("arg/y2", 80.0),
-						result("job/result", outPaths("j1/t3/result/y"))),
+						result("job/result", outArgs("j1/t3/result/y"))),
 				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/z1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/z2")));
@@ -224,7 +224,7 @@ public class LocalJobExertions implements SorcerConstants {
 				sig("exert", ServiceJobber.class),
 				cxt(inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						inVal("arg/y1", 20.0), inVal("arg/y2", 80.0),
-						result(outPaths("j1/t3/result/y"))),
+						result(outArgs("j1/t3/result/y"))),
 				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/z1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/z2")));
@@ -275,7 +275,7 @@ public class LocalJobExertions implements SorcerConstants {
 				sig("exert", ServiceJobber.class),
 				cxt(inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						inVal("arg/y1", 20.0), inVal("arg/y2", 80.0),
-						result("job/result", outPaths("j1/t3/result/y"))),
+						result("job/result", outArgs("j1/t3/result/y"))),
 				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
@@ -337,7 +337,7 @@ public class LocalJobExertions implements SorcerConstants {
 				"j1",
 				sig("exert", ServiceJobber.class),
 				cxt(inVal("arg/x1", 10.0),
-						result("job/result", outPaths("j1/t3/result/y"))),
+						result("job/result", outArgs("j1/t3/result/y"))),
 				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
@@ -373,7 +373,7 @@ public class LocalJobExertions implements SorcerConstants {
 				"j1",
 				sig("exert", ServiceJobber.class),
 				cxt(inVal("arg/x1", 10.0),
-						result("job/result", outPaths("j1/t3/result/y"))),
+						result("job/result", outArgs("j1/t3/result/y"))),
 				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));

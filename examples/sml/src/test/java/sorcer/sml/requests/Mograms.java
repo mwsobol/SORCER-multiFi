@@ -170,7 +170,7 @@ public class Mograms {
 
         // getValue the subcontext output from the the result path
         assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
-                exec(t5, outPaths("arg/x1", "result/y"))));
+                exec(t5, outArgs("arg/x1", "result/y"))));
     }
 
 
@@ -192,7 +192,7 @@ public class Mograms {
         Mogram job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
                 job("j1", sig(ServiceJobber.class),
                         cxt(inVal("arg/x1", 10.0),
-                                result("job/result", outPaths("j1/t3/result/y"))),
+                                result("job/result", outArgs("j1/t3/result/y"))),
                         job("j2", sig(ServiceJobber.class), t4, t5),
                         t3,
                         pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
@@ -225,7 +225,7 @@ public class Mograms {
 
         //TODO: CHECK Access.PULL doesn't work with ServiceJobber!!!
         Mogram job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
-                job("j1", sig(ServiceJobber.class), result("job/result", outPaths("j1/t3/result/y")),
+                job("j1", sig(ServiceJobber.class), result("job/result", outArgs("j1/t3/result/y")),
                         job("j2", sig(ServiceJobber.class), t4, t5),
 //                            strategy(Strategy.Flow.PAR, Strategy.Access.PUSH)),
                         t3,
@@ -240,7 +240,7 @@ public class Mograms {
                 ent("j1/j2/t5/result/y", 100.0),
                 ent("j1/t3/result/y", 400.0)).equals(
                 exec(job, result("result/z",
-                        outPaths("j1/j2/t4/result/y", "j1/j2/t5/result/y", "j1/t3/result/y")))));
+                        outArgs("j1/j2/t4/result/y", "j1/j2/t5/result/y", "j1/t3/result/y")))));
 
 
     }

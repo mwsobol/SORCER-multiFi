@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.co.operator;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
@@ -222,12 +223,12 @@ public class CoffeeServiceTest {
 			inVal("recipe/key", "espresso"),
 			inVal("coffee/paid", 120),
 			inVal("recipe", espresso),
-			outPaths("coffee/change")));
+			outArgs("coffee/change")));
 
 		Task delivery = task("delivery", sig("deliver", DeliveryImpl.class), context(
 			inVal("location", "PJATK"),
 			inVal("room", "101"),
-			outPaths("coffee/change", "delivery/cost", "change$")));
+			outArgs("coffee/change", "delivery/cost", "change$")));
 
 		Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
 
@@ -247,12 +248,12 @@ public class CoffeeServiceTest {
 			inVal("recipe/key", "espresso"),
 			inVal("coffee/paid", 120),
 			inVal("recipe", espresso),
-			outPaths("coffee/change")));
+			outArgs("coffee/change")));
 
 		Task delivery = task("delivery", sig("deliver", Delivery.class), context(
 			inVal("location", "PJATK"),
 			inVal("room", "101"),
-			outPaths("coffee/change", "delivery/cost", "change$")));
+			outArgs("coffee/change", "delivery/cost", "change$")));
 
 		Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
 

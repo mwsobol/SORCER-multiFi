@@ -4,6 +4,7 @@ import edu.pjatk.inn.coffeemaker.CoffeeService;
 import edu.pjatk.inn.coffeemaker.Delivery;
 import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
 import edu.pjatk.inn.coffeemaker.impl.DeliveryImpl;
+import sorcer.co.operator;
 import sorcer.core.consumer.ServiceConsumer;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
@@ -62,13 +63,13 @@ public class CoffeemakerConsumer extends ServiceConsumer {
         Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class), context(
             inVal("recipe/key", "espresso"),
             inVal("coffee/paid", 120),
-            outPaths("coffee/change"),
+            outArgs("coffee/change"),
             val("recipe", getEspressoContext())));
 
         Task delivery = task("delivery", sig("deliver", DeliveryImpl.class), context(
             inVal("location", "PJATK"),
             inVal("room", "101"),
-            outPaths("coffee/change", "delivery/cost", "change$")));
+            outArgs("coffee/change", "delivery/cost", "change$")));
 
         Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
 
@@ -79,13 +80,13 @@ public class CoffeemakerConsumer extends ServiceConsumer {
         Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
             inVal("recipe/key", "espresso"),
             inVal("coffee/paid", 120),
-            outPaths("coffee/change"),
+            outArgs("coffee/change"),
             val("recipe", getEspressoContext())));
 
         Task delivery = task("delivery", sig("deliver", Delivery.class), context(
             inVal("location", "PJATK"),
             inVal("room", "101"),
-            outPaths("coffee/change", "delivery/cost", "change$")));
+            outArgs("coffee/change", "delivery/cost", "change$")));
 
         Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
 

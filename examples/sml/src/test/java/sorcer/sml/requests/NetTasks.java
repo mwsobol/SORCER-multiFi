@@ -12,6 +12,7 @@ import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
+import sorcer.co.operator;
 import sorcer.service.Exerter;
 import sorcer.core.provider.RemoteServiceShell;
 import sorcer.service.*;
@@ -54,7 +55,7 @@ public class NetTasks {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
-				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
+				value(cxt, result("result/context", outArgs("arg/x1", "result/y")))));
 	}
 
 	@Test
@@ -76,7 +77,7 @@ public class NetTasks {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
-			value(cxt, outPaths("result/eval", "arg/x1"))));
+			value(cxt, outArgs("result/eval", "arg/x1"))));
 	}
 
 
@@ -98,7 +99,7 @@ public class NetTasks {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
-				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
+				value(cxt, result("result/context", outArgs("arg/x1", "result/y")))));
 	}
 
 	@Test
@@ -120,7 +121,7 @@ public class NetTasks {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(val("arg/x1", 20.0), val("result/y", 100.0)).equals(
-				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
+				value(cxt, result("result/context", outArgs("arg/x1", "result/y")))));
 	}
 
 	@Test
@@ -144,7 +145,7 @@ public class NetTasks {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
-				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
+				value(cxt, result("result/context", outArgs("arg/x1", "result/y")))));
 	}
 
 	@Test
@@ -169,7 +170,7 @@ public class NetTasks {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
-				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
+				value(cxt, result("result/context", outArgs("arg/x1", "result/y")))));
 	}
 
 	@Test
@@ -183,7 +184,7 @@ public class NetTasks {
 
 		// getValue the subcontext output from the exertion
 		assertTrue(context(val("arg/x1", 20.0), val("result/y", 100.0)).equals(
-				exec(t5, outPaths("arg/x1", "result/y"))));
+				exec(t5, outArgs("arg/x1", "result/y"))));
 
 	}
 
