@@ -9,7 +9,6 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.co.operator;
 import sorcer.service.*;
 
 import static org.junit.Assert.assertEquals;
@@ -44,7 +43,7 @@ public class LocalTasks {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
-			value(cxt, outArgs("result/eval", "arg/x1"))));
+			value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
 
@@ -66,7 +65,7 @@ public class LocalTasks {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
-			value(cxt, outArgs("result/eval", "arg/x1"))));
+			value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
 
@@ -85,7 +84,7 @@ public class LocalTasks {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 200.0), ent("arg/x1", 20.0)).equals(
-				value(cxt, outArgs("result/eval", "arg/x1"))));
+				value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
 
@@ -103,7 +102,7 @@ public class LocalTasks {
 
 		// getValue the subcontext output from the exertion
 		assertTrue(context(ent("result/y", 50.0), ent("arg/x1", 20.0)).equals(
-				exec(t6, outArgs("result/y", "arg/x1"))));
+				exec(t6, outPaths("result/y", "arg/x1"))));
 
 	}
 
@@ -128,7 +127,7 @@ public class LocalTasks {
         Task batch3 = task("batch3",
                 type(sig("multiply", MultiplierImpl.class, result("subtract/x1", Signature.Direction.IN)), Signature.PRE),
                 type(sig("add", AdderImpl.class, result("subtract/x2", Signature.Direction.IN)), Signature.PRE),
-                sig("subtract", SubtractorImpl.class, result("result/y", inArgs("subtract/x1", "subtract/x2"))),
+                sig("subtract", SubtractorImpl.class, result("result/y", inPaths("subtract/x1", "subtract/x2"))),
                 context(inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                         inVal("add/x1", 20.0), inVal("add/x2", 80.0)));
 
@@ -147,7 +146,7 @@ public class LocalTasks {
         Task batch3 = task("batch3",
                 type(sig("multiply#op1", MultiplierImpl.class, result("op3/x1", Signature.Direction.IN)), Signature.PRE),
                 type(sig("add#op2", AdderImpl.class, result("op3/x2", Signature.Direction.IN)), Signature.PRE),
-                sig("subtract", SubtractorImpl.class, result("result/y", inArgs("op3/x1", "op3/x2"))),
+                sig("subtract", SubtractorImpl.class, result("result/y", inPaths("op3/x1", "op3/x2"))),
                 context(inVal("op1/x1", 10.0), inVal("op1/x2", 50.0),
                         inVal("op2/x1", 20.0), inVal("op2/x2", 80.0)));
 

@@ -89,9 +89,9 @@ public class Entries {
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
-                        inArgs("multiply/x1", "multiply/x2")))),
+                        inPaths("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
-                        inArgs("add/x1", "add/x2")))),
+                        inPaths("add/x1", "add/x2")))),
                 ent("cmd", invoker(args)),
                 fxn("fxn", verifyExitValue),
                 response("fxn", "cmd", "cmd/out"));

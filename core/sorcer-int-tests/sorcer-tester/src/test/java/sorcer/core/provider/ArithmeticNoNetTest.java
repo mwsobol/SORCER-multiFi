@@ -240,7 +240,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 				"j1",
 				sig("exert", ServiceJobber.class),
 				cxt(inVal("arg/x1", 10.0),
-						result("job/result", operator.outArgs("j1/t3/result/y"))),
+						result("job/result", operator.outPaths("j1/t3/result/y"))),
 				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));

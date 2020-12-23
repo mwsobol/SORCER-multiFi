@@ -92,15 +92,15 @@ public class CollabBuilder {
 		Metafidelity fi4 = metaFi("sysFi4", fi("average", "mFi3"));
 
 		Signature add = sig("add", AdderImpl.class,
-			result("result/y1", inArgs("arg/x1", "arg/x2")));
+			result("result/y1", inPaths("arg/x1", "arg/x2")));
 		Signature subtract = sig("subtract", SubtractorImpl.class,
-			result("result/y2", inArgs("arg/x1", "arg/x2")));
+			result("result/y2", inPaths("arg/x1", "arg/x2")));
 		Signature average = sig("average", AveragerImpl.class,
-			result("result/y2", inArgs("arg/x1", "arg/x2")));
+			result("result/y2", inPaths("arg/x1", "arg/x2")));
 		Signature multiply = sig("multiply", MultiplierImpl.class,
-			result("result/y1", inArgs("arg/x1", "arg/x2")));
+			result("result/y1", inPaths("arg/x1", "arg/x2")));
 		Signature divide = sig("divide", DividerImpl.class,
-			result("result/y2", inArgs("arg/x1", "arg/x2")));
+			result("result/y2", inPaths("arg/x1", "arg/x2")));
 
 		// multifidelity model with morphers
 		Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),

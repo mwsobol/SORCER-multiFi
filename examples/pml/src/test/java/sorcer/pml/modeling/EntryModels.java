@@ -105,7 +105,7 @@ public class EntryModels {
 
 		// getValue model response
 		Row mr = (Row) query(model, //prc("x1", 10.0), prc("x2", 50.0),
-				result("y", operator.outArgs("t4", "t5", "j1")));
+				result("y", operator.outPaths("t4", "t5", "j1")));
 		assertTrue(names(mr).equals(list("t4", "t5", "j1")));
 		assertTrue(values(mr).equals(list(500.0, 100.0, 400.0)));
 	}

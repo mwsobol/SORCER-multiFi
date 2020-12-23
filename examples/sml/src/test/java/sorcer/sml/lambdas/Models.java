@@ -160,11 +160,11 @@ public class Models {
 				fxn("add", (Context <Double> model) ->
 								v(model, "add/x1") + v(model, "add/x2"),
 						result("add/out",
-								inArgs("add/x1", "add/x2"))),
+								inPaths("add/x1", "add/x2"))),
 				fxn("multiply", (Context <Double> model) ->
 								v(model, "multiply/x1") * v(model, "multiply/x2"),
 						result("multiply/out",
-								inArgs("multiply/x1", "multiply/x2"))),
+								inPaths("multiply/x1", "multiply/x2"))),
 				fxn("subtract", (Context <Double> model) ->
 								v(model, "multiply/out") - v(model, "add/out"),
 						result("model/response")),
@@ -195,11 +195,11 @@ public class Models {
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 				req(sig("multiply", MultiplierImpl.class, result("multiply/out",
-						inArgs("multiply/x1", "multiply/x2")))),
+						inPaths("multiply/x1", "multiply/x2")))),
 				req(sig("add", AdderImpl.class, result("add/out",
-						inArgs("add/x1", "add/x2")))),
+						inPaths("add/x1", "add/x2")))),
 				req(sig("subtract", SubtractorImpl.class, result("subtract/out",
-						inArgs("multiply/out", "add/out")))),
+						inPaths("multiply/out", "add/out")))),
 				response("subtract", "fxn", "out"));
 
 	//	dependsOn(mo, dep("subtract", paths("multiply", "add")));
@@ -239,11 +239,11 @@ public class Models {
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 				req(sig("multiply", MultiplierImpl.class, result("multiply/out",
-						inArgs("multiply/x1", "multiply/x2")))),
+						inPaths("multiply/x1", "multiply/x2")))),
 				req(sig("add", AdderImpl.class, result("add/out",
-						inArgs("add/x1", "add/x2")))),
+						inPaths("add/x1", "add/x2")))),
 				req(sig("subtract", SubtractorImpl.class, result("subtract/out",
-						inArgs("multiply/out", "add/out")))),
+						inPaths("multiply/out", "add/out")))),
 				response("subtract", "multiply"));
 //				response("fxn"));
 
@@ -340,15 +340,15 @@ public class Models {
 		Metafidelity fi4 = metaFi("sysFi4", fi("average", "mFi3"));
 
         Signature add = sig("add", AdderImpl.class,
-                result("result/y1", inArgs("arg/x1", "arg/x2")));
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
         Signature subtract = sig("subtract", SubtractorImpl.class,
-                result("result/y2", inArgs("arg/x1", "arg/x2")));
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
         Signature average = sig("average", AveragerImpl.class,
-                result("result/y2", inArgs("arg/x1", "arg/x2")));
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
         Signature multiply = sig("multiply", MultiplierImpl.class,
-                result("result/y1", inArgs("arg/x1", "arg/x2")));
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
         Signature divide = sig("divide", DividerImpl.class,
-                result("result/y2", inArgs("arg/x1", "arg/x2")));
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
 
         // three entry multifidelity model with morphers
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),

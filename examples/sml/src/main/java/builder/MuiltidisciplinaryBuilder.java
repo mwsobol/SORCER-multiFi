@@ -48,23 +48,23 @@ public class MuiltidisciplinaryBuilder {
 	public static mog getMorphingModel() throws Exception {
 
 		sig add = sig("add", Adder.class,
-			result("y1", inArgs("arg/x1", "arg/x2")));
+			result("y1", inPaths("arg/x1", "arg/x2")));
 		sig subtract = sig("subtract", Subtractor.class,
-			result("y2", inArgs("arg/x1", "arg/x2")));
+			result("y2", inPaths("arg/x1", "arg/x2")));
 		sig average = sig("average", Averager.class,
-			result("y3", inArgs("arg/x1", "arg/x2")));
+			result("y3", inPaths("arg/x1", "arg/x2")));
 		sig multiply = sig("multiply", Multiplier.class,
-			result("y4", inArgs("arg/x1", "arg/x2")));
+			result("y4", inPaths("arg/x1", "arg/x2")));
 		sig divide = sig("divide", Divider.class,
-			result("y5", inArgs("arg/x1", "arg/x2")));
+			result("y5", inPaths("arg/x1", "arg/x2")));
 
 		mog t4 = task("t4",
 			sig("multiply", MultiplierImpl.class,
-				result("result/y", inArgs("arg/x1", "arg/x2"))));
+				result("result/y", inPaths("arg/x1", "arg/x2"))));
 
 		mog t5 = task("t5",
 			sig("add", AdderImpl.class,
-				result("result/y", inArgs("arg/x1", "arg/x2"))));
+				result("result/y", inPaths("arg/x1", "arg/x2"))));
 
 		Morpher morpher1 = (mgr, mFi, value) -> {
 			Fidelity<Signature> fi = mFi.getFidelity();
@@ -176,7 +176,7 @@ public class MuiltidisciplinaryBuilder {
 		Opservice exprOut = invoker("exprOut", "lambdaOut - y", args("lambdaOut", "y"));
 
 		Opservice sigOut = sig("multiply", MultiplierImpl.class,
-			result("z", inArgs("lambdaOut", "exprOut")));
+			result("z", inPaths("lambdaOut", "exprOut")));
 
 		Pipeline opspl = pl(
 			lambdaOut,
@@ -195,7 +195,7 @@ public class MuiltidisciplinaryBuilder {
 		Opservice exprOut = invoker("exprOut", "lambdaOut - y", args("lambdaOut", "y"));
 
 		Opservice sigOut = sig("multiply", MultiplierImpl.class,
-			result("z", inArgs("lambdaOut", "exprOut")));
+			result("z", inPaths("lambdaOut", "exprOut")));
 
 		Pipeline opspl = pl(
 			lambdaOut,

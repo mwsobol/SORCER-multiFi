@@ -49,7 +49,7 @@ public class NetMograms {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
-				value(cxt, result("result/context", operator.outArgs("arg/x1", "result/y")))));
+				value(cxt, result("result/context", operator.outPaths("arg/x1", "result/y")))));
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class NetMograms {
 
 		// getValue the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
-				exec(t5, operator.outArgs("arg/x1", "result/y"))));
+				exec(t5, operator.outPaths("arg/x1", "result/y"))));
 
 	}
 
@@ -162,7 +162,7 @@ public class NetMograms {
 
 		// three entry model
 		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-				ent(sig("add", Adder.class, prvName("Adder"), result("result/y", inArgs("arg/x1", "arg/x2")))),
+				ent(sig("add", Adder.class, prvName("Adder"), result("result/y", inPaths("arg/x1", "arg/x2")))),
 				response("add", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);

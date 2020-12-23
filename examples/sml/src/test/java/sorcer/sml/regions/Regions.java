@@ -48,7 +48,7 @@ public class Regions {
         Opservice exprOut = invoker("exprOut", "lambdaOut - y", args("lambdaOut", "y"));
 
         Opservice sigOut = sig("multiply", MultiplierImpl.class,
-            result("z", inArgs("lambdaOut", "exprOut")));
+            result("z", inPaths("lambdaOut", "exprOut")));
 
         Pipeline opspl = pl(
             lambdaOut,
@@ -77,7 +77,7 @@ public class Regions {
         Opservice exprOut = invoker("exprOut", "lambdaOut - y", args("lambdaOut", "y"));
 
         Opservice sigOut = sig("multiply", MultiplierImpl.class,
-            result("z", inArgs("lambdaOut", "exprOut")));
+            result("z", inPaths("lambdaOut", "exprOut")));
 
         Pipeline opspl = pl(
             lambdaOut,

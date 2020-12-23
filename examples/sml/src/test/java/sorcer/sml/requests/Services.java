@@ -174,7 +174,7 @@ public class Services {
     public void signatureEntry() throws Exception {
 
         Function y1 = req("y1", sig("add", AdderImpl.class, result("add/out",
-                        inArgs("x1", "x2"))),
+                        inPaths("x1", "x2"))),
                     context(inVal("x1", 10.0), inVal("x2", 20.0)));
 
         assertEquals(30.0, exec(y1));

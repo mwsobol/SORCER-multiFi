@@ -4,7 +4,6 @@ import edu.pjatk.inn.coffeemaker.CoffeeService;
 import edu.pjatk.inn.coffeemaker.Delivery;
 import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
 import edu.pjatk.inn.coffeemaker.impl.DeliveryImpl;
-import sorcer.co.operator;
 import sorcer.core.consumer.ServiceConsumer;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
@@ -63,13 +62,13 @@ public class CoffeemakerConsumer extends ServiceConsumer {
         Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class), context(
             inVal("recipe/key", "espresso"),
             inVal("coffee/paid", 120),
-            outArgs("coffee/change"),
+            outPaths("coffee/change"),
             val("recipe", getEspressoContext())));
 
         Task delivery = task("delivery", sig("deliver", DeliveryImpl.class), context(
             inVal("location", "PJATK"),
             inVal("room", "101"),
-            outArgs("coffee/change", "delivery/cost", "change$")));
+            outPaths("coffee/change", "delivery/cost", "change$")));
 
         Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
 
@@ -80,13 +79,13 @@ public class CoffeemakerConsumer extends ServiceConsumer {
         Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
             inVal("recipe/key", "espresso"),
             inVal("coffee/paid", 120),
-            outArgs("coffee/change"),
+            outPaths("coffee/change"),
             val("recipe", getEspressoContext())));
 
         Task delivery = task("delivery", sig("deliver", Delivery.class), context(
             inVal("location", "PJATK"),
             inVal("room", "101"),
-            outArgs("coffee/change", "delivery/cost", "change$")));
+            outPaths("coffee/change", "delivery/cost", "change$")));
 
         Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
 
@@ -122,9 +121,9 @@ public class CoffeemakerConsumer extends ServiceConsumer {
             val("room", "101"),
 
                 req(sig("makeCoffee", CoffeeService.class,
-                        result("coffee$", inArgs("recipe/key")))),
+                        result("coffee$", inPaths("recipe/key")))),
                 req(sig("deliver", Delivery.class,
-                        result("delivery$", inArgs("location", "room")))));
+                        result("delivery$", inPaths("location", "room")))));
 //				prc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
 
         add(mdl, prc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));

@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.co.operator;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Projection;
 import sorcer.service.*;
@@ -74,7 +73,7 @@ public class TaskContextFidelity {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
-			value(cxt, outArgs("result/eval", "arg/x1"))));
+			value(cxt, outPaths("result/eval", "arg/x1"))));
 
 		out = exert(t5, cxtFi("cxt2"));
 		cxt = context(out);
@@ -84,7 +83,7 @@ public class TaskContextFidelity {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 120.0), ent("arg/x1", 30.0)).equals(
-			value(cxt, outArgs("result/eval", "arg/x1"))));
+			value(cxt, outPaths("result/eval", "arg/x1"))));
 	}
 
 	@Test
@@ -111,7 +110,7 @@ public class TaskContextFidelity {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/y1", 20.0)).equals(
-			value(cxt, outArgs("result/eval", "arg/y1"))));
+			value(cxt, outPaths("result/eval", "arg/y1"))));
 
 		out = exert(t5, cxtFi("cxt2"));
 		cxt = context(out);
@@ -121,7 +120,7 @@ public class TaskContextFidelity {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 120.0), ent("arg/y1", 30.0)).equals(
-			value(cxt, outArgs("result/eval", "arg/y1"))));
+			value(cxt, outPaths("result/eval", "arg/y1"))));
 	}
 
 	@Test
@@ -149,7 +148,7 @@ public class TaskContextFidelity {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/y1", 20.0)).equals(
-			value(cxt, outArgs("result/eval", "arg/y1"))));
+			value(cxt, outPaths("result/eval", "arg/y1"))));
 
 		out = exert(t5, cxtPrj2);
 		cxt = context(out);
@@ -159,7 +158,7 @@ public class TaskContextFidelity {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 120.0), ent("arg/y1", 30.0)).equals(
-			value(cxt, outArgs("result/eval", "arg/y1"))));
+			value(cxt, outPaths("result/eval", "arg/y1"))));
 	}
 
 	@Test
@@ -186,7 +185,7 @@ public class TaskContextFidelity {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/y1", 20.0)).equals(
-			value(cxt, outArgs("result/eval", "arg/y1"))));
+			value(cxt, outPaths("result/eval", "arg/y1"))));
 
 		out = exert(t5, prjFi("cxtPrj2"));
 		cxt = context(out);
@@ -196,7 +195,7 @@ public class TaskContextFidelity {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 120.0), ent("arg/y1", 30.0)).equals(
-			value(cxt, outArgs("result/eval", "arg/y1"))));
+			value(cxt, outPaths("result/eval", "arg/y1"))));
 	}
 
 
@@ -235,7 +234,7 @@ public class TaskContextFidelity {
 
         // getValue the subcontext output from the context
         assertTrue(context(ent("result/eval", 100.0), ent("arg/y1", 20.0)).equals(
-            value(cxt, outArgs("result/eval", "arg/y1"))));
+            value(cxt, outPaths("result/eval", "arg/y1"))));
 
         out = exert(t5, cxtFi("cxt2"));
         cxt = context(out);
@@ -245,7 +244,7 @@ public class TaskContextFidelity {
 
         // getValue the subcontext output from the context
         assertTrue(context(ent("result/eval", 120.0), ent("arg/y1", 30.0)).equals(
-            value(cxt, outArgs("result/eval", "arg/y1"))));
+            value(cxt, outPaths("result/eval", "arg/y1"))));
     }
 
     @Test
@@ -286,7 +285,7 @@ public class TaskContextFidelity {
 
         // getValue the subcontext output from the context
         assertTrue(context(ent("result/eval", 100.0), ent("arg/y1", 20.0)).equals(
-            value(cxt, outArgs("result/eval", "arg/y1"))));
+            value(cxt, outPaths("result/eval", "arg/y1"))));
 
         out = exert(t5, cxtFi("cxt2"));
         cxt = context(out);
@@ -296,7 +295,7 @@ public class TaskContextFidelity {
 
         // getValue the subcontext output from the context
         assertTrue(context(ent("result/eval", 120.0), ent("arg/y1", 30.0)).equals(
-            value(cxt, outArgs("result/eval", "arg/y1"))));
+            value(cxt, outPaths("result/eval", "arg/y1"))));
     }
 }
 	
