@@ -90,7 +90,7 @@ public class ArithmeticMograms {
 				value(model, "multiply/x1") * value(model, "multiply/x2"), args("multiply/x1", "multiply/x2")),
 			fxn("subtract", (Context <Double> model) ->
 				value(model, "multiply") - value(model, "add"), result("add/out",
-				inPaths("multiply", "add"))),
+				inArgs("multiply", "add"))),
 			response("subtract", "multiply", "add"));
 
 		Context out = response(mo);
@@ -150,14 +150,14 @@ public class ArithmeticMograms {
 			fxn("add", (Context <Double> model) ->
 					value(model, "add/x1") + value(model, "add/x2"),
 				result("add/out",
-					inPaths("add/x1", "add/x2"))),
+					inArgs("add/x1", "add/x2"))),
 			fxn("multiply", (Context <Double> model) ->
 					value(model, "multiply/x1") * value(model, "multiply/x2"),
 				result("multiply/out",
-					inPaths("multiply/x1", "multiply/x2"))),
+					inArgs("multiply/x1", "multiply/x2"))),
 			fxn("subtract", (Context <Double> model) ->
 					value(model, "multiply/out") - value(model, "add/out"),
-				result("model/response", inPaths("multiply/out", "add/out"))),
+				result("model/response", inArgs("multiply/out", "add/out"))),
 			response("subtract", "multiply/out", "add/out", "model/response"));
 
 		Context out = response(mdl);
@@ -175,11 +175,11 @@ public class ArithmeticMograms {
 			inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 			inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 			ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
-				inPaths("multiply/x1", "multiply/x2")))),
+				inArgs("multiply/x1", "multiply/x2")))),
 			ent(sig("add", AdderImpl.class, result("add/out",
-				inPaths("add/x1", "add/x2")))),
+				inArgs("add/x1", "add/x2")))),
 			ent(sig("subtract", SubtractorImpl.class, result("model/response",
-				inPaths("multiply/out", "add/out")))),
+				inArgs("multiply/out", "add/out")))),
 			response("subtract"));
 
 		logger.info("dependencies: " + deps(m));
@@ -198,11 +198,11 @@ public class ArithmeticMograms {
 			inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 			inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 			ent(sig("multiply", Multiplier.class, result("multiply/out",
-				inPaths("multiply/x1", "multiply/x2")))),
+				inArgs("multiply/x1", "multiply/x2")))),
 			ent(sig("add", Adder.class, result("add/out",
-				inPaths("add/x1", "add/x2")))),
+				inArgs("add/x1", "add/x2")))),
 			ent(sig("subtract", Subtractor.class, result("model/response",
-				inPaths("multiply/out", "add/out")))),
+				inArgs("multiply/out", "add/out")))),
 			response("subtract"));
 
 		logger.info("dependencies: " + deps(m));
@@ -219,11 +219,11 @@ public class ArithmeticMograms {
 			inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 			inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 			ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
-				inPaths("multiply/x1", "multiply/x2")))),
+				inArgs("multiply/x1", "multiply/x2")))),
 			ent(sig("add", AdderImpl.class, result("add/out",
-				inPaths("add/x1", "add/x2")))),
+				inArgs("add/x1", "add/x2")))),
 			ent(sig("subtract", Subtractor.class, result("model/response",
-				inPaths("multiply/out", "add/out")))),
+				inArgs("multiply/out", "add/out")))),
 			response("subtract"));
 
 		logger.info("dependencies: " + deps(m));
@@ -243,7 +243,7 @@ public class ArithmeticMograms {
 			type(sig("add", AdderImpl.class,
 				result("subtract/x2", Signature.Direction.IN)), Signature.PRE),
 			sig("subtract", SubtractorImpl.class,
-				result("result/y", inPaths("subtract/x1", "subtract/x2"))),
+				result("result/y", inArgs("subtract/x1", "subtract/x2"))),
 			context(inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0)));
 
@@ -408,15 +408,15 @@ public class ArithmeticMograms {
 		Metafidelity fi4 = metaFi("sysFi4", fi("average", "mFi3"));
 
 		Signature add = sig("add", AdderImpl.class,
-			result("result/y1", inPaths("arg/x1", "arg/x2")));
+			result("result/y1", inArgs("arg/x1", "arg/x2")));
 		Signature subtract = sig("subtract", SubtractorImpl.class,
-			result("result/y2", inPaths("arg/x1", "arg/x2")));
+			result("result/y2", inArgs("arg/x1", "arg/x2")));
 		Signature average = sig("average", AveragerImpl.class,
-			result("result/y2", inPaths("arg/x1", "arg/x2")));
+			result("result/y2", inArgs("arg/x1", "arg/x2")));
 		Signature multiply = sig("multiply", MultiplierImpl.class,
-			result("result/y1", inPaths("arg/x1", "arg/x2")));
+			result("result/y1", inArgs("arg/x1", "arg/x2")));
 		Signature divide = sig("divide", DividerImpl.class,
-			result("result/y2", inPaths("arg/x1", "arg/x2")));
+			result("result/y2", inArgs("arg/x1", "arg/x2")));
 
 		// multifidelity model with morphers
 		Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),

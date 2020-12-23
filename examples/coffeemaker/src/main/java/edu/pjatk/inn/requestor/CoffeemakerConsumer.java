@@ -121,9 +121,9 @@ public class CoffeemakerConsumer extends ServiceConsumer {
             val("room", "101"),
 
                 req(sig("makeCoffee", CoffeeService.class,
-                        result("coffee$", inPaths("recipe/key")))),
+                        result("coffee$", inArgs("recipe/key")))),
                 req(sig("deliver", Delivery.class,
-                        result("delivery$", inPaths("location", "room")))));
+                        result("delivery$", inArgs("location", "room")))));
 //				prc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
 
         add(mdl, prc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));

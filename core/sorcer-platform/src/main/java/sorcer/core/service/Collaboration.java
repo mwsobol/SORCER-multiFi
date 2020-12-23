@@ -428,7 +428,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 					}
 				} else if (domain.isExec()) {
 					if (domain instanceof Context && ((ServiceContext) domain).getType() == Functionality.Type.EXEC) {
-						// eventually add argument signatures ped domain
+						// eventually add argument signatures per domain
 						cxt = (Context) domain.execute();
 					} else {
 						cxt = response(domain);

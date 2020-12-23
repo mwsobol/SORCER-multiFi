@@ -167,13 +167,13 @@ public class operator extends Operator {
 	    return new Name(name);
     }
 
-	public static Context.Out outPaths(Name name, Object... elems) {
+	public static Context.Out outArgs(Name name, Object... elems) {
 		Context.Out out = outPaths(elems);
 		out.setName(name.getName());
 		return out;
 	}
 
-	public static Context.In inPaths(Object... elems) {
+	public static Context.In inArgs(Object... elems) {
 		List<Path> pl = new ArrayList(elems.length);
 		for (Object o : elems) {
 			if (o instanceof String) {

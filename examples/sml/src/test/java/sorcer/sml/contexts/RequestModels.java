@@ -73,7 +73,7 @@ public class RequestModels {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-                ent(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+                ent(sig("add", AdderImpl.class, result("result/y", inArgs("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
         Context out = response(mod);
@@ -88,8 +88,8 @@ public class RequestModels {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("meFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
-                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
+                ent("meFi", sigFi(sig("add", AdderImpl.class, result("result/y", inArgs("arg/x1", "arg/x2"))),
+                        sig("multiply", MultiplierImpl.class, result("result/y", inArgs("arg/x1", "arg/x2"))))),
                 response("meFi", "arg/x1", "arg/x2"));
 
         logger.info("fidelity: " + asis(mod, "meFi"));
@@ -110,7 +110,7 @@ public class RequestModels {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-                ent(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+                ent(sig("add", AdderImpl.class, result("result/y", inArgs("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
         Context out = response(mod);
@@ -125,7 +125,7 @@ public class RequestModels {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-                ent(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+                ent(sig("add", Adder.class, result("result/y", inArgs("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
         Model model = exert(mod);
@@ -138,7 +138,7 @@ public class RequestModels {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-                ent(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+                ent(sig("add", Adder.class, result("result/y", inArgs("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
         Context out = response(mod);
@@ -184,11 +184,11 @@ public class RequestModels {
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
-                        inPaths("multiply/x1", "multiply/x2")))),
+                        inArgs("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
-                        inPaths("add/x1", "add/x2")))),
+                        inArgs("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class, result("model/response",
-                        inPaths("multiply/out", "add/out")))),
+                        inArgs("multiply/out", "add/out")))),
                 aka("y1", "multiply/x1"),
                 response("subtract"));
 
@@ -207,11 +207,11 @@ public class RequestModels {
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
-                        inPaths("multiply/x1", "multiply/x2")))),
+                        inArgs("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
-                        inPaths("add/x1", "add/x2")))),
+                        inArgs("add/x1", "add/x2")))),
                 ent(sig("out", "subtract", SubtractorImpl.class, result("model/response",
-                        inPaths("multiply/out", "add/out")))),
+                        inArgs("multiply/out", "add/out")))),
                 response("out"));
 
 //        logger.info("response: " + response(m));
@@ -230,11 +230,11 @@ public class RequestModels {
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
-                        inPaths("multiply/x1", "multiply/x2")))),
+                        inArgs("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
-                        inPaths("add/x1", "add/x2")))),
+                        inArgs("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class, result("model/response",
-                        inPaths("multiply/out", "add/out")))),
+                        inArgs("multiply/out", "add/out")))),
                 aka("y1", "multiply/x1"));
 
 
@@ -270,11 +270,11 @@ public class RequestModels {
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
-                        inPaths("multiply/x1", "multiply/x2")))),
+                        inArgs("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
-                        inPaths("add/x1", "add/x2")))),
+                        inArgs("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class, result("subtract/response",
-                        inPaths("multiply/out", "add/out")))),
+                        inArgs("multiply/out", "add/out")))),
                 aka("y1", "multiply/x1"), aka("y2", "add/x2"), aka("y3", "subtract/response"));
 
 //                dep("subtract", paths("multiply", "add")));
@@ -289,7 +289,7 @@ public class RequestModels {
         Block block = block("mogram",
                 model,
                 task(sig("average", AveragerImpl.class,
-                        result("average/response", inPaths("y1", "y2", "y3")))));
+                        result("average/response", inArgs("y1", "y2", "y3")))));
 
 //        logger.info("block context: " + block.getContext());
         Context result = context(exert(block));
@@ -332,11 +332,11 @@ public class RequestModels {
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
-                        inPaths("multiply/x1", "multiply/x2")))),
+                        inArgs("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
-                        inPaths("add/x1", "add/x2")))),
+                        inArgs("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
-                        inPaths("multiply/out", "add/out")))));
+                        inArgs("multiply/out", "add/out")))));
 
         responseUp(model, "add", "multiply", "subtract");
         // specify how model connects to exertion

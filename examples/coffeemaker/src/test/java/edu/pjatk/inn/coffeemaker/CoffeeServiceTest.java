@@ -135,9 +135,9 @@ public class CoffeeServiceTest {
 			val("room", "101"),
 
 			ent(sig("makeCoffee", CoffeeService.class,
-				result("coffee$", inPaths("recipe/key")))),
+				result("coffee$", inArgs("recipe/key")))),
 			ent(sig("deliver", Delivery.class,
-				result("delivery$", inPaths("location", "room")))));
+				result("delivery$", inArgs("location", "room")))));
 //				ent("change$", invoker("paid$ - (coffee$ + delivery$)", args("paid$", "coffee$", "delivery$"))));
 
 		add(mod, ent("change$", invoker("paid$ - (coffee$ + delivery$)", args("paid$", "coffee$", "delivery$"))));

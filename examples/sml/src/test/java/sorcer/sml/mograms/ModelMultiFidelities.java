@@ -46,8 +46,8 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
-                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
+                ent("mFi", sigFi(sig("add", AdderImpl.class, result("result/y", inArgs("arg/x1", "arg/x2"))),
+                        sig("multiply", MultiplierImpl.class, result("result/y", inArgs("arg/x1", "arg/x2"))))),
                 response("mFi", "arg/x1", "arg/x2"));
 
         Context out = eval(mod, fi("multiply", "mFi"));
@@ -63,8 +63,8 @@ public class ModelMultiFidelities {
         Model mdl = model(
                 ent("arg/x1", entFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
                 ent("arg/x2", entFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
-                ent("mFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
-                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
+                ent("mFi", sigFi(sig("add", AdderImpl.class, result("result/y", inArgs("arg/x1", "arg/x2"))),
+                        sig("multiply", MultiplierImpl.class, result("result/y", inArgs("arg/x1", "arg/x2"))))),
                 response("mFi", "arg/x1", "arg/x2"));
 
         logger.info("DEPS: " + printDeps(mdl));
@@ -84,8 +84,8 @@ public class ModelMultiFidelities {
         Model mdl = model(
                 ent("arg/x1", entFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
                 ent("arg/x2", entFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
-                ent("sigFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
-                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
+                ent("sigFi", sigFi(sig("add", AdderImpl.class, result("result/y", inArgs("arg/x1", "arg/x2"))),
+                        sig("multiply", MultiplierImpl.class, result("result/y", inArgs("arg/x1", "arg/x2"))))),
                 response("sigFi", "arg/x1", "arg/x2"));
 
         logger.info("DEPS: " + printDeps(mdl));
@@ -105,8 +105,8 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
-                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
+                ent("mFi", sigFi(sig("add", AdderImpl.class, result("result/y", inArgs("arg/x1", "arg/x2"))),
+                        sig("multiply", MultiplierImpl.class, result("result/y", inArgs("arg/x1", "arg/x2"))))),
                 response("mFi", "arg/x1", "arg/x2"));
 
         Context out = response(mod, fi("add", "mFi"));
@@ -120,8 +120,8 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = reqModel(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-            val("sig1", sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
-            val("sig2", sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+            val("sig1", sig("add", AdderImpl.class, result("result/y", inArgs("arg/x1", "arg/x2")))),
+            val("sig2", sig("multiply", MultiplierImpl.class, result("result/y", inArgs("arg/x1", "arg/x2")))),
 
             ent("mFi", sigFi(ref("sig1"), ref("sig2"))),
             response("mFi", "arg/x1", "arg/x2"));
@@ -185,15 +185,15 @@ public class ModelMultiFidelities {
         };
 
         Signature add = sig("add", AdderImpl.class,
-                result("result/y1", inPaths("arg/x1", "arg/x2")));
+                result("result/y1", inArgs("arg/x1", "arg/x2")));
         Signature subtract = sig("subtract", SubtractorImpl.class,
-                result("result/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inArgs("arg/x1", "arg/x2")));
         Signature average = sig("average", AveragerImpl.class,
-                result("result/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inArgs("arg/x1", "arg/x2")));
         Signature multiply = sig("multiply", MultiplierImpl.class,
-                result("result/y1", inPaths("arg/x1", "arg/x2")));
+                result("result/y1", inArgs("arg/x1", "arg/x2")));
         Signature divide = sig("divide", DividerImpl.class,
-                result("result/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inArgs("arg/x1", "arg/x2")));
 
         // three entry multifidelity model
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
@@ -243,15 +243,15 @@ public class ModelMultiFidelities {
         Metafidelity fi3 = metaFi("sysFi3", fi("average$mFi2"), fi("divide$mFi3"));
 
         Signature add = sig("add", AdderImpl.class,
-                result("result/y1", inPaths("arg/x1", "arg/x2")));
+                result("result/y1", inArgs("arg/x1", "arg/x2")));
         Signature subtract = sig("subtract", SubtractorImpl.class,
-                result("result/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inArgs("arg/x1", "arg/x2")));
         Signature average = sig("average", AveragerImpl.class,
-                result("result/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inArgs("arg/x1", "arg/x2")));
         Signature multiply = sig("multiply", MultiplierImpl.class,
-                result("result/y1", inPaths("arg/x1", "arg/x2")));
+                result("result/y1", inArgs("arg/x1", "arg/x2")));
         Signature divide = sig("divide", DividerImpl.class,
-                result("result/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inArgs("arg/x1", "arg/x2")));
 
         // three entry multifidelity model
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
@@ -304,15 +304,15 @@ public class ModelMultiFidelities {
         };
 
         Entry addEnt = ent(sig("add", AdderImpl.class,
-                result("result/y1", inPaths("arg/x1", "arg/x2"))));
+                result("result/y1", inArgs("arg/x1", "arg/x2"))));
         Entry subtractEnt = ent(sig("subtract", SubtractorImpl.class,
-                result("result/y1", inPaths("arg/x1", "arg/x2"))));
+                result("result/y1", inArgs("arg/x1", "arg/x2"))));
         Entry multiplyEnt = ent(sig("multiply", MultiplierImpl.class,
-                result("result/y1", inPaths("arg/x1", "arg/x2"))));
+                result("result/y1", inArgs("arg/x1", "arg/x2"))));
         Entry divideEnt = ent(sig("divide", DividerImpl.class,
-                result("result/y2", inPaths("arg/x1", "arg/x2"))));
+                result("result/y2", inArgs("arg/x1", "arg/x2"))));
         Entry averageEnt = ent(sig("average", AveragerImpl.class,
-                result("result/y2", inPaths("arg/x1", "arg/x2"))));
+                result("result/y2", inArgs("arg/x1", "arg/x2"))));
 
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
                 addEnt, multiplyEnt, divideEnt, averageEnt,
@@ -368,15 +368,15 @@ public class ModelMultiFidelities {
         Metafidelity fi4 = metaFi("sysFi4", fi("average", "mFi3"));
 
         Signature add = sig("add", AdderImpl.class,
-                result("result/y1", inPaths("arg/x1", "arg/x2")));
+                result("result/y1", inArgs("arg/x1", "arg/x2")));
         Signature subtract = sig("subtract", SubtractorImpl.class,
-                result("result/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inArgs("arg/x1", "arg/x2")));
         Signature average = sig("average", AveragerImpl.class,
-                result("result/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inArgs("arg/x1", "arg/x2")));
         Signature multiply = sig("multiply", MultiplierImpl.class,
-                result("result/y1", inPaths("arg/x1", "arg/x2")));
+                result("result/y1", inArgs("arg/x1", "arg/x2")));
         Signature divide = sig("divide", DividerImpl.class,
-                result("result/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inArgs("arg/x1", "arg/x2")));
 
         // five entry multifidelity model with morphers
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
@@ -561,23 +561,23 @@ public class ModelMultiFidelities {
     public static mog getMorphingModel() throws Exception {
 
         sig add = sig("add", Adder.class,
-            result("y1", inPaths("arg/x1", "arg/x2")));
+            result("y1", inArgs("arg/x1", "arg/x2")));
         sig subtract = sig("subtract", Subtractor.class,
-            result("y2", inPaths("arg/x1", "arg/x2")));
+            result("y2", inArgs("arg/x1", "arg/x2")));
         sig average = sig("average", Averager.class,
-            result("y3", inPaths("arg/x1", "arg/x2")));
+            result("y3", inArgs("arg/x1", "arg/x2")));
         sig multiply = sig("multiply", Multiplier.class,
-            result("y4", inPaths("arg/x1", "arg/x2")));
+            result("y4", inArgs("arg/x1", "arg/x2")));
         sig divide = sig("divide", Divider.class,
-            result("y5", inPaths("arg/x1", "arg/x2")));
+            result("y5", inArgs("arg/x1", "arg/x2")));
 
         cxtn t4 = task("t4",
             sig("multiply", MultiplierImpl.class,
-                result("result/y", inPaths("arg/x1", "arg/x2"))));
+                result("result/y", inArgs("arg/x1", "arg/x2"))));
 
         cxtn t5 = task("t5",
             sig("add", AdderImpl.class,
-                result("result/y", inPaths("arg/x1", "arg/x2"))));
+                result("result/y", inArgs("arg/x1", "arg/x2"))));
 
         Morpher morpher1 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();

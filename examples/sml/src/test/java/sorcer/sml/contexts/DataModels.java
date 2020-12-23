@@ -36,10 +36,10 @@ public class DataModels {
     private final static Logger logger = LoggerFactory.getLogger(ContextModels.class);
 
     @Test
-    public void contextOperator() throws Exception {
+    public void dataContext() throws Exception {
 
-        Context<Double> cxt = context(ent("arg/x1", 1.1), ent("arg/x2", 1.2),
-                ent("arg/x3", 1.3), ent("arg/x4", 1.4), ent("arg/x5", 1.5));
+        Context<Double> cxt = context(val("arg/x1", 1.1), val("arg/x2", 1.2),
+            val("arg/x3", 1.3), val("arg/x4", 1.4), val("arg/x5", 1.5));
 
         add(cxt, ent("arg/x6", 1.6));
 

@@ -161,7 +161,7 @@ public class NetMograms {
 
 		// three entry model
 		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-				ent(sig("add", Adder.class, prvName("Adder"), result("result/y", inPaths("arg/x1", "arg/x2")))),
+				ent(sig("add", Adder.class, prvName("Adder"), result("result/y", inArgs("arg/x1", "arg/x2")))),
 				response("add", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);

@@ -127,7 +127,7 @@ public class LocalTasks {
         Task batch3 = task("batch3",
                 type(sig("multiply", MultiplierImpl.class, result("subtract/x1", Signature.Direction.IN)), Signature.PRE),
                 type(sig("add", AdderImpl.class, result("subtract/x2", Signature.Direction.IN)), Signature.PRE),
-                sig("subtract", SubtractorImpl.class, result("result/y", inPaths("subtract/x1", "subtract/x2"))),
+                sig("subtract", SubtractorImpl.class, result("result/y", inArgs("subtract/x1", "subtract/x2"))),
                 context(inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                         inVal("add/x1", 20.0), inVal("add/x2", 80.0)));
 
@@ -146,7 +146,7 @@ public class LocalTasks {
         Task batch3 = task("batch3",
                 type(sig("multiply#op1", MultiplierImpl.class, result("op3/x1", Signature.Direction.IN)), Signature.PRE),
                 type(sig("add#op2", AdderImpl.class, result("op3/x2", Signature.Direction.IN)), Signature.PRE),
-                sig("subtract", SubtractorImpl.class, result("result/y", inPaths("op3/x1", "op3/x2"))),
+                sig("subtract", SubtractorImpl.class, result("result/y", inArgs("op3/x1", "op3/x2"))),
                 context(inVal("op1/x1", 10.0), inVal("op1/x2", 50.0),
                         inVal("op2/x1", 20.0), inVal("op2/x2", 80.0)));
 

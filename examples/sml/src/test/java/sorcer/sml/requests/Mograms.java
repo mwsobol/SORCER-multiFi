@@ -105,11 +105,11 @@ public class Mograms {
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
-                        inPaths("multiply/x1", "multiply/x2")))),
+                        inArgs("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
-                        inPaths("add/x1", "add/x2")))),
+                        inArgs("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class, result("model/response",
-                        inPaths("multiply/out", "add/out")))),
+                        inArgs("multiply/out", "add/out")))),
                 aka("y1", "multiply/x1"),
                 response("subtract"));
 

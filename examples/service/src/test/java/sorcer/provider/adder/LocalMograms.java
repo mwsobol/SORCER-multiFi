@@ -178,7 +178,7 @@ public class LocalMograms {
 
 		// three entry model
 		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-				ent(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+				ent(sig("add", AdderImpl.class, result("result/y", inArgs("arg/x1", "arg/x2")))),
 					response("add", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);
