@@ -29,6 +29,8 @@ public interface Transdomain extends Transdiscipline, cxtn {
 
     public Map<String, Mogram> getChildren();
 
+    public Map<String, Context>  getChildrenContexts();
+
     public Mogram getChild(String name);
 
     public Object get(String path$domain);

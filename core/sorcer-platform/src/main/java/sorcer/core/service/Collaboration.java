@@ -66,6 +66,8 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
     // the output of this collaboration
     protected Context output;
 
+	protected Map<String, Context> childrenContexts;
+
 	// domain outputs
 	protected ContextList outputs = new ContextList();
 
@@ -456,7 +458,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 				}
 
 				collabOut.setSubject(name, this);
-				((ServiceContext) collabOut).put(Context.COLAB_DOMAIN_OUTPUTS_PATH, outputs);
+				((ServiceContext) collabOut).put(Context.DOMAIN_OUTPUTS_PATH, outputs);
 				output = collabOut;
 			}
 		} catch (ServiceException | SignatureException | RemoteException | DispatchException e) {
@@ -635,6 +637,15 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 
 	public void setFinalizerFi(Fidelity<Finalization> finalizerFi) {
 		this.finalizerFi = finalizerFi;
+	}
+
+	@Override
+	public Map<String, Context> getChildrenContexts() {
+		return childrenContexts;
+	}
+
+	public void setChildrenContexts(Map<String, Context> childrenContexts) {
+		this.childrenContexts = childrenContexts;
 	}
 
 	public ContextList getOutputs() {

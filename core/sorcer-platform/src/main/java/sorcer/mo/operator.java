@@ -1153,21 +1153,17 @@ public class operator {
     }
 
     public static Context dmnIn(Request request, String domainName) {
-        if (request instanceof Collaboration) {
-            try {
-                Context cxt = ((Collaboration)request).getDomains().get(domainName).getContext();
+        try {
+            if (request instanceof Collaboration) {
+                Context cxt = ((Collaboration) request).getDomains().get(domainName).getContext();
                 if (cxt instanceof Model) {
-                    try {
-                        return cxt.getInputs();
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    return ((Collaboration) request).getDomains().get(domainName).getContext();
+                    return cxt.getInputs();
                 }
-            } catch (ContextException e) {
-                throw new RuntimeException(e);
+            } else {
+                return ((Transdomain) request).getChildrenContexts().get(domainName).getContext();
             }
+        } catch (ContextException | RemoteException e) {
+                throw new RuntimeException(e);
         }
         return null;
     }
@@ -1175,8 +1171,10 @@ public class operator {
     public static Context dmnOut(Request request, String domainName) {
         if (request instanceof Collaboration) {
             return ((Collaboration) request).getOutputs().select(domainName);
+        } else if (request instanceof Transdomain) {
+            return ((Transmodel) request).getChildrenContexts().get(domainName);
         } else if (request instanceof Context) {
-            return ((Map<String, Context>)((Context)request).get(Context.COLAB_DOMAIN_OUTPUTS_PATH)).get(domainName);
+            return ((Map<String, Context>)((Context)request).get(Context.DOMAIN_OUTPUTS_PATH)).get(domainName);
         }
         return null;
     }

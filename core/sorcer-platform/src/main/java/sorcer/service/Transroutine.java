@@ -43,6 +43,8 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 
 	protected Fidelity<Exploration> explorerFi;
 
+	protected Map<String, Context> childrenContexts;
+
 	public Transroutine() {
 		this("transroutine-" + count++);
 	}
@@ -230,6 +232,15 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 			children.put(mog.getName(), (Domain) mog);
 		}
 		return children;
+	}
+
+	@Override
+	public Map<String, Context> getChildrenContexts() {
+		return childrenContexts;
+	}
+
+	public void setChildrenContexts(Map<String, Context> childrenContexts) {
+		this.childrenContexts = childrenContexts;
 	}
 
 	@Override
