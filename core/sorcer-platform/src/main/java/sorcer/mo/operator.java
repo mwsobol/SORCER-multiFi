@@ -1153,24 +1153,19 @@ public class operator {
     }
 
     public static Context dmnIn(Request request, String domainName) {
-        try {
-            if (request instanceof Collaboration) {
-                Context cxt = ((Collaboration) request).getDomains().get(domainName).getContext();
-                if (cxt instanceof Model) {
-                    return cxt.getInputs();
-                }
-            } else {
-                return ((Transdomain) request).getChildrenContexts().get(domainName).getContext();
-            }
-        } catch (ContextException | RemoteException e) {
-                throw new RuntimeException(e);
+        if (request instanceof Collaboration) {
+            return ((Collaboration) request).getChildrenContexts().get(domainName);
+        } else {
+            return ((Transdomain) request).getChildrenContexts().get(domainName);
         }
-        return null;
     }
 
     public static Context dmnOut(Request request, String domainName) {
         if (request instanceof Collaboration) {
-            return ((Collaboration) request).getOutputs().select(domainName);
+            ContextList outs = ((Collaboration) request).getOutputs();
+            if (outs != null) {
+                return outs.select(domainName);
+            }
         } else if (request instanceof Transdomain) {
             return ((Transmodel) request).getChildrenContexts().get(domainName);
         } else if (request instanceof Context) {

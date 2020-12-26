@@ -19,7 +19,13 @@ package sorcer.service;
 import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.Finalization;
 
+import java.util.Map;
+
 public interface Transdiscipline extends Discipline {
+
+    public Map<String, Context>  getChildrenContexts();
+
+    public Mogram getChild(String name);
 
     public Fidelity<Finalization> getFinalizerFi();
 

@@ -449,7 +449,9 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 				} else {
 					collabOut = input;
 				}
-				outputs.add(cxt);
+				if (cxt != null) {
+					outputs.add(cxt);
+				}
 
 				Analysis analyzer = analyzerFi.getSelect();
 				if (analyzerFi != null) {

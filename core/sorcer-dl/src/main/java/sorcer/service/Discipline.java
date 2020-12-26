@@ -16,5 +16,5 @@
  */
 package sorcer.service;
 
-public interface Discipline extends Request, Contextion {
+public interface Discipline extends Contextion {
 }

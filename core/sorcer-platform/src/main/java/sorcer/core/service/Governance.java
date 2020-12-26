@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Governance implements Transregion, Dependency, cxtn {
+public class Governance implements Transdiscipline, Dependency, cxtn {
 
 	private static final long serialVersionUID = 1L;
 
@@ -73,6 +73,8 @@ public class Governance implements Transregion, Dependency, cxtn {
 	protected ServiceFidelity contextMultiFi;
 
 	protected Map<String, Region> disciplines = new HashMap<>();
+
+	protected Map<String, Context> childrenContexts;
 
 	private Governor governor;
 
@@ -445,13 +447,25 @@ public class Governance implements Transregion, Dependency, cxtn {
 		return dependers;
 	}
 
-	@Override
 	public Map<String, Region> getChildren() {
 		return disciplines;
 	}
 
 	@Override
-	public Region getChild(String name) {
+	public Map<String, Context> getChildrenContexts() {
+		return childrenContexts;
+	}
+
+	@Override
+	public Mogram getChild(String name) {
+		try {
+			return (Mogram) disciplines.get(name).getContextion();
+		} catch (ServiceException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public Region getRegion(String name) {
 		return disciplines.get(name);
 	}
 

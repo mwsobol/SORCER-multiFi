@@ -52,7 +52,7 @@ import static sorcer.so.operator.exec;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public abstract class Subroutine extends ServiceMogram implements Discipline, Routine {
+public abstract class Subroutine extends ServiceMogram implements Routine {
 
     static final long serialVersionUID = -3907402419486719293L;
 
