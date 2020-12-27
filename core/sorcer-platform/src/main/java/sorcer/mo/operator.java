@@ -1337,7 +1337,7 @@ public class operator {
             Map<String, ServiceFidelity> fis = new HashMap<>();
             for (ServiceFidelity discFi : discFis) {
                 fis.put(discFi.getName(), discFi);
-                collab.getDomains().put(discFi.getName(), (Domain) discFi.getSelect());
+                collab.getChildren().put(discFi.getName(), (Domain) discFi.getSelect());
             }
             fiManager.setFidelities(fis);
             collab.setFiManager(fiManager);
