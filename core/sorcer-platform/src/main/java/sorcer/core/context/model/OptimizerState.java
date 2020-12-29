@@ -9,4 +9,7 @@ public interface OptimizerState {
         public Context getConstraintContext() throws ContextException;
 
         public Context getObjectiveContext() throws ContextException;
+
+        // complete design context
+        Context getDesignContext() throws ContextException;
 }

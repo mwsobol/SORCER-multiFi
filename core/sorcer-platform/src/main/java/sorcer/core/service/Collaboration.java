@@ -419,7 +419,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 						} else  if (response instanceof Response) {
 							cxt = ((Response)response).toContext();
 						} else if (response instanceof OptimizerState) {
-							cxt = ((OptimizerState)response).getOptiDesignContext();
+							cxt = ((OptimizerState)response).getDesignContext();
 						} else {
 							throw new ContextException("response not Context");
 						}

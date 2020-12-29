@@ -139,6 +139,10 @@ public class operator {
         return value(context, path, args);
     }
 
+    public static <T> T ev(Context<T> context, String path) throws ContextException {
+        return entValue(context, path);
+    }
+
     public static Object value(Request request, String path,
                                Arg... args) throws ContextException {
         if (request instanceof Governance) {
@@ -151,12 +155,22 @@ public class operator {
                                Arg... args) throws ContextException {
         if (response instanceof DataTable) {
             try {
-                return ((DataTable) response).getValue(path, args);
+                return response.getValue(path, args);
             } catch (RemoteException e) {
                 throw new ContextException(e);
             }
         }
         return null;
+    }
+
+    public static <T> T entValue(Context<T> context, String path,
+                              Arg... args) throws ContextException {
+        Object ent = value(context, path);
+        if (ent instanceof  Entry) {
+            return (T) ((Entry)ent).getValue();
+        } else {
+            return (T) ent;
+        }
     }
 
     public static <T> T value(Context<T> context, String path,
@@ -1593,8 +1607,10 @@ public class operator {
         return (DispatcherList) context.get(Context.COMPONENT_DISPATCHER_PATH);
     }
 
-    public static Context getDomainContext(Context context, String domain) throws ContextException {
-        if (context instanceof ServiceContext) {
+    public static Context getDomainContext(ContextDomain context, String domain) throws ContextException {
+        if (context instanceof Transdomain) {
+            return ((Transdomain)context).getChildrenContexts().get(domain);
+        } else if (context instanceof Context) {
             Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
             if (domainContexts instanceof ContextList && ((ContextList) domainContexts).size() > 0) {
                 return ((ContextList) domainContexts).select(domain);
