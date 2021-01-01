@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.mo.operator;
 import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
@@ -64,15 +65,15 @@ public class SmlOperators {
 
 		// Contextions
 		cxtn pl1 = pl("name");
-		dmn t1 = task(op1, c1);
-		dmn t2 = task(op1, op2, c1);
+		mog t1 = task(op1, c1);
+		cxtn t2 = task(op1, op2, c1);
 		dmn m1 = model(v1, p1, r1, n2);
 		dmn ex1 = block(t1, t2, m1);
 		mog ex2 = job(t1, job(t2, m1));
 		dmn m2 = model(m1, op1, t1, ex2);
 		dmn tm1 = tModel("name");
 		cxtn cb1 = clb("domainCollab");
-		cxtn d1 = dsc("name");
+		cxtn d1 = operator.rgn("name");
 		cxtn g1 = gov("name", d1);
 
 		// Object outputs
@@ -90,7 +91,7 @@ public class SmlOperators {
 		Object o10 = value(context(), "path");
 		Object o11 = exec(model(), "path");
 		Object o12 = exec(model(), "path", "domain");
-		Object o13 = exec(dsc(), cxt());
+		Object o13 = exec(operator.rgn(), cxt());
 
 		// Entries for results of exec
 		ent e3 = execEnt(v1);
@@ -100,7 +101,7 @@ public class SmlOperators {
 		ent e7 = execEnt(model(), "path");
 
 		// Exerting domains
-		dmn m3 = exert(task());
+		mog m3 = exert(task());
 		cxtn m4 = exert(job());
 		cxtn m5 = exert(model());
 
@@ -111,7 +112,7 @@ public class SmlOperators {
 		// Evaluate domains
 		cxt c4 = eval(model());
 		Context c5 = eval(ex2, context());
-		cxt c6 = eval(dsc(), cxt());
+		cxt c6 = eval(operator.rgn(), cxt());
 		// Domain results
 		cxt out1 = result(model());
 		cxt out2 = result(job());

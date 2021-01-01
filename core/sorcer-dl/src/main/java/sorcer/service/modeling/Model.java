@@ -28,14 +28,32 @@ import java.rmi.RemoteException;
  */
 public interface Model extends ContextDomain, mog, dmn, cxtn {
 
+    // All-at-Once (AAO),
+    // Simultaneous Analysis and Design (SAND),
+    // Individual Discipline Feasible (IDF),
+    // Multidiscipline Feasible (MDF)
+    // Analysis, Mado, Explore, Supervise
+    public enum Pattern {
+        AAO, SAND, IDF, MDF, ANAL, MDA, MDA_EXPL, MADO, EXPL, SUPV, COLLAB, MADOCOLLAB
+    }
+
     /**
-     * Returns a model current response context.
+     * Returns a model result.
      *
-     * @return a current response context
+     * @return a model result
      * @throws ContextException
      * @throws RemoteException
      */
     public Object getResult() throws ContextException, RemoteException;
+
+    /**
+     * Returns a model  response context.
+     *
+     * @return a response context
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Context getResponse(Context context, Arg... args) throws ContextException;
 
     /**
      * Sets a buider of this model to be used for replication it when needed.

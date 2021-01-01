@@ -80,6 +80,9 @@ public interface Contextion extends Request, Scopable {
 	public Context appendContext(Context context)
 		throws ContextException, RemoteException;
 
+	public Context getDomainData()
+		throws ContextException, RemoteException;
+
 	/**
 	 * Returns a subcontext specified by paths of contextTemplate.
 	 * @throws ContextException

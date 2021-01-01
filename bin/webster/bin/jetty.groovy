@@ -18,14 +18,25 @@
 /*
  * Starts Jetty, serving up Sorcer distribution content
  */
+String scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
+String sorcerHome = new File(scriptDir).parentFile.parentFile.parentFile.path
+println "SORCER_HOME: ${sorcerHome}"
+
+File jettyConfig
+if (args.length == 0) {
+    jettyConfig = new File(scriptDir, "../configs/jettyConfig.groovy")
+
+} else {
+    jettyConfig = new File(args[0])
+}
 
 /*
  * Get the local Maven repository
  */
-def getLocalRepository() {
+static def getLocalRepository() {
     File repoDir
     String localRepository = null
-    File defaultM2Home = new File(System.getProperty("user.home")+File.separator+".m2")
+    File defaultM2Home = new File(System.getProperty("user.home") + File.separator+".m2")
     File settingsFile = new File(defaultM2Home, "settings.xml")
     if (settingsFile.exists()) {
         def settings = new XmlSlurper().parse(settingsFile)
@@ -38,10 +49,6 @@ def getLocalRepository() {
     }
     repoDir.path
 }
-
-String scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
-String sorcerHome = new File(scriptDir).parentFile.parentFile.parentFile.path
-println "SORCER_HOME: ${sorcerHome}"
 
 /* Load versions.properties */
 def versions = new Properties()
@@ -60,7 +67,6 @@ configSlurper.setBinding("sorcerHome" : sorcerHome,
         "rioVersion" : versions['rio.version'],
         "m2Repo" : getLocalRepository())
 
-File jettyConfig = new File(scriptDir, "../configs/jettyConfig.groovy")
 def config = configSlurper.parse(jettyConfig.toURI().toURL())
 StringBuilder java = new StringBuilder()
 java.append(System.getProperty('java.home')).append("/bin/java")

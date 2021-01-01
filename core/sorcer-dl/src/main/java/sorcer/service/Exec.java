@@ -55,7 +55,8 @@ public interface Exec {
 	 * executing exertions (see sorcer.core.provider.exertmonitor.ExertMonitor)
 	 */
 	public enum State {
-		FAILED, INITIAL, INSPACE, RUNNING, DONE, STOPPED, SUSPENDED, RESUMED, NEXT_STEP, INSPACE_FOR_SLA, RETURNED, UPDATED, ASYNC, NULL, ASIS, PROVISION;
+		FAILED, INITIAL, INSPACE, RUNNING, DONE, STOPPED, SUSPENDED, RESUMED, NEXT_STEP,
+        INSPACE_FOR_SLA, RETURNED, UPDATED, ASYNC, NULL, ASIS, PROVISION;
 		
 		static public String name(int state) {
 			for (State s : State.values()) {

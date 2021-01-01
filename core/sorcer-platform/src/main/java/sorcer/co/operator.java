@@ -30,6 +30,7 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.provider.DatabaseStorer;
+import sorcer.core.service.Collaboration;
 import sorcer.core.signature.LocalSignature;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ServiceSignature;
@@ -737,9 +738,34 @@ public class operator extends Operator {
 		}
 	}
 
+	public static Object subject(Context context) {
+		return context.getSubjectValue();
+	}
+
+	public static Collaboration collab(Context context) {
+		Object subject = context.getSubjectValue();
+		if (subject instanceof Collaboration) {
+			return (Collaboration)subject;
+		} else {
+			return null;
+		}
+	}
+
 	public static Paths mado(String... disciplines) {
 		Paths paths = new Paths(disciplines);
 		paths.type = Type.MADO;
+		return paths;
+	}
+
+	public static Paths domains(String... domains) {
+		Paths paths = new Paths(domains);
+		paths.type = Type.COLLABORATION;
+		return paths;
+	}
+
+	public static Paths regions(String... disciplines) {
+		Paths paths = new Paths(disciplines);
+		paths.type = Type.REGION;
 		return paths;
 	}
 
@@ -757,6 +783,12 @@ public class operator extends Operator {
         ExecDependency de = new ExecDependency(path, condition, paths);
         de.setType(Type.CONDITION);
         return de;
+	}
+
+	public static ExecDependency idfDep(String fiName, List<Path> paths) {
+		ExecDependency de =  new ExecDependency(fiName, paths);
+		de.setType(Type.IDF);
+		return de;
 	}
 
 	public static ExecDependency fiDep(String fiName, List<Path> paths) {
@@ -1265,7 +1297,11 @@ public class operator extends Operator {
 
 	public static Request setValue(Request request, String path, Object value) throws ContextException {
 		if (request instanceof Contextion) {
-			((Contextion)request).getOutput().putValue(path, value);
+			if (request instanceof Context) {
+				((Context)request).putValue(path, value);
+			} else {
+				((Contextion) request).getOutput().putValue(path, value);
+			}
 		}
 		return request;
 	}
@@ -1339,6 +1375,49 @@ public class operator extends Operator {
 		return valuation.valuate();
 	}
 
+	public static Object get(Context context) throws ContextException,
+		RemoteException {
+		return context.getReturnValue();
+	}
+
+	public static Object get(Context context, int index)
+		throws ContextException {
+		if (context instanceof PositionalContext)
+			return ((PositionalContext) context).getValueAt(index);
+		else
+			throw new ContextException("Not PositionalContext, index: " + index);
+	}
+
+	public static Object get(Service service, String path)
+		throws ContextException {
+		Object obj = null;
+		if (service instanceof Context) {
+			obj = ((ServiceContext) service).get(path);
+			if (obj != null && obj instanceof Contextion) {
+				while (obj instanceof Contextion ||
+					(obj instanceof Reactive && ((Reactive) obj).isReactive())) {
+					try {
+						obj = ((Evaluation) obj).asis();
+					} catch (RemoteException e) {
+						throw new ContextException(e);
+					}
+				}
+			}
+		} else if (service instanceof Mogram) {
+			obj = (((Mogram) service).getContext()).asis(path);
+		}
+		return obj;
+	}
+
+	public static Object get(Routine exertion, String component, String path)
+		throws RoutineException {
+		Routine c = (Routine) exertion.getMogram(component);
+		try {
+			return get((Subroutine) c, path);
+		} catch (Exception e) {
+			throw new RoutineException(e);
+		}
+	}
 	public static Object get(Arg[] args, String path) throws EvaluationException, RemoteException {
 		for (Arg arg : args) {
 			if (arg instanceof sorcer.service.Callable && arg.getName().equals(path))
@@ -1826,7 +1905,7 @@ public class operator extends Operator {
 		return names;
 	}
 
-	private static String getUnknown() {
+	public static String getUnknown() {
 		return "unknown" + count++;
 	}
 
@@ -2004,6 +2083,17 @@ public class operator extends Operator {
         return new Index(index, type);
     }
 
+	public static String dmnName(Object identifiable) {
+		String dname = null;
+		if (identifiable instanceof Domain) {
+			dname = ((Domain) identifiable).getDomainName();
+		}
+		if (dname == null) {
+			dname = ((Identifiable) identifiable).getName();
+		}
+		return dname;
+	}
+
 	public static String name(Object identifiable) {
 		if (identifiable instanceof Identifiable) {
 			return ((Identifiable) identifiable).getName();
@@ -2019,6 +2109,10 @@ public class operator extends Operator {
 		return slot;
 	}
 
+	public static Context setName(Context context, String name) {
+		context.setName(name);
+		return context;
+	}
 	public static Signature setName(Signature signature, String name) {
 		((ServiceSignature)signature).setName(name);
 		return signature;

@@ -42,7 +42,7 @@ public class ArgSet extends LinkedHashSet<Arg> {
 		}
 	}
 	
-	public Arg getArg(String argName) throws ArgException {
+	public Arg getArg(String argName) {
 		for (Arg v : this) {
 			if (v.getName().equals(argName))
 				return v;

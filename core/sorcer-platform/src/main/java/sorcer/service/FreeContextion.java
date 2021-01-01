@@ -71,6 +71,11 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
+	public Context getDomainData() throws ContextException, RemoteException {
+		return null;
+	}
+
+	@Override
 	public Context getContext(Context contextTemplate) throws RemoteException, ContextException {
 		return null;
 	}

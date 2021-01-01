@@ -36,6 +36,7 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
+import sorcer.service.modeling.Model;
 
 import javax.security.auth.Subject;
 import java.rmi.RemoteException;

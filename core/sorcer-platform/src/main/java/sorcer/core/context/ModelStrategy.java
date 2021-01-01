@@ -75,7 +75,12 @@ public class ModelStrategy implements ServiceStrategy, Serializable {
     // evaluated model response args
     protected Context outcome;
 
-    protected Exec.State execState = Exec.State.NULL;
+    protected volatile Exec.State execState = Exec.State.NULL;
+    protected volatile Exec.State finalizeExecState = Exec.State.NULL;
+    protected volatile Exec.State analysisExecState = Exec.State.NULL;
+    protected volatile Exec.State exploreExecState = Exec.State.NULL;
+
+    protected Exec.State superviseExecState = Exec.State.NULL;
 
     // reponse paths of the runtime model
     protected List<Path> responsePaths = new ArrayList<Path>();
@@ -347,13 +352,44 @@ public class ModelStrategy implements ServiceStrategy, Serializable {
     public void setExecState(Exec.State state) {
         execState = state;
     }
-
     public Context getStrategyContext() {
         return strategyContext;
     }
 
     public void setStrategyContext(Context strategyContext) {
         this.strategyContext = strategyContext;
+    }
+
+    public Exec.State getFinalizeExecState() {
+        return finalizeExecState;
+    }
+
+    public void setFinalizeExecState(Exec.State finalizeExecState) {
+        this.finalizeExecState = finalizeExecState;
+    }
+
+    public Exec.State getExploreExecState() {
+        return exploreExecState;
+    }
+
+    public void setExploreExecState(Exec.State exploreExecState) {
+        this.exploreExecState = exploreExecState;
+    }
+
+    public Exec.State getAnalysisExecState() {
+        return analysisExecState;
+    }
+
+    public void setAnalysisExecState(Exec.State analysisExecState) {
+        this.analysisExecState = analysisExecState;
+    }
+
+    public Exec.State getSuperviseExecState() {
+        return superviseExecState;
+    }
+
+    public void setSuperviseExecState(Exec.State superviseExecState) {
+        this.superviseExecState = superviseExecState;
     }
 
 }

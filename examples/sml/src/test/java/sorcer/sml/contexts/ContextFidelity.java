@@ -21,8 +21,8 @@ import static sorcer.so.operator.*;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class RequestModelContextFidelity {
-	private final static Logger logger = LoggerFactory.getLogger(RequestModelContextFidelity.class);
+public class ContextFidelity {
+	private final static Logger logger = LoggerFactory.getLogger(ContextFidelity.class);
 
 	@Test
 	public void cxtFiLambdaModel() throws Exception {

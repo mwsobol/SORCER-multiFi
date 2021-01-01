@@ -24,8 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.core.context.model.Transmodel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.req.Transmodel;
+import sorcer.core.context.model.req.AnalysisModel;
 import sorcer.service.Context;
 import sorcer.service.Evaluator;
 import sorcer.service.Request;
@@ -85,7 +86,7 @@ public class Transmodels {
     @Test
     public void testArithmeticTransmodel() throws Exception {
 
-        Transmodel mdl = (Transmodel)instance(sig(Transmodels.class, "getArithmeticTransmodel"));
+        AnalysisModel mdl = (AnalysisModel)instance(sig(Transmodels.class, "getArithmeticTransmodel"));
 
         logger.info("y1: " + get(mdl, "z1"));
         Entry z1 = (Entry) get(mdl, "z1");
@@ -101,7 +102,7 @@ public class Transmodels {
     @Test
     public void evalArithmeticTransmodel() throws Exception {
 
-        Transmodel mdl = (Transmodel) instance(sig(Transmodels.class, "getArithmeticTransmodel"));
+        AnalysisModel mdl = (AnalysisModel) instance(sig(Transmodels.class, "getArithmeticTransmodel"));
 
         Context rc = eval(mdl);
 
@@ -122,7 +123,7 @@ public class Transmodels {
             mda("analyzer",
                 (Request req, Context cxt) -> {
                     double x1, x2, x3;
-                    String dmnName = dmn(cxt);
+                    String dmnName = dmnName(cxt);
                     if (dmnName.equals("model1")) {
                         x1 = (double)value(cxt, "y1");
                         x2 = (double)value(cxt, "y2");
@@ -138,7 +139,7 @@ public class Transmodels {
                 }))
         );
 
-        Transmodel mdl = (Transmodel) instance(sig(Transmodels.class, "getArithmeticTransmodel"));
+        Transmodel mdl = (AnalysisModel) instance(sig(Transmodels.class, "getArithmeticTransmodel"));
 
         Context rc = eval(mdl, mdaCxt);
 

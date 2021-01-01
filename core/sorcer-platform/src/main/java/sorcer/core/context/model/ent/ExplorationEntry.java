@@ -17,19 +17,25 @@
 
 package sorcer.core.context.model.ent;
 
+import sorcer.core.context.ServiceContext;
 import sorcer.core.signature.LocalSignature;
-import sorcer.service.Analysis;
 import sorcer.core.service.Collaboration;
 import sorcer.service.*;
 import sorcer.service.modeling.Exploration;
+import sorcer.service.modeling.ExploreException;
 import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
+import java.util.Map;
+
+import static sorcer.mo.operator.mdaFi;
+import static sorcer.so.operator.exec;
+import static sorcer.so.operator.response;
 
 /**
  * Created by Mike Sobolewski on 01/05/20.
  */
-public class EntryExplorer extends Entry<Exploration> implements Exploration {
+public class ExplorationEntry extends Entry<Exploration> implements Exploration {
 
     private static final long serialVersionUID = 1L;
 
@@ -39,23 +45,25 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
 
     private Signature signature;
 
-    public EntryExplorer(String name, Exploration explorer)  {
+    private Fidelity<Analysis> analyzerFi;
+
+    public ExplorationEntry(String name, Exploration explorer)  {
         this.key = name;
         this.impl = explorer;
-        this.type = Functionality.Type.EXPLORER;
+        this.type = Functionality.Type.EXPL;
     }
 
-    public EntryExplorer(String name, Signature signature) {
+    public ExplorationEntry(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
-        this.type = Functionality.Type.EXPLORER;
+        this.type = Functionality.Type.EXPL;
     }
 
-    public EntryExplorer(String name, Exploration mda, Context context) {
+    public ExplorationEntry(String name, Exploration mda, Context context) {
         this.key = name;
         scope = context;
         this.impl = mda;
-        this.type = Functionality.Type.EXPLORER;
+        this.type = Functionality.Type.EXPL;
     }
 
     public Contextion getContextion() {
@@ -82,38 +90,48 @@ public class EntryExplorer extends Entry<Exploration> implements Exploration {
         return signature;
     }
 
+    public Fidelity<Analysis> getAnalyzerFi() {
+        return analyzerFi;
+    }
+
+    public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
+        this.analyzerFi = analyzerFi;
+    }
+
     @Override
-    public Context explore(Context context) throws ContextException, RemoteException {
-        Context out = ((Collaboration) contextion).getOutput();
+    public Context explore(Context context) throws ContextException, ExploreException, RemoteException {
+        // use output for explorer after collaboration
+        Context output = null;
         try {
             if (disptacher != null) {
                 disptacher.dispatch(context);
             }
+
             if (contextion instanceof Collaboration) {
-                for (Domain domain : ((Collaboration) contextion).getDomains().values()) {
-                    Context cxt = domain.evaluate(context);
-                    out.appendContext(cxt);
-                    Analysis analyzer = ((Collaboration) contextion).getAnalyzerFi().getSelect();
-                    if (analyzer != null ) {
-                        out.putValue(Functionality.Type.DOMAIN.toString(), domain.getName());
-                        analyzer.analyze(domain,  out);
-                    }
-                }
+                ((Collaboration) contextion).analyze(context);
+                output = ((Collaboration) contextion).getOutput();
+                output.putValue(Functionality.Type.COLLABORATION.toString(), contextion.getName());
+                ((ServiceContext)output).remove(Functionality.Type.DOMAIN.toString());
+            } else if (analyzerFi != null) {
+                Analysis analyzer = analyzerFi.getSelect();
+                analyzer.analyze(contextion, context);
+                output = context;
             } else {
-                throw new ContextException("exploration failed for: " + contextion);
+                output = context;
             }
-            out.putValue(Functionality.Type.COLLABORATION.toString(), contextion.getName());
+
             if (impl != null && impl instanceof Exploration) {
-                out = ((Exploration) impl).explore(out);
+                output = ((Exploration) impl).explore(output);
             } else if (signature != null) {
                 impl = ((LocalSignature)signature).initInstance();
-                out = ((Exploration)impl).explore(out);
+                output = ((Exploration)impl).explore(output);
             } else if (impl == null) {
                 throw new InvocationException("No explorer available!");
             }
-        } catch (ContextException | SignatureException | DispatchException e) {
+        } catch (SignatureException | DispatchException | ServiceException e) {
             throw new ContextException(e);
         }
-        return out;
+        return output;
     }
+
 }

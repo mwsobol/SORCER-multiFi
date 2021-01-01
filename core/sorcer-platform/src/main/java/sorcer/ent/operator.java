@@ -810,6 +810,10 @@ public class operator extends Operator {
 		return cr;
 	}
 
+	public static Entry ent(Context context, String name) {
+		return new Entry(name, context.get(name));
+	}
+
 	public static Entry ent(Identifiable object) {
 		return new Entry(object.getName(), object);
 	}

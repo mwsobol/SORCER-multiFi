@@ -15,9 +15,17 @@
  */
 package sorcer.service.modeling;
 
+import sorcer.service.*;
+
+import java.rmi.RemoteException;
+import java.util.Map;
+
 /**
  * @author Mike Sobolewski
  */
-public interface StreamingParametricModeling extends ParametricModeling {
+public interface Mado extends OptimizationModeling {
 
+	public Paths getChildrenPaths() throws RemoteException;
+
+	public Context analyze(Context modelContext, Arg... args) throws EvaluationException, RemoteException;
 }

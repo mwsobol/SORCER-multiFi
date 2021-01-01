@@ -23,4 +23,7 @@ import java.rmi.RemoteException;
 public interface Response<T> extends Identifiable, Serializable {
 
 	public T getValue(String path, Arg... args) throws ContextException, RemoteException;
-}
+
+	public Context toContext() throws ContextException;
+
+	}

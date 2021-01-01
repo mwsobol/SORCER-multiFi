@@ -50,7 +50,7 @@ public class Governor implements Service, Supervision {
             }
             execDependencies(governance.getName(), args);
             if (analyzer != null) {
-                governance.getInput().putValue(Functionality.Type.DISCIPLINE.toString(), governance.getName());
+                governance.getInput().putValue(Functionality.Type.REGION.toString(), governance.getName());
                 analyzer.analyze(governance, governance.getInput());
             }
             return governance.getOutput();
@@ -69,10 +69,10 @@ public class Governor implements Service, Supervision {
                     if (dpl != null && dpl.size() > 0) {
                         for (Path p : dpl) {
                             try {
-                                Discipline disc = governance.getDiscipline(p.path);
+                                Region disc = governance.getDiscipline(p.path);
                                 disc.evaluate(governance.getOutput(), args);
                                 if (governance.getAnalyzerFi() != null && governance.getAnalyzerFi().getSelect() != null) {
-                                    disc.getOutput().putValue(Functionality.Type.DISCIPLINE.toString(), disc.getName());
+                                    disc.getOutput().putValue(Functionality.Type.REGION.toString(), disc.getName());
                                     governance.getAnalyzerFi().getSelect().analyze(governance, disc.getOutput());
                                 } else {
                                     governance.getOutput().append(disc.getOutput());

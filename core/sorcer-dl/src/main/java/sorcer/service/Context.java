@@ -187,6 +187,8 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 
 	final static String COMPONENT_CONTEXT_PATH = "domain" + SorcerConstants.CPS + "componentContexts";
 
+	final static String COMPONENT_DISPATCHER_PATH = "domain" + SorcerConstants.CPS + "componentDispatchers";
+
 	final static String MDA_PATH = "domain" + SorcerConstants.CPS + "mda"
 		+ SorcerConstants.CPS + "component";
 
@@ -196,6 +198,8 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 	// ContextDomain Specific Data Path
 	final static String DSD_PATH = "domain" + SorcerConstants.CPS + "specific"
 			+ SorcerConstants.CPS + "data";
+
+	final static String DOMAIN_OUTPUTS_PATH = "transdomain" + SorcerConstants.CPS + "domain" + SorcerConstants.CPS + "outputs";
 
 	/**
 	 * An object to specify no context execute.
@@ -947,7 +951,7 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 
 	public int size();
 
-	Mogram getDomain(String name) throws ContextException;
+	Mogram getChild(String name) throws ContextException;
 
 	public Return getContextReturn();
 

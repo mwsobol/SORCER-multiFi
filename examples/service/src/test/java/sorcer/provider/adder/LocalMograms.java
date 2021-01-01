@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.co.operator;
 import sorcer.core.provider.ServiceExerter;
 import sorcer.core.provider.SessionProvider;
 import sorcer.provider.adder.impl.AdderImpl;
@@ -17,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.get;
+import static sorcer.co.operator.get;
 import static sorcer.mo.operator.*;
 import static sorcer.ent.operator.ent;
 import static sorcer.so.operator.*;
@@ -52,7 +53,7 @@ public class LocalMograms {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("eval/result", 100.0)).equals(
-				value(cxt, outPaths("arg/x1", "eval/result"))));
+				value(cxt, operator.outPaths("arg/x1", "eval/result"))));
 	}
 
 	@Test
@@ -77,7 +78,7 @@ public class LocalMograms {
 
 		// getValue the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("eval/result", 100.0)).equals(
-				value(cxt, outPaths("arg/x1", "eval/result"))));
+				value(cxt, operator.outPaths("arg/x1", "eval/result"))));
 	}
 
 	@Test
@@ -147,7 +148,7 @@ public class LocalMograms {
 
 		// getValue the output subcontext from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
-				exec(t5, result(outPaths("arg/x1", "result/y")))));
+				exec(t5, result(operator.outPaths("arg/x1", "result/y")))));
 	}
 
 	@Test
@@ -155,7 +156,7 @@ public class LocalMograms {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), outVal("out/val"),
-						outPaths("out/val", "calculated/provider")));
+						operator.outPaths("out/val", "calculated/provider")));
 
 		// getValue the subcontext output from the exertion
 		assertTrue(context(ent("calculated/provider", AdderImpl.class.getName()),
@@ -167,7 +168,7 @@ public class LocalMograms {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), outVal("out/val"),
-						outPaths("out/val")));
+						operator.outPaths("out/val")));
 
 		// getValue the result eval
 		assertEquals(100.0, exec(t5));

@@ -22,7 +22,7 @@ import java.util.Date;
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.ent.operator.invoker;
-import static sorcer.eo.operator.get;
+import static sorcer.co.operator.get;
 import static sorcer.eo.operator.mog;
 import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.*;
@@ -560,7 +560,7 @@ public class Signatures {
 
 		logger.info("task context: " + context(task));
 
-		// the input context used by provides as-is
+		// the input context used by provider as-is
 		// but output context from provider remapped
 		assertEquals(20.0, value(context(task), "arg/x1"));
 		assertEquals(80.0, value(context(task), "arg/x2"));

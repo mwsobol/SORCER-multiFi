@@ -24,21 +24,22 @@ import sorcer.core.context.ContextSelector;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.DataContext;
+import sorcer.core.context.model.Transmodel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.req.Req;
-import sorcer.core.context.model.req.RequestModel;
-import sorcer.core.context.model.req.Transmodel;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
+import sorcer.core.service.Collaboration;
 import sorcer.core.service.Governance;
 import sorcer.core.signature.LocalSignature;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.service.Exertion;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
-import sorcer.service.Discipline;
+import sorcer.service.Region;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -161,8 +162,15 @@ public class operator extends Operator {
         }
     }
 
-    public static ServiceContext eval(Request request, Context context)
-            throws ContextException {
+    public static Context evalDomain(Collaboration collab, Request request, Context context) throws ContextException {
+        return collab.evaluateDomain(request, context);
+    }
+
+    public static Context evalDomain(Collaboration collab, String domainName, Context context) throws ContextException {
+        return collab.evaluateDomain(domainName, context);
+    }
+
+    public static ServiceContext eval(Request request, Context context) throws ContextException {
         Context rc = null;
         try {
             if (request instanceof Contextion) {
@@ -184,8 +192,8 @@ public class operator extends Operator {
         return (ServiceContext)rc;
     }
 
-    public static void clear(Discipline discipline) throws MogramException {
-        ((ServiceDiscipline)discipline).clear();
+    public static void clear(Region region) throws MogramException {
+        ((ServiceRegion) region).clear();
     }
 
     public static Context eval(Signature signature, Arg... args)
@@ -194,8 +202,8 @@ public class operator extends Operator {
         try {
             Object target = ((LocalSignature) signature).build();
 
-            if (target instanceof Discipline) {
-                out = (Context) ((Discipline) target).execute(args);
+            if (target instanceof Region) {
+                out = (Context) ((Region) target).execute(args);
             } else if (target instanceof Model) {
                 Context cxt = Arg.selectContext(args);
                 out = ((Model)target).evaluate(cxt);
@@ -206,33 +214,33 @@ public class operator extends Operator {
         return out;
     }
 
-    public static Context eval(Discipline discipline, Arg... args)
+    public static Context eval(Region region, Arg... args)
         throws ContextException {
         try {
-            return (Context) discipline.execute(args);
+            return (Context) region.execute(args);
         } catch (ServiceException | RemoteException e) {
             throw new ContextException(e);
         }
     }
 
-    public static Context dscOut(Discipline discipline) throws ContextException {
-        return discipline.getOutput();
+    public static Context dscOut(Region region) throws ContextException {
+        return region.getOutput();
     }
 
-    public static Context dspOut(Discipline discipline) throws ContextException {
-        return ((ServiceDiscipline)discipline).getOutDispatcher().getContext();
+    public static Context dspOut(Region region) throws ContextException {
+        return ((ServiceRegion) region).getOutDispatcher().getContext();
     }
 
     public static Context out(Governance governance) {
         return governance.getOutput();
     }
 
-    public static Context result(Discipline discipline) throws ContextException {
-        return ((Routine)discipline.getOutDispatcher()).getContext();
+    public static Context result(Region region) throws ContextException {
+        return ((Routine) region.getOutDispatcher()).getContext();
     }
 
-    public static Dispatch dispatcher(Discipline discipline) {
-        return discipline.getOutDispatcher();
+    public static Dispatch dispatcher(Region region) {
+        return region.getOutDispatcher();
     }
 
     public static Response query(Mogram mogram, Arg... args) throws ContextException {
@@ -303,14 +311,34 @@ public class operator extends Operator {
 
     public static Object response(ContextDomain model, String path, String domain) throws ContextException {
         if (model.isEvaluated() && ((ServiceMogram)model).getMdaFi() == null) {
-            return ((ServiceContext)model).getDomain(domain).getEvaluatedValue(path);
+            return ((ServiceContext)model).getChild(domain).getEvaluatedValue(path);
         } else {
             try {
-                return ((Context)((ServiceContext)model).getDomain(domain)).getValue(path);
+                return ((Context)((ServiceContext)model).getChild(domain)).getValue(path);
             } catch (RemoteException ex) {
                 throw new ContextException(ex);
             }
         }
+    }
+
+    public static ServiceContext response(Signature signature, Object... items) throws ContextException {
+        Mogram mogram = null;
+        try {
+            mogram = (Mogram) ((LocalSignature)signature).initInstance();
+        } catch (SignatureException e) {
+            e.printStackTrace();
+        }
+        return response(mogram, items);
+    }
+
+    public static Context outcome(Contextion domain, Context context, Arg... args) throws ContextException {
+        if (domain instanceof Model) {
+            return ((Model) domain).getResponse(context, args);
+        } else if (domain instanceof Routine) {
+            ((Routine)domain).getDataContext().append(context);
+            return exertionResponse((Routine) domain, (Object[])args);
+        }
+        return ((Mogram)domain).getDataContext().append(context);
     }
 
     public static ServiceContext response(Mogram mogram, Object... items) throws ContextException {
@@ -318,9 +346,9 @@ public class operator extends Operator {
             return exertionResponse((Routine) mogram, items);
         } else if (mogram instanceof ContextDomain &&  ((ServiceMogram)mogram).getType().equals(Functionality.Type.MADO)) {
             if (mogram.isEvaluated()) {
-                return (ServiceContext) ((ServiceContext) mogram).getDomain((String) items[0]).getEvaluatedValue((String) items[1]);
+                return (ServiceContext) ((ServiceContext) mogram).getChild((String) items[0]).getEvaluatedValue((String) items[1]);
             } else {
-                return (ServiceContext) ((ServiceContext) ((ServiceContext) mogram).getDomain((String) items[0])).getValue((String) items[1]);
+                return (ServiceContext) ((ServiceContext) ((ServiceContext) mogram).getChild((String) items[0])).getValue((String) items[1]);
             }
         } else if (mogram instanceof Transmodel &&
             ((Transmodel)mogram).getChildren() != null &&
@@ -346,8 +374,18 @@ public class operator extends Operator {
         Context out = null;
         if (request instanceof Mogram) {
             out = response((Mogram)request, items);
-        } else if(items.length == 1 && items[0] instanceof Context) {
-            out = eval(request, (Context)items[0]);
+        } else if(items.length == 1) {
+            if (items[0] instanceof Context) {
+                out = eval(request, (Context) items[0]);
+            } else  if (items[0] instanceof Signature) {
+                //&& ((ServiceSignature)items[0]).isKindOf(Signature.Kind.CONTEXT)) {
+                try {
+                    Context cxt = (Context) ((LocalSignature)items[0]).initInstance();
+                    out = eval(request, cxt);
+                } catch (SignatureException e) {
+                    throw new ContextException(e);
+                }
+            }
         } else if(items.length == 0) {
             out = eval(request, (Context)null);
         }
@@ -541,7 +579,7 @@ public class operator extends Operator {
             } else if (service instanceof Mogram) {
                 if (service instanceof DataContext || service instanceof MultiFiMogram) {
                     return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
-                } else if (service instanceof Discipline) {
+                } else if (service instanceof Region) {
                     return service.execute(args);
                 } else {
                     return execMogram((Mogram) service, args);

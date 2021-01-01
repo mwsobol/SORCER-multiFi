@@ -14,8 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sorcer.service;
 
-public interface ManagedRequest extends CombinedRequest {
+package sorcer.service.modeling;
+
+import sorcer.service.Arg;
+import sorcer.service.Context;
+import sorcer.service.ContextException;
+import sorcer.service.Request;
+
+/**
+ * Created by Mike Sobolewski on 12/19/2020.
+ */
+@FunctionalInterface
+public interface Finalization {
+
+    public void finalize(Context context, Arg... args) throws ContextException;
 
 }

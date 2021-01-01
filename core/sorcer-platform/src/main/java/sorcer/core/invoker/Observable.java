@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import net.jini.id.Uuid;
 import sorcer.service.EvaluationException;
+import sorcer.service.Evaluator;
 import sorcer.service.Identifiable;
 
 public class Observable implements EvaluationModel, Serializable {
@@ -116,8 +117,9 @@ public class Observable implements EvaluationModel, Serializable {
 			 * progress 2) a recently unregistered Observer will be wrongly
 			 * notified when it doesn't care
 			 */
-			if (!changed)
+			if (!changed) {
 				return;
+			}
 			if (observerMap != null) {
 				arrLocal = observerMap.values().toArray();
 			}
@@ -125,14 +127,7 @@ public class Observable implements EvaluationModel, Serializable {
 		}
 		if (arrLocal != null)
 			for (int i = arrLocal.length - 1; i >= 0; i--) {
-//				logger.info("Observable.notifyObservers(): I am observable \"" 
-//						+ toString() + "\", \ncalling arrLocal[i].update(this, arg) \n" 
-//						+ "with the following args: \n"
-//						+ "i = " + i + "\narrLocal[i] = " + arrLocal[i]
-//						+ "\narrLocal[i].getClass() = " + arrLocal[i].getClass()                                             
-//						+ "\nthis = " + this + "\narg = " + arg + "\n");
 				((Observer) arrLocal[i]).update(this, arg);
-//				logger.info("Observable.notifyObservers(): done calling updates");
 			}
 		//notifyParentObservers(arg);
 	}

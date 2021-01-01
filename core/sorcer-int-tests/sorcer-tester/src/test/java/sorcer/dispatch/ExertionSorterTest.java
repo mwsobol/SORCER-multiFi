@@ -8,6 +8,7 @@ import sorcer.arithmetic.tester.provider.Subtractor;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
+import sorcer.co.operator;
 import sorcer.core.dispatch.ExertionSorter;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
@@ -87,7 +88,7 @@ public class ExertionSorterTest {
         // Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
         //Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL, Access.PULL)), t3,
         return job("j1", sig("exert", ServiceJobber.class),
-                cxt(inVal("arg/x1", 10.0), result("job/result", outPaths("j1/t3/result/y"))),
+                cxt(inVal("arg/x1", 10.0), result("job/result", operator.outPaths("j1/t3/result/y"))),
                 job("j2", sig("exert", ServiceJobber.class), t4, t5),
                 t3,
                 pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),

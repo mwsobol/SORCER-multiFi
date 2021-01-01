@@ -1,6 +1,6 @@
 /*
- * Copyright 2013 the original author or authors.
- * Copyright 2013 SorcerSoft.org.
+ * Copyright 2020 the original author or authors.
+ * Copyright 2020 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import sorcer.service.modeling.Functionality;
 /**
  * Created by Mike Sobolewski on 01/05/20.
  */
-public class EntryAnalyzer extends Entry<Analysis> implements Analysis {
+public class AnalysisEntry extends Entry<Analysis> implements Analysis {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,19 +33,19 @@ public class EntryAnalyzer extends Entry<Analysis> implements Analysis {
 
     private Signature signature;
 
-    public EntryAnalyzer(String name, Analysis mda)  {
+    public AnalysisEntry(String name, Analysis mda)  {
         this.key = name;
         this.impl = mda;
         this.type = Functionality.Type.MDA;
     }
 
-    public EntryAnalyzer(String name, Signature signature) {
+    public AnalysisEntry(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
         this.type = Functionality.Type.MDA;
     }
 
-    public EntryAnalyzer(String name, Analysis mda, Context context) {
+    public AnalysisEntry(String name, Analysis mda, Context context) {
         this.key = name;
         scope = context;
         this.impl = mda;
@@ -72,7 +72,7 @@ public class EntryAnalyzer extends Entry<Analysis> implements Analysis {
     public void analyze(Request request, Context context) throws EvaluationException {
         try {
             if (impl != null && impl instanceof Analysis) {
-                if (contextion == null) {
+                if (contextion == null || context == contextion) {
                     ((Analysis) impl).analyze(request, context);
                 } else {
                     ((Analysis) impl).analyze(contextion, context);

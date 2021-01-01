@@ -7,11 +7,12 @@ import sorcer.co.tuple.ExecDependency;
 import sorcer.core.context.ContextList;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.Transmodel;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
+import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -21,11 +22,11 @@ import static sorcer.mo.operator.result;
 /**
  * Created by Mike Sobolewski on 12/28/2019.
  */
-public class Transmodel extends RequestModel implements Model, Transdomain, Configurable {
+public class AnalysisModel extends RequestModel implements Transmodel, Configurable {
 
     private static final Logger logger = LoggerFactory.getLogger(Transmodel.class);
 
-    protected Map<String, Domain> children = new HashMap<>();
+    protected Map<String, Mogram> children = new HashMap<>();
 
     protected Map<String, Context> childrenContexts = new HashMap<>();
 
@@ -33,24 +34,26 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
 
     protected Fidelity<Analysis> analyzerFi;
 
-    public Transmodel() {
+    protected Fidelity<Exploration> explorerFi;
+
+    public AnalysisModel() {
         super();
         type = Functionality.Type.TRANS;
     }
 
-    public Transmodel(String name) {
+    public AnalysisModel(String name) {
         super(name);
         type = Functionality.Type.TRANS;
     }
 
-    public static Transmodel instance(Signature builder) throws SignatureException {
-        Transmodel model = Transmodel.instance(null, builder);
+    public static AnalysisModel instance(Signature builder) throws SignatureException {
+        AnalysisModel model = AnalysisModel.instance(null, builder);
         model.setEvaluated(false);
         return model;
     }
 
-    public static Transmodel instance(String name, Signature builder) throws SignatureException {
-        Transmodel model = (Transmodel) sorcer.co.operator.instance(builder);
+    public static AnalysisModel instance(String name, Signature builder) throws SignatureException {
+        AnalysisModel model = (AnalysisModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         if (name != null) {
             model.setName(name);
@@ -59,13 +62,13 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
         return model;
     }
 
-    public Transmodel(String name, List<Transmodel> models) {
+    public AnalysisModel(String name, List<Transmodel> models) {
         super(name);
         for (Transmodel vm : models)
             children.put(vm.getName(), vm);
     }
 
-    public Transmodel(String name, Transmodel... models) {
+    public AnalysisModel(String name, Transmodel... models) {
         super(name);
         for (Transmodel vm : models)
             children.put(vm.getName(), vm);
@@ -79,7 +82,7 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
         this.childrenPaths = childrenPaths;
     }
 
-    public void addDomains(List<Domain> domains) {
+    public void addChildren(List<Domain> domains) {
         for (Domain vm : domains) {
             this.children.put(vm.getName(), vm);
             vm.setParent(this);
@@ -87,8 +90,12 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
     }
 
     @Override
-    public Domain getDomain(String domainName) {
-        return children.get(domainName);
+    public Fidelity<Analysis> getAnalyzerFi() {
+        return analyzerFi;
+    }
+
+    public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
+        this.analyzerFi = analyzerFi;
     }
 
     @Override
@@ -97,7 +104,7 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
     }
 
     @Override
-    public Map<String, Domain> getChildren() {
+    public Map<String, Mogram> getChildren() {
         return children;
     }
 
@@ -141,12 +148,13 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
         return dataContext;
     }
 
-    public Fidelity<Analysis> getAnalyzerFi() {
-        return analyzerFi;
+    @Override
+    public Fidelity<Exploration> getExplorerFi() {
+        return explorerFi;
     }
 
-    public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
-        this.analyzerFi = analyzerFi;
+    public void setExplorerFi(Fidelity<Exploration> explorerFi) {
+        this.explorerFi = explorerFi;
     }
 
     public Map<String, Context> getChildrenContexts() {
@@ -183,7 +191,7 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
         }
     }
 
-    protected void execDependencies(String path, Context inContext, Arg... args) throws MogramException, RemoteException, TransactionException {
+    public void execDependencies(String path, Context inContext, Arg... args) throws MogramException, RemoteException, TransactionException {
         Map<String, List<ExecDependency>> dpm = ((ModelStrategy) domainStrategy).getDependentDomains();
         if (dpm != null && dpm.get(path) != null) {
             List<Path> dpl = null;
@@ -194,7 +202,7 @@ public class Transmodel extends RequestModel implements Model, Transdomain, Conf
                     if (de.getName().equals(key)) {
                         dpl = de.getData();
                         for (Path p : dpl) {
-                            Domain domain = children.get(p.getName());
+                            Mogram domain = children.get(p.getName());
                             execDependencies(p.getName(), inContext, args);
                             Context cxt = null;
                             if (children.get(p.path) instanceof EntryModel) {

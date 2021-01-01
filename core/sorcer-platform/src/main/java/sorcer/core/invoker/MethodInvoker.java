@@ -235,7 +235,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> {
 					// exception when Arg... is not specified for the invoke
 					if (target instanceof Invocation && paramTypes.length == 1
 							&&  paramTypes[0] == Context.class
-							&& (selector.equals("invoke")))	{
+							&& ((selector.equals("evaluate") || selector.equals("invoke"))))	{
 						paramTypes = new Class[2];
 						paramTypes[0] = Context.class;
 						paramTypes[1] = Arg[].class;

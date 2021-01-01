@@ -8,6 +8,7 @@ import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.setValue;
 import static sorcer.ent.operator.*;
 import static sorcer.eo.operator.alt;
 import static sorcer.eo.operator.args;
@@ -130,11 +131,12 @@ public class CollabBuilder {
 
 	public static Collaboration getArithmeticColab2() throws Exception {
 
+
 		Context collabCxt = context(explFi("explorer",
 			expl("explorer1",
 				(Context cxt) -> {
 					double z1, z2;
-					String clbName = clb(cxt);
+					String clbName = clbName(cxt);
 					if (clbName.equals("domainCollab")) {
 						z1 = (double)value(cxt, "z1");
 						z2 = (double)value(cxt, "z2");
@@ -145,18 +147,20 @@ public class CollabBuilder {
 			mdaFi("analyzer",
 				(mda("analyzer1",
 					(Request collab, Context cxt) -> {
-						double y1, y2, y3, y4;
-						String dmnName = dmn(cxt);
+						double y1, y2, y3;
+						String dmnName = dmnName(cxt);
 						if (dmnName.equals("srvBlock")) {
 							y1 = (double)value(cxt, "arg/x1");
 							y2 = (double)value(cxt, "arg/x2");
 							y3 = (double)value(cxt, "arg/t5");
-							setValue(collab, "z1", (y3 * y2) / y1);
+							setValue(cxt, "z1", (y3 * y2) / y1);
 						} else if (dmnName.equals("entModel")) {
-							y4 = (double)value(cxt, "result");
-							setValue(collab, "z2", y4 * 2.4);
+							y1 = (double)value(cxt, "y1");
+							y2 = (double)value(cxt, "y2");
+							setValue(cxt, "z2", (y1 + y2) / 2.4);
 						}
-					}))));
+					}
+					))));
 
 		Collaboration collab = clb("domainCollab",
 			instance(sig("getEntryModel", CollabBuilder.class)),

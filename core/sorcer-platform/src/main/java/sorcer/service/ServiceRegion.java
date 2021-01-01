@@ -22,9 +22,11 @@ import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.signature.LocalSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Getter;
+import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -35,13 +37,13 @@ import java.util.Map;
 /**
  *  Implements a service discipline as out-multiFi-dispatch
  */
-public class ServiceDiscipline implements Discipline, Getter<Service> {
+public class ServiceRegion implements Region, Getter<Service> {
 
     protected Uuid disciplineId;
 
     protected String  name;
 
-    protected Map<String, DisciplineFidelity> disciplineFidelities = new HashMap<>();
+    protected Map<String, RegionFidelity> disciplineFidelities = new HashMap<>();
 
     protected ServiceFidelity contextMultiFi;
 
@@ -89,20 +91,20 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected ServiceStrategy serviceStrategy;
 
-    public ServiceDiscipline() {
+    public ServiceRegion() {
         disciplineId = UuidFactory.generate();
         serviceStrategy = new ModelStrategy(this);
     }
 
-    public ServiceDiscipline(Routine... dispatchs) {
+    public ServiceRegion(Routine... dispatchs) {
         contextionMultiFi = new ServiceFidelity(dispatchs);
     }
 
-    public ServiceDiscipline(Fidelity contextionFi, Fidelity dispatchFi) {
+    public ServiceRegion(Fidelity contextionFi, Fidelity dispatchFi) {
         this(contextionFi, dispatchFi, null);
     }
 
-    public ServiceDiscipline(Fidelity contextionFi, Fidelity dispatchFi, Fidelity contextFi) {
+    public ServiceRegion(Fidelity contextionFi, Fidelity dispatchFi, Fidelity contextFi) {
         Routine dispatch = (Routine) dispatchFi.getSelect();
         dispatch.setName(dispatchFi.getName());
         Service service = (Service)contextionFi.getSelect();
@@ -121,17 +123,17 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         }
     }
 
-    public ServiceDiscipline(Service service, Routine dispatch) {
+    public ServiceRegion(Service service, Routine dispatch) {
         contextionMultiFi = new ServiceFidelity(new Service[] { service });
         dispatchMultiFi = new ServiceFidelity(new Service[] { dispatch });
     }
 
-    public ServiceDiscipline(Service[] services, Routine[] dispatchs) {
+    public ServiceRegion(Service[] services, Routine[] dispatchs) {
         contextionMultiFi = new ServiceFidelity(services);
         dispatchMultiFi = new ServiceFidelity(dispatchs);
     }
 
-    public ServiceDiscipline(List<Service> services, List<Routine> dispatchs) {
+    public ServiceRegion(List<Service> services, List<Routine> dispatchs) {
         Routine[] cArray = new Routine[dispatchs.size()];
         Service[] pArray = new Routine[services.size()];
         contextionMultiFi = new ServiceFidelity(services.toArray(cArray));
@@ -347,6 +349,20 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             if (out != null) {
                 xrt.dispatch(out);
             }
+            // realize  contextion if not dispatched
+            if (out instanceof LocalSignature && cxt != null) {
+                try {
+                    out = (Contextion) ((LocalSignature)out).initInstance();
+                    if (out instanceof Model) {
+                    xrt.setContext(cxt);
+                        if (xrt.getProcessSignature() instanceof LocalSignature) {
+                            ((LocalSignature) xrt.getProcessSignature()).setTarget(out);
+                        }
+                    }
+                } catch (SignatureException e) {
+                    throw new ConfigurationException(e);
+                }
+            }
             outDispatcher = xrt.exert();
 
             return getOutput();
@@ -358,7 +374,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     @Override
     public void selectFidelity(Fidelity fi) throws ConfigurationException {
         if (fi.getPath().isEmpty()) {
-            DisciplineFidelity discFi = disciplineFidelities.get(fi.getName());
+            RegionFidelity discFi = disciplineFidelities.get(fi.getName());
             dispatchMultiFi.selectSelect(discFi.getDispatcherFi().getName());
             if (contextionMultiFi != null && discFi.getContextionFi() != null) {
                 contextionMultiFi.findSelect(discFi.getContextionFi().getName());
@@ -469,7 +485,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             if (out instanceof Context) {
                 return (Context) out;
             } else {
-                return ((ServiceDiscipline) out).getOutput();
+                return ((ServiceRegion) out).getOutput();
             }
         } catch (ServiceException e) {
             throw new EvaluationException(e);
@@ -491,13 +507,18 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         setInput(input);
     }
 
-    public Map<String, DisciplineFidelity> getDisciplineFidelities() {
+    public Map<String, RegionFidelity> getDisciplineFidelities() {
         return disciplineFidelities;
     }
 
     @Override
     public Context appendContext(Context context) throws ContextException, RemoteException {
         return input.appendContext(context);
+    }
+
+    @Override
+    public Context getDomainData() throws ContextException, RemoteException {
+        return input;
     }
 
     @Override
@@ -532,7 +553,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         this.parent = parent;
     }
 
-    public Discipline addDepender(Evaluation depender) {
+    public Region addDepender(Evaluation depender) {
         if (this.dependers == null)
             this.dependers = new ArrayList<Evaluation>();
         dependers.add(depender);
@@ -566,7 +587,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     public Functionality.Type getDependencyType() {
-        return Functionality.Type.DISCIPLINE;
+        return Functionality.Type.REGION;
     }
 
     @Override

@@ -73,7 +73,7 @@ public class SpaceTaker implements Runnable {
 
 	protected ExecutorService pool;
 
-    private LeaseRenewalManager lrm;
+    private final LeaseRenewalManager lrm;
 
 	// controls the loop of this space worker
 	protected volatile boolean keepGoing = true;
@@ -163,8 +163,8 @@ public class SpaceTaker implements Runnable {
 	}
 
 	protected long getTransactionLeaseTime() {
-		long lt = TRANSACTION_LEASE_TIME;
-		Configuration config = null;
+		long lt;
+		Configuration config;
 		try {
 			config = ((ServiceExerter)data.provider).getProviderConfiguration();
 			lt = (Long) config.getEntry(ServiceExerter.COMPONENT,
@@ -176,10 +176,9 @@ public class SpaceTaker implements Runnable {
 	}
 
 	protected long getTimeOut() {
-		long st = SPACE_TIMEOUT;
-		Configuration config = null;
+		long st;
 		try {
-			config = ((ServiceExerter)data.provider).getProviderConfiguration();
+			Configuration config = ((ServiceExerter)data.provider).getProviderConfiguration();
 			st = (Long) config.getEntry(ServiceExerter.COMPONENT,
 					ProviderDelegate.SPACE_TIMEOUT, long.class);
 		} catch (Exception e) {
@@ -192,7 +191,7 @@ public class SpaceTaker implements Runnable {
 	// fields for taker thread metrics
 	//
 	private int numThreadsTaker = 0;
-	private ArrayList<String> threadIdsTaker = new ArrayList<String>();
+	private final ArrayList<String> threadIdsTaker = new ArrayList<>();
 	private int numCallsTaker = 0;
 
 	protected synchronized String doThreadMonitorTaker(String threadIdString) {
@@ -223,7 +222,7 @@ public class SpaceTaker implements Runnable {
 	// fields for worker thread metrics
 	//
 	private int numThreadsWorker = 0;
-	private ArrayList<String> threadIdsWorker = new ArrayList<String>();
+	private final ArrayList<String> threadIdsWorker = new ArrayList<>();
 	private int numCallsWorker = 0;	
 	
 	protected synchronized String doThreadMonitorWorker(String threadIdString) {
@@ -317,7 +316,9 @@ public class SpaceTaker implements Runnable {
 				}
                 pool.execute(new SpaceWorker(ee, txnCreated, data.provider, remoteLogging));
 			} catch (Exception ex) {
-                logger.warn("Problem with SpaceTaker", ex);
+				if (keepGoing) {
+					logger.warn("Problem with SpaceTaker", ex);
+				}
 			}
 		}
 		

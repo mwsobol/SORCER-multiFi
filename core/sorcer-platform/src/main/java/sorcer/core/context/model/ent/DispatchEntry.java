@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 01/05/20.
  */
-public class EntryDispatcher extends Entry<Dispatch> implements Dispatch {
+public class DispatchEntry extends Entry<Dispatch> implements Dispatch {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,19 +35,19 @@ public class EntryDispatcher extends Entry<Dispatch> implements Dispatch {
 
     private Signature signature;
 
-    public EntryDispatcher(String name, Dispatch dispatcher)  {
+    public DispatchEntry(String name, Dispatch dispatcher)  {
         this.key = name;
         this.impl = dispatcher;
         this.type = Functionality.Type.DISPATCH;
     }
 
-    public EntryDispatcher(String name, Signature signature) {
+    public DispatchEntry(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
         this.type = Functionality.Type.DISPATCH;
     }
 
-    public EntryDispatcher(String name, Dispatch dispatcher, Context context) {
+    public DispatchEntry(String name, Dispatch dispatcher, Context context) {
         this.key = name;
         scope = context;
         this.impl = dispatcher;

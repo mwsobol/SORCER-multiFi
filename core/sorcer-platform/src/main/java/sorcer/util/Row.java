@@ -17,8 +17,10 @@
 
 package sorcer.util;
 
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Arg;
+import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Response;
 import sorcer.service.modeling.rsp;
@@ -111,6 +113,17 @@ public Object getValue(String name, Arg... args) throws ContextException, Remote
 			sb.append("\n").append(dataList.get(0));
 		}
 		return sb.toString();
+	}
+
+	public Context toContext() throws ContextException {
+		ServiceContext cxt = new ServiceContext(name);
+		List<String> cns = getColumnNames();
+		if (cns != null) {
+			for (int i = 0; i < cns.size(); i++) {
+				cxt.put(cns.get(i), dataList.get(0).get(i));
+			}
+		}
+		return cxt;
 	}
 
 	public boolean compareTo(Object table) {

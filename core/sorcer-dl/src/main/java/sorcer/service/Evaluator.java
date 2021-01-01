@@ -45,6 +45,8 @@ public interface Evaluator <T> extends Opservice, Exertion, Provider, Evaluation
 
 	public boolean isValid();
 
+	public boolean isChanged();
+
 	public enum SPI {
 		JEP, GROOVY, METHOD, EXERTION, OBJECT, PROXY, INDEPENDENT, DEPENDENT, SOA, NULL
 	}

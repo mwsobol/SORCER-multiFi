@@ -20,6 +20,7 @@ package sorcer.service;
 import net.jini.id.Uuid;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.dmn;
 
 import java.rmi.RemoteException;
@@ -39,6 +40,10 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 	protected List<Mogram> mograms = new ArrayList<Mogram>();
 
 	protected Fidelity<Analysis> analyzerFi;
+
+	protected Fidelity<Exploration> explorerFi;
+
+	protected Map<String, Context> childrenContexts;
 
 	public Transroutine() {
 		this("transroutine-" + count++);
@@ -123,6 +128,15 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 		addMogram(exertion);
 		controlContext.setPriority(exertion, priority);
 		return this;
+	}
+
+	@Override
+	public Fidelity<Exploration> getExplorerFi() {
+		return explorerFi;
+	}
+
+	public void setExplorerFi(Fidelity<Exploration> explorerFi) {
+		this.explorerFi = explorerFi;
 	}
 
 	/**
@@ -212,12 +226,21 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 	}
 
 	@Override
-	public Map<String, Domain> getChildren() {
-		Map<String, Domain> children = new HashMap<>();
+	public Map<String, Mogram> getChildren() {
+		Map<String, Mogram> children = new HashMap<>();
 		for (Mogram mog : mograms) {
 			children.put(mog.getName(), (Domain) mog);
 		}
 		return children;
+	}
+
+	@Override
+	public Map<String, Context> getChildrenContexts() {
+		return childrenContexts;
+	}
+
+	public void setChildrenContexts(Map<String, Context> childrenContexts) {
+		this.childrenContexts = childrenContexts;
 	}
 
 	@Override
@@ -228,5 +251,6 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 	public void setAnalyzerFi(Fidelity<Analysis> analyzerFi) {
 		this.analyzerFi = analyzerFi;
 	}
+
 
 }

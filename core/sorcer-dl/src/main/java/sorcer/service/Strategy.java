@@ -165,7 +165,7 @@ public interface Strategy extends Arg {
 	}
 
 	public enum Opti implements Arg {
-		MAX, MIN;
+		ANAL, EXPL, SUP, MAX, MIN;
 
 		/* (non-Javadoc)
 		 * @see sorcer.service.Arg#getName()

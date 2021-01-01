@@ -43,13 +43,14 @@ import sorcer.core.plexus.*;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
+import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.consumer.ServiceConsumer;
 import sorcer.service.Projection;
 import sorcer.core.signature.*;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
-import sorcer.service.DisciplineFidelity;
+import sorcer.service.RegionFidelity;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.modeling.*;
@@ -68,7 +69,6 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.Collections;
 
-import static sorcer.co.operator.path;
 import static sorcer.co.operator.*;
 import static sorcer.mo.operator.*;
 
@@ -257,10 +257,6 @@ operator extends Operator {
         return context(args);
     }
 
-    public static Context cxt(Object... entries) throws ContextException {
-        return context(entries);
-    }
-
     public static Context data(Object... entries) throws ContextException {
         for (Object obj : entries) {
             if (!(obj instanceof String) || !(obj instanceof Function && ((Function)obj).getType().equals(Functionality.Type.VAL))) {
@@ -274,14 +270,25 @@ operator extends Operator {
         return (Context)context((Object[])entries);
     }
 
-    public static Context strategyContext(Object... entries) throws ContextException {
-        Context scxt =  context(entries);
+    public static Context strategyContext(Object... items) throws ContextException {
+        Context scxt =  context(items);
         ((ServiceContext)scxt).setType(Functionality.Type.STRATEGY);
         return scxt;
     }
 
-    public static ServiceContext context(Object... entries) throws ContextException {
-        return (ServiceContext)domainContext(entries);
+    public static Context cxt(Object... items) throws ContextException {
+        return context(items);
+    }
+
+    public static ServiceContext context(Object... items) throws ContextException {
+        if (items.length == 1 && items[0] instanceof Signature) {
+            try {
+                return (ServiceContext) ((LocalSignature) items[0]).initInstance();
+            } catch (SignatureException e) {
+                throw new ContextException(e);
+            }
+        }
+        return (ServiceContext)domainContext(items);
     }
 
     public static ContextDomain domainContext(Object... entries) throws ContextException {
@@ -355,9 +362,9 @@ operator extends Operator {
         Context.Out outPaths = null;
         Context.In inPaths = null;
         Paths paths = null;
-        EntryAnalyzer mdaEntry = null;
+        AnalysisEntry mdaEntry = null;
         ServiceFidelity mdaFi = null;
-        EntryExplorer explEntry = null;
+        ExplorationEntry explEntry = null;
         ServiceFidelity explFi = null;
         List<Path> responsePaths = null;
         boolean autoDeps = true;
@@ -427,10 +434,10 @@ operator extends Operator {
                     } else if (((ServiceFidelity) o).getFiType().equals(Fi.Type.EXPLORER)) {
                         explFi = (ServiceFidelity) o;
                     }
-                } else if (o instanceof EntryAnalyzer) {
-                    mdaEntry = (EntryAnalyzer) o;
-                } else if (o instanceof EntryExplorer) {
-                    explEntry = (EntryExplorer) o;
+                } else if (o instanceof AnalysisEntry) {
+                    mdaEntry = (AnalysisEntry) o;
+                } else if (o instanceof ExplorationEntry) {
+                    explEntry = (ExplorationEntry) o;
                 }
             }
         }
@@ -1627,6 +1634,12 @@ operator extends Operator {
         return new ServiceSignature(selector);
     }
 
+    public static Signature dspSig(String selector) throws SignatureException {
+        LocalSignature local = new LocalSignature();
+        local.setSelector(selector);
+        return local;
+    }
+
     public static Signature sig(String name, String selector)
         throws SignatureException {
         return new ServiceSignature(name, selector);
@@ -1770,13 +1783,13 @@ operator extends Operator {
         return fi;
     }
 
-    public static DisciplineFidelity dscFi(Fidelity... fidelities) {
-        DisciplineFidelity fi = new DisciplineFidelity(fidelities);
+    public static RegionFidelity rgnFi(Fidelity... fidelities) {
+        RegionFidelity fi = new RegionFidelity(fidelities);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;
     }
-    public static DisciplineFidelity dscFi(String name, Fidelity... fidelities) {
-        DisciplineFidelity fi = new DisciplineFidelity(name, fidelities);
+    public static RegionFidelity rgnFi(String name, Fidelity... fidelities) {
+        RegionFidelity fi = new RegionFidelity(name, fidelities);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;
     }
@@ -2963,19 +2976,6 @@ operator extends Operator {
         }
     }
 
-    public static Object get(Context context) throws ContextException,
-        RemoteException {
-        return context.getReturnValue();
-    }
-
-    public static Object get(Context context, int index)
-        throws ContextException {
-        if (context instanceof PositionalContext)
-            return ((PositionalContext) context).getValueAt(index);
-        else
-            throw new ContextException("Not PositionalContext, index: " + index);
-    }
-
     public static Object returnValue(Mogram mogram) throws ContextException,
         RemoteException {
         return mogram.getContext().getReturnValue();
@@ -3013,38 +3013,6 @@ operator extends Operator {
 
     public static Mogram sub(Routine mogram, String path) {
         return mogram.getComponentMogram(path);
-    }
-
-
-    public static Object get(Service service, String path)
-        throws ContextException {
-        Object obj = null;
-        if (service instanceof Context) {
-            obj = ((ServiceContext) service).get(path);
-            if (obj != null && obj instanceof Contextion) {
-                while (obj instanceof Contextion ||
-                    (obj instanceof Reactive && ((Reactive) obj).isReactive())) {
-                    try {
-                        obj = ((Evaluation) obj).asis();
-                    } catch (RemoteException e) {
-                        throw new ContextException(e);
-                    }
-                }
-            }
-        } else if (service instanceof Mogram) {
-            obj = (((Mogram) service).getContext()).asis(path);
-        }
-        return obj;
-    }
-
-    public static Object get(Routine exertion, String component, String path)
-        throws RoutineException {
-        Routine c = (Routine) exertion.getMogram(component);
-        try {
-            return get((Subroutine) c, path);
-        } catch (Exception e) {
-            throw new RoutineException(e);
-        }
     }
 
     public static <T> T softValue(Context<T> context, String path) throws ContextException {
@@ -3232,11 +3200,6 @@ operator extends Operator {
     public static Context.Return result(String path, Class type, Path[] paths) {
         return new Context.Return(path, Direction.OUT, type, paths);
     }
-
-    public static String getUnknown() {
-        return "unknown" + count++;
-    }
-
 
     public static class Range extends Slot<Integer, Integer> {
         private static final long serialVersionUID = 1L;
@@ -3479,6 +3442,7 @@ operator extends Operator {
             this.args = objs;
             this.paths = paths;
         }
+
         public Args(String path, Object... args) {
             this.args = args;
             this.path = path;
@@ -3840,7 +3804,20 @@ operator extends Operator {
     }
 
     public static Signature dscSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(new Kind[]{Kind.DISCIPLINE, Kind.TASKER});
+        return disciplineSig(signature);
+    }
+
+    public static Signature disciplineSig(Signature signature) {
+        ((ServiceSignature)signature).addRank(new Kind[]{Kind.DISCIPLINE, Kind.DESIGN, Kind.MODEL, Kind.TASKER});
+        return signature;
+    }
+
+    public static Signature dscInSig(Signature signature) {
+        return  disciplineInputSig( signature);
+    }
+
+    public static Signature disciplineInputSig(Signature signature) {
+        ((ServiceSignature)signature).addRank(new Kind[]{Kind.CONTEXT, Kind.DISCIPLINE, Kind.DESIGN, Kind.TASKER});
         return signature;
     }
 
@@ -3849,13 +3826,17 @@ operator extends Operator {
         return signature;
     }
 
-    public static Signature domainManagerSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(Kind.MODEL, Kind.MODEL_MANAGER);
+    public static Signature cxtSig(Signature signature) {
+        return contextSig(signature);
+    }
+
+    public static Signature contextSig(Signature signature) {
+        ((ServiceSignature)signature).addRank(new Kind[]{Kind.CONTEXT, Kind.TASKER});
         return signature;
     }
 
-    public static Signature optiSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(Kind.OPTIMIZER, Kind.TASKER);
+    public static Signature domainManagerSig(Signature signature) {
+        ((ServiceSignature)signature).addRank(Kind.MODEL, Kind.MODEL_MANAGER);
         return signature;
     }
 
@@ -3869,9 +3850,17 @@ operator extends Operator {
         return signature;
     }
 
+    public static Signature optiSig(Signature signature) {
+        return optimizerSig(signature);
+    }
+
     public static Signature optimizerSig(Signature signature) {
         ((ServiceSignature)signature).addRank(Kind.OPTIMIZER, Kind.TASKER);
         return signature;
+    }
+
+    public static Signature expSig(Signature signature) {
+        return explorerSig(signature);
     }
 
     public static Signature explorerSig(Signature signature) {

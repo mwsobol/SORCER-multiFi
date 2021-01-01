@@ -96,7 +96,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected Subroutine exertion;
 	protected String currentPrefix;
 	protected boolean isFinalized = false;
-	protected Functionality.Type type = Functionality.Type.CONTEXT;
+	protected Function.Type type = Function.Type.CONTEXT;
+	protected Model.Pattern pattern =  Model.Pattern.ANAL;
 	Signature.Direction direction = Signature.Direction.INOUT;
 
 	protected boolean isSoft = false;
@@ -2762,6 +2763,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return null;
 	}
 
+	public void substituteInputs(Context context, String... names) throws SetterException {
+		try {
+			getInputs().append(context);
+		} catch (ContextException | RemoteException e) {
+			throw new SetterException(e);
+		}
+	}
+
 	public void substitute(Arg... entries) throws SetterException {
 		if (entries == null)
 			return;
@@ -3036,6 +3045,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
+	@Override
+	public Context toContext() throws ContextException {
+		return this;
+	}
+
 	public Object getResponseAt(String path, Arg... entries) throws ContextException, RemoteException {
 		return getValue(path, entries);
 	}
@@ -3113,8 +3127,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (args != null) {
 				substitute((Arg[]) args);
 			}
-			Context inputs = inputContext.getInputs();
-			setValues(this, inputs);
+//			Context inputs = inputContext.getInputs();
+//			setValues(this, inputs);
+			append(inputContext);
 			return getResponse();
 		} catch (ContextException e) {
 			throw new EvaluationException(e);
@@ -3581,7 +3596,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return (ModelStrategy) domainStrategy;
 	}
 
-	public void settDomainStrategy(ModelStrategy domainStrategy) {
+	public void setDomainStrategy(ModelStrategy domainStrategy) {
 		this.domainStrategy = domainStrategy;
 	}
 
@@ -3651,7 +3666,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Mogram getDomain(String name) throws ContextException {
+	public Mogram getChild(String name) throws ContextException {
         Object domain = data.get(name);
         if (domain instanceof Mogram) {
             return (Mogram) domain;
@@ -3821,6 +3836,10 @@ public class ServiceContext<T> extends ServiceMogram implements
         this.multiFiPaths = multiFiPaths;
     }
 
+    public Context getDomainData() throws ContextException, RemoteException{
+    	return this;
+	}
+
     @Override
     public Fidelity selectFidelity(String selection) throws ConfigurationException {
         if (selection == null ) {
@@ -3834,4 +3853,12 @@ public class ServiceContext<T> extends ServiceMogram implements
         isValid = true;
         return cxtFi(selected.getName(), selected );
     }
+
+	public Model.Pattern getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(Model.Pattern pattern) {
+		this.pattern = pattern;
+	}
 }

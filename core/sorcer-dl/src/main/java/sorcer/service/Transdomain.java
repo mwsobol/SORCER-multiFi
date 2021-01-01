@@ -17,15 +17,19 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.Exploration;
+import sorcer.service.modeling.Finalization;
 import sorcer.service.modeling.cxtn;
 
 import java.util.Map;
 
-public interface Transdomain extends Contextion, ManagedRequest, cxtn {
+public interface Transdomain extends Transdiscipline, cxtn {
 
-    public Map<String, Domain> getChildren();
+    public String getDomainName();
 
-    public Fidelity<Analysis> getAnalyzerFi();
+    public Map<String, Mogram> getChildren();
+
+    public Map<String, Context>  getChildrenContexts();
 
     public Mogram getChild(String name);
 

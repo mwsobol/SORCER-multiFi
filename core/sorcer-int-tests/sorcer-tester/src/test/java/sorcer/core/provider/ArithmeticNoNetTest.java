@@ -9,6 +9,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
+import sorcer.co.operator;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.exertion.ObjectJob;
@@ -239,7 +240,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 				"j1",
 				sig("exert", ServiceJobber.class),
 				cxt(inVal("arg/x1", 10.0),
-						result("job/result", outPaths("j1/t3/result/y"))),
+						result("job/result", operator.outPaths("j1/t3/result/y"))),
 				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));

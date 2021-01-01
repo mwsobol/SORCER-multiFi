@@ -150,10 +150,15 @@ public class SorcerServiceInfo extends ServiceType {
 	public String serviceHome;
 
 	/**
+	 * The data URL; host:port used by this service.
+	 */
+	public String dataUrl;
+
+	/**
 	 * The data store URL or host:port used by this service.
 	 */
 	public String repository;
-	
+
 	/**
 	 * An icon file name associated with this service.
 	 */

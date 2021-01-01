@@ -23,6 +23,7 @@ import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.req.Req;
 import sorcer.core.invoker.ServiceInvoker;
+import sorcer.core.service.Collaboration;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
 import sorcer.service.modeling.Model;
@@ -36,6 +37,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.mo.operator.setValues;
+import static sorcer.so.operator.eval;
 import static sorcer.so.operator.exec;
 
 /*
@@ -69,6 +71,9 @@ import static sorcer.so.operator.exec;
 public class EntryModel extends PositionalContext<Object> implements Model, Invocation<Object> {
 
     private static final long serialVersionUID = -6932730998474298653L;
+
+    // model supporting collaboration
+	protected Collaboration collaboration;
 
 	public static EntryModel instance(Signature builder) throws SignatureException {
 		EntryModel model = (EntryModel) sorcer.co.operator.instance(builder);
@@ -463,7 +468,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		}
 	}
 
-	public Functionality getVar(String name) throws ContextException {
+	public Functionality getFunc(String name) throws ContextException {
 		String key;
 		Object val = null;
 		Iterator e = keyIterator();
@@ -562,7 +567,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	 * @return enumeration of marked variable nodes.
 	 * @throws ContextException
 	 */
-	public Enumeration getVarPaths(Functionality var) throws ContextException {
+	public Enumeration getFuncPaths(Functionality var) throws ContextException {
 		String assoc = VAR_NODE_TYPE + APS + var.getName() + APS + var.getType();
 		String[] paths = Contexts.getMarkedPaths(this, assoc);
 		Vector outpaths = new Vector();
@@ -626,10 +631,27 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		return this;
 	}
 
+	public Collaboration getCollaboration() {
+		return collaboration;
+	}
+
+	public void setCollaboration(Collaboration collaboration) {
+		this.collaboration = collaboration;
+	}
+
 	@Override
 	public String toString() {
 		return this.getClass().getName() + ":" + getName() + "\nkeys: " + keySet()
 				+ "\n" + super.toString();
 	}
 
+	@Override
+	public Context getResponse(Context context, Arg... args) throws ContextException {
+		try {
+			evaluate(context, args);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
+		return getOutput(args);
+	}
 }

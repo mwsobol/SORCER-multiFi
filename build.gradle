@@ -24,7 +24,7 @@ int ndx = ref.lastIndexOf("/")
 String branch = ref.substring(ndx+1).trim()
 String branchRef = branch.equals("master")?"":"-$branch"
 
-version = "8.8.2.15$branchRef"
+version = "8.8.2.52$branchRef"
 
 apply plugin: 'idea'
 idea {
@@ -51,10 +51,7 @@ task printClasspath() {
     }
 }
 
-//task wrapper(type: Wrapper) {
-//    description = 'Prints the Gradle wrapper version.'
-//    gradleVersion = '2.12'
-//}
+// gradle wrapper --gradle-version 6.6.1 --distribution-type all
 
 ext {
     enclaveRepo = "10.131.7.138:7001"
