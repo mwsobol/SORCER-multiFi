@@ -264,5 +264,6 @@ public class CoffeeServiceTest {
 		assertEquals(value(out, "delivery/cost"), 60);
 		assertEquals(value(out, "change$"), 10);
 	}
+
 }
 

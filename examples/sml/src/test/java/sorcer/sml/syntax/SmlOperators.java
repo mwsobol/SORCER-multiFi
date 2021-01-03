@@ -196,8 +196,18 @@ public class SmlOperators {
 
 
 	@Test
-	public void testIt() throws Exception {
-		logger.info("" + ent("name$domain").getProperName());
+	public void metaobjects() {
+		Object task = new Task();
+		Class  mtc1 = task.getClass();
+		Class  mtc2 = Task.class;
+		if (mtc1 == mtc2) {
+			logger.info("same: " + mtc1);
+		}
+		Class mmtc = mtc2.getClass();
+		Class mmmtc = mmtc.getClass();
+		logger.info("mmmtc is Object: " + (mmmtc instanceof Object));
+		logger.info("mmtc: " + mmtc.getName());
+		logger.info("mmmtc: " + mmmtc.getName());
 	}
 
 	@Test
