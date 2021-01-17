@@ -394,7 +394,13 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 	}
 
 	public void analyze(Context context) throws ContextException {
-		Context collabOut = new ServiceContext(name);
+		Context collabOut = null;
+		if (((ServiceContext)context).getColabType() == Strategy.Colab.BBinCxt) {
+			collabOut = input;
+		} else {
+			 collabOut = new ServiceContext(name);
+
+		}
 		Mogram domain = null;
 		try {
 			for (Path path : domainPaths) {
@@ -434,6 +440,9 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 					} else {
 						collabOut = input;
 					}
+					if (cxt != null) {
+						outputs.add(cxt);
+					}
 				} else if (domain.isExec()) {
 					if (domain instanceof Context && ((ServiceContext) domain).getType() == Functionality.Type.EXEC) {
 						// eventually add argument signatures per domain
@@ -442,11 +451,11 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 						cxt = response(domain);
 					}
 					collabOut.append(cxt.getDomainData());
+					if (cxt != null) {
+						outputs.add(cxt);
+					}
 				} else {
 					collabOut = input;
-				}
-				if (cxt != null) {
-					outputs.add(cxt);
 				}
 
 				Analysis analyzer = analyzerFi.getSelect();
@@ -668,5 +677,9 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 
 	public void setCouplings(List<Coupling> couplings) {
 		this.couplings = couplings;
+	}
+
+	public Functionality.Type getType() {
+		return Functionality.Type.COLLABORATION;
 	}
 }

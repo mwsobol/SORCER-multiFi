@@ -18,10 +18,11 @@ version = sorcerVersion
 
 jar {
     manifest {
-        attributes("Implementation-Title": "Service Provider", "Implementation-Version": version)
+        attributes("Implementation-Title": "Service Provider",
+                "Implementation-Version": sorcerVersion)
     }
-    baseName = "adder"
-    classifier = "prv"
+    archiveBaseName = 'adder'
+    archiveClassifier = 'prv'
     dependsOn classes
     from sourceSets.main.output
     exclude('sorcer/requestor/**')
@@ -29,10 +30,11 @@ jar {
 
 task servicePrvDlJar(type: Jar) {
     manifest {
-        attributes("Implementation-Title": "Service Provider Exported Classes", "Implementation-Version": version)
+        attributes("Implementation-Title": "Service Provider Exported Classes",
+                "Implementation-Version": sorcerVersion)
     }
-    baseName = "adder"
-    classifier = "dl"
+    archiveBaseName = "adder"
+    archiveClassifier = "dl"
     dependsOn classes
     from sourceSets.main.output
     include('sorcer/provider/adder/*')
@@ -42,10 +44,11 @@ task servicePrvDlJar(type: Jar) {
 
 task serviceReqJar(type: Jar) {
     manifest {
-        attributes("Implementation-Title": "Service Requestor", "Implementation-Version": version)
+        attributes("Implementation-Title": "Service Requestor",
+                "Implementation-Version": sorcerVersion)
     }
-    baseName = "adder"
-    classifier = "req"
+    archiveBaseName = "adder"
+    archiveClassifier = "req"
     dependsOn classes
     from sourceSets.main.output
     include('sorcer/requestor/**')
@@ -54,10 +57,10 @@ task serviceReqJar(type: Jar) {
 task servicePrvUiJar(type: Jar) {
     manifest {
         attributes("Implementation-Title": "Adder Service UI",
-                "Implementation-Version": version)
+                "Implementation-Version": sorcerVersion)
     }
-    baseName = "adder"
-    classifier = "ui"
+    archiveBaseName = "adder"
+    archiveClassifier = "ui"
     dependsOn classes
     from sourceSets.main.output
     include('sorcer/provider/adder/ui/**')

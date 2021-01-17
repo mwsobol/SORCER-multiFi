@@ -22,10 +22,11 @@ version = sorcerVersion
 
 jar {
     manifest {
-        attributes("Implementation-Title": "Service Provider", "Implementation-Version": version)
+        attributes("Implementation-Title": "Service Provider Classes",
+                "Implementation-Version": sorcerVersion)
     }
-    baseName = "coffeemaker"
-    classifier = "prv"
+    archiveBaseName = "coffeemaker"
+    archiveClassifier = "prv"
     dependsOn classes
     from sourceSets.main.output
     exclude('edu/pjatk/inn/coffeemaker/requestor/**')
@@ -33,10 +34,11 @@ jar {
 
 task servicePrvDlJar(type: Jar) {
     manifest {
-        attributes("Implementation-Title": "Service Provider Exported Classes", "Implementation-Version": version)
+        attributes("Implementation-Title": "Service Provider Exported Classes",
+                "Implementation-Version": sorcerVersion)
     }
-    baseName = "coffeemaker"
-    classifier = "dl"
+    archiveBaseName = "coffeemaker"
+    archiveClassifier = "dl"
     dependsOn classes
     from sourceSets.main.output
     include('edu/pjatk/inn/coffeemaker/*')
@@ -48,10 +50,11 @@ task servicePrvDlJar(type: Jar) {
 
 task serviceReqJar(type: Jar) {
     manifest {
-        attributes("Implementation-Title": "Service Requestor", "Implementation-Version": version)
+        attributes("Implementation-Title": "Service Requestor",
+                "Implementation-Version": sorcerVersion)
     }
-    baseName = "coffeemaker"
-    classifier = "req"
+    archiveBaseName = "coffeemaker"
+    archiveClassifier = "req"
     dependsOn classes
     from sourceSets.main.output
     include('edu/pjatk/inn/coffeemaker/requestor/**')

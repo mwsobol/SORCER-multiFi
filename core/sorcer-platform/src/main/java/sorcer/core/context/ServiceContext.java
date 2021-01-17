@@ -108,6 +108,16 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	public boolean isPersistantTaskAssociated = false;
 
+	/**
+	 * Blackboard context type for Collaboration
+	 */
+	private Strategy.Colab colabType  = Strategy.Colab.BBnew;
+
+	/**
+	 * Optimization context type for Optimizer
+	 */
+	private Strategy.Opti optiType = Strategy.Opti.MIN;
+
 	/** EMPTY LEAF NODE ie. node with no data and not empty string */
 	public static String EMPTY_LEAF = ":Empty";
 
@@ -3853,6 +3863,23 @@ public class ServiceContext<T> extends ServiceMogram implements
         isValid = true;
         return cxtFi(selected.getName(), selected );
     }
+
+	public Strategy.Opti getOptiType() {
+		return optiType;
+	}
+
+	public void setOptiType(Strategy.Opti optiType) {
+		this.optiType = optiType;
+	}
+
+	public Strategy.Colab getColabType() {
+		return colabType;
+	}
+
+	public void setColabType(Strategy.Colab colabType) {
+		this.colabType = colabType;
+	}
+
 
 	public Model.Pattern getPattern() {
 		return pattern;

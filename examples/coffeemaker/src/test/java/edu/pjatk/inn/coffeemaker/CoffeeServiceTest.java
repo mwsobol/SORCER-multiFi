@@ -154,7 +154,7 @@ public class CoffeeServiceTest {
 	}
 
 	@Test
-	public void getJobLocalCoffee() throws Exception {
+	public void getCoffeeLocalJob() throws Exception {
 
 		Task coffee = task("tc", sig("makeCoffee", CoffeeMaker.class), context(
 			inVal("recipe/key", "espresso"),
@@ -192,7 +192,7 @@ public class CoffeeServiceTest {
 	}
 
 	@Test
-	public void getJobRemoteCoffee() throws Exception {
+	public void getCoffeeRemoteJob() throws Exception {
 
 		Task coffee = task("tc", sig("makeCoffee", CoffeeService.class), context(
 			inVal("recipe/key", "espresso"),
@@ -216,7 +216,7 @@ public class CoffeeServiceTest {
 	}
 
 	@Test
-	public void getBlockLocalCoffee() throws Exception {
+	public void getCoffeeLocalBlock() throws Exception {
 
 		Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class), context(
 			inVal("recipe/key", "espresso"),
@@ -241,7 +241,7 @@ public class CoffeeServiceTest {
 	}
 
 	@Test
-	public void getBlockRemoteCoffee() throws Exception {
+	public void getCoffeeRemoteBlock() throws Exception {
 
 		Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
 			inVal("recipe/key", "espresso"),

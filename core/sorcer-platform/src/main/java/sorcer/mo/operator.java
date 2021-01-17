@@ -1188,6 +1188,14 @@ public class operator {
         return null;
     }
 
+    public static void setOut(Service request, Context object) {
+        if (request instanceof Collaboration) {
+            ((Collaboration) request).setOutput((Context)object);
+        } else if (request instanceof Slot) {
+            ((Slot)request).setOut(object);
+        }
+    }
+
     public static void setDmnOut(Request request, Context context) {
         if (request instanceof Collaboration) {
             ((Collaboration) request).getOutputs().set(context);
@@ -1302,6 +1310,10 @@ public class operator {
     }
 
     public static Collaboration clb(Object... data) throws ContextException {
+        if (data[0] instanceof Context &&
+                ((Context)data[0]).getSubjectValue() instanceof Collaboration) {
+            return (Collaboration) ((Context)data[0]).getSubjectValue();
+        }
         String name = getUnknown();
         List<Domain> domains = new ArrayList<>();
         List<ServiceFidelity> discFis = new ArrayList<>();
