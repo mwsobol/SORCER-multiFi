@@ -170,12 +170,6 @@ public class CoffeeServiceTest {
 			pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "coffee/change")));
 
 		jcd = exert(jcd);
-
-		//TODO where selfContext is created?
-		// should be only when outPaths in thr job are declared
-//        Context selfOut = selfContext(jcd);
-//        Context out = upcontext(jcd);
-
 		Context out = upcontext(exert(jcd));
 
 		logger.info("out: " + out);
