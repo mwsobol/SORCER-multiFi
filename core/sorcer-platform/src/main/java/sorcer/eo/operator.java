@@ -1759,7 +1759,7 @@ operator extends Operator {
         return fi;
     }
 
-    public static List<Service>  fis(Mogram mogram) {
+    public static List<Service>  fis(Discipline mogram) {
         if (mogram.getMultiFi() != null) {
             return mogram.getMultiFi().getSelects();
         } else {
@@ -1767,8 +1767,8 @@ operator extends Operator {
         }
     }
 
-    public static Fidelity fi(Mogram mogram) {
-        return mogram.getSelectedFidelity();
+    public static Fidelity fi(Discipline mogram) {
+        return ((Mogram)mogram).getSelectedFidelity();
     }
 
     public static Fidelity fi(String name, String path) {
@@ -2680,9 +2680,9 @@ operator extends Operator {
         return task;
     }
 
-    public static List<Mogram> mograms(Mogram mogram) {
+    public static List<Discipline> mograms(Discipline mogram) {
         if (mogram instanceof Mogram) {
-            return mogram.getAllMograms();
+            return ((Mogram)mogram).getAllMograms();
         } else {
             return new ArrayList();
         }
@@ -2962,12 +2962,12 @@ operator extends Operator {
     }
 
     static private void unifyFiManager(Job job) {
-        List<Mogram> Mogram = job.getMograms();
+        List<Discipline> mograms = job.getMograms();
         FidelityManager root = (FidelityManager)job.getFidelityManager();
         if (root != null) {
             FidelityManager child = null;
-            for (Mogram m : Mogram) {
-                child = (FidelityManager) m.getFidelityManager();
+            for (Discipline m : mograms) {
+                child = (FidelityManager) ((Mogram)m).getFidelityManager();
                 root.getFidelities().putAll(child.getFidelities());
                 root.getMetafidelities().putAll(child.getMetafidelities());
                 root.getMorphFidelities().putAll(child.getMorphFidelities());
@@ -3011,7 +3011,7 @@ operator extends Operator {
         }
     }
 
-    public static Mogram sub(Routine mogram, String path) {
+    public static Discipline sub(Routine mogram, String path) {
         return mogram.getComponentMogram(path);
     }
 
@@ -3095,25 +3095,25 @@ operator extends Operator {
         return values;
     }
 
-    public static Mogram exertion(Routine exertion, String componentExertionName) {
+    public static Discipline exertion(Routine exertion, String componentExertionName) {
         return exertion.getComponentMogram(componentExertionName);
     }
-    public static Mogram xrt(Routine exertion, String componentExertionName) {
+    public static Discipline xrt(Routine exertion, String componentExertionName) {
         return exertion.getComponentMogram(componentExertionName);
     }
 
-    public static Mogram tracable(Mogram mogram) {
-        List<Mogram> mograms = ((ServiceMogram) mogram).getAllMograms();
-        for (Mogram m : mograms) {
+    public static Discipline tracable(Mogram mogram) {
+        List<Discipline> mograms = mogram.getAllMograms();
+        for (Discipline m : mograms) {
             ((Routine) m).getControlContext().setTracable(true);
         }
         return mogram;
     }
 
     public static List<String> trace(Mogram mogram) {
-        List<Mogram> mograms = ((ServiceMogram)mogram).getAllMograms();
+        List<Discipline> mograms = mogram.getAllMograms();
         List<String> trace = new ArrayList<String>();
-        for (Mogram m : mograms) {
+        for (Discipline m : mograms) {
             trace.addAll(((Routine) m).getControlContext().getTrace());
         }
         return trace;
@@ -3597,7 +3597,7 @@ operator extends Operator {
     }
 
     public static OutEndPoint outPoint(Mogram outExertion, String outPath) {
-        return new OutEndPoint((Routine)outExertion, outPath);
+        return new OutEndPoint(outExertion, outPath);
     }
 
     public static InEndPoint inPoint(String inComponent, String inPath) {
@@ -3605,7 +3605,7 @@ operator extends Operator {
     }
 
     public static InEndPoint inPoint(Mogram inExertion, String inPath) {
-        return new InEndPoint((Routine)inExertion, inPath);
+        return new InEndPoint(inExertion, inPath);
     }
 
     public static Pipe pipe(OutEndPoint outEndPoint, InEndPoint inEndPoint) {

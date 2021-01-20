@@ -215,7 +215,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 			exertion.getDataContext().setScope(null);
 	}
 
-    protected List<Mogram> getInputExertions() {
+    protected List<Discipline> getInputExertions() {
         return xrt.getMograms();
 	}
 

@@ -77,7 +77,7 @@ public class ObjectCloner {
 		if (obj instanceof Job) {
 			Uuid id = UuidFactory.generate();
 			((Subroutine) obj).setId(UuidFactory.generate());
-			for (Mogram each : ((Job) obj).getMograms()) {
+			for (Discipline each : ((Job) obj).getMograms()) {
 				((Subroutine) each).setParentId(id);
 				renewIDs(each);
 			}

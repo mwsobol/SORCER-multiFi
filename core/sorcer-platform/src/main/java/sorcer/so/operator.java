@@ -311,7 +311,7 @@ public class operator extends Operator {
 
     public static Object response(ContextDomain model, String path, String domain) throws ContextException {
         if (model.isEvaluated() && ((ServiceMogram)model).getMdaFi() == null) {
-            return ((ServiceContext)model).getChild(domain).getEvaluatedValue(path);
+            return ((Mogram)((ServiceContext)model).getChild(domain)).getEvaluatedValue(path);
         } else {
             try {
                 return ((Context)((ServiceContext)model).getChild(domain)).getValue(path);
@@ -346,7 +346,7 @@ public class operator extends Operator {
             return exertionResponse((Routine) mogram, items);
         } else if (mogram instanceof ContextDomain &&  ((ServiceMogram)mogram).getType().equals(Functionality.Type.MADO)) {
             if (mogram.isEvaluated()) {
-                return (ServiceContext) ((ServiceContext) mogram).getChild((String) items[0]).getEvaluatedValue((String) items[1]);
+                return (ServiceContext) ((Mogram)((ServiceContext) mogram).getChild((String) items[0])).getEvaluatedValue((String) items[1]);
             } else {
                 return (ServiceContext) ((ServiceContext) ((ServiceContext) mogram).getChild((String) items[0])).getValue((String) items[1]);
             }

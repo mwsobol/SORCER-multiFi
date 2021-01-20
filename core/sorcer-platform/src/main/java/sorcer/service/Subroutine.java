@@ -36,7 +36,6 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
-import sorcer.service.modeling.Model;
 
 import javax.security.auth.Subject;
 import java.rmi.RemoteException;
@@ -45,7 +44,6 @@ import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static sorcer.so.operator.eval;
 import static sorcer.so.operator.exec;
 
 /**
@@ -276,8 +274,8 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
             substitute(entries);
             if (context != null) {
                 if (((ServiceContext) context).isLinked()) {
-                    List<Mogram> exts = getAllMograms();
-                    for (Mogram e : exts) {
+                    List<Discipline> exts = getAllMograms();
+                    for (Discipline e : exts) {
                         Object link = context.getLink(e.getName());
                         if (link instanceof ContextLink) {
                             e.getContext().append(
@@ -286,9 +284,6 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
                     }
 
                 }
-                // else {
-                // dataContext.append(context);
-                // }
             }
             return invoke(entries);
         } catch (Exception e) {
@@ -437,7 +432,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     public void setSessionId(Uuid id) {
         sessionId = id;
         if (this instanceof Transroutine) {
-            List<Mogram> v =  this.getMograms();
+            List<Discipline> v =  this.getMograms();
             for (int i = 0; i < v.size(); i++) {
                 ((Subroutine) v.get(i)).setSessionId(id);
             }
@@ -481,8 +476,8 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
             return false;
     }
 
-    public List<Mogram> getAllMograms() {
-        List<Mogram> exs = new ArrayList<Mogram>();
+    public List<Discipline> getAllMograms() {
+        List<Discipline> exs = new ArrayList();
         getMograms(exs);
         return exs;
     }
@@ -839,17 +834,17 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
 
     public List<Signature> getAllSignatures() {
         List<Signature> allSigs = new ArrayList<Signature>();
-        List<Mogram> allExertions = getAllMograms();
-        for (Mogram e : allExertions) {
-            allSigs.add(e.getProcessSignature());
+        List<Discipline> allExertions = getAllMograms();
+        for (Discipline e : allExertions) {
+            allSigs.add(((Mogram)e).getProcessSignature());
         }
         return allSigs;
     }
 
     public List<Signature> getAllTaskSignatures() {
         List<Signature> allSigs = new ArrayList<Signature>();
-        List<Mogram> allExertions = getAllMograms();
-        for (Mogram e : allExertions) {
+        List<Discipline> allExertions = getAllMograms();
+        for (Discipline e : allExertions) {
             if (e instanceof Task)
                 allSigs.add(((Routine)e).getProcessSignature());
         }
@@ -866,11 +861,11 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     public void updateValue(Object value) throws ContextException {
-        List<Mogram> exertions = getAllMograms();
+        List<Discipline> exertions = getAllMograms();
         // logger.info(" eval = " + eval);
         // logger.info(" this exertion = " + this);
         // logger.info(" domains = " + domains);
-        for (Mogram e : exertions) {
+        for (Discipline e : exertions) {
             if (e instanceof Routine && !((Routine)e).isJob()) {
                 // logger.info(" exertion i = "+ e.getName());
                 Context cxt = ((Routine)e).getContext();

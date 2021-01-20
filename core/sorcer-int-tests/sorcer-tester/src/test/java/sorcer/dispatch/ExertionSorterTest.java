@@ -40,7 +40,7 @@ public class ExertionSorterTest {
             System.out.print("T " + topXrt.getName() + " ");
         else {
             System.out.println("J " + topXrt.getName() + " {");
-            for (Mogram xrt : topXrt.getMograms()) {
+            for (Discipline xrt : topXrt.getMograms()) {
                 printAllExertions((Routine)xrt);
             }
             System.out.println(" }");
@@ -189,11 +189,11 @@ public class ExertionSorterTest {
         ExertionSorter es = new ExertionSorter(job);
         System.out.println("After sorting");
         printAllExertions(es.getSortedJob());
-        final Mogram f3 = job.getMogram("Task_f3");
-        final Mogram j2 = job.getMogram("Job_f2");
-        final Mogram j8 = job.getMogram("Job_f8");
-        final Mogram j20 = job.getMogram("Job_f20");
-        List<Mogram> expList = new ArrayList<Mogram>();
+        final Discipline f3 = job.getMogram("Task_f3");
+        final Discipline j2 = job.getMogram("Job_f2");
+        final Discipline j8 = job.getMogram("Job_f8");
+        final Discipline j20 = job.getMogram("Job_f20");
+        List<Discipline> expList = new ArrayList();
         expList.add(j2);
         expList.add(f3);
         expList.add(j8);

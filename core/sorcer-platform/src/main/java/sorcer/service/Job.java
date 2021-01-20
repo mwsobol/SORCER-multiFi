@@ -169,16 +169,16 @@ public class Job extends Transroutine {
 	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
 	 */
 	@Override
-	public Mogram addMogram(Mogram ex) throws RoutineException {
+	public Discipline addMogram(Discipline ex) throws RoutineException {
 		mograms.add(ex);
-		ex.setIndex(mograms.indexOf(ex));
+		((Mogram)ex).setIndex(mograms.indexOf(ex));
 		try {
-			controlContext.registerExertion(ex);
-			ex.getDataContext().setScope(dataContext);
+			controlContext.registerExertion((Mogram)ex);
+			((Mogram)ex).getDataContext().setScope(dataContext);
 		} catch (ContextException e) {
 			throw new RoutineException(e);
 		}
-		ex.setParentId(getId());
+		((Mogram)ex).setParentId(getId());
 //		((ServiceMogram)ex).setParent(this);
 		return this;
 	}
@@ -213,7 +213,7 @@ public class Job extends Transroutine {
                 }
             }
             if (mograms.size() > 0) {
-                for (Mogram ex : mograms) {
+                for (Discipline ex : mograms) {
                     delegate.addMogram(ex);
                 }
             }
@@ -325,9 +325,9 @@ public class Job extends Transroutine {
 	@Override
 	public List<ThrowableTrace> getExceptions() {
 		List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
-		for (Mogram ext : mograms) {
+		for (Discipline ext : mograms) {
 			try {
-				exceptions.addAll(ext.getExceptions());
+				exceptions.addAll(((Mogram)ext).getExceptions());
 			} catch (RemoteException e) {
 				exceptions.add(new ThrowableTrace("Problem while collecting exceptions", e));
 			}
@@ -355,7 +355,7 @@ public class Job extends Transroutine {
 		return true;
 	}
 
-	public Mogram getExertion(int index) {
+	public Discipline getExertion(int index) {
 		return mograms.get(index);
 	}
 
@@ -406,7 +406,7 @@ public class Job extends Transroutine {
 	public Context linkContext(Context context, String path) {
 		Mogram ext;
 		for (int i = 0; i < size(); i++) {
-			ext = mograms.get(i);
+			ext = (Mogram) mograms.get(i);
 			try {
 				((Subroutine) ext).linkContext(context, path + CPS + ext.getName());
 			} catch (ContextException e) {
@@ -420,7 +420,7 @@ public class Job extends Transroutine {
 	public Context linkControlContext(Context context, String path) {
 		Mogram ext;
 		for (int i = 0; i < size(); i++) {
-			ext = mograms.get(i);
+			ext = (Mogram) mograms.get(i);
 			try {
 				((Subroutine) ext).linkControlContext(context, path + CPS
 						+ ext.getName());
@@ -444,7 +444,7 @@ public class Job extends Transroutine {
 		Mogram exti = this;
 		for (String attribute : attributes) {
 			if (((Subroutine) exti).hasChild(attribute)) {
-				exti = ((Job) exti).getChild(attribute);
+				exti = (Mogram) ((Job) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					last = attribute;
 					break;

@@ -118,7 +118,7 @@ public class OptTask extends ConditionalTask {
 		return cs;
 	}
 	
-	public List<Mogram> getMograms(List<Mogram> exs) {
+	public List<Discipline> getMograms(List<Discipline> exs) {
 		exs.add((Mogram)target);
 		exs.add(this);
 		return exs;

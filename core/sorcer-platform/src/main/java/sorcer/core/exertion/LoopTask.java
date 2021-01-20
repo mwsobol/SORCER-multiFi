@@ -225,7 +225,7 @@ public class LoopTask extends ConditionalTask {
 		return exceptions;
 	}
 	
-	public List<Mogram> getMograms(List<Mogram> exs) {
+	public List<Discipline> getMograms(List<Discipline> exs) {
 		if (target instanceof Mogram) {
 			exs.add((Mogram) target);
 			exs.add(this);

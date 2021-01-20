@@ -18,7 +18,6 @@
 package sorcer.core.context;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -3676,7 +3675,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Mogram getChild(String name) throws ContextException {
+	public Discipline getChild(String name) throws ContextException {
         Object domain = data.get(name);
         if (domain instanceof Mogram) {
             return (Mogram) domain;

@@ -124,7 +124,7 @@ public class operator {
 
     public static Object value(Context context, String path, String domain) throws ContextException {
         if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
-            return context.getChild(domain).getEvaluatedValue(path);
+            return ((Mogram)context.getChild(domain)).getEvaluatedValue(path);
         } else {
             try {
                 return ((Context) context.getChild(domain)).getValue(path);

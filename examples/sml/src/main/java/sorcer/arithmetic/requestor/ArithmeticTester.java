@@ -281,10 +281,10 @@ public class ArithmeticTester extends SorcerConsumer {
 		logger.info("job f1 context: " + context(out));
 		logger.info("job f1 job context: " + upcontext(out));
 		logger.info("job f1 f3/result/y3: " + get(out, "f1/f3/result/y3"));
-		logger.info("task f4 trace: " + trace(xrt(out, "f1/f2/f4")));
-		logger.info("task f5 trace: " + trace(xrt(out, "f1/f2/f5")));
-		logger.info("task f3 trace: " +  trace(xrt(out, "f1/f3")));
-		logger.info("task f2 trace: " +  trace(xrt(out, "f1/f2")));
+		logger.info("task f4 trace: " + trace((Mogram) xrt(out, "f1/f2/f4")));
+		logger.info("task f5 trace: " + trace((Mogram) xrt(out, "f1/f2/f5")));
+		logger.info("task f3 trace: " +  trace((Mogram) xrt(out, "f1/f3")));
+		logger.info("task f2 trace: " +  trace((Mogram) xrt(out, "f1/f2")));
 		logger.info("task f1 trace: " +  trace(out));
 		return out;
 	}
@@ -319,10 +319,10 @@ private Routine f1SEQpull() throws Exception {
 		logger.info("job f1 context: " + context(out));
 		logger.info("job f1 job context: " + upcontext(out));
 		logger.info("job f1 f3/result/y3: " + get(out, "f1/f3/result/y3"));
-		logger.info("task f4 trace: " + trace(xrt(out, "f1/f2/f4")));
-		logger.info("task f5 trace: " + trace(xrt(out, "f1/f2/f5")));
-		logger.info("task f3 trace: " +  trace(xrt(out, "f1/f3")));
-		logger.info("task f2 trace: " +  trace(xrt(out, "f1/f2")));
+		logger.info("task f4 trace: " + trace((Mogram) xrt(out, "f1/f2/f4")));
+		logger.info("task f5 trace: " + trace((Mogram) xrt(out, "f1/f2/f5")));
+		logger.info("task f3 trace: " +  trace((Mogram) xrt(out, "f1/f3")));
+		logger.info("task f2 trace: " +  trace((Mogram) xrt(out, "f1/f2")));
 		logger.info("task f1 trace: " +  trace(out));
 		return out;
 	}

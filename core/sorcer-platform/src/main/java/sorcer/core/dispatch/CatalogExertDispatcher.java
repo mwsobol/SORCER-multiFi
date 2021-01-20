@@ -300,10 +300,10 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 			dispatcher = MogramDispatcherFactory.getFactory()
 					.createDispatcher(block, sharedContexts, true, provider);
 
-            for (Mogram mog : block.getMograms()) {
-                if (mog.getDataContext() != null && mog.getDataContext().getScope() == null) {
+            for (Discipline mog : block.getMograms()) {
+                if (((Mogram)mog).getDataContext() != null && ((Mogram)mog).getDataContext().getScope() == null) {
                     if (block.getContext() != null) {
-                        mog.getDataContext().setScope(block.getContext());
+                        ((Mogram)mog).getDataContext().setScope(block.getContext());
                     }
                 }
             }

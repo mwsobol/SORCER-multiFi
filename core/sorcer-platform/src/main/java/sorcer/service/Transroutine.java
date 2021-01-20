@@ -19,7 +19,6 @@ package sorcer.service;
 
 import net.jini.id.Uuid;
 import sorcer.core.context.ControlContext;
-import sorcer.core.context.ServiceContext;
 import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.dmn;
 
@@ -37,7 +36,7 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 	/**
 	 * Component domains of this job (the Composite Design pattern)
 	 */
-	protected List<Mogram> mograms = new ArrayList<Mogram>();
+	protected List<Discipline> mograms = new ArrayList<Discipline>();
 
 	protected Fidelity<Analysis> analyzerFi;
 
@@ -63,7 +62,7 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 	};
 
 	public void reset(int state) {
-		for(Mogram e : mograms)
+		for(Discipline e : mograms)
 			((Subroutine)e).reset(state);
 
 		this.setStatus(state);
@@ -101,10 +100,10 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 		}
 	}
 
-	public Mogram removeExertion(Mogram mogram) throws ContextException {
+	public Discipline removeExertion(Discipline mogram) throws ContextException {
 		// int index = ((ExertionImpl)exertion).getIndex();
 		mograms.remove(mogram);
-		controlContext.deregisterExertion(this, mogram);
+		controlContext.deregisterExertion(this, (Mogram)mogram);
 		return mogram;
 	}
 
@@ -119,7 +118,7 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 		return (Routine) mograms.get(index);
 	}
 
-	public void setMograms(List<Mogram> mograms) {
+	public void setMograms(List<Discipline> mograms) {
 		this.mograms = mograms;
 
 	}
@@ -144,12 +143,12 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 	 *
 	 * @return all component domains
 	 */
-	public List<Mogram> getMograms() {
+	public List<Discipline> getMograms() {
 		return mograms;
 	}
 
-	public List<Mogram> getAllMograms() {
-		List<Mogram> allMograms = new ArrayList<>();
+	public List<Discipline> getAllMograms() {
+		List<Discipline> allMograms = new ArrayList<>();
 		return getMograms(allMograms);
 	}
 
@@ -158,16 +157,16 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 		return getContextions(allContextions);
 	}
 
-	public List<Mogram> getMograms(List<Mogram> mogramList) {
-		for (Mogram e : mograms) {
-			e.getMograms(mogramList);
+	public List<Discipline> getMograms(List<Discipline> mogramList) {
+		for (Discipline e : mograms) {
+			((Mogram)e).getMograms(mogramList);
 		}
 		mogramList.add(this);
 		return mogramList;
 	}
 
 	public List<Contextion> getContextions(List<Contextion> contextionList) {
-		for (Mogram e : mograms) {
+		for (Discipline e : mograms) {
 			e.getContextions(contextionList);
 		}
 		contextionList.add(this);
@@ -175,15 +174,15 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 	}
 
 	public boolean hasChild(String childName) {
-		for (Mogram ext : mograms) {
+		for (Discipline ext : mograms) {
 			if (ext.getName().equals(childName))
 				return true;
 		}
 		return false;
 	}
 
-	public Mogram getChild(String childName) {
-		for (Mogram ext : mograms) {
+	public Discipline getChild(String childName) {
+		for (Discipline ext : mograms) {
 			if (ext.getName().equals(childName))
 				return ext;
 		}
@@ -201,8 +200,8 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 
 	@Override
 	public Object get(String component) {
-		List<Mogram> allMograms = getAllMograms();
-		for (Mogram mog : allMograms) {
+		List<Discipline> allMograms = getAllMograms();
+		for (Discipline mog : allMograms) {
 			if (mog.getName().equals(component)) {
 				return mog;
 			}
@@ -210,7 +209,7 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 		return null;
 	}
 
-	abstract public Mogram getComponentMogram(String path);
+	abstract public Discipline getComponentMogram(String path);
 	
 	abstract public Context getComponentContext(String path) throws ContextException;
 
@@ -226,10 +225,10 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 	}
 
 	@Override
-	public Map<String, Mogram> getChildren() {
-		Map<String, Mogram> children = new HashMap<>();
-		for (Mogram mog : mograms) {
-			children.put(mog.getName(), (Domain) mog);
+	public Map<String, Discipline> getChildren() {
+		Map<String, Discipline> children = new HashMap<>();
+		for (Discipline mog : mograms) {
+			children.put(mog.getName(), mog);
 		}
 		return children;
 	}
