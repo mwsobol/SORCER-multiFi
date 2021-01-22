@@ -1683,6 +1683,20 @@ public class operator {
         return null;
     }
 
+    public static Context updateDomainContext(Context context, Context domainContext) throws ContextException {
+        if (context instanceof ServiceContext) {
+            ContextList domainContexts = (ContextList) context.get(Context.COMPONENT_CONTEXT_PATH);
+            Context edc = domainContexts.select(domainContext.getName());
+            Iterator<Map.Entry<String, Object>> eit =
+                ((ServiceContext)domainContext).getData().entrySet().iterator();
+            while (eit.hasNext()) {
+                Map.Entry edce = eit.next();
+                ((ServiceContext)context).put((String) edce.getKey(), edce.getValue());
+            }
+        }
+        return context;
+    }
+
     public static Context setDomainContext(Context context, Context domainContext) throws ContextException {
         if (context instanceof ServiceContext) {
             Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
