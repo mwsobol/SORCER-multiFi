@@ -44,7 +44,7 @@ import java.util.Map;
 import static sorcer.so.operator.exec;
 import static sorcer.so.operator.response;
 
-public class Collaboration implements Transdomain, Dependency, cxtn {
+public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 	private static final long serialVersionUID = 1L;
 
@@ -81,7 +81,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 
 	protected Fidelity<Exploration> explorerFi;
 
-	protected Map<String, Mogram> children = new HashMap<>();
+	protected Map<String, Discipline> children = new HashMap<>();
 
 	protected List<Coupling> couplings;
 
@@ -152,7 +152,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
         this.domainPaths = domainPaths;
     }
 
-	public Mogram getDomain(String name) {
+	public Discipline getDomain(String name) {
 		return children.get(name);
 	}
 
@@ -240,9 +240,9 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 		this.analyzerFi = analyzerFi;
 	}
 
-	public List<Mogram> getDisciplineList() {
-		List<Mogram> domainList = new ArrayList<>();
-		for (Mogram disc : children.values()) {
+	public List<Discipline> getDisciplineList() {
+		List<Discipline> domainList = new ArrayList<>();
+		for (Discipline disc : children.values()) {
 			if (disc instanceof Region) {
 				domainList.add(disc);
 			}
@@ -394,17 +394,23 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 	}
 
 	public void analyze(Context context) throws ContextException {
-		Context collabOut = new ServiceContext(name);
-		Mogram domain = null;
+		Context collabOut = null;
+		if (((ServiceContext)context).getColabType() == Strategy.Colab.BBinCxt) {
+			collabOut = input;
+		} else {
+			 collabOut = new ServiceContext(name);
+
+		}
+		Discipline domain = null;
 		try {
 			for (Path path : domainPaths) {
 				domain = children.get(path.path);
 				if (domain instanceof SignatureDomain) {
 					domain = ((SignatureDomain) domain).getDomain();
-					children.put(domain.getDomainName(), domain);
+					children.put(((Mogram)domain).getDomainName(), domain);
 				}
-				Context domainCxt = sorcer.mo.operator.getDomainContext(context, domain.getDomainName());
-				Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getDomainName());
+				Context domainCxt = sorcer.mo.operator.getDomainContext(context, ((Mogram)domain).getDomainName());
+				Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, ((Mogram)domain).getDomainName());
 				Context cxt = null;
 				if (domainCxt != null) {
 					if (domain instanceof Dispatch) {
@@ -424,7 +430,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 							throw new ContextException("response not Context");
 						}
 						collabOut.append(cxt);
-					} else if (domain.isExec()) {
+					} else if (((Mogram)domain).isExec()) {
 						if (domain instanceof Mogram) {
 							cxt = evaluateDomain(domain, domainCxt);
 						} else {
@@ -434,24 +440,27 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 					} else {
 						collabOut = input;
 					}
-				} else if (domain.isExec()) {
+					if (cxt != null) {
+						outputs.add(cxt);
+					}
+				} else if (((Mogram)domain).isExec()) {
 					if (domain instanceof Context && ((ServiceContext) domain).getType() == Functionality.Type.EXEC) {
 						// eventually add argument signatures per domain
 						cxt = (Context) domain.execute();
 					} else {
-						cxt = response(domain);
+						cxt = response((Mogram)domain);
 					}
 					collabOut.append(cxt.getDomainData());
+					if (cxt != null) {
+						outputs.add(cxt);
+					}
 				} else {
 					collabOut = input;
-				}
-				if (cxt != null) {
-					outputs.add(cxt);
 				}
 
 				Analysis analyzer = analyzerFi.getSelect();
 				if (analyzerFi != null) {
-					collabOut.putValue(Functionality.Type.DOMAIN.toString(), domain.getDomainName());
+					collabOut.putValue(Functionality.Type.DOMAIN.toString(), ((Mogram)domain).getDomainName());
 					analyzer.analyze(domain, collabOut);
 				}
 
@@ -466,18 +475,18 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 
 	public void initializeDomains() throws SignatureException {
 		// initialize domains specified by builder signatures
-		for (Mogram domain : children.values()) {
+		for (Discipline domain : children.values()) {
 			if (domain instanceof SignatureDomain) {
-				boolean isExec = domain.isExec();
+				boolean isExec = ((Mogram)domain).isExec();
 				domain = ((SignatureDomain) domain).getDomain();
-				children.put(domain.getDomainName(), domain);
-				domain.setExec(isExec);
+				children.put(((Mogram)domain).getDomainName(), domain);
+				((Mogram)domain).setExec(isExec);
 			}
 		}
 	}
 
 	public OptimizationModeling getOptimizationDomain() {
-		for (Mogram domain : children.values()) {
+		for (Discipline domain : children.values()) {
 			if (domain instanceof OptimizationModeling) {
 				return (OptimizationModeling) domain;
 			}
@@ -552,12 +561,10 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 			this.dependers.add(depender);
 	}
 
-	@Override
 	public List<Evaluation> getDependers() {
 		return dependers;
 	}
 
-	@Override
 	public String getDomainName() {
 		return domainName;
 	}
@@ -566,13 +573,12 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 		this.domainName = domainName;
 	}
 
-	@Override
-	public Map<String, Mogram> getChildren() {
+	public Map<String, Discipline> getChildren() {
 		return children;
 	}
 
 	@Override
-	public Mogram getChild(String name) {
+	public Discipline getChild(String name) {
 		return children.get(name);
 	}
 
@@ -586,7 +592,6 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 		this.scope = scope;;
 	}
 
-	@Override
 	public Object get(String path$domain) {
 		String path = null;
 		String domain = null;
@@ -594,7 +599,7 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 			int ind = path$domain.indexOf("$");
 			path = path$domain.substring(0, ind);
 			domain = path$domain.substring(ind + 1);
-			return getChild(domain).get(path);
+			return ((Mogram)getChild(domain)).get(path);
 		} else if (path$domain != null) {
 			return getChild(path$domain);
 		}
@@ -668,5 +673,9 @@ public class Collaboration implements Transdomain, Dependency, cxtn {
 
 	public void setCouplings(List<Coupling> couplings) {
 		this.couplings = couplings;
+	}
+
+	public Functionality.Type getType() {
+		return Functionality.Type.COLLABORATION;
 	}
 }

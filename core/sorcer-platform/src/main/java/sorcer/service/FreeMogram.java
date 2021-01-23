@@ -24,6 +24,7 @@ import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -86,7 +87,14 @@ public class FreeMogram extends ServiceMogram implements FreeService {
         return null;
     }
 
-    public Mogram getMogram() {
+    @Override
+    public List<Discipline> getMograms(List<Discipline> allMograms) {
+        List<Discipline> mograms = new ArrayList<>();
+        mograms.add(this);
+        return mograms;
+    }
+
+    public Discipline getMogram() {
         return mogram;
     }
 

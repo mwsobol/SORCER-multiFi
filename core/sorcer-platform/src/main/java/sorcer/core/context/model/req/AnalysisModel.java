@@ -26,7 +26,7 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
 
     private static final Logger logger = LoggerFactory.getLogger(Transmodel.class);
 
-    protected Map<String, Mogram> children = new HashMap<>();
+    protected Map<String, Discipline> children = new HashMap<>();
 
     protected Map<String, Context> childrenContexts = new HashMap<>();
 
@@ -104,12 +104,12 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
     }
 
     @Override
-    public Map<String, Mogram> getChildren() {
+    public Map<String, Discipline> getChildren() {
         return children;
     }
 
     @Override
-    public Mogram getChild(String name) {
+    public Discipline getChild(String name) {
         return children.get(name);
     }
 
@@ -136,7 +136,7 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
             dataContext.append(evalOut);
             // put results of component domains
             for (String mn : children.keySet()) {
-                dataContext.put(mn, result(children.get(mn)));
+                dataContext.put(mn, result((Mogram)children.get(mn)));
             }
             if (analyzerFi != null && analyzerFi.getSelect() != null) {
                 dataContext.putValue(Functionality.Type.DOMAIN.toString(), key);
@@ -183,7 +183,7 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
             int ind = path$domain.indexOf("$");
             path = path$domain.substring(0, ind);
             domain = path$domain.substring(ind + 1);
-            return getChild(domain).get(path);
+            return ((Mogram)getChild(domain)).get(path);
         } else if (path$domain != null){
             return data.get(path$domain);
         } else {
@@ -202,7 +202,7 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
                     if (de.getName().equals(key)) {
                         dpl = de.getData();
                         for (Path p : dpl) {
-                            Mogram domain = children.get(p.getName());
+                            Discipline domain = children.get(p.getName());
                             execDependencies(p.getName(), inContext, args);
                             Context cxt = null;
                             if (children.get(p.path) instanceof EntryModel) {
@@ -212,7 +212,7 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
                                 dataContext.append(cxt);
                             } else {
                                 domain.setScope(dataContext);
-                                Domain child = domain.exert(args);
+                                Domain child = ((Mogram)domain).exert(args);
                                 if (domain instanceof Job) {
                                     cxt = ((Job) child).getJobContext();
                                 } else if (domain instanceof Routine) {

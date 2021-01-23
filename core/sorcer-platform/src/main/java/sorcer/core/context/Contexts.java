@@ -620,7 +620,7 @@ public class Contexts implements SorcerConstants {
 		List allNodes = new ArrayList();
 		List additional = null;
 
-		List<Mogram> exertions = ((Job) job).getMograms();
+		List<Discipline> exertions = ((Job) job).getMograms();
 		for (Object exertion : exertions) {
 			if (exertion instanceof Subroutine) {
 				additional = Arrays

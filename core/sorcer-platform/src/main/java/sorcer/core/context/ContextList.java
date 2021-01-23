@@ -37,6 +37,11 @@ public class ContextList extends ArrayList<Context> {
 		this.type = type;
 	}
 
+	public boolean add(Context cxt) {
+		remove(cxt.getName());
+		return super.add(cxt);
+	}
+
 	public Context select(String domain) {
 		for (Context cxt : this) {
 			if (cxt.getName().equals(domain)) {

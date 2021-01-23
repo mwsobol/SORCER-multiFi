@@ -26,7 +26,6 @@ import sorcer.core.context.RoutineStrategy;
 import sorcer.core.provider.Jobber;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
-import sorcer.service.modeling.dmn;
 import sorcer.service.modeling.mog;
 
 /**
@@ -91,7 +90,7 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * @return an added component exertion
 	 * @throws ContextException 
 	 */
-	public Mogram addMogram(Mogram component) throws RoutineException;
+	public Discipline addMogram(Discipline component) throws RoutineException;
 	
 	/**
 	 * Returns a data service context (service data) of this exertion to be
@@ -116,7 +115,7 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
     /**
 	 * Returns a component exertion at a given path.
 	 */
-	public Mogram getComponentMogram(String path);
+	public Discipline getComponentMogram(String path);
 	
 	/**
 	 * Returns a execute associated with a path (key) in this exertion's context.
@@ -213,19 +212,19 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * Returns a component exertion with a given name.
 	 * @return Routine list
 	 */ 
-	public Mogram getMogram(String name);
+	public Discipline getMogram(String name);
 
 	/**
 	 * Returns the list of direct component exertions.
 	 * @return Routine list
 	 */ 
-	public List<Mogram> getMograms();
+	public List<Discipline> getMograms();
 	
 	/**
 	 * Returns the list of all nested component exertions/
 	 * @return Routine list
 	 */ 
-	public List<Mogram> getAllMograms();
+	public List<Discipline> getAllMograms();
 	
 	/**
 	 * Returns <code>true</code> if this exertion can be provisioned for its

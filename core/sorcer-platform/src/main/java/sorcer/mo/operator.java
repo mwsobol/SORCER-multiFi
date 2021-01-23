@@ -124,7 +124,7 @@ public class operator {
 
     public static Object value(Context context, String path, String domain) throws ContextException {
         if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
-            return context.getChild(domain).getEvaluatedValue(path);
+            return ((Mogram)context.getChild(domain)).getEvaluatedValue(path);
         } else {
             try {
                 return ((Context) context.getChild(domain)).getValue(path);
@@ -1188,6 +1188,14 @@ public class operator {
         return null;
     }
 
+    public static void setOut(Service request, Context object) {
+        if (request instanceof Collaboration) {
+            ((Collaboration) request).setOutput((Context)object);
+        } else if (request instanceof Slot) {
+            ((Slot)request).setOut(object);
+        }
+    }
+
     public static void setDmnOut(Request request, Context context) {
         if (request instanceof Collaboration) {
             ((Collaboration) request).getOutputs().set(context);
@@ -1302,6 +1310,10 @@ public class operator {
     }
 
     public static Collaboration clb(Object... data) throws ContextException {
+        if (data[0] instanceof Context &&
+                ((Context)data[0]).getSubjectValue() instanceof Collaboration) {
+            return (Collaboration) ((Context)data[0]).getSubjectValue();
+        }
         String name = getUnknown();
         List<Domain> domains = new ArrayList<>();
         List<ServiceFidelity> discFis = new ArrayList<>();
@@ -1669,6 +1681,20 @@ public class operator {
             }
         }
         return null;
+    }
+
+    public static Context updateDomainContext(Context context, Context domainContext) throws ContextException {
+        if (context instanceof ServiceContext) {
+            ContextList domainContexts = (ContextList) context.get(Context.COMPONENT_CONTEXT_PATH);
+            Context edc = domainContexts.select(domainContext.getName());
+            Iterator<Map.Entry<String, Object>> eit =
+                ((ServiceContext)domainContext).getData().entrySet().iterator();
+            while (eit.hasNext()) {
+                Map.Entry edce = eit.next();
+                ((ServiceContext)context).put((String) edce.getKey(), edce.getValue());
+            }
+        }
+        return context;
     }
 
     public static Context setDomainContext(Context context, Context domainContext) throws ContextException {

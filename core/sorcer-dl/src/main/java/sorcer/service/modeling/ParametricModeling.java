@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
  */
 public interface ParametricModeling extends Configurable, Modeling {
 
-	public Context<?> evaluateResponseTable(Context<?> context)
+	public Context evaluateResponseTable(Context<?> context)
 			throws EvaluationException, RemoteException;
 
 	public ModelTable getParametricTable() throws RemoteException;

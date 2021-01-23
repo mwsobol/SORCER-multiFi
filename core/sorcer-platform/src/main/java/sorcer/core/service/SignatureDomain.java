@@ -419,12 +419,12 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public List<Mogram> getMograms(List<Mogram> allMograms) {
+    public List<Discipline> getMograms(List<Discipline> allMograms) {
         return domain.getMograms(allMograms);
     }
 
     @Override
-    public List<Mogram> getMograms() {
+    public List<Discipline> getMograms() {
         return domain.getMograms();
     }
 
@@ -434,7 +434,7 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public List<Mogram> getAllMograms() {
+    public List<Discipline> getAllMograms() {
         return domain.getAllMograms();
     }
 

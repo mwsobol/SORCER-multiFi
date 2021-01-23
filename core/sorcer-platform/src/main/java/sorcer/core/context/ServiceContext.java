@@ -18,7 +18,6 @@
 package sorcer.core.context;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,6 +106,16 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * associated to task or not.
 	 */
 	public boolean isPersistantTaskAssociated = false;
+
+	/**
+	 * Blackboard context type for Collaboration
+	 */
+	private Strategy.Colab colabType  = Strategy.Colab.BBnew;
+
+	/**
+	 * Optimization context type for Optimizer
+	 */
+	private Strategy.Opti optiType = Strategy.Opti.MIN;
 
 	/** EMPTY LEAF NODE ie. node with no data and not empty string */
 	public static String EMPTY_LEAF = ":Empty";
@@ -3666,7 +3675,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Mogram getChild(String name) throws ContextException {
+	public Discipline getChild(String name) throws ContextException {
         Object domain = data.get(name);
         if (domain instanceof Mogram) {
             return (Mogram) domain;
@@ -3853,6 +3862,23 @@ public class ServiceContext<T> extends ServiceMogram implements
         isValid = true;
         return cxtFi(selected.getName(), selected );
     }
+
+	public Strategy.Opti getOptiType() {
+		return optiType;
+	}
+
+	public void setOptiType(Strategy.Opti optiType) {
+		this.optiType = optiType;
+	}
+
+	public Strategy.Colab getColabType() {
+		return colabType;
+	}
+
+	public void setColabType(Strategy.Colab colabType) {
+		this.colabType = colabType;
+	}
+
 
 	public Model.Pattern getPattern() {
 		return pattern;

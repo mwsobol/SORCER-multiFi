@@ -71,10 +71,10 @@ public class Binder {
 //		}
         Exec.State state = exertion.getControlContext().getExecState();
         if (state == Exec.State.INITIAL) {
-            for (Mogram e : exertion.getAllMograms()) {
+            for (Discipline e : exertion.getAllMograms()) {
                 if (e instanceof Routine) {
                     if (((ControlContext) ((Routine)e).getControlContext()).getExecState() == Exec.State.INITIAL) {
-                        e.setStatus(Exec.INITIAL);
+                        ((Mogram)e).setStatus(Exec.INITIAL);
                     }
                 }
                 if (e instanceof Block) {

@@ -154,7 +154,7 @@ public class CoffeeServiceTest {
 	}
 
 	@Test
-	public void getJobLocalCoffee() throws Exception {
+	public void getCoffeeLocalJob() throws Exception {
 
 		Task coffee = task("tc", sig("makeCoffee", CoffeeMaker.class), context(
 			inVal("recipe/key", "espresso"),
@@ -170,12 +170,6 @@ public class CoffeeServiceTest {
 			pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "coffee/change")));
 
 		jcd = exert(jcd);
-
-		//TODO where selfContext is created?
-		// should be only when outPaths in thr job are declared
-//        Context selfOut = selfContext(jcd);
-//        Context out = upcontext(jcd);
-
 		Context out = upcontext(exert(jcd));
 
 		logger.info("out: " + out);
@@ -192,7 +186,7 @@ public class CoffeeServiceTest {
 	}
 
 	@Test
-	public void getJobRemoteCoffee() throws Exception {
+	public void getCoffeeRemoteJob() throws Exception {
 
 		Task coffee = task("tc", sig("makeCoffee", CoffeeService.class), context(
 			inVal("recipe/key", "espresso"),
@@ -216,7 +210,7 @@ public class CoffeeServiceTest {
 	}
 
 	@Test
-	public void getBlockLocalCoffee() throws Exception {
+	public void getCoffeeLocalBlock() throws Exception {
 
 		Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class), context(
 			inVal("recipe/key", "espresso"),
@@ -241,7 +235,7 @@ public class CoffeeServiceTest {
 	}
 
 	@Test
-	public void getBlockRemoteCoffee() throws Exception {
+	public void getCoffeeRemoteBlock() throws Exception {
 
 		Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
 			inVal("recipe/key", "espresso"),
@@ -264,5 +258,6 @@ public class CoffeeServiceTest {
 		assertEquals(value(out, "delivery/cost"), 60);
 		assertEquals(value(out, "change$"), 10);
 	}
+
 }
 

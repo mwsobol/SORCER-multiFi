@@ -207,19 +207,19 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.dataContext = (ServiceContext) dataContext;
     }
 
-    public List<Mogram> getAllMograms() {
-        List<Mogram> exs = new ArrayList<Mogram>();
+    public List<Discipline> getAllMograms() {
+        List<Discipline> exs = new ArrayList();
         getMograms(exs);
         return exs;
     }
 
     public List<Contextion> getAllContextions() {
-        List<Contextion> exs = new ArrayList<Contextion>();
+        List<Contextion> exs = new ArrayList();
         getContextions(exs);
         return exs;
     }
 
-    public List<Mogram> getMograms(List<Mogram> exs) {
+    public List<Discipline> getMograms(List<Discipline> exs) {
         exs.add(this);
         return exs;
     }
@@ -231,7 +231,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public List<String> getAllMogramIds() {
         List<String> mogIdsList = new ArrayList<String>();
-        for (Mogram mo : getAllMograms()) {
+        for (Discipline mo : getAllMograms()) {
             mogIdsList.add(mo.getId().toString());
         }
         return mogIdsList;
@@ -239,17 +239,17 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public void trimAllNotSerializableSignatures() throws SignatureException {
         trimNotSerializableSignatures();
-        for (Mogram m : getAllMograms()) {
+        for (Discipline m : getAllMograms()) {
             ((ServiceMogram) m).trimNotSerializableSignatures();
         }
     }
 
-    public Mogram getMogram(String componentMogramName) {
+    public Discipline getMogram(String componentMogramName) {
         if (key.equals(componentMogramName)) {
             return this;
         } else {
-            List<Mogram> mograms = getAllMograms();
-            for (Mogram m : mograms) {
+            List<Discipline> mograms = getAllMograms();
+            for (Discipline m : mograms) {
                 if (m.getName().equals(componentMogramName)) {
                     return m;
                 }
@@ -486,8 +486,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public void trimNotSerializableSignatures() throws SignatureException {
-        List<Mogram> mogs = getAllMograms();
-        for (Mogram mog : mogs) {
+        List<Discipline> mogs = getAllMograms();
+        for (Discipline mog : mogs) {
             Fi mFi = mog.getMultiFi();
             if (mFi != null) {
                 for (Object fi : mFi.getSelects()) {
@@ -711,7 +711,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.contextSelector = contextSelector;
     }
 
-    public Mogram getComponentMogram(String path) {
+    public Discipline getComponentMogram(String path) {
         return this;
     }
 
@@ -882,7 +882,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
                     } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.SELECT) {
                         Mogram mog = null;
                         if (((Fidelity) a).getPath() != null && ((Fidelity) a).getPath().length() > 0) {
-                            mog = this.getComponentMogram(((Fidelity) a).getPath());
+                            mog = (Mogram) this.getComponentMogram(((Fidelity) a).getPath());
                         } else {
                             mog = this;
                         }
@@ -934,7 +934,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
             Mogram mog = null;
             for (Object obj : metaFi.selects) {
                 if (((Fidelity) obj).getPath() != null && ((Fidelity) obj).getPath().length() > 0) {
-                    mog = this.getComponentMogram(((Fidelity) obj).getPath());
+                    mog = (Mogram) this.getComponentMogram(((Fidelity) obj).getPath());
                 } else {
                     mog = this;
                 }
@@ -1247,8 +1247,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public List<Mogram> getMograms() {
-        List<Mogram> mograms = new ArrayList<>();
+    public List<Discipline> getMograms() {
+        List<Discipline> mograms = new ArrayList<>();
         mograms.add(this);
         return mograms;
     }

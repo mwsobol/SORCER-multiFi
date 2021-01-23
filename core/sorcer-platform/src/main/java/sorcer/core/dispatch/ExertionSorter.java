@@ -75,9 +75,9 @@ public class ExertionSorter {
      * @param sortedSubXrt
      * @return
      */
-    private List<String> addSubExertions(List<Mogram> sortedSubXrt) {
+    private List<String> addSubExertions(List<Discipline> sortedSubXrt) {
         List<String> sortedSubsetIds = new ArrayList<String>();
-        for (Mogram xrt : sortedSubXrt) {
+        for (Discipline xrt : sortedSubXrt) {
             sortedSubsetIds.add(xrt.getId().toString());
             if (xrt instanceof Job)
                 sortedSubsetIds.addAll(addSubExertions(((Job) xrt).getMograms()));
@@ -93,11 +93,11 @@ public class ExertionSorter {
      * @param sortedSubXrt
      * @return
      */
-    private Strategy.Flow setFlow(Routine topXrt, List<Mogram> sortedSubXrt) {
+    private Strategy.Flow setFlow(Routine topXrt, List<Discipline> sortedSubXrt) {
         List<String> sortedSubsetIds = addSubExertions(sortedSubXrt);
 
         int edges = 0;
-        for (Mogram xrt : topXrt.getMograms()) {
+        for (Discipline xrt : topXrt.getMograms()) {
             for (String depId : dag.getParentLabels(xrt.getId().toString())) {
                 if (sortedSubsetIds.contains(depId)) {
                     edges++;
@@ -126,15 +126,15 @@ public class ExertionSorter {
      * @throws ContextException
      */
     private void reorderJob(Routine topXrt, List<Mogram> sortedExertions) {
-        List<Mogram> sortedSubset = new ArrayList(sortedExertions);
+        List<Discipline> sortedSubset = new ArrayList(sortedExertions);
         sortedSubset.retainAll(topXrt.getMograms());
 
         if (topXrt.getFlowType()!=null && topXrt.getFlowType().equals(Strategy.Flow.AUTO)) {
             ((Subroutine) topXrt).setFlowType(setFlow(topXrt, sortedSubset));
             logger.info("FLOW for exertion: " + topXrt.getName() + " set to: " + topXrt.getFlowType());
         }
-        List<String> exertionsBefore = new ArrayList<String>();
-        for (Mogram xrt : topXrt.getMograms())
+        List<String> exertionsBefore = new ArrayList();
+        for (Discipline xrt : topXrt.getMograms())
                 exertionsBefore.add(xrt.getName());
 
         List<String> exertionsAfter = new ArrayList<String>();

@@ -73,19 +73,19 @@ public abstract class Block extends Transroutine {
 	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
 	 */
 	@Override
-	public Mogram addMogram(Mogram mogram) throws RoutineException {
+	public Discipline addMogram(Discipline mogram) throws RoutineException {
 		mograms.add(mogram);
-		mogram.setIndex(mograms.indexOf(mogram));
+		((Mogram)mogram).setIndex(mograms.indexOf(mogram));
 		try {
-			controlContext.registerExertion(mogram);
+			controlContext.registerExertion((Mogram)mogram);
 		} catch (ContextException e) {
 			throw new RoutineException(e);
 		}
-		mogram.setParentId(getId());
+		((Mogram)mogram).setParentId(getId());
 		return this;
 	}
 
-	public void setMograms(List<Mogram> mograms) {
+	public void setMograms(List<Discipline> mograms) {
 		this.mograms = mograms;
 	}
 
@@ -120,7 +120,7 @@ public abstract class Block extends Transroutine {
 	 * @see sorcer.service.Routine#getMograms()
 	 */
 	@Override
-	public List<Mogram> getMograms() {
+	public List<Discipline> getMograms() {
 		return mograms;
 	}
 
@@ -175,9 +175,9 @@ public abstract class Block extends Transroutine {
 	 * @see sorcer.service.Subroutine#getMograms(java.util.List)
 	 */
 	@Override
-	public List<Mogram> getMograms(List<Mogram> mogramList) {
-		for (Mogram e : mograms) {
-			e.getMograms(mogramList);
+	public List<Discipline> getMograms(List<Discipline> mogramList) {
+		for (Discipline e : mograms) {
+			((Mogram)e).getMograms(mogramList);
 		}
 		mogramList.add(this);
 		return mogramList;
@@ -240,22 +240,22 @@ public abstract class Block extends Transroutine {
 	}
 	
 	public boolean hasChild(String childName) {
-		for (Mogram ext : mograms) {
+		for (Discipline ext : mograms) {
 			if (ext.getName().equals(childName))
 				return true;
 		}
 		return false;
 	}
 
-	public Mogram getChild(String childName) {
-		for (Mogram ext : mograms) {
+	public Discipline getChild(String childName) {
+		for (Discipline ext : mograms) {
 			if (ext.getName().equals(childName))
 				return ext;
 		}
 		return null;
 	}
 
-	public Mogram getComponentMogram(String path) {
+	public Discipline getComponentMogram(String path) {
 		// TODO
 		return getChild(path);
 	}
@@ -278,7 +278,7 @@ public abstract class Block extends Transroutine {
 		Mogram exti = this;
 		for (String attribute : attributes) {
 			if (((Subroutine) exti).hasChild(attribute)) {
-				exti = ((Transroutine) exti).getChild(attribute);
+				exti = (Mogram) ((Transroutine) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					last = attribute;
 					break;
@@ -294,7 +294,7 @@ public abstract class Block extends Transroutine {
 	}
 	
 	public void reset(int state) {
-		for(Mogram e : mograms)
+		for(Discipline e : mograms)
 			((ServiceMogram)e).reset(state);
 		
 		this.setStatus(state);
@@ -332,8 +332,8 @@ public abstract class Block extends Transroutine {
 	}
 	
 	private void updateConditions() throws ContextException {
-		for (Mogram mogram : mograms) {
-			if (mogram instanceof Mogram && mogram.isConditional()) {
+		for (Discipline mogram : mograms) {
+			if (mogram instanceof Mogram && ((Mogram)mogram).isConditional()) {
 				if (mogram instanceof OptTask) {
 					((OptTask)mogram).getCondition().getConditionalContext().append(dataContext);
 				} else if (mogram instanceof LoopTask && ((LoopTask) mogram).getCondition() != null) {
@@ -351,18 +351,17 @@ public abstract class Block extends Transroutine {
 		Object[] paths = getDataContext().keySet().toArray();
 		for (Object path : paths) {
 			dataContext.removePath((String) path);
-//			dataContext.getScope().removePath((String) contextReturn);
 		}
 
 		Context.Return rp = dataContext.getContextReturn();
 		if (rp != null && rp.returnPath != null)
 			dataContext.removePath(rp.returnPath);
 
-		List<Mogram> mograms = getAllMograms();
+		List<Discipline> mograms = getAllMograms();
 		Context cxt = null;
-		for (Mogram mo : mograms) {
+		for (Discipline mo : mograms) {
 			if (mo instanceof Mogram)
-				((ServiceContext)mo.getDataContext()).clearScope();
+				((ServiceContext) ((Mogram)mo).getDataContext()).clearScope();
 
 //			if (mo instanceof Mogram)
 //				cxt = mo.getContext();

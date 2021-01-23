@@ -239,18 +239,18 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 				mogram.getExceptions().clear();
 				mogram.getTrace().clear();
 			}
-			for (Mogram e : mogram.getAllMograms()) {
+			for (Discipline e : mogram.getAllMograms()) {
 				if (e instanceof Routine) {
 					if (((ControlContext) ((Routine)e).getControlContext()).getExecState() == State.INITIAL) {
-						e.setStatus(Exec.INITIAL);
-						e.getExceptions().clear();
-						e.getTrace().clear();
+						((Mogram)e).setStatus(Exec.INITIAL);
+						((Mogram)e).getExceptions().clear();
+						((Mogram)e).getTrace().clear();
 					}
 				}
 				if (e instanceof Block) {
 					resetScope((Routine)e, argCxt, entries);
 				} else {
-					e.clearScope();
+					((Mogram)e).clearScope();
 				}
 			}
 		}
@@ -270,8 +270,8 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		if (context != null) {
 			exertion.getDataContext().append(context);
 		}
-		for (Mogram mogram : exertion.getMograms()) {
-			mogram.clearScope();
+		for (Discipline mogram : exertion.getMograms()) {
+			((Mogram)mogram).clearScope();
 		}
 	}
 
@@ -618,8 +618,8 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 	public static Mogram postProcessExertion(Mogram mog)
 			throws ContextException, RemoteException {
 		if (mog instanceof Routine) {
-			List<Mogram> mograms = ((Routine)mog).getAllMograms();
-			for (Mogram mogram : mograms) {
+			List<Discipline> mograms = mog.getAllMograms();
+			for (Discipline mogram : mograms) {
 				if (mogram instanceof Routine) {
 					List<Setter> ps = ((Subroutine) mogram).getPersisters();
 					if (ps != null) {

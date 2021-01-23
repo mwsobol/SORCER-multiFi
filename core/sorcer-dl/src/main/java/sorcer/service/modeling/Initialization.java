@@ -14,23 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sorcer.service;
 
-import sorcer.service.modeling.Exploration;
-import sorcer.service.modeling.Finalization;
+package sorcer.service.modeling;
 
-import java.util.Map;
+import sorcer.service.Arg;
+import sorcer.service.Context;
+import sorcer.service.ContextException;
 
-public interface Transdiscipline extends Discipline {
+/**
+ * Created by Mike Sobolewski on 01/20/2021.
+ */
+@FunctionalInterface
+public interface Initialization {
 
-    public Map<String, Context>  getChildrenContexts();
-
-    public Discipline getChild(String name);
-
-    public Fidelity<Finalization> getFinalizerFi();
-
-    public Fidelity<Analysis> getAnalyzerFi();
-
-    public Fidelity<Exploration> getExplorerFi();
+    public void initialize(Context context, Arg... args) throws ContextException;
 
 }

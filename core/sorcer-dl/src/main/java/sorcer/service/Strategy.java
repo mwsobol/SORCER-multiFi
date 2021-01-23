@@ -179,7 +179,23 @@ public interface Strategy extends Arg {
 			return this;
 		}
 	}
-	
+
+	public enum Colab implements Arg {
+		BBinCxt, BBinit, BBnew; // default
+
+		/* (non-Javadoc)
+		 * @see sorcer.service.Arg#getName()
+		 */
+		@Override
+		public String getName() {
+			return toString();
+		}
+
+		public Object execute(Arg... args) {
+			return this;
+		}
+	}
+
 	public boolean isWaitable();
 	
 	public Flow getFlowType();

@@ -62,6 +62,8 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
     // active disciplnes
     protected Paths disciplnePaths = new Paths();
 
+	protected Fidelity<Initialization> initializerFi;
+
 	protected Fidelity<Finalization> finalizerFi;
 
 	protected Fidelity<Analysis> analyzerFi;
@@ -504,6 +506,14 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 		}
 		contextionList.add(this);
 		return contextionList;
+	}
+
+	public Fidelity<Initialization> getInitializerFi() {
+		return initializerFi;
+	}
+
+	public void setInitializerFi(Fidelity<Initialization> initializerFi) {
+		this.initializerFi = initializerFi;
 	}
 
 	@Override

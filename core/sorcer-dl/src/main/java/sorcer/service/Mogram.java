@@ -32,7 +32,7 @@ import java.util.List;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Substitutable, Arg {
+public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, Scopable, Substitutable, Arg {
 
     /**
      * Returns an ID of this mogram.
@@ -346,7 +346,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
      */
     public boolean isExportControlled();
 
-	List<Mogram> getMograms(List<Mogram> allMograms);
+	List<Discipline> getMograms(List<Discipline> allMograms);
 
 	List<Contextion> getContextions(List<Contextion> allContextions);
 
@@ -354,7 +354,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
 	 * Returns the list of direct component exertions.
 	 * @return Routine list
 	 */
-	public List<Mogram> getMograms();
+	public List<Discipline> getMograms();
 
 	public List<Contextion> getContextions();
 
@@ -363,7 +363,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Su
 	 * Returns the list of all nested component exertions/
 	 * @return Routine list
 	 */
-	public List<Mogram> getAllMograms();
+	public List<Discipline> getAllMograms();
 
 	public List<Contextion> getAllContextions();
 
