@@ -15,7 +15,7 @@
  */
 
 /**
- * Created by Moke Sobolewski on 8/5/15.
+ * Created by Mike Sobolewski on 8/5/15.
  */
 
 version = sorcerVersion
@@ -119,7 +119,7 @@ task runCoffeemaker(type:JavaExec, dependsOn:[install]) {
 //task runConsumer(type:JavaExec, dependsOn:[jar, "bootme"]) {
 task runConsumer(type:JavaExec, dependsOn:[jar]) {
     description = 'Runs a service requestor executing a local or remote service.'
-    main = "sorcer.core.requestor.ServiceConsumer"
+    main = "sorcer.core.consumer.ServiceConsumer"
     classpath = sourceSets.main.runtimeClasspath
     systemProperty "project.version", "${version}"
     systemProperty "java.rmi.server.codebase",
