@@ -139,6 +139,8 @@ logger("org.rioproject.resolver.aether.util.ConsoleRepositoryListener", WARN)
  *  SORCER Loggers
  * ==================================================================*/
 logger("sorcer", WARN)
+logger("sorcer.core.consumer", INFO)
+logger("edu.pjatk.inn.coffeemaker", INFO)
 
 root(INFO, appenders)
 

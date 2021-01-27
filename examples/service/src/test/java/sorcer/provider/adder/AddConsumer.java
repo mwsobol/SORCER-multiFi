@@ -25,7 +25,7 @@ public class AddConsumer {
 	private final static Logger logger = LoggerFactory.getLogger(AddConsumer.class);
 
 	@Test
-	public void adderRequestorAsService() throws Exception {
+	public void adderConsumerAsService() throws Exception {
 
 		Consumer req = consumer(AdderConsumer.class, "routine");
 //		Consumer fxn = consumer(AdderConsumer.class, "netlet");

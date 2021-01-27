@@ -44,7 +44,7 @@ import static sorcer.eo.operator.prvName;
  */
 public class ServiceConsumer implements Consumer, SorcerConstants {
 	/** Logger for logging information about this instance */
-	protected static final Logger logger = LoggerFactory.getLogger(ServiceConsumer.class.getName());
+	protected static final Logger logger = LoggerFactory.getLogger(ServiceConsumer.class);
 
     protected String name;
 	protected Properties props;
@@ -103,10 +103,11 @@ public class ServiceConsumer implements Consumer, SorcerConstants {
 				else
 					mogram = requestor.mogram.exert(requestor.getTransaction(), args);
 			}
-
 		} catch (Exception e) {
 			throw new RoutineException(e);
 		}
+
+		logger.info("consumer/context: " + mogram.getContext());
 		return mogram.getContext();
 	}
 
@@ -227,7 +228,6 @@ public class ServiceConsumer implements Consumer, SorcerConstants {
 			} else {
 				mogram = mogram.exert(requestor.getTransaction());
 			}
-
 		} catch (Exception e) {
 			throw new RoutineException(e);
 		} 
@@ -262,6 +262,7 @@ public class ServiceConsumer implements Consumer, SorcerConstants {
 		}
 		Object outObject = serviceScripter.interpret();
 
+		logger.info("consumer/result: " + outObject);
 		return outObject;
 	}
 
@@ -369,10 +370,9 @@ public class ServiceConsumer implements Consumer, SorcerConstants {
 		} if (obj instanceof Routine) {
 			return context.append(((Routine)obj).getContext());
 		} else {
-			context.putValue("consumer/result", obj);
+			context.putValue("consumer/context", obj);
 			return context;
 		}
-
 	}
 
 	public String getName() {
@@ -388,6 +388,7 @@ public class ServiceConsumer implements Consumer, SorcerConstants {
 			inContext = outContext;
 			outContext = exec(service, inContext, consumerArgs);
 		}
+		logger.info("consumer/context: " + outContext);
 		return outContext;
 	}
 
