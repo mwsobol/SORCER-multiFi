@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 /**
+ * Recipe model class
  * @author   Sarah & Mike
  */
 public class Recipe implements Serializable {
@@ -33,6 +34,7 @@ public class Recipe implements Serializable {
     public int getAmtChocolate() {
 		return amtChocolate;
 	}
+
     /**
 	 * @param amtChocolate   The amtChocolate to setValue.
 	 */
@@ -41,12 +43,14 @@ public class Recipe implements Serializable {
 			this.amtChocolate = amtChocolate;
 		} 
 	}
+
     /**
 	 * @return   Returns the amtCoffee.
 	 */
     public int getAmtCoffee() {
 		return amtCoffee;
 	}
+
     /**
 	 * @param amtCoffee   The amtCoffee to setValue.
 	 */
@@ -55,12 +59,14 @@ public class Recipe implements Serializable {
 			this.amtCoffee = amtCoffee;
 		} 
 	}
+
     /**
 	 * @return   Returns the amtMilk.
 	 */
     public int getAmtMilk() {
 		return amtMilk;
 	}
+
     /**
 	 * @param amtMilk   The amtMilk to setValue.
 	 */
@@ -69,12 +75,14 @@ public class Recipe implements Serializable {
 			this.amtMilk = amtMilk;
 		} 
 	}
+
     /**
 	 * @return   Returns the amtSugar.
 	 */
     public int getAmtSugar() {
 		return amtSugar;
 	}
+
     /**
 	 * @param amtSugar   The amtSugar to setValue.
 	 */
@@ -83,13 +91,17 @@ public class Recipe implements Serializable {
 			this.amtSugar = amtSugar;
 		} 
 	}
+
     /**
 	 * @return   Returns the key.
 	 */
     public String getName() {
 		return name;
 	}
-    /**
+
+	/**
+	 * Sets new name of the Recipe.
+	 *
 	 * @param name   The key to setValue.
 	 */
     public void setName(String name) {
@@ -97,30 +109,56 @@ public class Recipe implements Serializable {
     		this.name = name;
     	}
 	}
-    /**
+
+	/**
+	 * Price of drink based on this recipe.
+	 *
 	 * @return   Returns the price.
 	 */
     public int getPrice() {
 		return price;
 	}
-    /**
+
+	/**
+	 * Sets new price of drink based on this recipe should be >=0.
+	 *
 	 * @param price   The price to setValue.
 	 */
     public void setPrice(int price) {
 		if (price >= 0) {
 			this.price = price;
 		} 
-	} 
+	}
+
+	/**
+	 * Compares names of this instance and input Recipe instance. Returns true if names are equal.
+	 *
+	 * @param r	instance of Recipe class.
+	 * @return boolean
+	 */
     public boolean equals(Recipe r) {
         if((this.name).equals(r.getName())) {
             return true;
         }
         return false;
     }
+
+	/**
+	 * Returns name of Recipe.
+	 *
+	 * @return String
+	 */
     public String toString() {
     	return name;
     }
 
+	/**
+	 * Creates Recipe instance from given context.
+	 *
+	 * @param context	Provided context.
+	 * @return r		Recipe obtained from context.
+	 * @throws ContextException	Exception thrown when Recipe could not be obtained.
+	 */
 	static public Recipe getRecipe(Context context) throws ContextException {
 		Recipe r = new Recipe();
 		try {
@@ -136,6 +174,13 @@ public class Recipe implements Serializable {
 		return r;
 	}
 
+	/**
+	 * Returns the context with given recipe
+	 *
+	 * @param recipe	the context identification
+	 * @return ctx		the context for the method
+	 * @throws ContextException
+	 */
 	static public Context getContext(Recipe recipe) throws ContextException {
 		Context cxt = new ServiceContext();
 		cxt.putValue("key", recipe.getName());
