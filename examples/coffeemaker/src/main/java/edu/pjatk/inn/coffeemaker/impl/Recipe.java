@@ -11,14 +11,24 @@ import java.rmi.RemoteException;
  * @author   Sarah & Mike
  */
 public class Recipe implements Serializable {
+
+	/** Name of the recipe */
     private String name;
+    /** Price of the recipe */
     private int price;
+    /** Amount of coffee in the recipe */
     private int amtCoffee;
+    /** Amount of milk in the recipe */
     private int amtMilk;
+    /** Amount of sugar in the recipe */
     private int amtSugar;
+    /** Amount of chocolate in the recipe */
     private int amtChocolate;
-    
-    public Recipe() {
+
+	/**
+	 * Constructor for the recipe
+	 */
+	public Recipe() {
     	this.name = "";
     	this.price = 0;
     	this.amtCoffee = 0;
@@ -84,13 +94,13 @@ public class Recipe implements Serializable {
 		} 
 	}
     /**
-	 * @return   Returns the key.
+	 * @return   Returns the name.
 	 */
     public String getName() {
 		return name;
 	}
     /**
-	 * @param name   The key to setValue.
+	 * @param name   The name to setValue.
 	 */
     public void setName(String name) {
     	if(name != null) {
@@ -110,17 +120,34 @@ public class Recipe implements Serializable {
 		if (price >= 0) {
 			this.price = price;
 		} 
-	} 
+	}
+
+	/**
+	 * Compares the Recipe with another Recipe, returning a boolean value.
+	 * @param r   Recipe to compare to.
+	 * @return    True if both objects have the same name, false otherwise.
+	 */
     public boolean equals(Recipe r) {
         if((this.name).equals(r.getName())) {
             return true;
         }
         return false;
     }
-    public String toString() {
+
+	/**
+	 * Get a string representation of the Recipe.
+	 * @return   Name of the recipe.
+	 */
+	public String toString() {
     	return name;
     }
 
+	/**
+	 * Creates a Recipe object based on the given Context.
+	 * @param context   Context object holding information about the recipe.
+	 * @return   A new Recipe object with the data provided by the Context.
+	 * @throws ContextException   When Context is unreachable.
+	 */
 	static public Recipe getRecipe(Context context) throws ContextException {
 		Recipe r = new Recipe();
 		try {
@@ -136,6 +163,12 @@ public class Recipe implements Serializable {
 		return r;
 	}
 
+	/**
+	 * Creates a Context object based on the given Recipe.
+	 * @param recipe   Recipe object to be stored in a new Context.
+	 * @return   Context object storing information about the given Recipe.
+	 * @throws ContextException   When Context cannot be created.
+	 */
 	static public Context getContext(Recipe recipe) throws ContextException {
 		Context cxt = new ServiceContext();
 		cxt.putValue("key", recipe.getName());
