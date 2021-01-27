@@ -18,7 +18,6 @@
 package sorcer.service;
 
 
-import com.sun.tools.javac.util.Name;
 import sorcer.service.modeling.Functionality;
 import sorcer.util.DataTable;
 
