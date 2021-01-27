@@ -18,10 +18,7 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 
 public class ArithmeticConsumer extends ServiceConsumer {
-
-	/* (non-Javadoc)
-         * @see sorcer.core.requestor.ServiceConsumer#getMogram(java.lang.String[])
-         */
+	
 	@Override
 	public Mogram getMogram(String... args) throws MogramException {
 
