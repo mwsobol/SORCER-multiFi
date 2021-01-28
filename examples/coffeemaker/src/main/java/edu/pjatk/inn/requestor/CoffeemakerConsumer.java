@@ -31,15 +31,16 @@ public class CoffeemakerConsumer extends ServiceConsumer {
         }
         try {
             if (option.equals("block")) {
-                return createExertionBlock();
+                return createBlock();
             } else if (option.equals("remoteBlock")) {
-                return createExertionRemoteBlock();
+                return createRemoteBlock();
             } else if (option.equals("model")) {
                 return createModel();
             } else if (option.equals("job")) {
-                return createExertionJob();
+                return createJob();
             } else if (option.equals("netlet")) {
-                return (Mogram) evaluate(new File("src/main/netlets/coffeemaker-exertion-remote.ntl"));
+                return (Mogram) evaluate(new
+                    File("src/main/netlets/coffeemaker-exertion-remote.ntl"));
             }
         } catch (Throwable e) {
             throw new MogramException(e);
@@ -55,54 +56,56 @@ public class CoffeemakerConsumer extends ServiceConsumer {
 
     private Task getRecipeTask() throws MogramException, SignatureException {
         // make sure we have a recipe for required coffee
-       return task("recipe", sig("addRecipe", CoffeeService.class), getEspressoContext());
+        return task("recipe", sig("addRecipe", CoffeeService.class), getEspressoContext());
     }
 
-    private Mogram createExertionBlock() throws Exception {
-        Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class), context(
-            inVal("recipe/key", "espresso"),
-            inVal("coffee/paid", 120),
-            outPaths("coffee/change"),
-            val("recipe", getEspressoContext())));
+    private Mogram createBlock() throws Exception {
+        Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class),
+            context(inVal("recipe/key", "espresso"),
+                inVal("coffee/paid", 120),
+                outPaths("coffee/change"),
+                val("recipe", getEspressoContext())));
 
-        Task delivery = task("delivery", sig("deliver", DeliveryImpl.class), context(
-            inVal("location", "PJATK"),
-            inVal("room", "101"),
-            outPaths("coffee/change", "delivery/cost", "change$")));
+        Task delivery = task("delivery", sig("deliver", DeliveryImpl.class),
+            context(inVal("location", "PJATK"),
+                inVal("room", "101"),
+                outPaths("coffee/change", "delivery/cost", "change$")));
 
-        Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
+        Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")),
+            coffee, delivery);
 
         return drinkCoffee;
     }
 
-    private Mogram createExertionRemoteBlock() throws Exception {
-        Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
-            inVal("recipe/key", "espresso"),
-            inVal("coffee/paid", 120),
-            outPaths("coffee/change"),
-            val("recipe", getEspressoContext())));
+    private Mogram createRemoteBlock() throws Exception {
+        Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class),
+            context(inVal("recipe/key", "espresso"),
+                inVal("coffee/paid", 120),
+                outPaths("coffee/change"),
+                val("recipe", getEspressoContext())));
 
-        Task delivery = task("delivery", sig("deliver", Delivery.class), context(
-            inVal("location", "PJATK"),
-            inVal("room", "101"),
-            outPaths("coffee/change", "delivery/cost", "change$")));
+        Task delivery = task("delivery", sig("deliver", Delivery.class),
+            context(inVal("location", "PJATK"),
+                inVal("room", "101"),
+                outPaths("coffee/change", "delivery/cost", "change$")));
 
-        Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
+        Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")),
+            coffee, delivery);
 
         return drinkCoffee;
     }
 
-    private Mogram createExertionJob() throws Exception {
-        Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
-            val("recipe/key", "espresso"),
-            val("coffee/paid", 120),
-            val("coffee/change"),
-            val("recipe", getEspressoContext())));
+    private Mogram createJob() throws Exception {
+        Task coffee = task(sig("makeCoffee", CoffeeService.class),
+            context(val("recipe/key", "espresso"),
+                val("coffee/paid", 120),
+                val("coffee/change"),
+                val("recipe", getEspressoContext())));
 
-        Task delivery = task("delivery", sig("deliver", Delivery.class), context(
-            val("location", "PJATK"),
-            val("delivery/paid"),
-            val("room", "101")));
+        Task delivery = task(sig("deliver", Delivery.class),
+            context(val("location", "PJATK"),
+                val("delivery/paid"),
+                val("room", "101")));
 
         Job drinkCoffee = job(coffee, delivery,
             pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "delivery/paid")));
@@ -119,12 +122,11 @@ public class CoffeemakerConsumer extends ServiceConsumer {
             val("paid$", 120),
             val("location", "PJATK"),
             val("room", "101"),
-
-                req(sig("makeCoffee", CoffeeService.class,
-                        result("coffee$", inPaths("recipe/key")))),
-                req(sig("deliver", Delivery.class,
-                        result("delivery$", inPaths("location", "room")))));
-//				prc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
+            req(sig("makeCoffee", CoffeeService.class,
+                result("coffee$", inPaths("recipe/key")))),
+            req(sig("deliver", Delivery.class,
+                result("delivery$", inPaths("location", "room")))));
+//			prc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
 
         add(mdl, prc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
         dependsOn(mdl, dep("change$", paths("makeCoffee")), dep("change$", paths("deliver")));

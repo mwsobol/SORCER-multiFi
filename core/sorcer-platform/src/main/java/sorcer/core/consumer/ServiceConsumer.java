@@ -107,7 +107,7 @@ public class ServiceConsumer implements Consumer, SorcerConstants {
 			throw new RoutineException(e);
 		}
 
-		logger.info("consumer/context: " + mogram.getContext());
+//		logger.info("consumer/context: " + mogram.getContext());
 		return mogram.getContext();
 	}
 
@@ -194,7 +194,7 @@ public class ServiceConsumer implements Consumer, SorcerConstants {
 			if (in != null) {
 				requestor.setMogram(in);
 				if (mogram != null && mogram instanceof Routine)
-					logger.info(">>>>>>>>>> Input context: \n" + ((Routine) mogram).getContext());
+					logger.info(">>>>>>>>>> Input context: \n" + mogram.getContext());
 				else {
 					logger.info(">>>>>>>>>> Inputs: \n" + ((Model) mogram).getInputs());
 				}

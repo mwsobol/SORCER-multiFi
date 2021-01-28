@@ -264,13 +264,14 @@ public class CoffeeServiceTest {
 	@Test
 	public void coffeemakerConsumerAsService() throws Exception {
 
-		Consumer req = consumer(CoffeemakerConsumer.class, "block");
-//		Consumer req = consumer(CoffeemakerConsumer.class, "job");
+//		Consumer req = consumer(CoffeemakerConsumer.class, "block");
+		Consumer req = consumer(CoffeemakerConsumer.class, "job");
 
 		Context cxt = (Context) exec(req);
 
 		logger.info("out context: " + cxt);
-		assertEquals(120, value(cxt, "coffee/paid"));
+//		assertEquals(120, value(cxt, "coffee/paid"));
+		assertEquals(120, value(cxt, "job-0/makeCoffee/coffee/paid"));
 	}
 }
 
