@@ -107,7 +107,7 @@ public class CoffeemakerConsumer extends ServiceConsumer {
                 val("delivery/paid"),
                 val("room", "101")));
 
-        Job drinkCoffee = job(coffee, delivery,
+        Job drinkCoffee = job("job", coffee, delivery,
             pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "delivery/paid")));
 
         return drinkCoffee;
