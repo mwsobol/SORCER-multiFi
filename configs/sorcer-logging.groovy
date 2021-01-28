@@ -188,6 +188,8 @@ logger("sorcer.modeling.vfe.persist", WARN)
 /* ==================================================================
  *  SORCER Other specialized loggers
  * ==================================================================*/
+logger("sorcer.core.consumer", INFO)
+logger("edu.pjatk.inn.coffeemaker", INFO)
 logger("sorcer.core.context.eval", OFF)
 logger("sorcer.core.context", TRACE)
 logger("sorcer.jini.jeri.SorcerILFactory", INFO)
