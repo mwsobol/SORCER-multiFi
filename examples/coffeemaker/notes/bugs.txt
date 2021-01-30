@@ -1,19 +1,26 @@
-There were multiple bugs which I have described below:
-
 Bug 1:
-testAddInventory()
+Method: testAddInventory()
+Line: 151
 '> 0' is used instead of '< 0' The level of positiveness in the sugar is completely wrong and the method addInventory.
 
 Bug 2:
+Method: testAddRecipe()
+Line: 25
 In the testAddRecipe(), NUM_RECIPES in CoffeeMaking.java the values were set to 4 which should be 3.
 
 
 Bug 3:
+Method: estDeleteRecipe()
+Line: 91
 deleteRecipe will not delete any recipe from the recipe array in testDeleteRecipe().
 
 Bug 4:
-testEditRecipe(), having 2 recipe with the same name is not allowed.editRecipe method should be looking at oldRecipe.
+Method: testEditRecipe()
+Line: 126, 132
+Having 2 recipe with the same name is not allowed.editRecipe method should be looking at oldRecipe.
 
 
 Bug 5:
+Method: testMakeCoffe()
+Line: 187
 Making coffee did not decrease the inventory.The testMakeCoffe() method is increasing the chocolate amount instead of decreasing it.
