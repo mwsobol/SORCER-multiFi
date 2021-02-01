@@ -3,7 +3,6 @@ package edu.pjatk.inn.coffeemaker;
 import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
 import edu.pjatk.inn.coffeemaker.impl.DeliveryImpl;
 import edu.pjatk.inn.coffeemaker.impl.Recipe;
-import edu.pjatk.inn.requestor.CoffeemakerConsumer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +19,6 @@ import static edu.pjatk.inn.coffeemaker.impl.Recipe.getRecipe;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.get;
 import static sorcer.co.operator.inVal;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.result;
@@ -261,15 +259,5 @@ public class CoffeeServiceTest {
 		assertEquals(value(out, "change$"), 10);
 	}
 
-	@Test
-	public void coffeemakerConsumerAsService() throws Exception {
-
-		Consumer req = consumer(CoffeemakerConsumer.class, "block");
-//		Consumer req = consumer(CoffeemakerConsumer.class, "job");
-
-		Context cxt = (Context) exec(req);
-
-		logger.info("out context: " + cxt);
-		assertEquals(120, value(cxt, "coffee/paid"));
-	}
 }
+
