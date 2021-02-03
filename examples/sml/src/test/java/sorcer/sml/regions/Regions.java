@@ -89,7 +89,7 @@ public class Regions {
             loop(condition(cxt -> (double)
                 value(cxt, "lambdaOut") < 500.0), pipeline("cxtn1")));
 
-        Region plDis = operator.rgn(
+        Region plDis = rgn(
             cxtnFi("cxtn1", opspl),
             dspFi("dspt1", plDispatch));
 
@@ -180,14 +180,14 @@ public class Regions {
         Governance gov = (Governance) instance(
             sig("getMultidiscGovernance1", MuiltidisciplinaryBuilder.class));
 
-        logger.info("discipline morphModelDisc name: " + operator.rgn(gov, "morphModelDisc").getName());
-        logger.info("discipline plDisc name: " + operator.rgn(gov, "plDisc").getName());
-        assertEquals(operator.rgn(gov, "morphModelDisc").getName(), "morphModelDisc");
-        assertEquals(operator.rgn(gov, "plDisc").getName(), "plDisc");
+        logger.info("discipline morphModelDisc name: " + rgn(gov, "morphModelDisc").getName());
+        logger.info("discipline plDisc name: " + rgn(gov, "plDisc").getName());
+        assertEquals(rgn(gov, "morphModelDisc").getName(), "morphModelDisc");
+        assertEquals(rgn(gov, "plDisc").getName(), "plDisc");
 
         Context out = eval(gov, govCxt);
-        logger.info("gov morphModelDisc out: " + out(operator.rgn(gov, "morphModelDisc")));
-        logger.info("gov plDisc out: " + out(operator.rgn(gov, "plDisc")));
+        logger.info("gov morphModelDisc out: " + out(rgn(gov, "morphModelDisc")));
+        logger.info("gov plDisc out: " + out(rgn(gov, "plDisc")));
         logger.info("gov out: " + out);
 
         assertEquals(0.092, value(out(gov), "g1"));
@@ -201,14 +201,14 @@ public class Regions {
         Governance gov = (Governance) instance(
             sig("getMultidiscGovernance2", MuiltidisciplinaryBuilder.class));
 
-        logger.info("discipline morphModelDisc name: " + operator.rgn(gov, "morphModelDisc").getName());
-        logger.info("discipline plDisc name: " + operator.rgn(gov, "plDisc").getName());
-        assertEquals(operator.rgn(gov, "morphModelDisc").getName(), "morphModelDisc");
-        assertEquals(operator.rgn(gov, "plDisc").getName(), "plDisc");
+        logger.info("discipline morphModelDisc name: " + name(rgn(gov, "morphModelDisc")));
+        logger.info("discipline plDisc name: " + name(rgn(gov, "plDisc")));
+        assertEquals(name(rgn(gov, "morphModelDisc")), "morphModelDisc");
+        assertEquals(name(rgn(gov, "plDisc")), "plDisc");
 
         Context out = eval(gov);
-        logger.info("gov morphModelDisc out: " + out(operator.rgn(gov, "morphModelDisc")));
-        logger.info("gov plDisc out: " + out(operator.rgn(gov, "plDisc")));
+        logger.info("gov morphModelDisc out: " + out(rgn(gov, "morphModelDisc")));
+        logger.info("gov plDisc out: " + out(rgn(gov, "plDisc")));
         logger.info("gov out: " + out);
 
         assertEquals(0.092, value(out(gov), "g1"));

@@ -93,7 +93,7 @@ public class RemoteSignature extends LocalSignature implements sig {
 	public RemoteSignature(String selector, Class serviceType, ProviderName providerName) {
 		this(selector, serviceType);
 		this.providerName =  providerName;
-		execType = Type.PROC;
+		execType = Type.PRO;
 	}
 
 
@@ -133,7 +133,7 @@ public class RemoteSignature extends LocalSignature implements sig {
 		else
 			this.providerName = new ProviderName(providerName);
 		if (methodType == null) 
-			execType = Type.PROC;
+			execType = Type.PRO;
 		else
 			execType = methodType;
 		

@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 01/05/20.
  */
-public class SupervisionEntry extends Entry<Supervision> implements Supervision {
+public class Supervisor extends Entry<Supervision> implements Controller, Supervision {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,19 +36,19 @@ public class SupervisionEntry extends Entry<Supervision> implements Supervision 
 
     private Signature signature;
 
-    public SupervisionEntry(String name, Supervision supervisor)  {
+    public Supervisor(String name, Supervision supervisor)  {
         this.key = name;
         this.impl = supervisor;
         this.type = Functionality.Type.SUPERVISOR;
     }
 
-    public SupervisionEntry(String name, Signature signature) {
+    public Supervisor(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
         this.type = Functionality.Type.SUPERVISOR;
     }
 
-    public SupervisionEntry(String name, Supervision supervisor, Context context) {
+    public Supervisor(String name, Supervision supervisor, Context context) {
         this.key = name;
         scope = context;
         this.impl = supervisor;

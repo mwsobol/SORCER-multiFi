@@ -8,7 +8,6 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.invoker.Pipeline;
 import sorcer.core.service.Governance;
-import sorcer.mo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.fi;
 import sorcer.service.modeling.mog;
@@ -38,7 +37,7 @@ public class MuiltidisciplinaryBuilder {
 			loop(condition(cxt -> (double)
 				value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
-		Region morphDis = operator.rgn("morphModelDisc",
+		Region morphDis = rgn("morphModelDisc",
 			cxtnFi("cxtn1", sig("cxtn1", MuiltidisciplinaryBuilder.class, "getMorphingModel")),
 			dspFi("dspt1", mdlDispatch));
 
@@ -154,7 +153,7 @@ public class MuiltidisciplinaryBuilder {
 			loop(condition(cxt -> (double)
 				value(cxt, "lambdaOut") < 500.0), pipeline("cxtn2")));
 
-		Region plDisc = operator.rgn("plDisc",
+		Region plDisc = rgn("plDisc",
 			rgnFi("plDisc1",
 				cxtnFi("cxtn1", sig("getPipeline1",  MuiltidisciplinaryBuilder.class)),
 				cxtFi("cxt1", cxt1),
@@ -206,16 +205,16 @@ public class MuiltidisciplinaryBuilder {
 
 	static public Governance getMultidiscGovernance1() throws Exception {
 
-		Governance mdisc = gov("multidisc",
+		Governance govc = gov("multidisc",
 			instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1")),
 			instance(sig("getMultiFiPipelineDiscipline", MuiltidisciplinaryBuilder.class), fi("plDisc1")));
 
-		return mdisc;
+		return govc;
 	}
 
 	static public Governance getMultidiscGovernance2() throws Exception {
 
-		Context govCxt = context(mdaFi("multidiscMdaFi",
+		Context govcCxt = context(mdaFi("multidiscMdaFi",
 			mda("analyzer",
 				(Request gov, Context cxt) -> {
 					double x1, x2, x3;
@@ -238,7 +237,7 @@ public class MuiltidisciplinaryBuilder {
 		Governance mdisc = gov("multidisc",
 			instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1")),
 			instance(sig("getMultiFiPipelineDiscipline", MuiltidisciplinaryBuilder.class), fi("plDisc1")),
-			govCxt);
+			govcCxt);
 
 		return mdisc;
 	}

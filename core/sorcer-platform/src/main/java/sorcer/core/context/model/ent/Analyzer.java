@@ -18,40 +18,50 @@
 package sorcer.core.context.model.ent;
 
 import sorcer.core.signature.LocalSignature;
+import sorcer.service.Analysis;
 import sorcer.service.*;
-import sorcer.service.modeling.Finalization;
 import sorcer.service.modeling.Functionality;
 
 /**
- * Created by Mike Sobolewski on 12/19/2020.
+ * Created by Mike Sobolewski on 01/05/20.
  */
-public class FinalizerEntry extends Entry<Finalization> implements Finalization {
+public class Analyzer extends Entry<Analysis> implements Controller, Analysis {
 
     private static final long serialVersionUID = 1L;
 
+    private Contextion contextion;
+
     private Signature signature;
 
-    public FinalizerEntry(String name, Finalization finalizer)  {
+    public Analyzer(String name, Analysis mda)  {
         this.key = name;
-        this.impl = finalizer;
-        this.type = Functionality.Type.FNL;
+        this.impl = mda;
+        this.type = Functionality.Type.MDA;
     }
 
-    public FinalizerEntry(String name, Signature signature) {
+    public Analyzer(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
-        this.type = Functionality.Type.FNL;
+        this.type = Functionality.Type.MDA;
     }
 
-    public FinalizerEntry(String name, Finalization finalizer, Context context) {
+    public Analyzer(String name, Analysis mda, Context context) {
         this.key = name;
         scope = context;
-        this.impl = finalizer;
-        this.type = Functionality.Type.FNL;
+        this.impl = mda;
+        this.type = Functionality.Type.MDA;
     }
 
-    public Finalization getFinalizer() {
-        return (Finalization) impl;
+    public Analysis getAnalyzer() {
+        return (Analysis) impl;
+    }
+
+    public Contextion getContextion() {
+        return contextion;
+    }
+
+    public void setContextion(Contextion contextion) {
+        this.contextion = contextion;
     }
 
     public Signature getSignature() {
@@ -59,15 +69,19 @@ public class FinalizerEntry extends Entry<Finalization> implements Finalization 
     }
 
     @Override
-    public void finalize(Context context, Arg... args) throws EvaluationException {
+    public void analyze(Request request, Context context) throws EvaluationException {
         try {
-            if (impl != null && impl instanceof Finalization) {
-                ((Finalization) impl).finalize(context, args);
+            if (impl != null && impl instanceof Analysis) {
+                if (contextion == null || context == contextion) {
+                    ((Analysis) impl).analyze(request, context);
+                } else {
+                    ((Analysis) impl).analyze(contextion, context);
+                }
             } else if (signature != null) {
                 impl = ((LocalSignature)signature).initInstance();
-                ((Finalization)impl).finalize(context, args);
+                ((Analysis)impl).analyze(request, context);
             } else if (impl == null) {
-                throw new InvocationException("No Finalizer available!");
+                throw new InvocationException("No MDA analysis available!");
             }
         } catch (ContextException | SignatureException e) {
             throw new EvaluationException(e);

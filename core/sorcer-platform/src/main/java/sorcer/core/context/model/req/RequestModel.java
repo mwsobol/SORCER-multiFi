@@ -113,7 +113,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
 
     public boolean isBatch() {
         for (Object s : ((ServiceFidelity)multiFi.getSelect()).getSelects()) {
-            if (s instanceof Signature && ((Signature)s).getExecType() != Signature.Type.PROC)
+            if (s instanceof Signature && ((Signature)s).getExecType() != Signature.Type.PRO)
                 return false;
         }
         return true;

@@ -90,7 +90,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	protected Routine exertion;
 
 	/** preprocess, compute, postprocess, append context */
-	protected Type execType = Type.PROC;
+	protected Type execType = Type.PRO;
 
 	// true if is sharesd by multiple evalators associated with this signature
 	protected boolean isReused = false;
@@ -155,7 +155,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
         this.operation.selector = selector;
         this.multitype = multitype;
         this.providerName =  providerName;
-        execType = Type.PROC;
+        execType = Type.PRO;
     }
 
 	public void setExertion(Routine exertion) throws RoutineException {
@@ -412,7 +412,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	public boolean isProcessType() {
-		return execType == Type.PROC;
+		return execType == Type.PRO;
 	}
 
 	public boolean isPreprocessType() {

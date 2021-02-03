@@ -43,7 +43,6 @@ import sorcer.core.plexus.*;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.consumer.ServiceConsumer;
 import sorcer.service.Projection;
@@ -362,9 +361,9 @@ operator extends Operator {
         Context.Out outPaths = null;
         Context.In inPaths = null;
         Paths paths = null;
-        AnalysisEntry mdaEntry = null;
+        Analyzer mdaEntry = null;
         ServiceFidelity mdaFi = null;
-        ExplorationEntry explEntry = null;
+        Explorer explEntry = null;
         ServiceFidelity explFi = null;
         List<Path> responsePaths = null;
         boolean autoDeps = true;
@@ -434,10 +433,10 @@ operator extends Operator {
                     } else if (((ServiceFidelity) o).getFiType().equals(Fi.Type.EXPLORER)) {
                         explFi = (ServiceFidelity) o;
                     }
-                } else if (o instanceof AnalysisEntry) {
-                    mdaEntry = (AnalysisEntry) o;
-                } else if (o instanceof ExplorationEntry) {
-                    explEntry = (ExplorationEntry) o;
+                } else if (o instanceof Analyzer) {
+                    mdaEntry = (Analyzer) o;
+                } else if (o instanceof Explorer) {
+                    explEntry = (Explorer) o;
                 }
             }
         }
@@ -1739,7 +1738,7 @@ operator extends Operator {
     }
 
     public static Signature pro(Signature signature) {
-        signature.setType(Type.PROC);
+        signature.setType(Type.PRO);
         return signature;
     }
 

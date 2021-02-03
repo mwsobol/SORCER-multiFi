@@ -1526,15 +1526,15 @@ public class operator {
         return fi;
     }
 
-    public static SupervisionEntry sup(String name, Supervision supervisor)
+    public static Supervisor sup(String name, Supervision supervisor)
         throws EvaluationException {
-        return new SupervisionEntry(name, supervisor);
+        return new Supervisor(name, supervisor);
     }
 
     public static ServiceFidelity supFi(String name, Supervision... supEntries) {
-        SupervisionEntry[] entries = new SupervisionEntry[supEntries.length];
+        Supervisor[] entries = new Supervisor[supEntries.length];
         for (int i = 0; i < supEntries.length; i++) {
-            entries[i] = (SupervisionEntry) supEntries[i];
+            entries[i] = (Supervisor) supEntries[i];
         }
         ServiceFidelity sFi = new ServiceFidelity(entries);
         sFi.setName(name);
@@ -1544,13 +1544,13 @@ public class operator {
 
     public static Analysis mda(String name, Analysis mda)
         throws EvaluationException {
-        return new AnalysisEntry(name, mda);
+        return new Analyzer(name, mda);
     }
 
     public static ServiceFidelity mdaFi(String name, Analysis... mdaEntries) {
-        AnalysisEntry[] entries = new AnalysisEntry[mdaEntries.length];
+        Analyzer[] entries = new Analyzer[mdaEntries.length];
         for (int i = 0; i < mdaEntries.length; i++) {
-            entries[i] = (AnalysisEntry) mdaEntries[i];
+            entries[i] = (Analyzer) mdaEntries[i];
         }
         ServiceFidelity mdaFi = new ServiceFidelity(entries);
         mdaFi.setName(name);
@@ -1559,9 +1559,9 @@ public class operator {
     }
 
     public static ServiceFidelity explFi(String name, Exploration... explEntries) {
-        ExplorationEntry[] entries = new ExplorationEntry[explEntries.length];
+        Explorer[] entries = new Explorer[explEntries.length];
         for (int i = 0; i < explEntries.length; i++) {
-            entries[i] = (ExplorationEntry) explEntries[i];
+            entries[i] = (Explorer) explEntries[i];
         }
         ServiceFidelity eFi = new ServiceFidelity(entries);
         eFi.setName(name);
@@ -1571,12 +1571,12 @@ public class operator {
 
     public static Exploration expl(String name, Exploration explorer)
         throws EvaluationException {
-        return new ExplorationEntry(name, explorer);
+        return new Explorer(name, explorer);
     }
 
     public static Exploration expl(String name, Signature signature)
         throws EvaluationException {
-        ExplorationEntry ee = new ExplorationEntry(name, signature);
+        Explorer ee = new Explorer(name, signature);
         ee.setType(Functionality.Type.EXPL);
         try {
             ee.setValue(signature);
@@ -1588,7 +1588,7 @@ public class operator {
 
     public static Analysis mdaInstace(String name, Signature signature)
         throws EvaluationException {
-        AnalysisEntry mda = new AnalysisEntry(name, signature);
+        Analyzer mda = new Analyzer(name, signature);
         mda.setType(Functionality.Type.MDA);
         try {
             mda.setValue(signature);
@@ -1601,7 +1601,7 @@ public class operator {
 
     public static Analysis mda(String name, Signature signature)
         throws EvaluationException {
-        AnalysisEntry mda = new AnalysisEntry(name, signature);
+        Analyzer mda = new Analyzer(name, signature);
         mda.setType(Functionality.Type.MDA);
         try {
             mda.setValue(signature);

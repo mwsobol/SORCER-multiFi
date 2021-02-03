@@ -224,17 +224,17 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	/**
 	 * There are four types of {@link Signature} operations that can be
 	 * associated with signatures: <code>PRE</code> (preprocess),
-	 * <code>PROC</code> (process/service) , <code>POST</code> (postprocess), and
+	 * <code>PRO</code> (process/service) , <code>POST</code> (postprocess), and
 	 * <code>APD_DATA</code> (append data) and code>APD_CONTROL</code> (append
-	 * control strategy). Only one <code>PROC</code> signature can be associated
-	 * with any exertion. The <code>PROC</code> signature defines an executing
-	 * provider dynamically bounded at runtime. The <code>APD_DATA</code>
-	 * signatures are invoked invoked first to getValue specified contexts from
+	 * control strategy). Only one <code>PRO</code> signature can be associated
+	 * with the target process. The <code>PRO</code> signature defines an executing
+	 * provider to be bounded at runtime. The <code>APD_DATA</code>
+	 * signatures are invoked first to getValue specified contexts from
 	 * {@link sorcer.service.Contexter}s that are appended to the task's current
 	 * context.
 	 */
 	public enum Type implements Arg {
-		PROC, PRE, POST, SRV, APD_DATA, APD_CONTROL, BUILDER;
+		PRO, PRE, POST, SRV, APD_DATA, APD_CONTROL, BUILDER, CONTROLLER;
 
 		/* (non-Javadoc)
          * @see sorcer.service.Arg#getName()
@@ -316,7 +316,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 
 	static final String SELF = "_self_";
 	static final String SELF_VALUE = "_self_value_";
-	static final Type SRV = Type.PROC;
+	static final Type SRV = Type.PRO;
 	static final Type PRE = Type.PRE;
 	static final Type POST = Type.POST;
 	static final Type APD = Type.APD_DATA;

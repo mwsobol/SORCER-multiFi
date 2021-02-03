@@ -596,7 +596,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 				sig.setServiceType(Spacer.class);
 				((RemoteSignature) sig).setSelector("exert");
 				sig.getProviderName().setName(SorcerConstants.ANY);
-				sig.setType(Signature.Type.PROC);
+				sig.setType(Signature.Type.PRO);
 				exertion.getControlContext().setAccessType(access);
 			} else if (Access.PUSH == access
 					&& !sig.getServiceType()
@@ -605,7 +605,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 					sig.setServiceType(Jobber.class);
 					((RemoteSignature) sig).setSelector("exert");
 					sig.getProviderName().setName(SorcerConstants.ANY);
-					sig.setType(Signature.Type.PROC);
+					sig.setType(Signature.Type.PRO);
 					exertion.getControlContext().setAccessType(access);
 				}
 			}

@@ -22,7 +22,6 @@ import java.rmi.RemoteException;
 
 public interface Supervision {
 
-
     public Context supervise(Context context, Arg... args) throws SuperviseException,
             RemoteException;
 

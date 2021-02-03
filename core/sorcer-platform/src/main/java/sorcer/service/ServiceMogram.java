@@ -13,7 +13,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Coupling;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.AnalysisEntry;
+import sorcer.core.context.model.ent.Analyzer;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.ContextFidelityManager;
@@ -77,7 +77,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected Differentiator differentiator;
     protected Differentiator fdDifferentiator;
     protected Differentiator globalDifferentiator;
-    protected Fidelity<AnalysisEntry> mdaFi;
+    protected Fidelity<Analyzer> mdaFi;
     protected List<Coupling> couplings;
     protected ContextSelector contextSelector;
     protected boolean isExec = true;
@@ -473,7 +473,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
         Signature sig = null;
         for (Object s : selectedFi.selects) {
-            if (s instanceof Signature && ((Signature)s).getExecType() == Signature.Type.PROC) {
+            if (s instanceof Signature && ((Signature)s).getExecType() == Signature.Type.PRO) {
                 sig = (Signature)s;
                 break;
             }
@@ -1053,10 +1053,10 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         Fidelity<Analysis> analysisFi = null;
             Object mdaComponent = context.get(Context.MDA_PATH);
             if (mdaComponent != null) {
-                if (mdaComponent instanceof AnalysisEntry) {
-                    analysisFi = new Fidelity(((AnalysisEntry)mdaComponent).getName());
-                    analysisFi.addSelect((AnalysisEntry) mdaComponent);
-                    analysisFi.setSelect((AnalysisEntry)mdaComponent);
+                if (mdaComponent instanceof Analyzer) {
+                    analysisFi = new Fidelity(((Analyzer)mdaComponent).getName());
+                    analysisFi.addSelect((Analyzer) mdaComponent);
+                    analysisFi.setSelect((Analyzer)mdaComponent);
                 } else if (mdaComponent instanceof ServiceFidelity
                     && ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
                     analysisFi = (Fidelity) mdaComponent;
@@ -1065,14 +1065,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return analysisFi;
     }
 
-    public Fidelity<AnalysisEntry> setMdaFi(Context context) throws ConfigurationException {
+    public Fidelity<Analyzer> setMdaFi(Context context) throws ConfigurationException {
        if(mdaFi == null) {
            Object mdaComponent = context.get(Context.MDA_PATH);
            if (mdaComponent != null) {
-               if (mdaComponent instanceof AnalysisEntry) {
-                   mdaFi = new Fidelity(((AnalysisEntry)mdaComponent).getName());
-                   mdaFi.addSelect((AnalysisEntry) mdaComponent);
-                   mdaFi.setSelect((AnalysisEntry)mdaComponent);
+               if (mdaComponent instanceof Analyzer) {
+                   mdaFi = new Fidelity(((Analyzer)mdaComponent).getName());
+                   mdaFi.addSelect((Analyzer) mdaComponent);
+                   mdaFi.setSelect((Analyzer)mdaComponent);
                } else if (mdaComponent instanceof ServiceFidelity
                        && ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
                    mdaFi = (Fidelity) mdaComponent;
@@ -1082,7 +1082,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
        return mdaFi;
     }
 
-    public Fidelity<AnalysisEntry> getMdaFi() {
+    public Fidelity<Analyzer> getMdaFi() {
         return mdaFi;
     }
 

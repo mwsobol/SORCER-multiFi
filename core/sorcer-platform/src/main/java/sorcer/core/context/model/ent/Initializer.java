@@ -18,50 +18,41 @@
 package sorcer.core.context.model.ent;
 
 import sorcer.core.signature.LocalSignature;
-import sorcer.service.Analysis;
 import sorcer.service.*;
+import sorcer.service.modeling.Finalization;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.Initialization;
 
 /**
- * Created by Mike Sobolewski on 01/05/20.
+ * Created by Mike Sobolewski on 02/01/2021.
  */
-public class AnalysisEntry extends Entry<Analysis> implements Analysis {
+public class Initializer extends Entry<Initialization> implements Controller, Initialization {
 
     private static final long serialVersionUID = 1L;
 
-    private Contextion contextion;
-
     private Signature signature;
 
-    public AnalysisEntry(String name, Analysis mda)  {
+    public Initializer(String name, Initialization finalizer)  {
         this.key = name;
-        this.impl = mda;
-        this.type = Functionality.Type.MDA;
+        this.impl = finalizer;
+        this.type = Functionality.Type.FNL;
     }
 
-    public AnalysisEntry(String name, Signature signature) {
+    public Initializer(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
-        this.type = Functionality.Type.MDA;
+        this.type = Functionality.Type.FNL;
     }
 
-    public AnalysisEntry(String name, Analysis mda, Context context) {
+    public Initializer(String name, Initialization finalizer, Context context) {
         this.key = name;
         scope = context;
-        this.impl = mda;
-        this.type = Functionality.Type.MDA;
+        this.impl = finalizer;
+        this.type = Functionality.Type.FNL;
     }
 
-    public Analysis getAnalyzer() {
-        return (Analysis) impl;
-    }
-
-    public Contextion getContextion() {
-        return contextion;
-    }
-
-    public void setContextion(Contextion contextion) {
-        this.contextion = contextion;
+    public Initialization getFinalizer() {
+        return (Initialization) impl;
     }
 
     public Signature getSignature() {
@@ -69,22 +60,19 @@ public class AnalysisEntry extends Entry<Analysis> implements Analysis {
     }
 
     @Override
-    public void analyze(Request request, Context context) throws EvaluationException {
+    public void initialize(Context context, Arg... args) throws ContextException {
         try {
-            if (impl != null && impl instanceof Analysis) {
-                if (contextion == null || context == contextion) {
-                    ((Analysis) impl).analyze(request, context);
-                } else {
-                    ((Analysis) impl).analyze(contextion, context);
-                }
+            if (impl != null && impl instanceof Initialization) {
+                ((Initialization) impl).initialize(context, args);
             } else if (signature != null) {
                 impl = ((LocalSignature)signature).initInstance();
-                ((Analysis)impl).analyze(request, context);
+                ((Initialization)impl).initialize(context, args);
             } else if (impl == null) {
-                throw new InvocationException("No MDA analysis available!");
+                throw new InvocationException("No Initializer available!");
             }
         } catch (ContextException | SignatureException e) {
             throw new EvaluationException(e);
         }
     }
+
 }

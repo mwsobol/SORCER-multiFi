@@ -28,8 +28,8 @@ import sorcer.core.context.ModelTask;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.OptimizerState;
 import sorcer.core.context.model.ent.Coupling;
-import sorcer.core.context.model.ent.AnalysisEntry;
-import sorcer.core.context.model.ent.ExplorationEntry;
+import sorcer.core.context.model.ent.Analyzer;
+import sorcer.core.context.model.ent.Explorer;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
 import sorcer.service.Region;
@@ -254,15 +254,15 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		if(explorerFi == null) {
 			Object exploreComponent = context.get(Context.EXPLORER_PATH);
 			if (exploreComponent != null) {
-				if (exploreComponent instanceof ExplorationEntry) {
-					explorerFi = new Fidelity(((ExplorationEntry)exploreComponent).getName());
-					explorerFi.addSelect((ExplorationEntry) exploreComponent);
-					explorerFi.setSelect((ExplorationEntry)exploreComponent);
-					((AnalysisEntry)exploreComponent).setContextion(this);
+				if (exploreComponent instanceof Explorer) {
+					explorerFi = new Fidelity(((Explorer)exploreComponent).getName());
+					explorerFi.addSelect((Explorer) exploreComponent);
+					explorerFi.setSelect((Explorer)exploreComponent);
+					((Analyzer)exploreComponent).setContextion(this);
 				} else if (exploreComponent instanceof ServiceFidelity
 					&& ((ServiceFidelity) exploreComponent).getFiType().equals(Fi.Type.EXPLORER)) {
 					explorerFi = (Fidelity) exploreComponent;
-					((ExplorationEntry)explorerFi.getSelect()).setContextion(this);
+					((Explorer)explorerFi.getSelect()).setContextion(this);
 				}
 
 			}
@@ -278,15 +278,15 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		if(analyzerFi == null) {
 			Object mdaComponent = context.get(Context.MDA_PATH);
 			if (mdaComponent != null) {
-				if (mdaComponent instanceof AnalysisEntry) {
-					analyzerFi = new Fidelity(((AnalysisEntry)mdaComponent).getName());
-					analyzerFi.addSelect((AnalysisEntry) mdaComponent);
-					analyzerFi.setSelect((AnalysisEntry)mdaComponent);
-					((AnalysisEntry)mdaComponent).setContextion(this);
+				if (mdaComponent instanceof Analyzer) {
+					analyzerFi = new Fidelity(((Analyzer)mdaComponent).getName());
+					analyzerFi.addSelect((Analyzer) mdaComponent);
+					analyzerFi.setSelect((Analyzer)mdaComponent);
+					((Analyzer)mdaComponent).setContextion(this);
 				} else if (mdaComponent instanceof ServiceFidelity
 						&& ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
 					analyzerFi = (Fidelity) mdaComponent;
-					((AnalysisEntry)analyzerFi.getSelect()).setContextion(this);
+					((Analyzer)analyzerFi.getSelect()).setContextion(this);
 				}
 			}
 		}
@@ -365,8 +365,8 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 						analyzerFi.selectSelect(fi.getName());
 					}
 				}
-				((AnalysisEntry)analyzerFi.getSelect()).setContextion(this);
-				logger.info("*** analyzerFi: {}", ((AnalysisEntry)analyzerFi.getSelect()).getName());
+				((Analyzer)analyzerFi.getSelect()).setContextion(this);
+				logger.info("*** analyzerFi: {}", ((Analyzer)analyzerFi.getSelect()).getName());
 			}
 			if (explorerFi != null) {
 				for (Fi fi : fis) {
@@ -374,7 +374,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 						analyzerFi.selectSelect(fi.getName());
 					}
 				}
-				((ExplorationEntry)explorerFi.getSelect()).setContextion(this);
+				((Explorer)explorerFi.getSelect()).setContextion(this);
 				logger.info("*** explorerFi: {}", ((Identifiable)explorerFi.getSelect()).getName());
 			}
 

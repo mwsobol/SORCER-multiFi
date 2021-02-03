@@ -124,7 +124,7 @@ public class Job extends Transroutine {
 			sig = new RemoteSignature("exert", Jobber.class);
 		}
 		sig.getProviderName().setName(null);
-		sig.setType(Signature.Type.PROC);
+		sig.setType(Signature.Type.PRO);
 		ServiceFidelity sFi = new ServiceFidelity(sig);
 		sFi.setSelect(sig);
 		((ServiceFidelity)multiFi).getSelects().add(sFi);// Add the signature

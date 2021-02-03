@@ -893,7 +893,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
                 sig.setServiceType(Spacer.class);
                 ((RemoteSignature) sig).setSelector("exert");
                 sig.getProviderName().setName(ANY);
-                sig.setType(Signature.Type.PROC);
+                sig.setType(Signature.Type.PRO);
                 getControlContext().setAccessType(access);
             } else if (Access.PUSH == access
                     && !getProcessSignature().getServiceType()
@@ -902,7 +902,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
                     sig.setServiceType(Jobber.class);
                     ((RemoteSignature) sig).setSelector("exert");
                     sig.getProviderName().setName(ANY);
-                    sig.setType(Signature.Type.PROC);
+                    sig.setType(Signature.Type.PRO);
                     getControlContext().setAccessType(access);
                 }
             }
