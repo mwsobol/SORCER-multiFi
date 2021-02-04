@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static sorcer.co.operator.path;
 
-public class Governor implements Service, Supervision {
+public class Governor implements Service, Executive {
 
     protected Governance governance;
 
@@ -100,7 +100,7 @@ public class Governor implements Service, Supervision {
 
 
     @Override
-    public Context supervise(Context input, Arg... args) throws SuperviseException, RemoteException {
+    public Context govern(Context input, Arg... args) throws SuperviseException, RemoteException {
         try {
             if (governance.getInput() == null)  {
                 governance.setInput(input);
