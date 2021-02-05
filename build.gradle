@@ -131,8 +131,8 @@ subprojects {
                     maven {
                         url = uri("https://repo.repsy.io/mvn/mwsobol/sorcersoft")
                         credentials {
-                            username = project.findProperty("repsy.sorcer.user") ?: System.getenv("USERNAME")
-                            password = project.findProperty("repsy.sorcer.key") ?: System.getenv("TOKEN")
+                            username = project.findProperty("repsy.sorcer.user")
+                            password = project.findProperty("repsy.sorcer.key")
                         }
                     }
                 }
