@@ -87,7 +87,6 @@ ext {
                              "${rioHome}/lib/logging/jul-to-slf4j-${slf4jVersion}.jar",
                              "${rioHome}/lib/logging/logback-core-${logbackVersion}.jar",
                              "${rioHome}/lib/logging/logback-classic-${logbackVersion}.jar",
-                             "${rioHome}/lib/logging/rio-logging-support-${rioVersion}.jar",
                              "${sorcerDistHome}/lib/sorcer/lib/sorcer-resolving-loader-${sorcerVersion}.jar",
                              "${sorcerDistHome}/lib/common/guava-${guavaVersion}.jar",
                              "${rioHome}/lib/rio-platform-${rioVersion}.jar",
