@@ -39,15 +39,15 @@ if (args.length == 0 || options.h) {
 String scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
 File sorcerDist =  new File(scriptDir, "../../")
 System.setProperty("java.security.policy", new File(sorcerDist, "policy/policy.all").absolutePath)
-if(System.securityManager==null)
+if (System.securityManager == null)
     System.securityManager = new SecurityManager()
 
-if(!sorcerDist.exists()) {
+if (!sorcerDist.exists()) {
     println "You must build the SORCER distribution first"
     System.exit(-1)
 }
 def props = new Properties()
-new File(sorcerDist, "configs/versions.properties").withReader { reader ->
+new File(sorcerDist, "configs/properties").withReader { reader ->
     props.load(reader)
 }
 
@@ -55,23 +55,22 @@ File rioHome = new File(sorcerDist, "rio-${props['rio.version']}")
 
 def jars = []
 rioHome.eachFileRecurse (FileType.FILES) { file ->
-    if(file.name.startsWith("rio-platform") ||
+    if (file.name.startsWith("rio-platform") ||
        file.name.startsWith("jsk-platform") ||
        file.name.startsWith("jsk-lib") ||
        file.name.startsWith("jsk-dl") ||
        file.name.startsWith("serviceui") ||
        file.name.startsWith("rio-lib") ||
-       file.name.startsWith("rio-logging-support") ||
        file.name.startsWith("slf4j-api") ||
        file.name.startsWith("logback")) {
         /* Skip the logging/logback directory to avoid having multiple slf4j bindings */
-        if(!file.parentFile.path.contains("logging")) {
+        if (!file.parentFile.path.contains("logging")) {
             jars << file.toURI().toURL()
 		}
     }
 }
 sorcerDist.eachFileRecurse (FileType.FILES) { file ->
-    if(file.name.startsWith("sorcer-platform"))
+    if (file.name.startsWith("sorcer-platform"))
         jars << file.toURI().toURL()
 }
 
@@ -99,7 +98,7 @@ try {
     System.setProperty(key, value)
 }
 
-if(options.d) {
+if (options.d) {
     GroovyClassLoader gcl = Thread.currentThread().contextClassLoader as GroovyClassLoader
     LinkedList<URLClassLoader> list = new LinkedList<URLClassLoader>()
     list.add(0, gcl)
@@ -220,7 +219,7 @@ def discover = { host ->
     serviceMatches.items.each { item ->
         String name
         item.attributeSets.each { entry ->
-            if(entry.getClass().name=="net.jini.lookup.entry.ServiceInfo")
+            if (entry.getClass().name=="net.jini.lookup.entry.ServiceInfo")
                 name = entry.name
         }
         println "${i++} $name: ${item.service.getClass().name}"
@@ -228,7 +227,7 @@ def discover = { host ->
             println "\t${entry}"
         }*/
     }
-    if(serviceMatches.items.length>0)
+    if (serviceMatches.items.length>0)
         println ""
 }
 
@@ -243,6 +242,6 @@ if (client || server) {
         multicastServer()
     }
 } else {
-	if(options.u)
+	if (options.u)
         discover(options.u)
 }
