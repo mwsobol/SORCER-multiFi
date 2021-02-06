@@ -12,22 +12,23 @@ import java.util.Map;
 
 import static sorcer.co.operator.path;
 
-public class Governor implements Service, Executive {
+public class Admin implements Service, Administration {
 
     protected Governance governance;
 
-    protected Supervision supervisor;
-    public Governor() {
+    protected Administration rule;
+
+    public Admin() {
         // do nothing
     }
 
-    public Governor(Governance governance) {
+    public Admin(Governance governance) {
         this.governance = governance;
     }
 
-    public Governor(Governance governance, Supervision supervisor) {
+    public Admin(Governance governance, Administration rule) {
         this.governance = governance;
-        this.supervisor = this.supervisor;
+        this.rule = this.rule;
     }
 
     @Override
@@ -90,17 +91,17 @@ public class Governor implements Service, Executive {
         }
     }
 
-    public Supervision getSupervisor() {
-        return supervisor;
+    public Administration getRule() {
+        return rule;
     }
 
-    public void setSupervisor(Supervision govSuervision) {
-        this.supervisor = govSuervision;
+    public void setRule(Administration rule) {
+        this.rule = rule;
     }
 
 
     @Override
-    public Context govern(Context input, Arg... args) throws SuperviseException, RemoteException {
+    public Context admin(Context input, Arg... args) throws ExecutiveException, RemoteException {
         try {
             if (governance.getInput() == null)  {
                 governance.setInput(input);
@@ -108,20 +109,20 @@ public class Governor implements Service, Executive {
                 governance.getInput().substitute(input);
             }
             Context outCxt = (Context) execute(args);
-            Supervision sup = null;
+            Administration executive = null;
             Context tmpCxt;
-            if (governance.getSupervisorFi() != null) {
-                sup = governance.getSupervisorFi().getSelect();
-                tmpCxt = sup.supervise(input, args);
+            if (governance.getExecutiveFi() != null) {
+                executive = governance.getExecutiveFi().getSelect();
+                tmpCxt = executive.admin(input, args);
                 outCxt.appendContext(tmpCxt);
             }
-            if (supervisor != null) {
-                tmpCxt = supervisor.supervise(outCxt);
+            if (rule != null) {
+                tmpCxt = rule.admin(outCxt);
                 outCxt.appendContext(tmpCxt);
             }
             return outCxt;
         } catch (ServiceException e) {
-            throw new SuperviseException(e);
+            throw new ExecutiveException(e);
         }
     }
 }

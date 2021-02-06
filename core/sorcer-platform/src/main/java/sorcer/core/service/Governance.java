@@ -72,7 +72,7 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 
 	protected Fidelity<Supervision> supervisorFi;
 
-	protected Fidelity<Executive> executiveFi;
+	protected Fidelity<Administration> executiveFi;
 
 	protected ServiceFidelity contextMultiFi;
 
@@ -80,7 +80,7 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 
 	protected Map<String, Context> childrenContexts;
 
-	private Executive governor;
+	private Administration governor;
 
 	// dependency management for this governance
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
@@ -112,7 +112,7 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
             this.name = name;
         }
 		serviceStrategy = new ModelStrategy(this);
-		governor = new Governor(this);
+		governor = new Admin(this);
     }
 
     public Governance(String name, Region[] regions) {
@@ -327,11 +327,11 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 		return supervisorFi;
 	}
 
-	public Fidelity<Executive> getExecutiveFi() {
+	public Fidelity<Administration> getExecutiveFi() {
 		return executiveFi;
 	}
 
-	public void setExecutiveFi(Fidelity<Executive> executiveFi) {
+	public void setExecutiveFi(Fidelity<Administration> executiveFi) {
 		this.executiveFi = executiveFi;
 	}
 
@@ -398,10 +398,10 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 
 			ModelStrategy strategy = ((ModelStrategy) cxt.getDomainStrategy());
 			strategy.setExecState(Exec.State.RUNNING);
-			governor.govern(cxt, args);
+			governor.admin(cxt, args);
 			((ModelStrategy) serviceStrategy).setOutcome(output);
 			strategy.setExecState(Exec.State.DONE);
-		} catch (SuperviseException | ConfigurationException e) {
+		} catch (ConfigurationException | ExecutiveException e) {
 			throw new EvaluationException(e);
 		}
 		return out;
