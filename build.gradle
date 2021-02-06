@@ -86,6 +86,7 @@ subprojects {
 
         if (project.name != "distribution") {
             apply plugin: "java"
+
             idea {
                 module {
                     downloadSources = true
@@ -93,11 +94,13 @@ subprojects {
                 }
             }
             /* Always run tests */
-            test.outputs.upToDateWhen { false }
+            test.outputs.upToDateWhen {
+                false
+            }
             /*
              * Inject an allTest task for projects with a Test class that has a name of "test"
              */
-            Test tester = tasks.getByName("test")
+            def tester = tasks.getByName("test")
             if (tester != null) {
                 task "allTest" {
                     description = "Runs all tests in a project"
@@ -107,27 +110,41 @@ subprojects {
             compileJava.options.encoding = 'UTF-8'
             apply from: file("${rootProject.projectDir.path}/gradle/bootme.gradle")
 
-            publishing {
-                publications {
-                    mavenJava(MavenPublication) {
-                        from components.java
+            if (!project.path.contains("examples")
+                    && project.name != "deploy-tests"
+                    && project.name != "sorcer-tester") {
+                publishing {
+                    publications {
+                        mavenJava(MavenPublication) {
+                            from components.java
+                        }
                     }
                 }
             }
         }
+
         publishing {
             repositories {
-                maven {
-                    url "http://$enclaveRepo"
+                if (enclave) {
+                    maven { url "http://$enclaveRepo" }
+                } else {
+                    maven {
+                        url = uri("https://repo.repsy.io/mvn/mwsobol/sorcersoft")
+                        credentials {
+                            username = project.findProperty("repsy.sorcer.user")
+                            password = project.findProperty("repsy.sorcer.key")
+                        }
+                    }
                 }
+
             }
         }
+
         repositories {
             mavenLocal()
             if (!enclave) {
                 maven { url "https://dl.bintray.com/dreedyman/maven"}
                 maven { url "http://www.rio-project.org/maven2" }
-                //maven { url"http://pol.sytes.net/repository/public/" }
                 mavenCentral()
             } else {
                 maven { url "http://$enclaveRepo" }

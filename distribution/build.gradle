@@ -18,7 +18,6 @@ import org.apache.tools.ant.filters.ReplaceTokens
 /* Build a distribution  */
 
 apply plugin: 'base'
-apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 version = sorcerVersion
@@ -313,18 +312,6 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
             into "${distDir}-${version}/bin/icons"
         }
 
-        /* Move the SLF4J logback jars out of the way and slide SLF4J JUL logging support in */
-        /*File rioLoggingLib = file("${distDir}-${version}/rio-${rioVersion}/lib/logging")
-        for(File jar : rioLoggingLib.listFiles()) {
-            if(jar.name.startsWith("logback") && !jar.isDirectory())
-                jar.delete()
-        }
-        copy {
-            from(file("${rioLoggingLib.path}/jul")) {
-                include "**//*slf4j-jdk14*.jar"
-            }
-            into rioLoggingLib
-        }*/
         /* Create a versions.properties file based on the versions in this build */
         Properties versionProps = new Properties()
         File versionPropsFile = file("${distDir}-${version}/configs/versions.properties")
@@ -382,11 +369,10 @@ publishing {
         distribution(MavenPublication) {
             artifact sorcerDistribution
             artifact source: propertiesConfig, classifier: "versions"
+            groupId = project.group
+            artifactId = project.archivesBaseName
+            version = project.version
         }
-    }
-    repositories {
-        maven { url "http://$enclaveRepo" }
-//        maven { url "file:///Users/dreedy/dev/src/projects/mstc/TEMP"}
     }
 }
 

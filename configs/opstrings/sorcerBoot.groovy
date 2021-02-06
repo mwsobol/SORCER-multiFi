@@ -181,7 +181,7 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
-    if(System.getenv('sorcer.start.all')!=null || System.getProperty('sorcer.start.all')!=null) {
+    if(System.getenv('SORCER_START_ALL') != null || System.getProperty('sorcer.start.all') != null) {
 
         service(name: SorcerEnv.getActualName("Exerter")) {
             interfaces {

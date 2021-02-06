@@ -42,21 +42,6 @@ artifacts {
     archives sourcesJar
 }
 
-publishing {
-	publications {
-		impl(MavenPublication) {
-			groupId group
-			/*artifactId 'monitor-service'*/
-			version version
-
-			from components.java
-		}
-	}
-	repositories {
-		maven { url "http://$enclaveRepo" }
-	}
-}
-
 test {
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
