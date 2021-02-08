@@ -30,16 +30,6 @@ jar {
     from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
         include "sorcer/core/modeling/monitoring/**"
     }
-    dependsOn('sourcesJar')
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-artifacts {
-    archives sourcesJar
 }
 
 test {
