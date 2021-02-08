@@ -37,13 +37,13 @@ import java.util.Map;
 /**
  *  Implements a service discipline as out-multiFi-dispatch
  */
-public class ServiceRegion implements Region, Getter<Service> {
+public class ServiceNode implements Node, Getter<Service> {
 
     protected Uuid disciplineId;
 
     protected String  name;
 
-    protected Map<String, RegionFidelity> disciplineFidelities = new HashMap<>();
+    protected Map<String, NodeFidelity> disciplineFidelities = new HashMap<>();
 
     protected ServiceFidelity contextMultiFi;
 
@@ -91,20 +91,20 @@ public class ServiceRegion implements Region, Getter<Service> {
 
     protected ServiceStrategy serviceStrategy;
 
-    public ServiceRegion() {
+    public ServiceNode() {
         disciplineId = UuidFactory.generate();
         serviceStrategy = new ModelStrategy(this);
     }
 
-    public ServiceRegion(Routine... dispatchs) {
+    public ServiceNode(Routine... dispatchs) {
         contextionMultiFi = new ServiceFidelity(dispatchs);
     }
 
-    public ServiceRegion(Fidelity contextionFi, Fidelity dispatchFi) {
+    public ServiceNode(Fidelity contextionFi, Fidelity dispatchFi) {
         this(contextionFi, dispatchFi, null);
     }
 
-    public ServiceRegion(Fidelity contextionFi, Fidelity dispatchFi, Fidelity contextFi) {
+    public ServiceNode(Fidelity contextionFi, Fidelity dispatchFi, Fidelity contextFi) {
         Routine dispatch = (Routine) dispatchFi.getSelect();
         dispatch.setName(dispatchFi.getName());
         Service service = (Service)contextionFi.getSelect();
@@ -123,17 +123,17 @@ public class ServiceRegion implements Region, Getter<Service> {
         }
     }
 
-    public ServiceRegion(Service service, Routine dispatch) {
+    public ServiceNode(Service service, Routine dispatch) {
         contextionMultiFi = new ServiceFidelity(new Service[] { service });
         dispatchMultiFi = new ServiceFidelity(new Service[] { dispatch });
     }
 
-    public ServiceRegion(Service[] services, Routine[] dispatchs) {
+    public ServiceNode(Service[] services, Routine[] dispatchs) {
         contextionMultiFi = new ServiceFidelity(services);
         dispatchMultiFi = new ServiceFidelity(dispatchs);
     }
 
-    public ServiceRegion(List<Service> services, List<Routine> dispatchs) {
+    public ServiceNode(List<Service> services, List<Routine> dispatchs) {
         Routine[] cArray = new Routine[dispatchs.size()];
         Service[] pArray = new Routine[services.size()];
         contextionMultiFi = new ServiceFidelity(services.toArray(cArray));
@@ -374,7 +374,7 @@ public class ServiceRegion implements Region, Getter<Service> {
     @Override
     public void selectFidelity(Fidelity fi) throws ConfigurationException {
         if (fi.getPath().isEmpty()) {
-            RegionFidelity discFi = disciplineFidelities.get(fi.getName());
+            NodeFidelity discFi = disciplineFidelities.get(fi.getName());
             dispatchMultiFi.selectSelect(discFi.getDispatcherFi().getName());
             if (contextionMultiFi != null && discFi.getContextionFi() != null) {
                 contextionMultiFi.findSelect(discFi.getContextionFi().getName());
@@ -485,7 +485,7 @@ public class ServiceRegion implements Region, Getter<Service> {
             if (out instanceof Context) {
                 return (Context) out;
             } else {
-                return ((ServiceRegion) out).getOutput();
+                return ((ServiceNode) out).getOutput();
             }
         } catch (ServiceException e) {
             throw new EvaluationException(e);
@@ -507,7 +507,7 @@ public class ServiceRegion implements Region, Getter<Service> {
         setInput(input);
     }
 
-    public Map<String, RegionFidelity> getDisciplineFidelities() {
+    public Map<String, NodeFidelity> getDisciplineFidelities() {
         return disciplineFidelities;
     }
 
@@ -553,7 +553,7 @@ public class ServiceRegion implements Region, Getter<Service> {
         this.parent = parent;
     }
 
-    public Region addDepender(Evaluation depender) {
+    public Node addDepender(Evaluation depender) {
         if (this.dependers == null)
             this.dependers = new ArrayList<Evaluation>();
         dependers.add(depender);

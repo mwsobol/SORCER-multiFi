@@ -18,7 +18,7 @@ import sorcer.mo.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.modeling.*;
-import sorcer.service.Region;
+import sorcer.service.Node;
 
 import java.rmi.RemoteException;
 
@@ -729,7 +729,7 @@ public class ModelMultiFidelities {
             loop(condition(cxt -> (double)
                 value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
-        Region morphDis = operator.rgn(
+        Node morphDis = operator.rnd(
             cxtnFi("cxtn1", sig("cxtn1", ModelMultiFidelities.class, "getMorphingModel")),
             dspFi("dspt1", mdlDispatch));
 

@@ -1,17 +1,17 @@
 package sorcer.service;
 
-public class RegionFidelity extends Fidelity<Fidelity> {
+public class NodeFidelity extends Fidelity<Fidelity> {
 
     private Fidelity cxtnFi;
 
     private Fidelity cxtFi;
 
-    public RegionFidelity(String name, Fidelity... fidelities) {
+    public NodeFidelity(String name, Fidelity... fidelities) {
         this(fidelities);
         fiName = name;
     }
 
-    public RegionFidelity(Fidelity... fidelities) {
+    public NodeFidelity(Fidelity... fidelities) {
         for (Fidelity fi : fidelities) {
             assignFi(fi);
         }

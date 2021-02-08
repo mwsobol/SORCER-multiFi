@@ -23,7 +23,7 @@ import sorcer.service.modeling.cxtn;
  *  Service governance is the indeterminate multifidelity process of decision-making
  *  and the process by which decisions are actualized in the form of a service federation.
  */
-public interface Region extends Discipline, Dependency, cxtn {
+public interface Node extends Discipline, Dependency, cxtn {
 
     /**
      * Returns a context multifidelity

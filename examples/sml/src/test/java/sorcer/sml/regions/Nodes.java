@@ -10,7 +10,6 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.invoker.Pipeline;
 import sorcer.core.service.Governance;
-import sorcer.mo.operator;
 import sorcer.service.*;
 
 import static org.junit.Assert.assertEquals;
@@ -34,9 +33,9 @@ import static sorcer.so.operator.*;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class Regions {
+public class Nodes {
 
-    private final static Logger logger = LoggerFactory.getLogger(Regions.class);
+    private final static Logger logger = LoggerFactory.getLogger(Nodes.class);
 
     @Test
     public void opservicePipeline() throws Exception {
@@ -89,7 +88,7 @@ public class Regions {
             loop(condition(cxt -> (double)
                 value(cxt, "lambdaOut") < 500.0), pipeline("cxtn1")));
 
-        Region plDis = rgn(
+        Node plDis = rnd(
             cxtnFi("cxtn1", opspl),
             dspFi("dspt1", plDispatch));
 
@@ -161,7 +160,7 @@ public class Regions {
             mda("analyzer",
                 (Request gov, Context cxt) -> {
                     double x1, x2, x3;
-                    String discName = rgn(cxt);
+                    String discName = rgnn(cxt);
                     if (discName.equals("morphModelDisc")) {
                         setValue(gov, "m1", value(cxt, "morpher3"));
                     } else if (discName.equals("plDisc")) {

@@ -32,7 +32,7 @@ import sorcer.core.context.model.ent.Analyzer;
 import sorcer.core.context.model.ent.Explorer;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
-import sorcer.service.Region;
+import sorcer.service.Node;
 import sorcer.service.modeling.*;
 
 import java.rmi.RemoteException;
@@ -108,6 +108,8 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	protected Projection outPathProjection;
 
 	protected Model.Pattern pattern =  Model.Pattern.COLLAB;
+
+	protected Contextion parent;
 
 	public Collaboration() {
         this(null);
@@ -243,7 +245,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	public List<Discipline> getDisciplineList() {
 		List<Discipline> domainList = new ArrayList<>();
 		for (Discipline disc : children.values()) {
-			if (disc instanceof Region) {
+			if (disc instanceof Node) {
 				domainList.add(disc);
 			}
 		}
@@ -665,6 +667,14 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 	@Override
 	public void selectFidelity(Fidelity fi) throws ConfigurationException {
+	}
+
+	public Contextion getParent() {
+		return parent;
+	}
+
+	public void setParent(Contextion parent) {
+		this.parent = parent;
 	}
 
 	public List<Coupling> getCouplings() {

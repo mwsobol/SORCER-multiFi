@@ -17,4 +17,5 @@
 package sorcer.service;
 
 public interface Discipline extends Contextion {
+
 }

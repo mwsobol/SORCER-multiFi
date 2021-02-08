@@ -25,6 +25,7 @@ import sorcer.core.context.*;
 import sorcer.core.context.model.Transmodel;
 import sorcer.core.context.model.req.AnalysisModel;
 import sorcer.core.plexus.ContextFidelityManager;
+import sorcer.core.service.Region;
 import sorcer.core.service.SignatureDomain;
 import sorcer.service.Analysis;
 import sorcer.core.context.model.DataContext;
@@ -44,7 +45,7 @@ import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
 import sorcer.service.modeling.*;
-import sorcer.service.Region;
+import sorcer.service.Node;
 import sorcer.util.DataTable;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -430,8 +431,8 @@ public class operator {
         return null;
     }
 
-    public static Context result(Region region) throws ServiceException {
-        return region.getOutput();
+    public static Context result(Node node) throws ServiceException {
+        return node.getOutput();
     }
 
     public static Object result(Mogram mogram, String path) throws ContextException {
@@ -530,7 +531,7 @@ public class operator {
     }
 
     public static ServiceContext out(Contextion contextion) throws ContextException {
-        if (contextion instanceof Region) {
+        if (contextion instanceof Node) {
             return (ServiceContext) contextion.getOutput();
         } else if (contextion instanceof Governance) {
             return (ServiceContext) ((Governance) contextion).getOutput();
@@ -540,8 +541,8 @@ public class operator {
     }
 
     public static ServiceContext in(Contextion contextion) throws ContextException {
-        if (contextion instanceof Region) {
-            return (ServiceContext) ((ServiceRegion) contextion).getInput();
+        if (contextion instanceof Node) {
+            return (ServiceContext) ((ServiceNode) contextion).getInput();
         } else if (contextion instanceof Collaboration) {
             return (ServiceContext) ((Collaboration) contextion).getInput();
         } else if (contextion instanceof Governance) {
@@ -1115,24 +1116,24 @@ public class operator {
         return servers;
     }
 
-    public static Region rgn(Service server, Routine consumer) {
-        return new ServiceRegion(server, consumer);
+    public static Node rnd(Service server, Routine consumer) {
+        return new ServiceNode(server, consumer);
     }
 
-    public static Region rgn(Service[] servers, Routine[] clients) {
-        return new ServiceRegion(servers, clients);
+    public static Node rnd(Service[] servers, Routine[] clients) {
+        return new ServiceNode(servers, clients);
     }
 
-    public static Region rgn(List<Service> servers,
-                             List<Routine> clients) {
-        return new ServiceRegion(servers, clients);
+    public static Node rnd(List<Service> servers,
+                           List<Routine> clients) {
+        return new ServiceNode(servers, clients);
     }
 
-    public static Region rgn(Governance multidisc, String name) {
-        return multidisc.getDiscipline(name);
+    public static Region rgn(Governance gov, String name) {
+        return gov.getRegion(name);
     }
 
-    public static String rgn(Context context) {
+    public static String rgnn(Context context) {
         return (String) context.get(Functionality.Type.REGION.toString());
     }
 
@@ -1263,25 +1264,25 @@ public class operator {
         return new SignatureDomain(name, signature);
     }
 
-    public static Region rgn(Fidelity... discFis) {
-        return rgn((String) null, discFis);
+    public static Node rnd(Fidelity... discFis) {
+        return rnd((String) null, discFis);
     }
 
-    public static Region rgn(String name, Fidelity... discFis) {
-        ServiceRegion srvDisc = null;
-        if (discFis[0] instanceof RegionFidelity) {
-            srvDisc = new ServiceRegion(((RegionFidelity) discFis[0]).getContextionFi(),
-                ((RegionFidelity) discFis[0]).getDispatcherFi(),
-                ((RegionFidelity) discFis[0]).getContextFi());
-            srvDisc.getDisciplineFidelities().put(discFis[0].getName(), (RegionFidelity) discFis[0]);
+    public static Node rnd(String name, Fidelity... discFis) {
+        ServiceNode srvDisc = null;
+        if (discFis[0] instanceof NodeFidelity) {
+            srvDisc = new ServiceNode(((NodeFidelity) discFis[0]).getContextionFi(),
+                ((NodeFidelity) discFis[0]).getDispatcherFi(),
+                ((NodeFidelity) discFis[0]).getContextFi());
+            srvDisc.getDisciplineFidelities().put(discFis[0].getName(), (NodeFidelity) discFis[0]);
             for (int i = 1; i < discFis.length; i++) {
-                srvDisc.add(((RegionFidelity) discFis[i]).getContextionFi(),
-                    ((RegionFidelity) discFis[i]).getDispatcherFi(),
-                    ((RegionFidelity) discFis[i]).getContextFi());
-                srvDisc.getDisciplineFidelities().put(discFis[i].getName(), (RegionFidelity) discFis[i]);
+                srvDisc.add(((NodeFidelity) discFis[i]).getContextionFi(),
+                    ((NodeFidelity) discFis[i]).getDispatcherFi(),
+                    ((NodeFidelity) discFis[i]).getContextFi());
+                srvDisc.getDisciplineFidelities().put(discFis[i].getName(), (NodeFidelity) discFis[i]);
             }
         } else {
-            srvDisc = new ServiceRegion(discFis[0], discFis[1]);
+            srvDisc = new ServiceNode(discFis[0], discFis[1]);
         }
         if (name != null) {
             srvDisc.setName(name);
@@ -1289,22 +1290,22 @@ public class operator {
         return srvDisc;
     }
 
-    public static Region add(Region disciplne, Service server, Routine client) {
+    public static Node add(Node disciplne, Service server, Routine client) {
         disciplne.add(server, client, null);
         return disciplne;
     }
 
-    public static Region add(Region disciplne, Fidelity providerFi, Fidelity clientFi) {
+    public static Node add(Node disciplne, Fidelity providerFi, Fidelity clientFi) {
         disciplne.add(providerFi, clientFi, null);
         return disciplne;
     }
 
-    public static Region add(Region disciplne, Service server, Routine client, Context context) {
+    public static Node add(Node disciplne, Service server, Routine client, Context context) {
         disciplne.add(server, client, context);
         return disciplne;
     }
 
-    public static Region add(Region disciplne, Fidelity providerFi, Fidelity clientFi, Fidelity contextFi) {
+    public static Node add(Node disciplne, Fidelity providerFi, Fidelity clientFi, Fidelity contextFi) {
         disciplne.add(providerFi, clientFi, contextFi);
         return disciplne;
     }
@@ -1445,7 +1446,7 @@ public class operator {
             Object o = dataList.get(i);
             if (o instanceof String) {
                 name = (String) o;
-            } else if (o instanceof Region) {
+            } else if (o instanceof Node) {
                 regions.add((Region) o);
             } else if (o instanceof DataContext) {
                 govContext = (Context) o;
@@ -1467,7 +1468,7 @@ public class operator {
         Object[] names = new Object[regions.size()];
 
         for (int i = 0; i < regions.size(); i++) {
-            ((ServiceRegion) regions.get(i)).setParent(gov);
+            (regions.get(i)).setParent(gov);
             names[i] = regions.get(i).getName();
         }
 
@@ -1476,7 +1477,7 @@ public class operator {
             Map<String, ServiceFidelity> fis = new HashMap<>();
             for (ServiceFidelity discFi : discFis) {
                 fis.put(discFi.getName(), discFi);
-                gov.getDisciplines().put(discFi.getName(), (Region) discFi.getSelect());
+                gov.getRegions().put(discFi.getName(), (Region) discFi.getSelect());
             }
             fiManager.setFidelities(fis);
             gov.setFiManager(fiManager);
@@ -1517,6 +1518,98 @@ public class operator {
             }
         }
         return gov;
+    }
+
+
+    public static Region rgn(Object... data) throws ContextException {
+        String name = getUnknown();
+        List<Node> nodes = new ArrayList<>();
+        List<ServiceFidelity> discFis = new ArrayList<>();
+        Dependency dependency = null;
+        ExecDeps execDeps = null;
+        Paths nodePaths = null;
+        Context govContext = null;
+
+        List<Object> dataList = new ArrayList<>();
+        for (Object o : data) {
+            dataList.add(o);
+        }
+        for (int i = 0; i < dataList.size(); i++) {
+            Object o = dataList.get(i);
+            if (o instanceof String) {
+                name = (String) o;
+            } else if (o instanceof Node) {
+                nodes.add((Node) o);
+            } else if (o instanceof DataContext) {
+                govContext = (Context) o;
+            } else if (o instanceof Dependency) {
+                dependency = (Dependency) o;
+            } else if (o instanceof ExecDeps) {
+                execDeps = (ExecDeps) o;
+            } else if (o instanceof ServiceFidelity) {
+                discFis.add((ServiceFidelity) o);
+            } else if (o instanceof Paths && ((Paths) o).type.equals(Functionality.Type.NODE)) {
+                nodePaths = (Paths) o;
+            }
+        }
+
+        Region rgn = new Region(name, nodes);
+        if (govContext != null) {
+            rgn.setInput(govContext);
+        }
+        Object[] names = new Object[nodes.size()];
+
+        for (int i = 0; i < nodes.size(); i++) {
+            ((ServiceNode) nodes.get(i)).setParent(rgn);
+            names[i] = nodes.get(i).getName();
+        }
+        if (discFis.size() > 0) {
+            FidelityManager fiManager = new FidelityManager();
+            Map<String, ServiceFidelity> fis = new HashMap<>();
+            for (ServiceFidelity discFi : discFis) {
+                fis.put(discFi.getName(), discFi);
+                rgn.getChildren().put(discFi.getName(), (Region) discFi.getSelect());
+            }
+            fiManager.setFidelities(fis);
+            rgn.setFiManager(fiManager);
+        }
+
+        if (nodePaths != null) {
+            nodePaths.name = rgn.getName();
+            rgn.setDomainPaths(nodePaths);
+        }
+
+        if (dependency == null && names.length > 0) {
+            if (nodePaths != null) {
+                sorcer.co.operator.dependsOn(rgn, ent(rgn.getName(), nodePaths));
+            } else {
+                sorcer.co.operator.dependsOn(rgn, ent(rgn.getName(), paths(names)));
+            }
+        } else {
+            List<Evaluation> entries = dependency.getDependers();
+            for (Evaluation e : entries) {
+                if (e instanceof Entry && ((Entry) e).getName().equals("self")) {
+                    e.setName(rgn.getName());
+                }
+            }
+        }
+
+        if (execDeps != null && names.length > 0) {
+            ExecDependency[] entries = execDeps.deps;
+            for (Evaluation e : entries) {
+                if (e instanceof Entry && ((Entry) e).getName().equals("self")) {
+                    e.setName(rgn.getName());
+                }
+            }
+
+            if (execDeps.getType().equals(Functionality.Type.FUNCTION)) {
+                sorcer.co.operator.dependsOn(rgn, execDeps.deps);
+            } else if (execDeps.getType().equals(Functionality.Type.NODE)) {
+                sorcer.co.operator.dependsOn(rgn, execDeps.deps);
+            }
+        }
+
+        return rgn;
     }
 
     public static Fidelity mdaFi(String name, String path) {

@@ -30,14 +30,14 @@ public class MuiltidisciplinaryBuilder {
 	private final static Logger logger = LoggerFactory.getLogger(MuiltidisciplinaryBuilder.class);
 
 
-	public static Region getMorphModelDiscipline() throws Exception {
+	public static Node getMorphModelDiscipline() throws Exception {
 
 		// cxtn1 is a free contextion for a discipline dispatcher
 		Block mdlDispatch = block(
 			loop(condition(cxt -> (double)
 				value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
-		Region morphDis = rgn("morphModelDisc",
+		Node morphDis = rnd("morphModelDisc",
 			cxtnFi("cxtn1", sig("cxtn1", MuiltidisciplinaryBuilder.class, "getMorphingModel")),
 			dspFi("dspt1", mdlDispatch));
 
@@ -132,7 +132,7 @@ public class MuiltidisciplinaryBuilder {
 		return mdl;
 	}
 
-	static public Region getMultiFiPipelineDiscipline() throws Exception {
+	static public Node getMultiFiPipelineDiscipline() throws Exception {
 
 		// evalTask dispatches the contextion Fi cxtn1
 		// evaluator("cxtn1") is FreeEvaluator to be bound to Fi cxtn1
@@ -153,7 +153,7 @@ public class MuiltidisciplinaryBuilder {
 			loop(condition(cxt -> (double)
 				value(cxt, "lambdaOut") < 500.0), pipeline("cxtn2")));
 
-		Region plDisc = rgn("plDisc",
+		Node plDisc = rnd("plDisc",
 			rgnFi("plDisc1",
 				cxtnFi("cxtn1", sig("getPipeline1",  MuiltidisciplinaryBuilder.class)),
 				cxtFi("cxt1", cxt1),
@@ -206,8 +206,8 @@ public class MuiltidisciplinaryBuilder {
 	static public Governance getMultidiscGovernance1() throws Exception {
 
 		Governance govc = gov("multidisc",
-			instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1")),
-			instance(sig("getMultiFiPipelineDiscipline", MuiltidisciplinaryBuilder.class), fi("plDisc1")));
+			rgn(instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1")),
+			instance(sig("getMultiFiPipelineDiscipline", MuiltidisciplinaryBuilder.class), fi("plDisc1"))));
 
 		return govc;
 	}
@@ -218,7 +218,7 @@ public class MuiltidisciplinaryBuilder {
 			mda("analyzer",
 				(Request gov, Context cxt) -> {
 					double x1, x2, x3;
-					String discName = rgn(cxt);
+					String discName = rgnn(cxt);
 					if (discName.equals("morphModelDisc")) {
 						setValue(gov, "m1", value(cxt, "morpher3"));
 					} else if (discName.equals("plDisc")) {

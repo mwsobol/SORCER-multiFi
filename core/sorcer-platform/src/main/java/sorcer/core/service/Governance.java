@@ -28,7 +28,7 @@ import sorcer.core.context.model.ent.Analyzer;
 import sorcer.core.context.model.ent.Supervisor;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
-import sorcer.service.Region;
+import sorcer.service.Node;
 import sorcer.service.modeling.*;
 
 import java.rmi.RemoteException;
@@ -76,7 +76,7 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 
 	protected ServiceFidelity contextMultiFi;
 
-	protected Map<String, Region> disciplines = new HashMap<>();
+	protected Map<String, Region> regions = new HashMap<>();
 
 	protected Map<String, Context> childrenContexts;
 
@@ -117,17 +117,17 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 
     public Governance(String name, Region[] regions) {
         this(name);
-        for (Region disc : regions) {
-                this.disciplines.put(disc.getName(), disc);
-				disciplnePaths.add(new Path(disc.getName()));
+        for (Region rgn : regions) {
+                this.regions.put(rgn.getName(), rgn);
+				disciplnePaths.add(new Path(rgn.getName()));
         }
     }
 
 	public Governance(String name, List<Region> regions) {
 		this(name);
-		for (Region disc : regions) {
-			this.disciplines.put(disc.getName(), disc);
-			disciplnePaths.add(new Path(disc.getName()));
+		for (Region rgn : regions) {
+			this.regions.put(rgn.getName(), rgn);
+			disciplnePaths.add(new Path(rgn.getName()));
 		}
 	}
 
@@ -147,12 +147,8 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
         this.disciplnePaths = disciplnePaths;
     }
 
-    public Map<String, Region> getDisciplines() {
-		return disciplines;
-	}
-
-	public Region getDiscipline(String name) {
-		return disciplines.get(name);
+    public Map<String, Region> getRegions() {
+		return regions;
 	}
 
     public Supervision getSuperviser() {
@@ -275,10 +271,10 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 		this.analyzerFi = analyzerFi;
 	}
 
-	public List<Region> getDisciplineList() {
+	public List<Region> getRegionList() {
 		List<Region> discList = new ArrayList<>();
-		for (Region disc : disciplines.values()) {
-			if (disc instanceof Region) {
+		for (Region disc : regions.values()) {
+			if (disc instanceof Node) {
 				discList.add(disc);
 			}
 		}
@@ -460,7 +456,7 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 	}
 
 	public Map<String, Region> getChildren() {
-		return disciplines;
+		return regions;
 	}
 
 	@Override
@@ -469,16 +465,12 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 	}
 
 	@Override
-	public Mogram getChild(String name) {
-		try {
-			return (Mogram) disciplines.get(name).getContextion();
-		} catch (ServiceException e) {
-			throw new RuntimeException(e);
-		}
+	public Region getChild(String name) {
+		return regions.get(name);
 	}
 
 	public Region getRegion(String name) {
-		return disciplines.get(name);
+		return regions.get(name);
 	}
 
 	@Override
@@ -511,7 +503,7 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 
 	@Override
 	public List<Contextion> getContextions(List<Contextion> contextionList) {
-		for (Contextion e : disciplines.values()) {
+		for (Contextion e : regions.values()) {
 			e.getContextions(contextionList);
 		}
 		contextionList.add(this);

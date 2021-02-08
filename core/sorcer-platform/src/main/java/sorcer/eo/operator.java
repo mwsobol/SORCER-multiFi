@@ -49,7 +49,7 @@ import sorcer.service.Projection;
 import sorcer.core.signature.*;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
-import sorcer.service.RegionFidelity;
+import sorcer.service.NodeFidelity;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.modeling.*;
@@ -1782,13 +1782,13 @@ operator extends Operator {
         return fi;
     }
 
-    public static RegionFidelity rgnFi(Fidelity... fidelities) {
-        RegionFidelity fi = new RegionFidelity(fidelities);
+    public static NodeFidelity rgnFi(Fidelity... fidelities) {
+        NodeFidelity fi = new NodeFidelity(fidelities);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;
     }
-    public static RegionFidelity rgnFi(String name, Fidelity... fidelities) {
-        RegionFidelity fi = new RegionFidelity(name, fidelities);
+    public static NodeFidelity rgnFi(String name, Fidelity... fidelities) {
+        NodeFidelity fi = new NodeFidelity(name, fidelities);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;
     }

@@ -34,12 +34,11 @@ import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.service.Collaboration;
 import sorcer.core.service.Governance;
 import sorcer.core.signature.LocalSignature;
-import sorcer.core.signature.ServiceSignature;
 import sorcer.service.Exertion;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
-import sorcer.service.Region;
+import sorcer.service.Node;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -192,8 +191,8 @@ public class operator extends Operator {
         return (ServiceContext)rc;
     }
 
-    public static void clear(Region region) throws MogramException {
-        ((ServiceRegion) region).clear();
+    public static void clear(Node node) throws MogramException {
+        ((ServiceNode) node).clear();
     }
 
     public static Context eval(Signature signature, Arg... args)
@@ -202,8 +201,8 @@ public class operator extends Operator {
         try {
             Object target = ((LocalSignature) signature).build();
 
-            if (target instanceof Region) {
-                out = (Context) ((Region) target).execute(args);
+            if (target instanceof Node) {
+                out = (Context) ((Node) target).execute(args);
             } else if (target instanceof Model) {
                 Context cxt = Arg.selectContext(args);
                 out = ((Model)target).evaluate(cxt);
@@ -214,33 +213,33 @@ public class operator extends Operator {
         return out;
     }
 
-    public static Context eval(Region region, Arg... args)
+    public static Context eval(Node node, Arg... args)
         throws ContextException {
         try {
-            return (Context) region.execute(args);
+            return (Context) node.execute(args);
         } catch (ServiceException | RemoteException e) {
             throw new ContextException(e);
         }
     }
 
-    public static Context dscOut(Region region) throws ContextException {
-        return region.getOutput();
+    public static Context dscOut(Node node) throws ContextException {
+        return node.getOutput();
     }
 
-    public static Context dspOut(Region region) throws ContextException {
-        return ((ServiceRegion) region).getOutDispatcher().getContext();
+    public static Context dspOut(Node node) throws ContextException {
+        return ((ServiceNode) node).getOutDispatcher().getContext();
     }
 
     public static Context out(Governance governance) {
         return governance.getOutput();
     }
 
-    public static Context result(Region region) throws ContextException {
-        return ((Routine) region.getOutDispatcher()).getContext();
+    public static Context result(Node node) throws ContextException {
+        return ((Routine) node.getOutDispatcher()).getContext();
     }
 
-    public static Dispatch dispatcher(Region region) {
-        return region.getOutDispatcher();
+    public static Dispatch dispatcher(Node node) {
+        return node.getOutDispatcher();
     }
 
     public static Response query(Mogram mogram, Arg... args) throws ContextException {
@@ -579,7 +578,7 @@ public class operator extends Operator {
             } else if (service instanceof Mogram) {
                 if (service instanceof DataContext || service instanceof MultiFiMogram) {
                     return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
-                } else if (service instanceof Region) {
+                } else if (service instanceof Node) {
                     return service.execute(args);
                 } else {
                     return execMogram((Mogram) service, args);

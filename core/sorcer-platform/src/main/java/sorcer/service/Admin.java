@@ -4,6 +4,7 @@ import sorcer.co.tuple.ExecDependency;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.service.Governance;
+import sorcer.core.service.Region;
 import sorcer.service.modeling.*;
 
 import java.rmi.RemoteException;
@@ -70,7 +71,7 @@ public class Admin implements Service, Administration {
                     if (dpl != null && dpl.size() > 0) {
                         for (Path p : dpl) {
                             try {
-                                Region disc = governance.getDiscipline(p.path);
+                                Region disc = governance.getRegion(p.path);
                                 disc.evaluate(governance.getOutput(), args);
                                 if (governance.getAnalyzerFi() != null && governance.getAnalyzerFi().getSelect() != null) {
                                     disc.getOutput().putValue(Functionality.Type.REGION.toString(), disc.getName());
