@@ -386,9 +386,11 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 			if (explorerFi == null) {
 				setExplorerFi(input);
 			}
-			out = explorerFi.getSelect().explore(input);
-			((ModelStrategy) serviceStrategy).setOutcome(out);
-			strategy.setExecState(Exec.State.DONE);
+			if (explorerFi != null) {
+				out = explorerFi.getSelect().explore(input);
+				((ModelStrategy) serviceStrategy).setOutcome(out);
+				strategy.setExecState(Exec.State.DONE);
+			}
 		} catch (ConfigurationException | ContextException | ExploreException e) {
 			throw new EvaluationException(e);
 		}

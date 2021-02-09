@@ -179,10 +179,10 @@ public class Nodes {
         Governance gov = (Governance) instance(
             sig("getMultidiscGovernance1", MuiltidisciplinaryBuilder.class));
 
-        logger.info("discipline morphModelDisc name: " + rgn(gov, "morphModelDisc").getName());
-        logger.info("discipline plDisc name: " + rgn(gov, "plDisc").getName());
-        assertEquals(rgn(gov, "morphModelDisc").getName(), "morphModelDisc");
-        assertEquals(rgn(gov, "plDisc").getName(), "plDisc");
+        logger.info("discipline morphModelDisc name: " + name(rgn(gov, "morphModelDisc")));
+        logger.info("discipline plDisc name: " + name(rgn(gov, "plDisc")));
+        assertEquals(name(rgn(gov, "morphModelDisc")), "morphModelDisc");
+        assertEquals(name(rgn(gov, "plDisc")), "plDisc");
 
         Context out = eval(gov, govCxt);
         logger.info("gov morphModelDisc out: " + out(rgn(gov, "morphModelDisc")));

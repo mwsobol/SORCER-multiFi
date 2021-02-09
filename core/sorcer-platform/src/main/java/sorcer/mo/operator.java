@@ -1446,7 +1446,7 @@ public class operator {
             Object o = dataList.get(i);
             if (o instanceof String) {
                 name = (String) o;
-            } else if (o instanceof Node) {
+            } else if (o instanceof Region) {
                 regions.add((Region) o);
             } else if (o instanceof DataContext) {
                 govContext = (Context) o;
@@ -1554,6 +1554,9 @@ public class operator {
         }
 
         Region rgn = new Region(name, nodes);
+        if (nodes.size() == 1 && (name == null || name.contains("unknown"))) {
+            rgn.setName(nodes.get(0).getName());
+        }
         if (govContext != null) {
             rgn.setInput(govContext);
         }

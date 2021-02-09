@@ -1,9 +1,9 @@
 package sorcer.core.service;
 
 import sorcer.core.context.ModelStrategy;
-import sorcer.service.Node;
-import sorcer.service.Supervision;
+import sorcer.service.*;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class Region extends Collaboration {
@@ -41,6 +41,16 @@ public class Region extends Collaboration {
 
     public void setSupervisor(Supervision supervisor) {
         this.supervisor = supervisor;
+    }
+
+    @Override
+    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
+        if (children.size() == 1) {
+            output =  children.values().iterator().next().evaluate(context, args);
+        } else {
+            output = super.evaluate(context, args);
+        }
+        return output;
     }
 
 }

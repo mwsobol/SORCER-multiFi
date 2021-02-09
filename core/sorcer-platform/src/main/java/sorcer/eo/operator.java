@@ -1782,12 +1782,12 @@ operator extends Operator {
         return fi;
     }
 
-    public static NodeFidelity rgnFi(Fidelity... fidelities) {
+    public static NodeFidelity rndFi(Fidelity... fidelities) {
         NodeFidelity fi = new NodeFidelity(fidelities);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;
     }
-    public static NodeFidelity rgnFi(String name, Fidelity... fidelities) {
+    public static NodeFidelity rndFi(String name, Fidelity... fidelities) {
         NodeFidelity fi = new NodeFidelity(name, fidelities);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;

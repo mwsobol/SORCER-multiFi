@@ -154,12 +154,12 @@ public class MuiltidisciplinaryBuilder {
 				value(cxt, "lambdaOut") < 500.0), pipeline("cxtn2")));
 
 		Node plDisc = rnd("plDisc",
-			rgnFi("plDisc1",
+			rndFi("plDisc1",
 				cxtnFi("cxtn1", sig("getPipeline1",  MuiltidisciplinaryBuilder.class)),
 				cxtFi("cxt1", cxt1),
 				dspFi("dspt1", evalTask)),
 
-			rgnFi("plDisc2",
+			rndFi("plDisc2",
 				cxtnFi("cxtn2", sig("getPipeline2",  MuiltidisciplinaryBuilder.class)),
 				cxtFi("cxt2", cxt2),
 				dspFi("dspt2", blockDispatch)));
@@ -206,8 +206,8 @@ public class MuiltidisciplinaryBuilder {
 	static public Governance getMultidiscGovernance1() throws Exception {
 
 		Governance govc = gov("multidisc",
-			rgn(instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1")),
-			instance(sig("getMultiFiPipelineDiscipline", MuiltidisciplinaryBuilder.class), fi("plDisc1"))));
+			rgn(instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1"))),
+			rgn(instance(sig("getMultiFiPipelineDiscipline", MuiltidisciplinaryBuilder.class), fi("plDisc1"))));
 
 		return govc;
 	}
@@ -235,8 +235,8 @@ public class MuiltidisciplinaryBuilder {
 		);
 
 		Governance mdisc = gov("multidisc",
-			instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1")),
-			instance(sig("getMultiFiPipelineDiscipline", MuiltidisciplinaryBuilder.class), fi("plDisc1")),
+			rgn(instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1"))),
+			rgn(instance(sig("getMultiFiPipelineDiscipline", MuiltidisciplinaryBuilder.class), fi("plDisc1"))),
 			govcCxt);
 
 		return mdisc;
