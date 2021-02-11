@@ -13,8 +13,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.service.ContextException;
 import sorcer.service.Routine;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static sorcer.eo.operator.*;
 import static sorcer.so.operator.eval;
 import static sorcer.so.operator.exec;
@@ -124,4 +123,3 @@ public class CoffeeMakerTest {
 	}
 
 }
-
