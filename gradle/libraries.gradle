@@ -74,6 +74,7 @@ ext {
         "https" in set
     }
 
+    websterAddress = "192.168.229.128"
     if (useHttps()) {
         websterUrl = "https://${websterAddress}:${websterPort}"
     } else {
