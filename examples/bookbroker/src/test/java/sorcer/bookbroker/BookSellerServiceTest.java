@@ -12,14 +12,15 @@ import sorcer.bookbroker.impl.BookBid;
 import sorcer.bookbroker.impl.BookRequest;
 import sorcer.bookseller.BookSeller;
 import sorcer.bookseller.Book;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Routine;
-import sorcer.service.Task;
+import sorcer.bookseller.impl.BookSellerService;
+import sorcer.core.context.ControlContext;
+import sorcer.service.*;
 
 import static sorcer.bookbroker.impl.BookRequest.getBookRequest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.match;
+import static sorcer.co.operator.os;
 import static sorcer.ent.operator.ent;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.value;
@@ -97,6 +98,43 @@ public class BookSellerServiceTest {
         // The seller makes the bid
         Task task = task(sig("makeBid", BookSeller.class), jobContext);
         task = exert(task);
+        jobContext = context(task);
+        logger.info("bid context:" + (Context) value(jobContext, "bid"));
+
+        // Check bid
+        BookBid bid = BookBid.getBookBid((Context) value(jobContext, "bid"));
+        System.out.println("bid: " + bid);
+        assertEquals(995.0, bid.getBidPrice(), 1e6);
+        assertEquals(100, bid.getNumCopies());
+    }
+
+    @Test
+    public void testMakeBidSelectableTask() throws Exception {
+
+        // Create context for bid on request
+        Context jobContext = context(
+                ent("key", "theLittlePrince"),
+                ent("request", BookRequest.getContext(requestTLP)));
+
+        // The seller makes the bid
+//        Task task = task(
+//                sig(BookSeller.class,
+//                        op("makeBid", match(os("Linux")), Strategy.Access.PULL, Strategy.Wait.YES)),
+//                jobContext);
+        Task task = task(
+                sig("makeBid", BookSeller.class),
+                jobContext,
+                strategy(Strategy.Access.PULL, Strategy.Wait.YES));
+        System.out.println(task);
+        task = exert(task);
+
+//        Job job = new Job();
+//        ControlContext cc = job.getControlContext();
+//        cc.setAccessType(Strategy.Access.PULL);
+//        job.addMogram(task);
+//        job = job.exert();
+//        task = (Task) job.getMograms().get(0);
+
         jobContext = context(task);
         logger.info("bid context:" + (Context) value(jobContext, "bid"));
 

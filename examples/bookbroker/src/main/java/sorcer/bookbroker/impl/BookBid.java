@@ -102,6 +102,8 @@ public class BookBid implements Serializable {
             bid.bidPrice = (double) context.getValue("bidPrice");
         } catch (RemoteException e) {
             throw new ContextException(e);
+        } catch (NullPointerException e) {
+            throw new ContextException("Missing a bid attribute in context: " + context, e);
         }
         return bid;
     }

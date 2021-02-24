@@ -85,7 +85,6 @@ dependencies {
 def deployConfig = file("configs/bookseller-prv.config")
 artifacts {
     archives deployConfig
-//    archives file("configs/bookseller-prv.config")
 }
 
 def repoPath() {

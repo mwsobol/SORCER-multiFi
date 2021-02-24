@@ -1,20 +1,25 @@
 package sorcer.bookseller.impl;
 
+import org.rioproject.impl.system.OperatingSystemType;
 import sorcer.bookbroker.impl.BookBid;
 import sorcer.bookbroker.impl.BookRequest;
 import sorcer.bookseller.Book;
+import sorcer.bookseller.BookSeller;
+import sorcer.core.provider.ProviderSupport;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.service.Routine;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * @author   Marco
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class BookSellerService implements sorcer.bookseller.BookSeller {
+public class BookSellerService implements BookSeller {
 
     private final static Logger logger = LoggerFactory.getLogger(BookSellerService.class);
 
@@ -91,8 +96,6 @@ public class BookSellerService implements sorcer.bookseller.BookSeller {
                 bid.setBidPrice(bidPrice);
                 logger.info("Making $" + bidPrice + " bid for " + numCopies + "copies of \"" + bookTitle + "\"");
 
-//                context.putValue("bid/price", bidPrice);
-//                context.putValue("bid/numCopies", numAvailCopies);
                 context.putValue("bid", BookBid.getContext(bid));
                 if (context.getContextReturn() != null) {
                     context.setReturnValue(bidPrice);
@@ -102,4 +105,28 @@ public class BookSellerService implements sorcer.bookseller.BookSeller {
 
         return context;
     }
+
+//    public String getProviderOsName() {
+//        if (OperatingSystemType.isLinux()) {
+//            return OperatingSystemType.LINUX;
+//        }
+//        else if (OperatingSystemType.isMac()) {
+//            return OperatingSystemType.MACINTOSH;
+//        }
+//        else if (OperatingSystemType.isWindows()) {
+//            return OperatingSystemType.WINDOWS;
+//        }
+//        else {
+//            return null;
+//        }
+//    }
+//
+//    public List<String> getAvailableApps() {
+//        return null;
+//    }
+//
+//    public boolean isReady(Routine exertion) {
+//        return true;
+//    }
+
 }

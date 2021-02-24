@@ -3010,7 +3010,6 @@ public class ProviderDelegate {
 				logger.debug("service component exposed interfaces {}", exposedInterfaces);
 			}
 		} else {
-			System.out.println("\n\n\n\nPUBLISHED SERVICE TYPES: " + publishedServiceTypes);
 			for (Class publishedType : publishedServiceTypes) {
 				for (Object serviceBean : serviceBeans) {
 					if (publishedType.isInstance(serviceBean)) {
