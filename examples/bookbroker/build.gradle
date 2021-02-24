@@ -42,11 +42,11 @@ task servicePrvDlJar(type: Jar) {
     dependsOn classes
     from sourceSets.main.output
     include('sorcer/bookbroker/*')
-    include('sorcer/bookbroker/impl/BookRequest.class')
-    include('sorcer/bookbroker/impl/BookBid.class')
+//    include('sorcer/bookbroker/impl/BookRequest.class')
+//    include('sorcer/bookbroker/impl/BookBid.class')
     include('sorcer/bookseller/*')
-    include('sorcer/bookseller/impl/Book.class')
-    include('sorcer/bookseller/impl/BookInventory.class')
+//    include('sorcer/bookseller/impl/Book.class')
+//    include('sorcer/bookseller/impl/BookInventory.class')
     from sourceSets.main.resources
     include('sorcer.jpg')
 }

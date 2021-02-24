@@ -8,12 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.bookbroker.impl.BookBid;
 import sorcer.bookbroker.impl.BookRequest;
-import sorcer.bookseller.impl.Book;
-import sorcer.bookseller.impl.BookSeller;
+import sorcer.bookseller.BookSeller;
+import sorcer.bookseller.Book;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Routine;
+import sorcer.service.Task;
 
 import static sorcer.bookbroker.impl.BookRequest.getBookRequest;
 import static org.junit.Assert.assertEquals;
@@ -51,7 +53,7 @@ public class BookSellerServiceTest {
         addTLP = exert(addTLP);
         Context ctx = context(addTLP);
         logger.info("addTLP context: " + ctx);
-        assertEquals(value(ctx, "context/result"), 100);
+        assertEquals(100, value(ctx, "context/result"));
 
         // Setup request from John Doe for 100 copies of The Little Prince
         requestTLP = new BookRequest();
@@ -85,20 +87,24 @@ public class BookSellerServiceTest {
     }
 
     @Test
-    public void testMakeBidJob() throws Exception {
+    public void testMakeBidTask() throws Exception {
 
         // Create context for bid on request
-        Context theLittlePrince = context(
+        Context jobContext = context(
                 ent("key", "theLittlePrince"),
                 ent("request", BookRequest.getContext(requestTLP)));
 
         // The seller makes the bid
-        Routine tlp = task(sig("makeBid", BookSeller.class), theLittlePrince);
-        tlp = exert(tlp);
-        theLittlePrince = context(tlp);
-        logger.info("job context:" + theLittlePrince);
-        logger.info("bid:" + value(theLittlePrince, "bid/value"));
-//        Context bid = (Context) value(context(tlp),"bid");
-//        logger.info("bid context:" + bid);
+        Task task = task(sig("makeBid", BookSeller.class), jobContext);
+        task = exert(task);
+        jobContext = context(task);
+        logger.info("bid context:" + (Context) value(jobContext, "bid"));
+
+        // Check bid
+        BookBid bid = BookBid.getBookBid((Context) value(jobContext, "bid"));
+        System.out.println("bid: " + bid);
+        assertEquals(995.0, bid.getBidPrice(), 1e6);
+        assertEquals(100, bid.getNumCopies());
+
     }
 }

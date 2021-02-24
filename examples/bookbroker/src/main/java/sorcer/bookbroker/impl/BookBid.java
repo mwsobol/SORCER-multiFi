@@ -77,7 +77,7 @@ public class BookBid implements Serializable {
         return bidPrice;
     }
     /**
-     * @param bidPrice   The numCopies to setValue.
+     * @param bidPrice   The bidPrice to setValue.
      */
     public void setBidPrice(double bidPrice) {
         this.bidPrice = bidPrice;
@@ -88,15 +88,18 @@ public class BookBid implements Serializable {
     }
 
     public String toString() {
-        return name;
+        return "BookBid(name=\"" + name
+                + "\", bookTitle=\"" + bookTitle
+                + "\", numCopies=" + numCopies + ")";
     }
 
-    static public BookBid getBookRequest(Context context) throws ContextException {
+    static public BookBid getBookBid(Context context) throws ContextException {
         BookBid bid = new BookBid();
         try {
             bid.name = (String) context.getValue("key");
             bid.bookTitle = (String) context.getValue("bookTitle");
             bid.numCopies = (int) context.getValue("numCopies");
+            bid.bidPrice = (double) context.getValue("bidPrice");
         } catch (RemoteException e) {
             throw new ContextException(e);
         }

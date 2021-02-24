@@ -1,6 +1,8 @@
 package sorcer.bookseller.impl;
 
-import sorcer.bookseller.BookSellerService;
+import sorcer.bookbroker.impl.BookBid;
+import sorcer.bookbroker.impl.BookRequest;
+import sorcer.bookseller.Book;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import org.slf4j.Logger;
@@ -12,13 +14,13 @@ import java.rmi.RemoteException;
  * @author   Marco
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class BookSeller implements BookSellerService{
+public class BookSellerService implements sorcer.bookseller.BookSeller {
 
-    private final static Logger logger = LoggerFactory.getLogger(BookSeller.class);
+    private final static Logger logger = LoggerFactory.getLogger(BookSellerService.class);
 
     private BookInventory bookInventory;
 
-    public BookSeller() {
+    public BookSellerService() {
         this.bookInventory = new BookInventory();
     }
 
@@ -64,23 +66,34 @@ public class BookSeller implements BookSellerService{
      */
     public Context makeBid(Context context) throws RemoteException, ContextException {
 
-        String requestKey = (String) context.getValue("key");
+//        String key = (String) context.getValue("key");
         Context requestContext = (Context) context.getValue("request");
 
         if (requestContext != null) {
 
-            String bookTitle = (String) requestContext.getValue("bookTitle");
-            int numCopies = (int) requestContext.getValue("numCopies");
+            BookRequest request = BookRequest.getBookRequest(requestContext);
+            String bookTitle = request.getBookTitle();
+            int numCopies = request.getNumCopies();
             logger.info("Processing request for " + numCopies + " copies of book titled \"" + bookTitle + "\"");
 
             if (this.bookInventory.contains(bookTitle)) {
 
                 int numAvailCopies = this.bookInventory.getNumCopiesOfBook(bookTitle);
+                if (numAvailCopies < numCopies) {
+                    numCopies = numAvailCopies;
+                }
                 double bidPrice = calculateBidPrice(bookTitle, numCopies);
 
-                logger.info("Making $" + bidPrice + " bid for the title \"" + bookTitle + "\"");
-                context.putValue("bid/price", bidPrice);
-                context.putValue("bid/numCopies", numAvailCopies);
+                BookBid bid = new BookBid();
+                bid.setName(request.getName());
+                bid.setBookTitle(bookTitle);
+                bid.setNumCopies(numCopies);
+                bid.setBidPrice(bidPrice);
+                logger.info("Making $" + bidPrice + " bid for " + numCopies + "copies of \"" + bookTitle + "\"");
+
+//                context.putValue("bid/price", bidPrice);
+//                context.putValue("bid/numCopies", numAvailCopies);
+                context.putValue("bid", BookBid.getContext(bid));
                 if (context.getContextReturn() != null) {
                     context.setReturnValue(bidPrice);
                 }

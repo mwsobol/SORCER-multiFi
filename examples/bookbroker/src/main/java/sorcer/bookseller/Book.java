@@ -1,9 +1,11 @@
-package sorcer.bookseller.impl;
+package sorcer.bookseller;
+
+import java.io.Serializable;
 
 /**
  * @author   Marco
  */
-public class Book implements Comparable<Book>{
+public class Book implements Serializable, Comparable<Book>{
 
     private String title;
     private Double price;
@@ -58,4 +60,5 @@ public class Book implements Comparable<Book>{
     public int compareTo(Book that){
         return this.title.compareTo(that.title);
     }
+
 }

@@ -28,11 +28,11 @@ public interface BookBrokerService {
 //    public boolean processBookBid(BookBid bid) throws RemoteException;
 
 
-    public Context takeBookRequest(Context context) throws RemoteException, ContextException;
+    Context takeBookRequest(Context context) throws RemoteException, ContextException;
 
-    public Context writeBookRequest(Context context) throws RemoteException, ContextException;
+    Context writeBookRequest(Context context) throws RemoteException, ContextException;
 
-    public Context takeBookBid(Context context) throws RemoteException, ContextException;
+    Context takeBookBid(Context context) throws RemoteException, ContextException;
 
-    public Context writeBookBid(Context context) throws RemoteException, ContextException;
+    Context writeBookBid(Context context) throws RemoteException, ContextException;
 }

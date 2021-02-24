@@ -73,7 +73,9 @@ public class BookRequest implements Serializable {
     }
 
     public String toString() {
-        return name;
+        return "BookRequest(name=\"" + name
+                + "\", bookTitle=\"" + bookTitle
+                + "\", numCopies=" + numCopies + ")";
     }
 
     static public BookRequest getBookRequest(Context context) throws ContextException {
