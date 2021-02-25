@@ -19,7 +19,7 @@ package sorcer.core.provider;
 import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.co.operator;
+import net.jini.space.JavaSpace05;
 import sorcer.core.exertion.ExertionEnvelop;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.river.TX;
@@ -31,10 +31,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import static sorcer.co.operator.list;
-
 /*
- * This space taker firts reads taks and takes only tasks with indicated OS
+ * This space taker first reads and takes only tasks with indicated OS
  * matching OS of the platform the SpaceOSTaker is running.
  */
 public class SelectableTaker extends SpaceTaker {
@@ -67,7 +65,7 @@ public class SelectableTaker extends SpaceTaker {
 						continue;
 					}
 					// select the space entry that matching provider's OS and application constraints
-					ee = selectSpaceEntry(data);
+					ee = selectSpaceEntry(data, space);
 					if (ee == null) {
 						Thread.sleep(spaceTimeout);
 					}
@@ -135,46 +133,65 @@ public class SelectableTaker extends SpaceTaker {
 		doThreadMonitorTaker(threadId);
 	}
 
-	private ExertionEnvelop selectSpaceEntry(SpaceTakerData data) throws
+	ExertionEnvelop selectSpaceEntry(SpaceTakerData data, JavaSpace05 space) throws
 		TransactionException, UnusableEntryException, RemoteException, InterruptedException {
 		ExertionEnvelop envelop = (ExertionEnvelop) space.read(data.entry, null, SPACE_TIMEOUT);
 		logger.debug("########### {} selectable taker read envelop: {}", data.provider.getProviderName(), envelop);
 		if (envelop != null) {
-			List matchTokens = ((ServiceSignature) envelop.exertion.getProcessSignature()).getOperation().getMatchTokens();
+			List<?> matchTokens = ((ServiceSignature) envelop.exertion.getProcessSignature()).getOperation().getMatchTokens();
 			logger.debug("########### {} selectable taker read matchTokens: {}", data.provider.getProviderName(), matchTokens);
-			if (matchTokens != null && matchTokens instanceof Tokens) {
-				if (((Tokens) matchTokens).getType().equals("LIST")) {
-					boolean osIsOK = false;
-					boolean appIsOK = false;
-					for (Object list : matchTokens) {
-						if (list instanceof Tokens) {
-							if (((Tokens) list).getType().equals("OS")) {
-								if (((Tokens) list).contains(data.osName)) {
-									logger.debug("########### {} Signature OS Names {} match provider OS: {}",
-										data.provider.getProviderName(), list, data.osName);
+			if (matchTokens instanceof Tokens) {
+				Tokens tokens = (Tokens)matchTokens;
+				switch (tokens.getType()) {
+					case "LIST":
+						boolean noMatch = false;
+						for (Object list : tokens) {
+							if (list instanceof Tokens) {
+								Tokens tokenList = (Tokens) list;
+								if (tokenList.getType().equals("OS")) {
+									if (tokenList.contains(data.osName)) {
+										logger.debug("########### {} Signature OS Names {} match provider OS: {}",
+													 data.provider.getProviderName(),
+													 list,
+													 data.osName);
+									} else {
+										logger.debug("########### {} Signature OS Names {} no match provider OS: {}",
+													 data.provider.getProviderName(),
+													 list,
+													 data.osName);
+										noMatch = true;
+										break;
+									}
+								} else if (tokenList.getType().equals("APP")) {
+									if (data.appNames != null && data.appNames.containsAll((Tokens) list)) {
+										logger.debug("########### {} Signature appNames {} match provider apps: {}",
+													 data.provider.getProviderName(),
+													 list,
+													 data.appNames);
+									} else {
+										noMatch = true;
+										break;
+									}
 								}
-								else {
-									return null;
-								}
-							} else if (((Tokens) list).getType().equals("APP")) {
-								if (data.appNames.containsAll((Tokens) list)) {
-									logger.debug("########### {} Signature appNames {} match provider apps: {}",
-										data.provider.getProviderName(), list, data.appNames);
-								}
-								else {
-									return null;
-								}
+							} else {
+								logger.warn("Unknown Tokens type: " + list.getClass().getName());
+								noMatch = true;
 							}
 						}
-					}
-				} else if (((Tokens) matchTokens).getType().equals("OS")) {
-					if (!matchTokens.contains(data.osName)) {
-						envelop = null;
-					}
-				} else if (((Tokens) matchTokens).getType().equals("APP")) {
-					if (!data.appNames.containsAll(matchTokens)) {
-						envelop = null;
-					}
+						if (noMatch) {
+							envelop = null;
+						}
+						break;
+					case "OS":
+						if (!tokens.contains(data.osName)) {
+							envelop = null;
+						}
+						break;
+					case "APP":
+						if (!data.appNames.containsAll(matchTokens)) {
+							envelop = null;
+						}
+						break;
 				}
 			}
 		}
