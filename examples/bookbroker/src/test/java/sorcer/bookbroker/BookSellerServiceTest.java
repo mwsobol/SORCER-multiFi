@@ -14,13 +14,13 @@ import sorcer.bookseller.BookSeller;
 import sorcer.bookseller.Book;
 import sorcer.bookseller.impl.BookSellerService;
 import sorcer.core.context.ControlContext;
+import sorcer.core.signature.RemoteSignature;
 import sorcer.service.*;
 
 import static sorcer.bookbroker.impl.BookRequest.getBookRequest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.match;
-import static sorcer.co.operator.os;
+import static sorcer.co.operator.*;
 import static sorcer.ent.operator.ent;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.value;
@@ -117,26 +117,16 @@ public class BookSellerServiceTest {
                 ent("request", BookRequest.getContext(requestTLP)));
 
         // The seller makes the bid
-//        Task task = task(
-//                sig(BookSeller.class,
-//                        op("makeBid", match(os("Linux")), Strategy.Access.PULL, Strategy.Wait.YES)),
-//                jobContext);
         Task task = task(
-                sig("makeBid", BookSeller.class),
+                sig(BookSeller.class,
+                        op("makeBid", match(os("Linux")))),
                 jobContext,
-                strategy(Strategy.Access.PULL, Strategy.Wait.YES));
-        System.out.println(task);
+                strategy(Strategy.Access.PULL));
+
+        assertEquals(Strategy.Access.PULL, task.getControlContext().getAccessType());
         task = exert(task);
-
-//        Job job = new Job();
-//        ControlContext cc = job.getControlContext();
-//        cc.setAccessType(Strategy.Access.PULL);
-//        job.addMogram(task);
-//        job = job.exert();
-//        task = (Task) job.getMograms().get(0);
-
         jobContext = context(task);
-        logger.info("bid context:" + (Context) value(jobContext, "bid"));
+//        logger.info("bid context:" + (Context) value(jobContext, "bid"));
 
         // Check bid
         BookBid bid = BookBid.getBookBid((Context) value(jobContext, "bid"));
