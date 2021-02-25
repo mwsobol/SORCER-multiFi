@@ -47,6 +47,7 @@ TODO/BUGS:
 * object needs to be serializable, message should be explicit in that 
   requirement... NotSerializableException
 * local vs remote service execution, message should make it obvious
+* hands on config file syntax erro
 
 serial version uid... need to declare final long. java convention
 ```java

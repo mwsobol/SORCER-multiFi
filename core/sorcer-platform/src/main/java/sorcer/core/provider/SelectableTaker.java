@@ -152,19 +152,20 @@ public class SelectableTaker extends SpaceTaker {
 								if (((Tokens) list).contains(data.osName)) {
 									logger.debug("########### {} Signature OS Names {} match provider OS: {}",
 										data.provider.getProviderName(), list, data.osName);
-									osIsOK = true;
+								}
+								else {
+									return null;
 								}
 							} else if (((Tokens) list).getType().equals("APP")) {
 								if (data.appNames.containsAll((Tokens) list)) {
 									logger.debug("########### {} Signature appNames {} match provider apps: {}",
 										data.provider.getProviderName(), list, data.appNames);
-									appIsOK = true;
+								}
+								else {
+									return null;
 								}
 							}
 						}
-					}
-					if (!(osIsOK && appIsOK)) {
-						envelop = null;
 					}
 				} else if (((Tokens) matchTokens).getType().equals("OS")) {
 					if (!matchTokens.contains(data.osName)) {
