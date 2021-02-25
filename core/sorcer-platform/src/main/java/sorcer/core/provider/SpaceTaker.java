@@ -37,6 +37,7 @@ import sorcer.core.monitor.MonitoringSession;
 import sorcer.river.TX;
 import sorcer.service.*;
 import sorcer.service.space.SpaceAccessor;
+import sorcer.util.OperatingSystemType;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -102,7 +103,7 @@ public class SpaceTaker implements Runnable {
 		public String spaceGroup;
 		public boolean workerTransactional;
 		public boolean noQueue;
-		public Object osName = System.getProperty("os.name");
+		public Object osName = OperatingSystemType.get();
 		public List<String> appNames;
 
 
