@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Marco de Lannoy Kobayashi on 2/21/21.
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unused"})
 public interface BookSeller {
 
     int addBook(Book book, Integer numCopies) throws RemoteException;
