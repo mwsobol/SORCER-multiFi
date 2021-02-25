@@ -12,14 +12,11 @@ import sorcer.bookbroker.impl.BookBid;
 import sorcer.bookbroker.impl.BookRequest;
 import sorcer.bookseller.BookSeller;
 import sorcer.bookseller.Book;
-import sorcer.bookseller.impl.BookSellerService;
-import sorcer.core.context.ControlContext;
-import sorcer.core.signature.RemoteSignature;
 import sorcer.service.*;
+import sorcer.util.OperatingSystemType;
 
 import static sorcer.bookbroker.impl.BookRequest.getBookRequest;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.ent.operator.ent;
 import static sorcer.eo.operator.*;
@@ -99,7 +96,7 @@ public class BookSellerServiceTest {
         Task task = task(sig("makeBid", BookSeller.class), jobContext);
         task = exert(task);
         jobContext = context(task);
-        logger.info("bid context:" + (Context) value(jobContext, "bid"));
+        logger.info("bid context:" + value(jobContext, "bid"));
 
         // Check bid
         BookBid bid = BookBid.getBookBid((Context) value(jobContext, "bid"));
@@ -110,7 +107,6 @@ public class BookSellerServiceTest {
 
     @Test
     public void testMakeBidSelectableTask() throws Exception {
-
         // Create context for bid on request
         Context jobContext = context(
                 ent("key", "theLittlePrince"),
@@ -119,7 +115,7 @@ public class BookSellerServiceTest {
         // The seller makes the bid
         Task task = task(
                 sig(BookSeller.class,
-                        op("makeBid", match(os("Linux")))),
+                        op("makeBid", match(os(OperatingSystemType.get())))),
                 jobContext,
                 strategy(Strategy.Access.PULL));
 
