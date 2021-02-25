@@ -164,11 +164,11 @@ public class ProviderDelegate {
 
 	protected String spaceName;
 
-	private List<SpaceTaker> spaceTakers = new ArrayList<SpaceTaker>();
+	private List<SpaceTaker> spaceTakers = new ArrayList<>();
 
 	protected Class[] publishedServiceTypes;
 
-	protected String osName = System.getProperty("os.name");
+	protected String osName = OperatingSystemType.get();
 
 	protected List<String> appNames;
 	/** provider service multitype entry used to be included in the provider's proxy. */
@@ -557,15 +557,14 @@ public class ProviderDelegate {
 			logger.warn("Problem getting {}.{}", ServiceExerter.COMPONENT, SPACE_READINESS, e);
 		}
 
+		boolean matchOnOpSys;
 		try {
-			osName = ((ServiceExerter)provider).getProviderOsName();
-			if (osName == null) {
-				osName = (String) jconfig.getEntry(ServiceExerter.COMPONENT,
-					OS_NAME, String.class, null);
-			}
+			matchOnOpSys = (Boolean)jconfig.getEntry(ServiceExerter.COMPONENT,
+													  MATCH_ON_OPSYS, Boolean.class, false);
+
 		} catch (Exception e) {
-			logger.warn("Problem getting {}.{}", ServiceExerter.COMPONENT, OS_NAME, e);
-			osName = System.getProperty("os.name");
+			logger.warn("Problem getting {}.{}", ServiceExerter.COMPONENT, MATCH_ON_OPSYS, e);
+			matchOnOpSys = false;
 		}
 
 		try {
@@ -582,7 +581,7 @@ public class ProviderDelegate {
 			appNames = null;
 		}
 
-		if (osName != null || appNames != null) {
+		if (matchOnOpSys || appNames != null) {
 			takersSelectable = true;
 		} else {
 			try {
@@ -3372,6 +3371,9 @@ public class ProviderDelegate {
 	public static final String APP_NAMES = "appNames";
 
 	public final static String OS_NAME = "osName";
+
+	public final static String MATCH_ON_OPSYS = "matchOnOpSys";
+
 	public static final String MUTUAL_EXCLUSION = "mutualExclusion";
 
 	public static final String SPACE_SECURITY_ENABLED = "spaceSecurityEnabled";
