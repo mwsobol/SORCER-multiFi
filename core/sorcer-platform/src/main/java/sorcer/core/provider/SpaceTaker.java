@@ -103,7 +103,7 @@ public class SpaceTaker implements Runnable {
 		public String spaceGroup;
 		public boolean workerTransactional;
 		public boolean noQueue;
-		public Object osName = OperatingSystemType.get();
+		public String osName = OperatingSystemType.get();
 		public List<String> appNames;
 
 
