@@ -46,7 +46,7 @@ public class OperatingSystemType {
         if (isWindows()) {
             opSysType = WINDOWS;
         } else if (isLinux()) {
-            return LINUX;
+            opSysType = LINUX;
         } else if (isUnix()) {
             opSysType = UNIX;
         } else if (isMac()) {
