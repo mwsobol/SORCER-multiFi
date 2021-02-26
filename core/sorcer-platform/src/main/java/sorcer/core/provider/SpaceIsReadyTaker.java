@@ -55,8 +55,7 @@ public class SpaceIsReadyTaker extends SpaceTaker {
 				ExertionEnvelop ee = (ExertionEnvelop) space.read(data.entry,
 						null, SPACE_TIMEOUT);
 				if (ee != null) {
-					isReady = ((ServiceExerter) data.provider)
-							.isReady(data.entry.exertion);
+					isReady = ((ServiceExerter) data.provider).isReady(data.entry.exertion);
 					if (!isReady) {
 						logger.debug("########### Provider is NOT ready ...");
 						Thread.sleep(SPACE_TIMEOUT / 2);
