@@ -15,9 +15,6 @@ public class OperatingSystemTypeTest {
         if (OperatingSystemType.isLinux()) {
             assertEquals(OperatingSystemType.LINUX, type);
         }
-        if (OperatingSystemType.isUnix()) {
-            assertEquals(OperatingSystemType.UNIX, type);
-        }
         if (OperatingSystemType.isWindows()) {
             assertEquals(OperatingSystemType.WINDOWS, type);
         }
