@@ -21,6 +21,7 @@ import groovy.lang.GroovyShell;
 import net.jini.admin.Administrable;
 import net.jini.config.Configuration;
 import net.jini.config.ConfigurationException;
+import net.jini.config.NoSuchEntryException;
 import net.jini.core.entry.Entry;
 import net.jini.core.event.RemoteEvent;
 import net.jini.core.lease.Lease;
@@ -474,7 +475,7 @@ public class ProviderDelegate {
 		}
 	}
 
-	protected void configure(Configuration jconfig) throws ExportException {
+	protected void configure(Configuration jconfig) throws ExportException, ConfigurationException {
 		final Thread currentThread = Thread.currentThread();
 		implClassLoader = currentThread.getContextClassLoader();
 		Class partnerType;
@@ -654,10 +655,12 @@ public class ProviderDelegate {
 		}
 		Class[] serviceTypes = new Class[0];
 		try {
-			serviceTypes = (Class[]) config.jiniConfig.getEntry(ServiceExerter.COMPONENT, J_INTERFACES, Class[].class);
-		} catch (ConfigurationException e) {
+			serviceTypes = (Class<?>[]) config.jiniConfig.getEntry(ServiceExerter.COMPONENT,
+																   J_INTERFACES,
+																   Class[].class);
+		} catch (NoSuchEntryException e) {
 			// do nothing, used the default eval
-			// e.printStackTrace();
+			logger.warn("Problem getting {}.{}: {}", ServiceExerter.COMPONENT, J_INTERFACES, e.getMessage());
 		}
 		if ((serviceTypes != null) && (serviceTypes.length > 0)) {
 			Set<Class<?>> toPublish = new HashSet<>();
