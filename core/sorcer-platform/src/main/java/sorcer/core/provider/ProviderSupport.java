@@ -1,5 +1,5 @@
 /*
-s * Copyright 2018 the original author or authors.
+ * Copyright 2018 the original author or authors.
  * Copyright 2018 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,7 @@ import sorcer.service.Routine;
 import java.util.List;
 
 /**
- * Methods delegated toservice beans by service providers
+ * Methods delegated to service beans by service providers
  *
  * @see ServiceExerter
  *
@@ -30,9 +30,7 @@ import java.util.List;
  */
 public interface ProviderSupport {
 
-	public String getProviderOsName();
+	List<String> getAvailableApps();
 
-	public List<String> getAvailableApps();
-
-	public boolean isReady(Routine exertion);
+	boolean isReady(Routine exertion);
 }
