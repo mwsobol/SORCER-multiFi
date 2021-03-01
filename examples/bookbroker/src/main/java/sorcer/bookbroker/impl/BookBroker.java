@@ -10,21 +10,13 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 /**
+ * TODO: implement and use in bookbroker example
  * @author   Marco
  */
 @SuppressWarnings("rawtypes")
 public class BookBroker implements BookBrokerService {
 
     private final static Logger logger = LoggerFactory.getLogger(BookBroker.class);
-
-//    /**
-//     * ArrayList of BookRequests
-//     */
-//    private ArrayList<BookRequest> requests;
-//    /**
-//     * Array of BookBids
-//     */
-//    private ArrayList<BookBid> bids;
 
     public BookBroker() {}
 

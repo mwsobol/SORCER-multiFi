@@ -77,7 +77,6 @@ dependencies {
     testRuntime libs.logback
 }
 
-//def deployConfig = file("configs/bookbroker-prv.config")
 def deployConfig = file("configs/bookseller-prv.config")
 artifacts {
     archives deployConfig
@@ -95,43 +94,6 @@ bootme {
 //    debug = true
 }
 
-//def script = "${project.buildDir}/bin/${project.name}.sh"
-//
-//task ss {
-//    doFirst {
-//        File scriptDir = new File(project.buildDir, "bin")
-//        scriptDir.mkdirs()
-//        File scriptFile = new File(script)
-//        scriptFile.text = "java -cp ${project.buildDir}/classes/main:${sourceSets.main.runtimeClasspath.getAsPath()} sorcer.bookbuyer.BookBuyer"
-//        Process chmod = "chmod +x ${scriptFile.path}".execute()
-//        chmod.waitFor()
-//    }
-//}
-
-//// run with "gradle runBookBuyer -q"
-//task runBookBuyer(type:JavaExec, dependsOn:[install]) {
-//    description = 'Runs a BookBuyer main.'
-//    main = "sorcer.bookbuyer.BookBuyer"
-//    classpath = sourceSets.main.runtimeClasspath
-//    standardInput = System.in
-//}
-//
-////task runConsumer(type:JavaExec, dependsOn:[jar, "bootme"]) {
-//task runConsumer(type:JavaExec, dependsOn:[jar]) {
-//    description = 'Runs a service buyer executing a local or remote service.'
-//    main = "sorcer.core.consumer.ServiceConsumer"
-//    classpath = sourceSets.main.runtimeClasspath
-////    standardOutput = System.out
-//    systemProperty "project.version", "${version}"
-//    systemProperty "java.rmi.server.codebase",
-//            "${websterUrl}/${repoPath()}/bookbroker-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
-//
-//    dependsOn([install, bootme])
-//    args = ["sorcer.bookbuyer.BookBrokerConsumer", "job"]
-//
-//    finalizedBy (haltme)
-//}
-
 test {
     description = 'Tests local and remote services with JUnit test case.'
     systemProperty "java.rmi.server.codebase",
@@ -140,7 +102,6 @@ test {
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
     }
-    //dependsOn([install])
     dependsOn([install, bootme])
     finalizedBy(haltme)
 }

@@ -11,7 +11,7 @@ import java.rmi.RemoteException;
  * @author   Marco
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class BookRequest implements Serializable {
+public class BookRequest {
 
     private String name;
     private String bookTitle;

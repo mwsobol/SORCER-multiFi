@@ -1,19 +1,15 @@
 package sorcer.bookseller.impl;
 
-import org.rioproject.impl.system.OperatingSystemType;
 import sorcer.bookbroker.impl.BookBid;
 import sorcer.bookbroker.impl.BookRequest;
 import sorcer.bookseller.Book;
 import sorcer.bookseller.BookSeller;
-import sorcer.core.provider.ProviderSupport;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.service.Routine;
 
 import java.rmi.RemoteException;
-import java.util.List;
 
 /**
  * @author   Marco
@@ -71,7 +67,6 @@ public class BookSellerService implements BookSeller {
      */
     public Context makeBid(Context context) throws RemoteException, ContextException {
 
-//        String key = (String) context.getValue("key");
         Context requestContext = (Context) context.getValue("request");
 
         if (requestContext != null) {
@@ -105,28 +100,4 @@ public class BookSellerService implements BookSeller {
 
         return context;
     }
-
-//    public String getProviderOsName() {
-//        if (OperatingSystemType.isLinux()) {
-//            return OperatingSystemType.LINUX;
-//        }
-//        else if (OperatingSystemType.isMac()) {
-//            return OperatingSystemType.MACINTOSH;
-//        }
-//        else if (OperatingSystemType.isWindows()) {
-//            return OperatingSystemType.WINDOWS;
-//        }
-//        else {
-//            return null;
-//        }
-//    }
-//
-//    public List<String> getAvailableApps() {
-//        return null;
-//    }
-//
-//    public boolean isReady(Routine exertion) {
-//        return true;
-//    }
-
 }

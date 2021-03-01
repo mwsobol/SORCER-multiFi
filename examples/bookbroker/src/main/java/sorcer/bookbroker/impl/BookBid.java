@@ -11,7 +11,7 @@ import java.rmi.RemoteException;
  * @author   Marco
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class BookBid implements Serializable {
+public class BookBid {
 
     private String name;
     private String bookTitle;
@@ -103,7 +103,7 @@ public class BookBid implements Serializable {
         } catch (RemoteException e) {
             throw new ContextException(e);
         } catch (NullPointerException e) {
-            throw new ContextException("Missing a bid attribute in context: " + context, e);
+            throw new ContextException("Bad bid context: " + context, e);
         }
         return bid;
     }

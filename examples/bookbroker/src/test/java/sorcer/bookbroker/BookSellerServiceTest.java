@@ -115,14 +115,15 @@ public class BookSellerServiceTest {
         // The seller makes the bid
         Task task = task(
                 sig(BookSeller.class,
-                        op("makeBid", match(os(OperatingSystemType.get())))),
+                        op("makeBid", match(os(OperatingSystemType.MACINTOSH,
+                                                       OperatingSystemType.LINUX,
+                                                       OperatingSystemType.WINDOWS)))),
                 jobContext,
                 strategy(Strategy.Access.PULL));
 
-        assertEquals(Strategy.Access.PULL, task.getControlContext().getAccessType());
+//        assertEquals(Strategy.Access.PULL, task.getControlContext().getAccessType());
         task = exert(task);
         jobContext = context(task);
-//        logger.info("bid context:" + (Context) value(jobContext, "bid"));
 
         // Check bid
         BookBid bid = BookBid.getBookBid((Context) value(jobContext, "bid"));
