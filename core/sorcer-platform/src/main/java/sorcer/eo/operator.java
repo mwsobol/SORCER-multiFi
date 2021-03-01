@@ -2536,9 +2536,9 @@ operator extends Operator {
         if (operation != null) {
             task.setAccess(operation.accessType);
         }
-//        else if (cc == null && srvSig != null) {
-//            task.setAccess(((ServiceSignature) srvSig).getAccessType());
-//        }
+        else if (cc == null && srvSig != null) {
+            task.setAccess(((ServiceSignature) srvSig).getAccessType());
+        }
 
         FidelityManager fiManager = null;
         Strategy.FidelityManagement fm = null;

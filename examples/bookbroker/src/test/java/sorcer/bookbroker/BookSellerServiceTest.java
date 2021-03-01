@@ -120,8 +120,8 @@ public class BookSellerServiceTest {
                                                        OperatingSystemType.WINDOWS)))),
                 jobContext,
                 strategy(Strategy.Access.PULL));
-
-//        assertEquals(Strategy.Access.PULL, task.getControlContext().getAccessType());
+        assertEquals(Strategy.Access.PULL, task.getControlContext().getAccessType());
+        
         task = exert(task);
         jobContext = context(task);
 
