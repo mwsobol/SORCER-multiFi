@@ -27,10 +27,6 @@ public class OperatingSystemType {
      */
     public static final String LINUX = "Linux";
     /**
-     * Unix identifier
-     */
-    public static final String UNIX = "Unix";
-    /**
      * Mac identifier
      */
     public static final String MACINTOSH = "Mac";
@@ -47,8 +43,6 @@ public class OperatingSystemType {
             opSysType = WINDOWS;
         } else if (isLinux()) {
             opSysType = LINUX;
-        } else if (isUnix()) {
-            opSysType = UNIX;
         } else if (isMac()) {
             opSysType = MACINTOSH;
         } else {
@@ -63,10 +57,6 @@ public class OperatingSystemType {
 
     public static boolean isLinux() {
         return OP_SYS.contains("linux");
-    }
-
-    public static boolean isUnix() {
-        return OP_SYS.contains("nix") || OP_SYS.contains("nux") || OP_SYS.contains("aix");
     }
 
     public static boolean isMac() {
