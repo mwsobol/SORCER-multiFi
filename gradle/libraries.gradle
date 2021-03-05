@@ -63,8 +63,7 @@ ext {
     sorcerEnv = sorcerEnvParsed
 
     websterPort = sorcerEnv.provider.webster.port
-    //websterAddress = InetAddress.getLocalHost().getHostAddress()
-    websterAddress = nonLoopbackAddress()
+    websterAddress = firstNonLoopbackAddress()
 
     useHttps = {
         def set = System.getProperties().stringPropertyNames()
@@ -100,23 +99,18 @@ ext {
     ]
 }
 
-static def nonLoopbackAddress() {
-    InetAddress address
+static def firstNonLoopbackAddress() {
     Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
     while (en.hasMoreElements()) {
         NetworkInterface i = en.nextElement();
         for (Enumeration<InetAddress> en2 = i.getInetAddresses(); en2.hasMoreElements();) {
-            InetAddress addr = en2.nextElement();
-            if (!addr.isLoopbackAddress()) {
-                if (addr instanceof Inet4Address) {
-                    address = addr
-                    break
+            InetAddress address = en2.nextElement();
+            if (!address.isLoopbackAddress()) {
+                if (address instanceof Inet4Address) {
+                    return address.hostAddress
                 }
             }
         }
-    }
-    if (address != null) {
-        return address.hostAddress
     }
     "127.0.0.1"
 }
