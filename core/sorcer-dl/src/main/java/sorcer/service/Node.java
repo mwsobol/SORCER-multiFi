@@ -26,11 +26,6 @@ import sorcer.service.modeling.cxtn;
 public interface Node extends Discipline, Dependency, cxtn {
 
     /**
-     * Returns a context multifidelity
-     */
-    public ServiceFidelity getContextMultiFi();
-
-    /**
      * Returns a service governance specifying actualization of this discipline
      *
      * @throws ServiceException
@@ -43,11 +38,6 @@ public interface Node extends Discipline, Dependency, cxtn {
      * @throws ServiceException
      */
     public Service getOutContextion();
-
-    /**
-     * Returns a dispatcher multifidelity
-     */
-    public ServiceFidelity getDispatcherMultiFi();
 
     /**
      * Returns a dispatcher to dispatch this discipline
@@ -66,11 +56,6 @@ public interface Node extends Discipline, Dependency, cxtn {
     public Dispatch getOutDispatcher();
 
     /**
-     * Returns a service contextion multifidelity
-     */
-    public ServiceFidelity getContextionMultiFi();
-
-    /**
      * Returns a discipline input context.
      *
      * @return a current input context
@@ -85,17 +70,6 @@ public interface Node extends Discipline, Dependency, cxtn {
      * @throws ContextException
      */
     public Context getOutput(Arg... args) throws ContextException;
-
-    /**
-     * Adds a dispatcher-contextion fidelity of this discipline.
-     * Fidelity names are names of dispatcher and service correspondingly.
-     */
-    public void add(Service contextion, Routine dispatcher, Context context);
-
-    /**
-     * Adds a dispatcher and contextion fidelities to this discipline
-     */
-    public void add(Fidelity contextionFi, Fidelity dispatcherFi, Fidelity contextFi);
 
     /**
      * Returns a builder of this discipline to be used for replication

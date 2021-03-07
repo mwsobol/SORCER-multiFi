@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.Operator;
 import sorcer.co.operator.DataSlot;
 import sorcer.co.tuple.*;
+import sorcer.core.Dispatcher;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.DataContext;
@@ -49,7 +50,6 @@ import sorcer.service.Projection;
 import sorcer.core.signature.*;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
-import sorcer.service.NodeFidelity;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.modeling.*;
@@ -277,6 +277,10 @@ operator extends Operator {
 
     public static Context cxt(Object... items) throws ContextException {
         return context(items);
+    }
+
+    public static Contextion cxtn(Signature signature) throws SignatureException {
+        return (Contextion) ((LocalSignature) signature).initInstance();
     }
 
     public static ServiceContext context(Object... items) throws ContextException {
@@ -1782,16 +1786,16 @@ operator extends Operator {
         return fi;
     }
 
-    public static NodeFidelity rndFi(Fidelity... fidelities) {
-        NodeFidelity fi = new NodeFidelity(fidelities);
-        fi.fiType = Fi.Type.DISCIPLINE;
-        return fi;
-    }
-    public static NodeFidelity rndFi(String name, Fidelity... fidelities) {
-        NodeFidelity fi = new NodeFidelity(name, fidelities);
-        fi.fiType = Fi.Type.DISCIPLINE;
-        return fi;
-    }
+//    public static NodeFidelity rndFi(Fidelity... fidelities) {
+//        NodeFidelity fi = new NodeFidelity(fidelities);
+//        fi.fiType = Fi.Type.DISCIPLINE;
+//        return fi;
+//    }
+//    public static NodeFidelity rndFi(String name, Fidelity... fidelities) {
+//        NodeFidelity fi = new NodeFidelity(name, fidelities);
+//        fi.fiType = Fi.Type.DISCIPLINE;
+//        return fi;
+//    }
 
     public static Fidelity cxtFi(String name) {
         Fidelity fi = new Fidelity(name);
@@ -1809,6 +1813,20 @@ operator extends Operator {
         Fidelity fi = new Fidelity(name);
         fi.setSelect(select);
         fi.fiType = Fi.Type.CONTEXT;
+        return fi;
+    }
+
+    public static DscFidelity dscFi(String name, Object... objects) {
+        DscFidelity fi = new DscFidelity(name);
+        for (Object obj : objects) {
+            if (obj instanceof Context) {
+                fi.setContext((Context)obj);
+            } else  if (obj instanceof Contextion) {
+                fi.setContextion((Contextion)obj);
+            } else if (obj instanceof Dispatcher) {
+                fi.setDispatcher((Dispatcher)obj);
+            }
+        }
         return fi;
     }
 
@@ -1833,41 +1851,41 @@ operator extends Operator {
         return cxt;
     }
 
-    public static Fidelity dspFi(String name) {
-        Fidelity fi = new Fidelity(name);
-        fi.fiType = Fi.Type.DISPATCHER;
-        return fi;
-    }
+//    public static Fidelity dspFi(String name) {
+//        Fidelity fi = new Fidelity(name);
+//        fi.fiType = Fi.Type.DISPATCHER;
+//        return fi;
+//    }
 
-    public static Fidelity dspFi(String name, Object select) {
-        Fidelity fi = new Fidelity(name);
-        fi.setSelect(select);
-        fi.fiType = Fi.Type.DISPATCHER;
-        return fi;
-    }
+//    public static Fidelity dspFi(String name, Object select) {
+//        Fidelity fi = new Fidelity(name);
+//        fi.setSelect(select);
+//        fi.fiType = Fi.Type.DISPATCHER;
+//        return fi;
+//    }
 
-    public static Fidelity projFi(String name, Object select) {
-        Fidelity fi = new Fidelity(name);
-        fi.setSelect(select);
-        fi.fiType = Fi.Type.PROJECTION;
-        return fi;
-    }
+//    public static Fidelity projFi(String name, Object select) {
+//        Fidelity fi = new Fidelity(name);
+//        fi.setSelect(select);
+//        fi.fiType = Fi.Type.PROJECTION;
+//        return fi;
+//    }
 
-    public static Fidelity cxtnFi(String name) {
-        Fidelity fi = new Fidelity(name);
-        fi.fiType = Fi.Type.CONTEXTION;
-        return fi;
-    }
+//    public static Fidelity cxtnFi(String name) {
+//        Fidelity fi = new Fidelity(name);
+//        fi.fiType = Fi.Type.CONTEXTION;
+//        return fi;
+//    }
 
-    public static Fidelity cxtnFi(String name, Object select) {
-        Fidelity fi = new Fidelity(name);
-        fi.setSelect(select);
-        if (select instanceof Signature) {
-            ((ServiceSignature)select).setName(name);
-        }
-        fi.fiType = Fi.Type.CONTEXTION;
-        return fi;
-    }
+//    public static Fidelity cxtnFi(String name, Object select) {
+//        Fidelity fi = new Fidelity(name);
+//        fi.setSelect(select);
+//        if (select instanceof Signature) {
+//            ((ServiceSignature)select).setName(name);
+//        }
+//        fi.fiType = Fi.Type.CONTEXTION;
+//        return fi;
+//    }
 
     public static String fiName(Mogram mogram) {
         return ((Identifiable) mogram.getMultiFi().getSelect()).getName();
@@ -3841,6 +3859,16 @@ operator extends Operator {
 
     public static Signature driverSig(Signature signature) {
         ((ServiceSignature)signature).addRank(Kind.DRIVER);
+        return signature;
+    }
+
+    public static Signature cxtnSig(Signature signature) {
+        ((ServiceSignature)signature).addRank(Kind.CONTEXTION);
+        return signature;
+    }
+
+    public static Signature dspSig(Signature signature) {
+        ((ServiceSignature)signature).addRank(Kind.DISPATCHER);
         return signature;
     }
 

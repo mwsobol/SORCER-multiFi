@@ -110,7 +110,7 @@ public interface Contextion extends Request, Scopable {
 	 * @throws RemoteException
 	 */
 	public Context getContext(String path) throws ContextException,
-		RemoteException;
+        RemoteException, ConfigurationException;
 
 	/**
 	 * Returns a Context.Return that specifies a returned context

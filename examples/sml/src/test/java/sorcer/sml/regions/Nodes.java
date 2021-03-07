@@ -89,8 +89,7 @@ public class Nodes {
                 value(cxt, "lambdaOut") < 500.0), pipeline("cxtn1")));
 
         Node plDis = rnd(
-            cxtnFi("cxtn1", opspl),
-            dspFi("dspt1", plDispatch));
+            dscFi("pln", opspl, plDispatch));
 
         setContext(opspl, context("mfprc",
             inVal("lambdaOut", 20.0),

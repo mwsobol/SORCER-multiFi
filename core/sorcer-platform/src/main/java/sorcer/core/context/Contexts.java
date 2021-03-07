@@ -1098,7 +1098,7 @@ public class Contexts implements SorcerConstants {
 						try {
 							subcntxt = link.getContext().getContext(
 									link.getOffset().trim());
-						} catch (RemoteException ex) {
+						} catch (RemoteException | ConfigurationException ex) {
 							throw new ContextException(ex);
 						}
 						// getSubcontext cuts above, which is what we want
@@ -1135,7 +1135,7 @@ public class Contexts implements SorcerConstants {
 				try {
 					subcntxt = link.getContext().getContext(
 							link.getOffset().trim());
-				} catch (RemoteException ex) {
+				} catch (RemoteException | ConfigurationException ex) {
 					throw new ContextException(ex);
 				}
 				// getSubcontext cuts above, which is what we want

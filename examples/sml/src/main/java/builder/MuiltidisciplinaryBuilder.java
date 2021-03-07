@@ -38,8 +38,7 @@ public class MuiltidisciplinaryBuilder {
 				value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
 		Node morphDis = rnd("morphModelDisc",
-			cxtnFi("cxtn1", sig("cxtn1", MuiltidisciplinaryBuilder.class, "getMorphingModel")),
-			dspFi("dspt1", mdlDispatch));
+			dscFi("mmd", cxt(sig(MuiltidisciplinaryBuilder.class, "getMorphingModel")), mdlDispatch));
 
 		return morphDis;
 	}
@@ -154,15 +153,10 @@ public class MuiltidisciplinaryBuilder {
 				value(cxt, "lambdaOut") < 500.0), pipeline("cxtn2")));
 
 		Node plDisc = rnd("plDisc",
-			rndFi("plDisc1",
-				cxtnFi("cxtn1", sig("getPipeline1",  MuiltidisciplinaryBuilder.class)),
-				cxtFi("cxt1", cxt1),
-				dspFi("dspt1", evalTask)),
-
-			rndFi("plDisc2",
-				cxtnFi("cxtn2", sig("getPipeline2",  MuiltidisciplinaryBuilder.class)),
-				cxtFi("cxt2", cxt2),
-				dspFi("dspt2", blockDispatch)));
+			dscFi("plDisc1",
+				cxtn(sig("getPipeline1",  MuiltidisciplinaryBuilder.class)), cxt1, evalTask),
+			dscFi("plDisc2",
+				cxtn(sig("getPipeline2",  MuiltidisciplinaryBuilder.class)), cxt2, blockDispatch));
 
 		return plDisc;
 	}

@@ -1358,7 +1358,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				try {
 					subcntxt = getLinkedContext(link)
 							.getContext(link.getOffset());
-				} catch (RemoteException ex) {
+				} catch (RemoteException |ConfigurationException ex) {
 					throw new ContextException(ex);
 				}
 				// getDirectionalSubcontext cuts above, which is what we want
@@ -1565,7 +1565,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				try {
 					subcntxt = getLinkedContext(link)
 							.getContext(link.getOffset());
-				} catch (RemoteException ex) {
+				} catch (RemoteException | ConfigurationException ex) {
 					throw new ContextException(ex);
 				}
 				// getDirectionalSubcontext cuts above, which is what we want

@@ -729,9 +729,8 @@ public class ModelMultiFidelities {
             loop(condition(cxt -> (double)
                 value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
-        Node morphDis = operator.rnd(
-            cxtnFi("cxtn1", sig("cxtn1", ModelMultiFidelities.class, "getMorphingModel")),
-            dspFi("dspt1", mdlDispatch));
+        Node morphDis = rnd(
+            dscFi("morph3", cxtn(sig(ModelMultiFidelities.class, "getMorphingModel")), mdlDispatch));
 
         // out is the discipline output
         Context out  = eval(morphDis, fi("cxtn1", "dspt1"));

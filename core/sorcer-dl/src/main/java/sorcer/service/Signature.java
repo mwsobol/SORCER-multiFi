@@ -269,7 +269,8 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	}
 
 	public enum Kind implements Arg {
-		CONTEXT, DESIGN, TASKER, JOBBER, SPACER, DISPATCHER, OPTIMIZER, EXPLORER, SOLVER, DRIVER, MODEL, DISCIPLINE, MODEL_MANAGER;
+		CONTEXT, CONTEXTION, DESIGN, TASKER, JOBBER, SPACER, DISPATCHER, OPTIMIZER,
+		EXPLORER, SOLVER, DRIVER, MODEL, DISCIPLINE, MODEL_MANAGER;
 
 		/* (non-Javadoc)
 		 * @see sorcer.service.Arg#getName()
