@@ -74,7 +74,7 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	/**
 	 * Assigns a dispatch for this exertion.
 	 */
-	public void dispatch(Service service) throws DispatchException, ConfigurationException;
+	void dispatch(Service service) throws DispatchException, ConfigurationException;
 
 	/**
 	 * Returns a deployment ID for this exertion.
@@ -82,7 +82,7 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * @return a deployment identifier 
 	 * @throws NoSuchAlgorithmException 
 	 */
-	public String getDeploymentId() throws NoSuchAlgorithmException, SignatureException;
+	String getDeploymentId() throws NoSuchAlgorithmException, SignatureException;
 	
 	/**
 	 * Appends the specified component exertion to the end of its list of exertions.
@@ -90,7 +90,7 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * @return an added component exertion
 	 * @throws ContextException 
 	 */
-	public Discipline addMogram(Discipline component) throws RoutineException;
+	Discipline addMogram(Discipline component) throws RoutineException;
 	
 	/**
 	 * Returns a data service context (service data) of this exertion to be
@@ -99,7 +99,7 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * @return a service context
 	 * @throws ContextException 
 	 */
-	public Context getDataContext() throws ContextException;
+	Context getDataContext() throws ContextException;
 
 	/**
 	 * Returns a combined nested data context for parentand
@@ -108,31 +108,31 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * @return a service context
 	 * @throws ContextException 
 	 */
-	public Context getContext() throws ContextException;
+	Context getContext() throws ContextException;
 
-    public void setContext(Context data);
+    void setContext(Context data);
 
     /**
 	 * Returns a component exertion at a given path.
 	 */
-	public Discipline getComponentMogram(String path);
+	Discipline getComponentMogram(String path);
 	
 	/**
 	 * Returns a execute associated with a path (key) in this exertion's context.
 	 * 
 	 * @return a referenced by a path object
 	 */
-	public Object getValue(String path, Arg... args) throws ContextException;
+	Object getValue(String path, Arg... args) throws ContextException;
 
-	public Object getOutValue(Context.Out outPaths ) throws ContextException;
+	Object getOutValue(Context.Out outPaths ) throws ContextException;
 
-	public void updateValue(Object value) throws ContextException;
+	void updateValue(Object value) throws ContextException;
 	/**
 	 * Returns a return execute associated with a return path in this exertion's context.
 	 * 
 	 * @return a referenced by a return path object
 	 */
-	public Object getReturnValue(Arg... entries) throws ContextException,
+	Object getReturnValue(Arg... entries) throws ContextException,
 			RemoteException;
 	
 	/**
@@ -141,7 +141,7 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * @return a service context
 	 * @throws ContextException
 	 */
-	public Context getContext(String componentExertionName) throws ContextException;
+	Context getContext(String componentExertionName) throws ContextException;
 
 	/**
 	 * Returns a control context (service control strategy) of this exertion to be 
@@ -150,16 +150,16 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * @return a control context
 
 	 */
-	public RoutineStrategy getControlContext();
+	RoutineStrategy getControlContext();
 	
-	public String getExecTime();
+	String getExecTime();
 	
 	/**
 	 * Returns a signature of the <code>PROCESS</code> type for this exertion.
 	 * 
 	 * @return a process service signature
 	 */
-	public Signature getProcessSignature();
+	Signature getProcessSignature();
 
 	/**
 	 * Returns a flow fiType for this exertion execution. A flow fiType indicates if
@@ -171,7 +171,7 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * @return a flow type
 	 * @see {@link Flow}.
 	 */
-	public Flow getFlowType();
+	Flow getFlowType();
 
 	/**
 	 * Returns a provider access type for this exertion execution. An access
@@ -182,7 +182,7 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * @return an access type
 	 * @see {@link Access}.
 	 */
-	public Access getAccessType();
+	Access getAccessType();
 
     // Check if this is a Job that will be performed by Spacer
     boolean isSpacable();
@@ -192,39 +192,39 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * 
 	 * @return Signature list
 	 */
-	public List<Signature> getAllSignatures();
+	List<Signature> getAllSignatures();
 
 	/**
 	 * Returns the list of all net signatures of component exertions.
 	 * 
 	 * @return Signature list
 	 */
-	public List<Signature> getAllNetSignatures();
+	List<Signature> getAllNetSignatures();
 	
 	/**
 	 * Returns the list of all net task signatures of component exertions.
 	 * 
 	 * @return Signature list
 	 */
-	public List<Signature> getAllNetTaskSignatures();
+	List<Signature> getAllNetTaskSignatures();
 
 	/**
 	 * Returns a component exertion with a given name.
 	 * @return Routine list
 	 */ 
-	public Discipline getMogram(String name);
+	Discipline getMogram(String name);
 
 	/**
 	 * Returns the list of direct component exertions.
 	 * @return Routine list
 	 */ 
-	public List<Discipline> getMograms();
+	List<Discipline> getMograms();
 	
 	/**
 	 * Returns the list of all nested component exertions/
 	 * @return Routine list
 	 */ 
-	public List<Discipline> getAllMograms();
+	List<Discipline> getAllMograms();
 	
 	/**
 	 * Returns <code>true</code> if this exertion can be provisioned for its
@@ -233,7 +233,7 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * @return <code>true</code> if this exertion can be
 	 *         provisioned.
 	 */
-	public boolean isProvisionable();
+	boolean isProvisionable();
 	
 	/**
 	 * Returns <code>true</code> if this result exertion should be returned to
@@ -242,7 +242,7 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * 
 	 * @return <code>true</code> if this exertion is returned synchronously.
 	 */
-	public boolean isWaitable();
+	boolean isWaitable();
 	
 	/**
 	 * Returns <code>true</code> if this exertion requires execution by a
@@ -253,15 +253,15 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * @return <code>true</code> if this exertion requires execution by a
 	 *         {@link Jobber}.
 	 */
-	public boolean isJob();
+	boolean isJob();
 
-	public boolean isTask();
+	boolean isTask();
 	
-	public boolean isBlock();
+	boolean isBlock();
 
-	public boolean isCmd();
+	boolean isCmd();
 	
-	public void setProvisionable(boolean state);
+	void setProvisionable(boolean state);
 
 	/**
 	 * Returns true if this exertion is atop an acyclic graph in which no node
@@ -270,6 +270,6 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * @return true if this exertion is atop an acyclic graph in which no node
 	 *         has two parents (two references to it).
 	 */
-	public boolean isTree();
+	boolean isTree();
 
 }
