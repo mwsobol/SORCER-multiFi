@@ -10,8 +10,7 @@ public class DividerImpl implements Divider {
 	Arithmometer arithmometer = new Arithmometer();
 
 	@SuppressWarnings("rawtypes")
-	public Context divide(Context context) throws RemoteException,
-			ContextException {
+	public Context divide(Context context) throws ContextException {
 		return arithmometer.divide(context);
 	}
 }

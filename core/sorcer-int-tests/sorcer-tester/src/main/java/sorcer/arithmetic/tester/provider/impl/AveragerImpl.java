@@ -11,8 +11,7 @@ public class AveragerImpl implements Averager {
 	private Arithmometer arithmometer = new Arithmometer();
 
 	@SuppressWarnings("rawtypes")
-	public Context average(Context context) throws RemoteException,
-			ContextException {
+	public Context average(Context context) throws ContextException {
 		return arithmometer.average(context);
 	}
 
