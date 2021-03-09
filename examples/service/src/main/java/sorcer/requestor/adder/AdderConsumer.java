@@ -41,7 +41,7 @@ public class AdderConsumer extends ServiceConsumer {
         return null;
     }
 
-    private Routine createRoutine() throws ContextException, SignatureException, RoutineException {
+    private Routine createRoutine() throws MogramException, SignatureException {
         Double v1 = new Double(getProperty("arg/x1"));
         Double v2 = new Double(getProperty("arg/x2"));
 
