@@ -37,10 +37,10 @@ public interface Contextion extends Request, Scopable {
 	 * to evaluate it if is still valid.
      *
      * @return the current execute of this evaluation
-     * @throws EvaluationException
+     * @throws MogramException
      * @throws RemoteException
      */
-    Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException;
+    Context evaluate(Context context, Arg... args) throws MogramException, RemoteException;
 
 	/**
 	 * Generic federated execution called exertion by federated services.
@@ -53,7 +53,7 @@ public interface Contextion extends Request, Scopable {
 	 * @throws RemoteException
 	 *             if remote call causes an error
 	 */
-	<T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException;
+	<T extends Contextion> T exert(Transaction txn, Arg... args) throws MogramException, RemoteException;
 
 	/**
 	 * Returns the data context of this contextion.
