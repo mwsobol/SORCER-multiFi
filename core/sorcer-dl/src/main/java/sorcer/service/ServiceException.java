@@ -59,10 +59,11 @@ public class ServiceException extends Exception {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder(getClass().getName()).append("\n");
-		sb.append(getLocalizedMessage()).append("\n");
-		sb.append(providerInfo);
-
+		StringBuilder sb = new StringBuilder(getClass().getName()).append(": ");
+		sb.append(getLocalizedMessage());
+		if (providerInfo != null) {
+			sb.append("\n").append(providerInfo);
+		}
 		return sb.toString();
 	}
 }
