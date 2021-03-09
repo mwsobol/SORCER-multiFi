@@ -17,29 +17,29 @@
 
 package sorcer.core.context.model.ent;
 
-import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.rmi.RemoteException;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.Arrays;
-
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.service.Arg;
 import sorcer.service.Context;
 import sorcer.service.EvaluationException;
 
+import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.Arrays;
+
 /**
  * @author Mike Sobolewski
  *
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class Agent<T> extends Prc<T> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private URL[] agentURLs;
+	private final URL[] agentURLs;
 	
 	private String className;
 	
@@ -52,20 +52,15 @@ public class Agent<T> extends Prc<T> implements Serializable {
 		this.agentURLs = agentURLs;
 	}
 	
-	public Agent(String name, String className, URL... agentURLs)
-			throws EvaluationException, RemoteException {
+	public Agent(String name, String className, URL... agentURLs) {
 		super(name);
 		this.className = className;
 		this.agentURLs = agentURLs;
 	}
 
 	public T process(Arg... entries) throws EvaluationException {
-		try {
-			if (invoker != null) {
-				return (T) invoker.evaluate(getPars(entries));
-			}
-		} catch (RemoteException e) {
-			throw new EvaluationException(e);
+		if (invoker != null) {
+			return (T) invoker.evaluate(getPars(entries));
 		}
 
 		if (className == null)
@@ -76,65 +71,50 @@ public class Agent<T> extends Prc<T> implements Serializable {
 			agentLoader = URLClassLoader.newInstance(agentURLs, cl);
 			final Thread currentThread = Thread.currentThread();
 			final ClassLoader parentLoader = (ClassLoader) AccessController
-					.doPrivileged(new PrivilegedAction() {
-						public Object run() {
-							return (currentThread.getContextClassLoader());
-						}
-					});
+					.doPrivileged((PrivilegedAction<?>) currentThread::getContextClassLoader);
 
 			try {
-				AccessController.doPrivileged(new PrivilegedAction() {
-					public Object run() {
-						currentThread.setContextClassLoader(agentLoader);
-						return (null);
-					}
+				AccessController.doPrivileged((PrivilegedAction<?>) () -> {
+					currentThread.setContextClassLoader(agentLoader);
+					return (null);
 				});
-				Class clazz = null;
+				Class<?> clazz;
 				try {
 					clazz = agentLoader.loadClass(className);
 				} catch (ClassNotFoundException ex) {
 					ex.printStackTrace();
 					throw ex;
 				}
-				Constructor constructor = clazz
-						.getConstructor(new Class[] { Context.class });
+				Constructor<?> constructor = clazz.getConstructor(Context.class);
 				
-				Object obj = constructor
-						.newInstance(new Object[] { scope });
+				Object obj = constructor.newInstance(scope);
 				invoker = new MethodInvoker(name, obj, name, entries);
 				if (scope instanceof EntryModel)
 					invoker.setInvokeContext(scope);
 				invoker.setContext(scope);
 			} finally {
-				AccessController.doPrivileged(new PrivilegedAction() {
-					public Object run() {
-						currentThread.setContextClassLoader(parentLoader);
-						return (null);
-					}
+				AccessController.doPrivileged((PrivilegedAction<?>) () -> {
+					currentThread.setContextClassLoader(parentLoader);
+					return (null);
 				});
 			}
 		} catch (Throwable e) {
-			e.printStackTrace();
 			throw new IllegalArgumentException(
 					"Unable to instantiate prc agent :"
 							+ e.getClass().getName() + ": "
 							+ e.getLocalizedMessage());
 		}
-		try {
-			out = (T)invoker.evaluate(entries);
-		} catch (RemoteException e) {
-			throw new EvaluationException();
-		}
+		out = (T)invoker.evaluate(entries);
 		invoker.setValid(true);
 		return out;
 	}
 	
 	@Override
-	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
+	public T evaluate(Arg... args) throws EvaluationException {
 		if (out != null && invoker != null && invoker.isValid())
 			return out;
 		else
-			return (T)process(args);
+			return process(args);
 	}
 	
 	/* (non-Javadoc)
@@ -147,7 +127,7 @@ public class Agent<T> extends Prc<T> implements Serializable {
 	
 	private Prc[] getPars(Arg... entries) {
 		Prc[] pa = new Prc[entries.length];
-		if (entries != null && entries.length > 0) {
+		if (entries.length > 0) {
 			for (int i = 0; i < entries.length; i++)
 				pa[i] = (Prc) entries[i];
 		}
