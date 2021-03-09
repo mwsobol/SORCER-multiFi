@@ -100,31 +100,31 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public <T extends Contextion> T exert(Transaction txn, Arg... entries) throws ContextException, RemoteException {
+    public <T extends Contextion> T exert(Transaction txn, Arg... entries) throws MogramException {
         Mogram mogram = (Mogram) morphFidelity.getSelect();
         mogram.getContext().setScope(scope);
-        T out = mogram.exert(txn, entries);
-        morphFidelity.setChanged();
-        morphFidelity.notifyObservers(out);
-        return out;
+        try {
+            T out = mogram.exert(txn,
+                                 entries);
+            morphFidelity.setChanged();
+            morphFidelity.notifyObservers(out);
+            return out;
+        } catch (RemoteException e) {
+            throw new MogramException(e);
+        }
     }
 
     @Override
-    public <T extends Contextion> T exert(Arg... entries) throws ContextException, RemoteException {
+    public <T extends Contextion> T exert(Arg... entries) throws MogramException {
         return exert(null, entries);
     }
 
     @Override
-    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
-        Mogram mog = null;
-        try {
-            dataContext.substitute(context);
-            dataContext.substitute(args);
-            mog = exert(args);
-            return mog.getContext();
-        } catch (MogramException e) {
-            throw new EvaluationException(e);
-        }
+    public Context evaluate(Context context, Arg... args) throws MogramException {
+        dataContext.substitute(context);
+        dataContext.substitute(args);
+        Mogram mog = exert(args);
+        return mog.getContext();
     }
 
     @Override

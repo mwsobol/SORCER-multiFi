@@ -76,6 +76,7 @@ import static sorcer.mo.operator.*;
  *
  * @author Mike Sobolewski
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class
 operator extends Operator {
 
@@ -115,7 +116,7 @@ operator extends Operator {
 
     public static Object revalue(Object object, String path,
                                  Arg... entries) throws ContextException {
-        Object obj = null;
+        Object obj;
         if (object instanceof Entry) {
             obj = ((Entry) object).getValue(entries);
         } else if (object instanceof Context) {
@@ -160,9 +161,8 @@ operator extends Operator {
         return attributes[0];
     }
 
-    public static <T> Complement<T> subject(String path, T value)
-        throws SignatureException {
-        return new Complement<T>(path, value);
+    public static <T> Complement<T> subject(String path, T value) {
+        return new Complement<>(path, value);
     }
 
     public static void add(Routine exertion, Identifiable... entries)
@@ -171,7 +171,7 @@ operator extends Operator {
     }
 
     public static void put(Routine exertion, Identifiable... entries)
-        throws ContextException, RemoteException {
+        throws ContextException {
         put(exertion.getContext(), entries);
     }
 
@@ -201,17 +201,15 @@ operator extends Operator {
         return signature;
     }
 
-    public static ControlContext control(Routine exertion)
-        throws ContextException {
+    public static ControlContext control(Routine exertion) {
         return ((Subroutine) exertion).getControlContext();
     }
 
-    public static ControlContext control(Routine exertion, String childName)
-        throws ContextException {
+    public static ControlContext control(Routine exertion, String childName) {
         return (ControlContext) ((Routine) exertion.getMogram(childName)).getControlContext();
     }
 
-    public static Context ccxt(Routine exertion) throws ContextException {
+    public static Context ccxt(Routine exertion) {
         return ((Subroutine) exertion).getControlContext();
     }
 
@@ -306,8 +304,8 @@ operator extends Operator {
             return argsContext((Args)entries[0]);
         }
 
-        ContextDomain cxt = null;
-        List<ServiceContext> cxts = new ArrayList();;
+        ContextDomain cxt;
+        List<ServiceContext> cxts = new ArrayList();
         List<Connector> connList = new ArrayList();
         Strategy.Access accessType = null;
         Strategy.Flow flowType = null;
@@ -635,7 +633,7 @@ operator extends Operator {
             if (cxt instanceof RequestModel && autoDeps) {
                 cxt = new SrvModelAutoDeps((RequestModel) cxt).get();
             }
-        } catch (SignatureException | SortingException e) {
+        } catch (SortingException | SignatureException e) {
             throw new ContextException(e);
         }
 
@@ -707,11 +705,10 @@ operator extends Operator {
     }
 
 
-    protected static void useSlots(ServiceContext pcxt,
-                                   List<Slot> slotList) throws ContextException {
-        for (int i = 0; i < slotList.size(); i++) {
-            Slot ent = slotList.get(i);
-            pcxt.put(ent.getName(), ent.getOut());
+    protected static void useSlots(ServiceContext pcxt, List<Slot> slotList) {
+        for (Slot ent : slotList) {
+            pcxt.put(ent.getName(),
+                     ent.getOut());
         }
     }
 
@@ -873,8 +870,7 @@ operator extends Operator {
         return context;
     }
 
-    public static Context set(Context context, Identifiable... objects)
-        throws RemoteException, ContextException {
+    public static Context set(Context context, Identifiable... objects) {
         for (Identifiable obj : objects) {
             // just replace the eval
             ((ServiceContext)context).put(obj.getName(), obj);
@@ -882,8 +878,7 @@ operator extends Operator {
         return context;
     }
 
-    public static Context put(Context context, Identifiable... objects)
-        throws RemoteException, ContextException {
+    public static Context put(Context context, Identifiable... objects) throws ContextException {
         for (Identifiable i : objects) {
             // just replace the eval
             if (context.containsPath(i.getName())) {
@@ -1050,13 +1045,11 @@ operator extends Operator {
         return dpl;
     }
 
-    public static SignatureDeployer deployer(Signature... builders)
-        throws SignatureException {
+    public static SignatureDeployer deployer(Signature... builders) {
         return new SignatureDeployer(builders);
     }
 
-    public static MultiFiSignature mFiSig(Signature... signatures)
-            throws SignatureException {
+    public static MultiFiSignature mFiSig(Signature... signatures) {
         MultiFiSignature mfi = new MultiFiSignature(signatures);
         return mfi;
     }
@@ -1120,7 +1113,7 @@ operator extends Operator {
         return signature.getSelector();
     }
 
-    public static Signature sig(String operation, Object provider, Object... args) throws SignatureException {
+    public static Signature sig(String operation, Object provider, Object... args) {
         LocalSignature sig = new LocalSignature();
         sig.setName(operation);
         sig.setSelector(operation);
@@ -1201,7 +1194,7 @@ operator extends Operator {
                 returnPath = (Context.Return)item;
             }
         }
-        ServiceSignature signature = null;
+        ServiceSignature signature;
         if (args != null && parTypes != null) {
             LocalSignature os = new LocalSignature();
             os.setMultitype(multitype);
@@ -1341,12 +1334,12 @@ operator extends Operator {
         return sig(serviceType, items);
     }
 
-    public static Signature sig(Signature signature, String operation) throws SignatureException {
+    public static Signature sig(Signature signature, String operation) {
         ((ServiceSignature)signature).setSelector(operation);
         return signature;
     }
 
-    public static Signature sig(Signature signature, Operation operation) throws SignatureException {
+    public static Signature sig(Signature signature, Operation operation) {
         ((ServiceSignature)signature).setOperation(operation);
         return signature;
     }
@@ -1629,23 +1622,21 @@ operator extends Operator {
         return Sorcer.getActualName(name);
     }
 
-    public static Signature sig(String selector) throws SignatureException {
+    public static Signature sig(String selector) {
         return new ServiceSignature(selector);
     }
 
-    public static Signature dspSig(String selector) throws SignatureException {
+    public static Signature dspSig(String selector) {
         LocalSignature local = new LocalSignature();
         local.setSelector(selector);
         return local;
     }
 
-    public static Signature sig(String name, String selector)
-        throws SignatureException {
+    public static Signature sig(String name, String selector) {
         return new ServiceSignature(name, selector);
     }
 
-    public static Signature sig(String name, String selector, ServiceDeployment deployment)
-        throws SignatureException {
+    public static Signature sig(String name, String selector, ServiceDeployment deployment) {
         ServiceSignature signture = new ServiceSignature(name, selector);
         signture.setDeployment(deployment);
         signture.setProvisionable(true);
@@ -1670,8 +1661,7 @@ operator extends Operator {
         return signature;
     }
 
-    public static Signature sig(Class<?> serviceType, Context.Return returnPath)
-        throws SignatureException {
+    public static Signature sig(Class<?> serviceType, Context.Return returnPath) {
         Signature sig = null;
         if (serviceType.isInterface()) {
             sig = new RemoteSignature("exert", serviceType);
@@ -1686,8 +1676,8 @@ operator extends Operator {
     }
 
     public static EvaluationSignature sig(String name, Evaluator evaluator,
-                                          Context.Return requestPath) throws SignatureException {
-        EvaluationSignature sig = null;
+                                          Context.Return requestPath) {
+        EvaluationSignature sig;
         if (evaluator instanceof Scopable) {
             sig = new EvaluationSignature(new Prc(evaluator));
         } else {
@@ -1701,15 +1691,15 @@ operator extends Operator {
     }
 
     public static EvaluationSignature sig(Evaluator evaluator,
-                                          Context.Return requestPath) throws SignatureException {
+                                          Context.Return requestPath) {
         return sig(null, evaluator, requestPath);
     }
 
-    public static EvaluationSignature sig(Evaluator evaluator) throws SignatureException {
+    public static EvaluationSignature sig(Evaluator evaluator)  {
         return new EvaluationSignature(evaluator);
     }
 
-    public static EvaluationSignature sig(String name, Evaluator evaluator) throws SignatureException {
+    public static EvaluationSignature sig(String name, Evaluator evaluator) {
         return new EvaluationSignature(name, evaluator);
     }
 
@@ -2737,26 +2727,23 @@ operator extends Operator {
         }
     }
 
-    public static Routine xrt(String name, Object... items) throws RoutineException,
-        ContextException, SignatureException {
+    public static Routine xrt(String name, Object... items) throws MogramException, SignatureException {
         return exertion(name, items);
     }
 
-    public static <E extends Routine> E exertion(String name, Object... items) throws RoutineException,
-        ContextException, SignatureException {
-        List<Mogram> exertions = new ArrayList<Mogram>();
+    public static <E extends Routine> E exertion(String name, Object... items) throws MogramException, SignatureException {
+        List<Mogram> exertions = new ArrayList<>();
         Signature sig = null;
-        Context cxt = null;
         boolean isBlock =false;
-        for (int i = 0; i < items.length; i++) {
-            if (items[i] instanceof Routine || items[i] instanceof EntryModel) {
-                exertions.add((Mogram) items[i]);
-                if (items[i] instanceof ConditionalTask)
+        for (Object item : items) {
+            if (item instanceof Routine || item instanceof EntryModel) {
+                exertions.add((Mogram) item);
+                if (item instanceof ConditionalTask)
                     isBlock = true;
-            } else if (items[i] instanceof Signature) {
-                sig = (Signature) items[i];
-            } else if (items[i] instanceof String) {
-                name = (String) items[i];
+            } else if (item instanceof Signature) {
+                sig = (Signature) item;
+            } else if (item instanceof String) {
+                name = (String) item;
             }
         }
         if (isBlock || exertions.size() > 0 && sig != null
@@ -3810,7 +3797,10 @@ operator extends Operator {
     }
 
     public static Signature disciplineSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(new Kind[]{Kind.DISCIPLINE, Kind.DESIGN, Kind.MODEL, Kind.TASKER});
+        ((ServiceSignature)signature).addRank(Kind.DISCIPLINE,
+                                              Kind.DESIGN,
+                                              Kind.MODEL,
+                                              Kind.TASKER);
         return signature;
     }
 
@@ -3819,12 +3809,16 @@ operator extends Operator {
     }
 
     public static Signature disciplineInputSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(new Kind[]{Kind.CONTEXT, Kind.DISCIPLINE, Kind.DESIGN, Kind.TASKER});
+        ((ServiceSignature)signature).addRank(Kind.CONTEXT,
+                                              Kind.DISCIPLINE,
+                                              Kind.DESIGN,
+                                              Kind.TASKER);
         return signature;
     }
 
     public static Signature modelSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(new Kind[]{Kind.MODEL, Kind.TASKER});
+        ((ServiceSignature)signature).addRank(Kind.MODEL,
+                                              Kind.TASKER);
         return signature;
     }
 
@@ -3833,7 +3827,8 @@ operator extends Operator {
     }
 
     public static Signature contextSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(new Kind[]{Kind.CONTEXT, Kind.TASKER});
+        ((ServiceSignature)signature).addRank(Kind.CONTEXT,
+                                              Kind.TASKER);
         return signature;
     }
 
@@ -3924,8 +3919,8 @@ operator extends Operator {
             throw new ContextException(se);
         }
         //make sure it has EntryModel as the data context
-        EntryModel pm = null;
-        Context cxt = null;
+        EntryModel pm;
+        Context cxt;
         try {
             cxt = block.getDataContext();
             if (cxt == null) {
@@ -3956,7 +3951,7 @@ operator extends Operator {
 
                     Contextion target = ((LoopTask)e).getTarget();
                     if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Entry) {
-                        ServiceContext ltcxt = (ServiceContext) ((EvaluationTask)target).getDataContext();
+                        ServiceContext ltcxt = ((EvaluationTask)target).getDataContext();
                         if (ltcxt == null || ltcxt.size() == 0) {
                             ((EvaluationTask)target).setContext(pm);
                         }
@@ -4078,7 +4073,7 @@ operator extends Operator {
     }
 
     public static class IP {
-        final Set<String> ips = new HashSet<String>();
+        final Set<String> ips = new HashSet<>();
         boolean exclude;
 
         public IP(final String... ips) {
@@ -4267,10 +4262,10 @@ operator extends Operator {
         } else {
             block = new ObjectBlock(exertion.getName() + "-block");
         }
-        Routine xrt = null;
+        Routine xrt;
         for (String name : names) {
             xrt = (Routine) ObjectCloner.cloneAnnotatedWithNewIDs(exertion);
-            ((Subroutine) xrt).setName(name);
+            xrt.setName(name);
             block.addMogram(xrt);
         }
         return block;

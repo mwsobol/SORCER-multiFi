@@ -45,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static sorcer.co.operator.get;
 import static sorcer.mo.operator.value;
 
 /**
@@ -143,8 +142,8 @@ public class operator extends Operator {
 
     public static Object exec(ContextDomain domain, String path, Arg... args) throws ContextException {
         if (path.indexOf("$") > 0) {
-            String pn = null;
-            String dn = null;
+            String pn;
+            String dn;
             int ind = path.indexOf("$");
             pn = path.substring(0, ind);
             dn = path.substring(ind + 1);
@@ -161,16 +160,16 @@ public class operator extends Operator {
         }
     }
 
-    public static Context evalDomain(Collaboration collab, Request request, Context context) throws ContextException {
+    public static Context evalDomain(Collaboration collab, Request request, Context context) throws MogramException {
         return collab.evaluateDomain(request, context);
     }
 
-    public static Context evalDomain(Collaboration collab, String domainName, Context context) throws ContextException {
+    public static Context evalDomain(Collaboration collab, String domainName, Context context) throws MogramException {
         return collab.evaluateDomain(domainName, context);
     }
 
-    public static ServiceContext eval(Request request, Context context) throws ContextException {
-        Context rc = null;
+    public static ServiceContext eval(Request request, Context context) throws MogramException {
+        Context rc;
         try {
             if (request instanceof Contextion) {
                 rc = ((Contextion) request).evaluate(context);
@@ -263,23 +262,23 @@ public class operator extends Operator {
         return resp;
     }
 
-    public static Object resp(Mogram model, String path) throws ContextException {
+    public static Object resp(Mogram model, String path) throws MogramException {
         return response(model, path);
     }
 
-    public static Context resp(Mogram model) throws ContextException {
+    public static Context resp(Mogram model) throws MogramException {
         return response(model);
     }
 
-    public static Object response(Routine exertion, String path) throws ContextException {
+    public static Object response(Routine exertion, String path) throws MogramException {
         try {
             return ((ServiceContext)exertion.exert().getContext()).getResponseAt(path);
-        } catch (RemoteException | MogramException e) {
+        } catch (RemoteException e) {
             throw new ContextException(e);
         }
     }
 
-    public static Object exec(Request request, String path$domain) throws ContextException {
+    public static Object exec(Request request, String path$domain) throws MogramException {
         if (request instanceof DataContext) {
             return value((Context)request, path$domain);
         } else {
@@ -289,8 +288,8 @@ public class operator extends Operator {
 
     public static Object response(ContextDomain model, String path$domain) throws ContextException {
         try {
-            String path = null;
-            String domain = null;
+            String path;
+            String domain;
             if (path$domain.indexOf("$") > 0) {
                 int ind = path$domain.indexOf("$");
                 path = path$domain.substring(0, ind);
@@ -320,7 +319,7 @@ public class operator extends Operator {
         }
     }
 
-    public static ServiceContext response(Signature signature, Object... items) throws ContextException {
+    public static ServiceContext response(Signature signature, Object... items) throws MogramException {
         Mogram mogram = null;
         try {
             mogram = (Mogram) ((LocalSignature)signature).initInstance();
@@ -340,7 +339,7 @@ public class operator extends Operator {
         return ((Mogram)domain).getDataContext().append(context);
     }
 
-    public static ServiceContext response(Mogram mogram, Object... items) throws ContextException {
+    public static ServiceContext response(Mogram mogram, Object... items) throws MogramException {
         if (mogram instanceof Routine) {
             return exertionResponse((Routine) mogram, items);
         } else if (mogram instanceof ContextDomain &&  ((ServiceMogram)mogram).getType().equals(Functionality.Type.MADO)) {
@@ -369,7 +368,7 @@ public class operator extends Operator {
         }
     }
 
-    public static ServiceContext eval(Request request, Object... items) throws ContextException {
+    public static ServiceContext eval(Request request, Object... items) throws MogramException {
         Context out = null;
         if (request instanceof Mogram) {
             out = response((Mogram)request, items);
@@ -554,20 +553,16 @@ public class operator extends Operator {
         }
     }
 
-    public static Object execMogram(Mogram mogram, Arg... args) throws ContextException {
-        try {
-            Object out = null;
-            synchronized (mogram) {
-                if (mogram instanceof Routine) {
-                    out = new ServiceShell().evaluate(mogram, args);
-                } else {
-                    out = ((ServiceContext) mogram).getValue(args);
-                }
-                ((ServiceMogram)mogram).setChanged(true);
-                return out;
+    public static Object execMogram(Mogram mogram, Arg... args) throws ServiceException {
+        Object out;
+        synchronized (mogram) {
+            if (mogram instanceof Routine) {
+                out = new ServiceShell().evaluate(mogram, args);
+            } else {
+                out = ((ServiceContext) mogram).getValue(args);
             }
-        } catch (RemoteException | ServiceException e) {
-            throw new ContextException(e);
+            ((ServiceMogram)mogram).setChanged(true);
+            return out;
         }
     }
 
