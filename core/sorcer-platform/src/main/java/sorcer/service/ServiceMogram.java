@@ -170,7 +170,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         subdomainId = "0";
         accessClass = PUBLIC;
         isExportControlled = Boolean.FALSE;
-        status = new Integer(INITIAL);
+        status = INITIAL;
         principal = new SorcerPrincipal(System.getProperty("user.name"));
         principal.setId(principal.getName());
         setSubject(principal);
@@ -324,12 +324,12 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
+    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws MogramException {
         return null;
     }
 
     @Override
-    public <T extends Contextion> T exert(Arg... args) throws ContextException, RemoteException {
+    public <T extends Contextion> T exert(Arg... args) throws MogramException {
         return null;
     }
 
@@ -405,9 +405,9 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     private void setSubject(Principal principal) {
         if (principal == null)
             return;
-        Set<Principal> principals = new HashSet<Principal>();
+        Set<Principal> principals = new HashSet<>();
         principals.add(principal);
-        subject = new Subject(true, principals, new HashSet(), new HashSet());
+        subject = new Subject(true, principals, new HashSet<>(), new HashSet<>());
     }
 
     public SorcerPrincipal getSorcerPrincipal() {

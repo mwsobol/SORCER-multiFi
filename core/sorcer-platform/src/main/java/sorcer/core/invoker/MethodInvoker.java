@@ -30,7 +30,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.rmi.RemoteException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
@@ -43,8 +42,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> {
 
 	private static final long serialVersionUID = -1158778636907725414L;
 
-	final protected static Logger logger = LoggerFactory.getLogger(MethodInvoker.class
-			.getName());
+	private final static Logger logger = LoggerFactory.getLogger(MethodInvoker.class.getName());
 
 	protected String className;
 
@@ -186,7 +184,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> {
 	}
 
 	@Override
-	public T evaluate(Arg... args) throws RemoteException, InvocationException {
+	public T evaluate(Arg... args) throws InvocationException {
 		Object[] parameters = new Object[0];
 		try {
 			parameters = getParameters();
@@ -205,8 +203,8 @@ public class MethodInvoker<T> extends ServiceInvoker<T> {
 
 					Constructor<?> constructor;
 					if (initObject != null) {
-						constructor = evalClass.getConstructor(new Class[]{Object.class});
-						target = constructor.newInstance(new Object[]{initObject});
+						constructor = evalClass.getConstructor(Object.class);
+						target = constructor.newInstance(initObject);
 					} else
 						target = evalClass.newInstance();
 				}

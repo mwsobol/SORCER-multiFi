@@ -111,27 +111,19 @@ public class Task extends Subroutine implements ElementaryRequest {
 		multiFi.setSelect(sFi);
 	}
 
-	public Task doTask(Arg... args) throws EvaluationException {
-		try {
-			return doTask(null, args);
-		} catch (MogramException e) {
-			throw new EvaluationException();
-		}
+	public Task doTask(Arg... args) throws MogramException {
+		return doTask(null, args);
 	}
 
-	public Task doTask(Transaction txn, Arg... args) throws EvaluationException {
-		try {
-			initDelegate();
-			Task done = delegate.doTask(txn, args);
-			setContext(done.getDataContext());
-			setControlContext(done.getControlContext());
-			return this;
-		} catch (SignatureException | MogramException e) {
-			throw new EvaluationException();
-		}
+	public Task doTask(Transaction txn, Arg... args) throws MogramException {
+		initDelegate();
+		Task done = delegate.doTask(txn, args);
+		setContext(done.getDataContext());
+		setControlContext(done.getControlContext());
+		return this;
 	}
 
-	public void initDelegate() throws ContextException, RoutineException, SignatureException {
+	public void initDelegate() throws MogramException {
 		if (delegate != null && multiFi.getSelect() != delegate.getMultiFi().getSelect()) {
 			delegate = null;
 			dataContext.clearReturnPath();

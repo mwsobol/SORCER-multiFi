@@ -130,8 +130,12 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public <T extends Contextion> T exert(Arg... args) throws ContextException, RemoteException {
-        return domain.exert(args);
+    public <T extends Contextion> T exert(Arg... args) throws MogramException {
+        try {
+            return domain.exert(args);
+        } catch (RemoteException e) {
+            throw new MogramException(e);
+        }
     }
 
     @Override
@@ -487,13 +491,21 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
-        return domain.evaluate(context, args);
+    public Context evaluate(Context context, Arg... args) throws MogramException {
+        try {
+            return domain.evaluate(context, args);
+        } catch (RemoteException e) {
+            throw new MogramException(e);
+        }
     }
 
     @Override
-    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
-        return domain.exert(txn, args);
+    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws MogramException {
+        try {
+            return domain.exert(txn, args);
+        } catch (RemoteException e) {
+            throw new MogramException(e);
+        }
     }
 
     @Override
@@ -582,8 +594,12 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public <T extends Contextion> T exert(T exertion, Transaction txn, Arg... args) throws ContextException, RemoteException {
-        return domain.exert(exertion, txn, args);
+    public <T extends Contextion> T exert(T exertion, Transaction txn, Arg... args) throws MogramException {
+        try {
+            return domain.exert(exertion, txn, args);
+        } catch (RemoteException e) {
+            throw new MogramException(e);
+        }
     }
 
     @Override

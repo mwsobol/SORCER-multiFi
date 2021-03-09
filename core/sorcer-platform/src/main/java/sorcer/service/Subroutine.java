@@ -297,14 +297,9 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      * @see sorcer.service.Routine#exert(net.jini.core.transaction.Transaction,
      * sorcer.servie.Arg[])
      */
-    public Routine exert(Transaction txn, Arg... entries)
-            throws ContextException, RemoteException {
-        try {
-            substitute(entries);
-        } catch (SetterException e) {
-            logger.error("Error in exertion {}", mogramId, e);
-            throw new ContextException(e);
-        }
+    public Routine exert(Transaction txn, Arg... entries) throws MogramException {
+        substitute(entries);
+
         String prvName = null;
         for(Arg arg : entries) {
             if (arg instanceof ProviderName) {
@@ -321,7 +316,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      *
      * @see sorcer.service.Routine#exert(sorcer.core.context.Path.Entry[])
      */
-    public <T extends Contextion> T  exert(Arg... entries) throws ContextException, RemoteException {
+    public <T extends Contextion> T  exert(Arg... entries) throws MogramException {
         try {
             substitute(entries);
         } catch (SetterException e) {
