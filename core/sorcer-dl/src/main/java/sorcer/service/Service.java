@@ -7,8 +7,6 @@
  */
 package sorcer.service;
 
-import net.jini.core.transaction.TransactionException;
-
 import java.rmi.RemoteException;
 
 /**
@@ -16,6 +14,6 @@ import java.rmi.RemoteException;
  */
 public interface Service {
 
-    public Object execute(Arg... args) throws ServiceException, RemoteException;
+    Object execute(Arg... args) throws ServiceException, RemoteException;
 
 }
