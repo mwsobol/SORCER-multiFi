@@ -213,11 +213,11 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
         return multitype;
     }
 
-	public Class getServiceType() throws SignatureException {
+	public Class<?> getServiceType() throws SignatureException {
 		return this.multitype.getProviderType();
 	}
 
-	public void setServiceType(Class serviceType) {
+	public void setServiceType(Class<?> serviceType) {
 		this.multitype.providerType = serviceType;
 	}
 
@@ -390,11 +390,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		if (operation.selector == null && multitype == null) {
 			return false;
 		}
-		Method[] methods = null;
-		if (multitype.providerType.isInterface())
-			methods = multitype.providerType.getMethods();
-		else
-			methods = multitype.providerType.getMethods();
+		Method[] methods = multitype.providerType.getMethods();
 
 		for (Method m : methods) {
 			if (m.getName().equals(operation.selector)) {
@@ -469,7 +465,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	@Override
-	public void close() throws RemoteException, IOException {
+	public void close() throws IOException {
 		// implemented in subclasses
 	}
 
@@ -624,17 +620,16 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 
 	@Override
 	public Context exert(Contextion mogram, Transaction txn, Arg... args)
-		throws ContextException, RemoteException {
-		Context cxt = null;
+		throws MogramException {
+		Context cxt;
 		if (mogram instanceof Context) {
 			cxt = (Context)mogram;
 		} else {
-			cxt = (Context) context(exert(mogram, txn, args));
+			cxt = context(exert(mogram, txn, args));
 		}
-		Task out = null;
+		Task out;
 		out = task(this, cxt);
-		Object result = null;
-		result = exert(out);
+		Object result = exert(out);
 		if (result instanceof Context) {
 			return (Context) result;
 		} else {
@@ -642,7 +637,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		}
 	}
 
-	public Context exert(Contextion mogram) throws ContextException, RemoteException {
+	public Context exert(Contextion mogram) throws MogramException {
 		return exert(mogram, null);
 	}
 
