@@ -34,7 +34,7 @@ public interface ContextDomain extends Domain {
 	 * @throws ContextException
 	 * @throws RemoteException
 	 */
-	public Object getResponse(Arg... args) throws ContextException, RemoteException;
+	Object getResponse(Arg... args) throws ContextException, RemoteException;
 
 	/**
 	 * Returns the input context of this domain.
@@ -43,7 +43,7 @@ public interface ContextDomain extends Domain {
 	 * @throws ContextException
 	 * @throws RemoteException
 	 */
-	public Context getInputs() throws ContextException, RemoteException;
+	Context getInputs() throws ContextException, RemoteException;
 
 	/**
 	 * Returns the input context of this domain with all inputs (in and inout directions).
@@ -52,7 +52,7 @@ public interface ContextDomain extends Domain {
 	 * @throws ContextException
 	 * @throws RemoteException
 	 */
-	public Context getAllInputs() throws ContextException, RemoteException;
+	Context getAllInputs() throws ContextException, RemoteException;
 
 	/**
 	 * Returns the output context of this domain.
@@ -61,7 +61,7 @@ public interface ContextDomain extends Domain {
 	 * @throws ContextException
 	 * @throws RemoteException
 	 */
-	public Context getOutputs() throws ContextException, RemoteException;
+	Context getOutputs() throws ContextException, RemoteException;
 
 	/**
 	 * Returns a execute of the object at the returnPath od this domain
@@ -72,10 +72,10 @@ public interface ContextDomain extends Domain {
 	 * @return this domain updated
 	 * @throws ContextException
 	 */
-	public ContextDomain add(Identifiable... objects) throws ContextException,
+	ContextDomain add(Identifiable... objects) throws ContextException,
 			RemoteException;
 
-	public Path getPath(String path) throws ContextException;
+	Path getPath(String path) throws ContextException;
 
-	public Object getValue(Path path, Arg... args) throws ContextException, RemoteException;
+	Object getValue(Path path, Arg... args) throws ContextException, RemoteException;
 }
