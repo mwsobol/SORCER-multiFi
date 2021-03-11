@@ -50,9 +50,7 @@ public class CollectionOperators {
 	@Test
 	public void slotsAndTuples() throws Exception {
 
-		Slot s1 = slot("Mike");
-
-		Slot s2 = slot("Mike", "Sobolewski");
+		Slot s1 = slot("Mike", "Sobolewski");
 
 		Tuple2 t2 = x("Mike", "Sobolewski");
 
@@ -64,7 +62,6 @@ public class CollectionOperators {
 
 		Tuple6 t6 = x("Mike", "Sobolewski", "SORCER", 2010, "TTU", "AFRL/WPAFB");
 
-		assertTrue(s1 instanceof Slot);
 		assertTrue(t2 instanceof Tuple2);
 		assertTrue(t3 instanceof Tuple3);
 
@@ -75,8 +72,7 @@ public class CollectionOperators {
 		// casting required
 		String first = (String)t5._1;
 
-		assertEquals(s1.key(), "Mike");
-		assertEquals(s2.getValue(), "Sobolewski");
+		assertEquals(s1.getValue(), "Sobolewski");
 
 		assertEquals(t2._1, t2._1);
 		assertEquals(t2._2, t3._2);

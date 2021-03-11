@@ -14,7 +14,6 @@ import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiMogram;
-import sorcer.mo.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.modeling.*;
@@ -730,7 +729,7 @@ public class ModelMultiFidelities {
                 value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
         Node morphDis = rnd(
-            dscFi("morph3", cxtn(sig(ModelMultiFidelities.class, "getMorphingModel")), mdlDispatch));
+            rndFi("morph3", cxtn(sig(ModelMultiFidelities.class, "getMorphingModel")), mdlDispatch));
 
         // out is the discipline output
         Context out  = eval(morphDis, fi("cxtn1", "dspt1"));

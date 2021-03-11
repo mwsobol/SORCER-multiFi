@@ -23,16 +23,12 @@ import net.jini.id.UuidFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.signature.LocalSignature;
-import sorcer.core.signature.ServiceSignature;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Getter;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *  Implements a service discipline as out-multiFi-dispatch
@@ -84,15 +80,25 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
     public ServiceNode() {
         disciplineId = UuidFactory.generate();
         serviceStrategy = new ModelStrategy(this);
+        multiFi = new ServiceFidelity();
     }
 
-    public ServiceNode(DscFidelity fidelity) {
-        multiFi.getSelects().add(fidelity);
+    public ServiceNode(String name) {
+        this.name = name;
+        disciplineId = UuidFactory.generate();
+        serviceStrategy = new ModelStrategy(this);
+        multiFi = new ServiceFidelity();
+        ((ServiceFidelity)multiFi).setName(name);
+    }
+
+    public ServiceNode(String name, DisciplineFidelity[] fidelities) {
+        this(name);
+        multiFi.getSelects().addAll(Arrays.asList(fidelities));
     }
 
     @Override
     public Service getContextion() {
-        return ((DscFidelity)multiFi.getSelect()).getContextion();
+        return ((DisciplineFidelity)multiFi.getSelect()).getContextion();
     }
 
     @Override
@@ -104,13 +110,13 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
         return out;
     }
 
-    public Context getContextionConext() throws ContextException {
+    public Context getContextionContext() throws ContextException {
         return ((Contextion)out).getContext();
     }
 
     @Override
     public Routine getDispatcher() {
-        return (Routine) ((DscFidelity)multiFi.getSelect()).getDispatcher();
+        return ((DisciplineFidelity)multiFi.getSelect()).getDispatcher();
     }
 
     public Context setInput(Context input) throws ContextException {
@@ -209,8 +215,8 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
                 }
             }
             Routine xrt = getDispatcher();
-            Context cxt = ((DscFidelity)multiFi.getSelect()).getContext();
-            if (cxt != null) {
+            Context cxt = ((DisciplineFidelity)multiFi.getSelect()).getContext();
+            if (cxt != null && xrt != null) {
                 xrt.setContext(cxt);
             }
             if (input != null) {
@@ -221,10 +227,10 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
                 }
             }
             out = this.getContextion();
-            if (out != null) {
+            if (out != null && xrt != null) {
                 xrt.dispatch(out);
             }
-            // realize  contextion if not dispatched
+            // realize contextion if not dispatched
             if (out instanceof LocalSignature && cxt != null) {
                 try {
                     out = (Contextion) ((LocalSignature)out).initInstance();
@@ -238,7 +244,11 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
                     throw new ConfigurationException(e);
                 }
             }
-            outDispatcher = xrt.exert();
+            if (xrt != null) {
+                outDispatcher = xrt.exert();
+            } else if (out != null) {
+                output = ((Contextion)out).evaluate(cxt, args);
+            }
 
             return getOutput();
         } catch (DispatchException | ConfigurationException |RemoteException e) {
@@ -312,11 +322,11 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
     }
 
     public Context<Object> getContext(String dscName) throws ConfigurationException {
-        return ((DscFidelity) multiFi.selectSelect(dscName)).getContext();
+        return ((DisciplineFidelity) multiFi.selectSelect(dscName)).getContext();
     }
 
     public Context<Object> getContext() {
-        return ((DscFidelity) multiFi.getSelect()).getContext();
+        return ((DisciplineFidelity) multiFi.getSelect()).getContext();
     }
 
     @Override

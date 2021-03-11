@@ -1255,12 +1255,12 @@ public class operator {
         return new SignatureDomain(name, signature);
     }
 
-    public static Node rnd(DscFidelity... discFis) {
+    public static Node rnd(DisciplineFidelity... discFis) {
         return rnd(null, discFis);
     }
 
-    public static Node rnd(String name, DscFidelity... discFis) {
-        return rnd(name, discFis);
+    public static Node rnd(String name, DisciplineFidelity... discFis) {
+        return new ServiceNode(name, discFis);
     }
 
 //    public static Node add(Node disciplne, Service server, Routine client) {

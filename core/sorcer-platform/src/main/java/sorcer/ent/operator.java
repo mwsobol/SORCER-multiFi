@@ -319,6 +319,7 @@ public class operator extends Operator {
 
     public static Pipeline pl(String name, Opservice... pservices) {
         Pipeline pl =  new Pipeline(pservices);
+        pl.setName(name);
         return pl;
     }
 
