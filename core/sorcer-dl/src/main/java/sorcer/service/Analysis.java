@@ -17,18 +17,12 @@
 
 package sorcer.service;
 
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Request;
-import sorcer.service.Service;
-import sorcer.service.modeling.Model;
-
 /**
  * Created by Mike Sobolewski on 6/3/17.
  */
 @FunctionalInterface
 public interface Analysis {
 
-    public void analyze(Request request, Context context) throws ContextException;
+    void analyze(Request request, Context context) throws MogramException;
 
 }
