@@ -1797,8 +1797,8 @@ operator extends Operator {
         return fi;
     }
 
-    public static DisciplineFidelity rndFi(String name, Object... objects) {
-        DisciplineFidelity fi = new DisciplineFidelity(name);
+    public static NodeFidelity rndFi(String name, Object... objects) {
+        NodeFidelity fi = new NodeFidelity(name);
         for (Object obj : objects) {
             if (obj instanceof MultiSlot && ((MultiSlot)obj).getFiType().equals(Fi.Type.CONTEXTION)) {
                 fi.setContextionFi((MultiSlot)obj);

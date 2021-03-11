@@ -91,14 +91,14 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
         ((ServiceFidelity)multiFi).setName(name);
     }
 
-    public ServiceNode(String name, DisciplineFidelity[] fidelities) {
+    public ServiceNode(String name, NodeFidelity[] fidelities) {
         this(name);
         multiFi.getSelects().addAll(Arrays.asList(fidelities));
     }
 
     @Override
     public Service getContextion() {
-        return ((DisciplineFidelity)multiFi.getSelect()).getContextion();
+        return ((NodeFidelity)multiFi.getSelect()).getContextion();
     }
 
     @Override
@@ -116,7 +116,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
 
     @Override
     public Routine getDispatcher() {
-        return ((DisciplineFidelity)multiFi.getSelect()).getDispatcher();
+        return ((NodeFidelity)multiFi.getSelect()).getDispatcher();
     }
 
     public Context setInput(Context input) throws ContextException {
@@ -215,7 +215,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
                 }
             }
             Routine xrt = getDispatcher();
-            Context cxt = ((DisciplineFidelity)multiFi.getSelect()).getContext();
+            Context cxt = ((NodeFidelity)multiFi.getSelect()).getContext();
             if (cxt != null && xrt != null) {
                 xrt.setContext(cxt);
             }
@@ -322,11 +322,11 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
     }
 
     public Context<Object> getContext(String dscName) throws ConfigurationException {
-        return ((DisciplineFidelity) multiFi.selectSelect(dscName)).getContext();
+        return ((NodeFidelity) multiFi.selectSelect(dscName)).getContext();
     }
 
     public Context<Object> getContext() {
-        return ((DisciplineFidelity) multiFi.getSelect()).getContext();
+        return ((NodeFidelity) multiFi.getSelect()).getContext();
     }
 
     @Override

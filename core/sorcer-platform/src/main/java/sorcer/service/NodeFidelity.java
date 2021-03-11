@@ -23,9 +23,9 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 /**
- * @author Mike Sobolewski
+ * @author Mike Sobolewski 03/11/2021
  */
-public class DisciplineFidelity implements Identifiable, Serializable, Arg {
+public class NodeFidelity implements Identifiable, Serializable, Arg {
 
     private String name;
 
@@ -37,7 +37,7 @@ public class DisciplineFidelity implements Identifiable, Serializable, Arg {
 
     private MultiSlot dspFi;
 
-    public DisciplineFidelity(String name) {
+    public NodeFidelity(String name) {
         this.name = name;
     }
 
