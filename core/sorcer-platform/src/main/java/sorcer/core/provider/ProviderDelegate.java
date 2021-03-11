@@ -1037,12 +1037,8 @@ public class ProviderDelegate {
 	private Task useServiceComponents(Task task, Transaction transaction, Arg... args)
 		throws ContextException {
 		String selector = task.getProcessSignature().getSelector();
-		Class serviceType = null;
-		try {
-			serviceType = task.getProcessSignature().getServiceType();
-		} catch (SignatureException e) {
-			throw new ContextException(e);
-		}
+		Class<?> serviceType = task.getProcessSignature().getServiceType();
+
 		Iterator i = serviceComponents.entrySet().iterator();
 		Map.Entry next;
 		Object impl = null;
@@ -1922,20 +1918,14 @@ public class ProviderDelegate {
 				return false;
 			}
 		}
-		Class st = null;
-		try {
-			st = task.getProcessSignature().getServiceType();
-		} catch (SignatureException e) {
-			throw new RoutineException(e);
-		}
-
+		Class<?> st = task.getProcessSignature().getServiceType();
 		if (publishedServiceTypes == null) {
 			servicetask.getContext().reportException(
 				new RoutineException("No published interfaces defined by: "+ getProviderName()));
 			return false;
 		} else {
-			for (int i = 0; i < publishedServiceTypes.length; i++) {
-				if (publishedServiceTypes[i] == st) {
+			for (Class<?> publishedServiceType : publishedServiceTypes) {
+				if (publishedServiceType == st) {
 					return true;
 				}
 			}

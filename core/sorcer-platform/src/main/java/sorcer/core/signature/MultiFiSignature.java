@@ -72,7 +72,7 @@ public class MultiFiSignature extends MultiFiSlot<String, Signature> implements 
     }
 
     @Override
-    public Class<?> getServiceType() throws SignatureException {
+    public Class<?> getServiceType() {
         return ((Signature)impl).getServiceType();
     }
 

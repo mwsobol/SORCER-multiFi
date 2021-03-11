@@ -158,7 +158,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
         execType = Type.PRO;
     }
 
-	public void setExertion(Routine exertion) throws RoutineException {
+	public void setExertion(Routine exertion) {
 		this.exertion = exertion;
 	}
 
@@ -213,7 +213,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
         return multitype;
     }
 
-	public Class<?> getServiceType() throws SignatureException {
+	public Class<?> getServiceType() {
 		return this.multitype.getProviderType();
 	}
 
@@ -359,7 +359,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	public void removeContextTemplateID(String id) {
 		if (contextTemplateIDs == null)
 			return;
-		List<String> v = new ArrayList<String>();
+		List<String> v = new ArrayList<>();
 		for (int i = 0; i < contextTemplateIDs.length; i++)
 			v.add(contextTemplateIDs[i]);
 		v.remove(id);

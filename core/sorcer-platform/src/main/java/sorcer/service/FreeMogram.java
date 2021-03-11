@@ -83,7 +83,7 @@ public class FreeMogram extends ServiceMogram implements FreeService {
     }
 
     @Override
-    public List<ThrowableTrace> getExceptions() throws RemoteException {
+    public List<ThrowableTrace> getExceptions() {
         return null;
     }
 

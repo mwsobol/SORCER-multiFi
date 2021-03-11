@@ -17,6 +17,8 @@
 
 package sorcer.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.provider.ProviderName;
 import sorcer.service.modeling.EvaluationComponent;
 import sorcer.service.modeling.SupportComponent;
@@ -102,7 +104,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 *
 	 * @return name of service interface
 	 */
-	Class<?> getServiceType() throws SignatureException;
+	Class<?> getServiceType();
 
 	/**
 	 * Assigns a service type of this signature.
@@ -474,6 +476,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 
 	class Multitype implements Serializable, Arg {
 		static long serialVersionUID = 1L;
+		private static final Logger logger = LoggerFactory.getLogger(Multitype.class);
 
 		public String typeName;
 
@@ -504,11 +507,11 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 			}
 		}
 
-		public Class getProviderType() throws SignatureException {
+		public Class<?> getProviderType() {
 			return getProviderType(null);
 		}
 
-		public Class getProviderType(ClassLoader loader) throws SignatureException {
+		public Class<?> getProviderType(ClassLoader loader) {
 			if (providerType != null) {
 				return providerType;
 			} else if (typeName != null) {
@@ -518,7 +521,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 					else
 						providerType = Class.forName(typeName, true, loader);
 				} catch (ClassNotFoundException e) {
-					throw new SignatureException(e);
+					logger.warn("Unable to load " + typeName, e);
 				}
 			}
 			return providerType;

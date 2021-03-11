@@ -199,7 +199,7 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public List<ThrowableTrace> getExceptions() throws RemoteException {
+    public List<ThrowableTrace> getExceptions() {
         return domain.getExceptions();
     }
 

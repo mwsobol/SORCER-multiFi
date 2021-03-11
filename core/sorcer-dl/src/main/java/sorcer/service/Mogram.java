@@ -97,7 +97,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
      * Returns the list of traces of thrown exceptions from this mogram.
      * @return ThrowableTrace list
      */
-    public List<ThrowableTrace> getExceptions() throws RemoteException;
+    public List<ThrowableTrace> getExceptions();
 
     public void reportException(String message, Throwable t);
 
