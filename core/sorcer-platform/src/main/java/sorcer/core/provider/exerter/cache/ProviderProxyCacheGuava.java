@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
  * Implementation of a ProviderCache using Guava's LocalCache.
  */
 public class ProviderProxyCacheGuava implements ProviderCache {
-    private static LoadingCache<Signature, Object> proxyCache = setupProxyCache();
+    private static final LoadingCache<Signature, Object> proxyCache = setupProxyCache();
     protected final static Logger logger = LoggerFactory.getLogger(ProviderProxyCacheGuava.class);
 
     @Override
