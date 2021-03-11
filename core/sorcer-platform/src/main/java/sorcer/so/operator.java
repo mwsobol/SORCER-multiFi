@@ -447,7 +447,8 @@ public class operator extends Operator {
                         ((ServiceContext)cfmgr.getDataContext()).remap(model.getInPathProjection());
                     }
                     if (model.getOutPathProjection() != null) {
-                        ((ServiceContext)cfmgr.getDataContext()).setMultiFiPaths(((ServiceContext)model.getContext()).getMultiFiPaths());
+                        ((ServiceContext)cfmgr
+                                .getDataContext()).setMultiFiPaths(((ServiceContext)model.getContext()).getMultiFiPaths());
                         ((ServiceContext)cfmgr.getDataContext()).remap(model.getOutPathProjection());
                     }
                     cfmgr.morph(prj.getName());
@@ -597,37 +598,46 @@ public class operator extends Operator {
         }
     }
 
-    public static List<ThrowableTrace> exceptions(Routine exertion) throws RemoteException {
+    public static List<ThrowableTrace> exceptions(Routine exertion) {
         return exertion.getExceptions();
     }
 
     public static <T extends Mogram> T exert(T mogram, Arg... args) throws MogramException {
         try {
             return mogram.exert(null, args);
-        } catch (Exception e) {
-            throw new RoutineException(e);
+        } catch (RemoteException e) {
+            throw new MogramException(e);
         }
     }
 
-    public static <T extends Contextion> T exert(T input,
-                                             Transaction transaction,
-                                             Arg... entries) throws ContextException {
+    public static <T extends Contextion> T exert(T input, Transaction transaction, Arg... entries)
+            throws MogramException {
         return new sorcer.core.provider.exerter.ServiceShell().exert(input, transaction, entries);
     }
 
-    public static <T extends Mogram> T exert(Exertion service, T mogram, Arg... entries)
-            throws TransactionException, MogramException, RemoteException {
-        return service.exert(mogram, null, entries);
+    public static <T extends Mogram> T exert(Exertion service, T mogram, Arg... entries) throws MogramException {
+        try {
+            return service.exert(mogram, null, entries);
+        } catch (RemoteException e) {
+            throw new MogramException(e);
+        }
     }
 
-    public static <T extends Mogram> T exert(Mogram service, T mogram, Arg... entries)
-            throws TransactionException, MogramException, RemoteException {
-        return service.exert(mogram, null, entries);
+    public static <T extends Mogram> T exert(Mogram service, T mogram, Arg... entries) throws MogramException {
+        try {
+            return service.exert(mogram, null, entries);
+        } catch (RemoteException e) {
+            throw new MogramException(e);
+        }
     }
 
     public static <T extends Mogram> T exert(Mogram service, T mogram, Transaction txn, Arg... entries)
-            throws TransactionException, MogramException, RemoteException {
-        return service.exert(mogram, txn, entries);
+            throws MogramException {
+        try {
+            return service.exert(mogram, txn, entries);
+        } catch (RemoteException e) {
+            throw new MogramException(e);
+        }
     }
 
 }
