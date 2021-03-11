@@ -25,10 +25,7 @@ import sorcer.core.context.model.ent.Ref;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A metasystem is represented by a mogram with multiple projections of its
@@ -157,8 +154,14 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public List<ThrowableTrace> getExceptions() throws RemoteException {
-        return ((Mogram)fiManager.getMogram()).getExceptions();
+    public List<ThrowableTrace> getExceptions() {
+        try {
+            return ((Mogram)fiManager.getMogram()).getExceptions();
+        } catch (RemoteException e) {
+            logger.warn("Could not get mogram", e);
+        }
+        List<ThrowableTrace> list = new ArrayList<>();
+        return list;
     }
 
     @Override
