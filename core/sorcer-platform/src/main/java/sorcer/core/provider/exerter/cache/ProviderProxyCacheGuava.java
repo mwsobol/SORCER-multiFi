@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.provider.ServiceName;
 import sorcer.core.provider.exerter.ProviderCache;
-import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 import sorcer.util.ProviderLocator;
 
