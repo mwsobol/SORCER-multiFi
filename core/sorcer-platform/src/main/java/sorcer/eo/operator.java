@@ -88,11 +88,11 @@ operator extends Operator {
         ((Subroutine) exertion).setExecTimeRequested(true);
     }
 
-    public static ServiceConsumer consumer(Class consumerType, String... args) {
+    public static ServiceConsumer consumer(Class<?> consumerType, String... args) {
         return  new ServiceConsumer(consumerType, args);
     }
 
-    public static ServiceConsumer consumer(Class consumerType, Context inContext, Arg... args) {
+    public static ServiceConsumer consumer(Class<?> consumerType, Context inContext, Arg... args) {
         return  new ServiceConsumer(consumerType, inContext, args);
     }
 
@@ -355,7 +355,7 @@ operator extends Operator {
         PathResponse response = null;
         QueueStrategy modelStrategy = null;
         Signature sig = null;
-        Class customContextClass = null;
+        Class<?> customContextClass = null;
         Context.Out outPaths = null;
         Context.In inPaths = null;
         Paths paths = null;
@@ -633,7 +633,7 @@ operator extends Operator {
             if (cxt instanceof RequestModel && autoDeps) {
                 cxt = new SrvModelAutoDeps((RequestModel) cxt).get();
             }
-        } catch (SortingException | SignatureException e) {
+        } catch (SortingException e) {
             throw new ContextException(e);
         }
 
@@ -778,8 +778,8 @@ operator extends Operator {
                     }
                 }
             } else if (ent instanceof Entry) {
-                if (ent instanceof Prc && ((Prc)ent).getImpl() instanceof Invocation) {
-                    ((ServiceInvoker)((Prc)ent).getImpl()).setInvokeContext(pcxt);
+                if (ent instanceof Prc && ent.getImpl() instanceof Invocation) {
+                    ((ServiceInvoker)ent.getImpl()).setInvokeContext(pcxt);
                 }
                 if (ent.isPersistent()) {
                     setProc(pcxt, entryList.get(i), i);
@@ -805,40 +805,48 @@ operator extends Operator {
 
     public static void populteContext(Context cxt,
                                       List<Entry> entryList) throws ContextException {
-        for (int i = 0; i < entryList.size(); i++) {
-            Entry ent = entryList.get(i);
-            if (entryList.get(i) instanceof InputValue || ent.getType().equals(Functionality.Type.INPUT)) {
+        for (Entry ent : entryList) {
+            if (ent instanceof InputValue || ent.getType().equals(Functionality.Type.INPUT)) {
                 Object val = null;
-                val = entryList.get(i).asis();
+                val = ent.asis();
                 if (val instanceof Incrementor &&
-                    ((IncrementInvoker)val).getTarget() == null) {
-                    ((IncrementInvoker)val).setInvokeContext(cxt);
+                        ((IncrementInvoker) val).getTarget() == null) {
+                    ((IncrementInvoker) val).setInvokeContext(cxt);
                 }
                 if (ent.isPersistent()) {
-                    setProc(cxt, ent);
+                    setProc(cxt,
+                            ent);
                 } else {
-                    cxt.putInValue(ent.getName(), ent.getImpl());
+                    cxt.putInValue(ent.getName(),
+                                   ent.getImpl());
                 }
             } else if (ent instanceof OutputValue || ent.getType().equals(Functionality.Type.OUTPUT)) {
                 if (ent.isPersistent()) {
-                    setProc(cxt, ent);
+                    setProc(cxt,
+                            ent);
                 } else {
-                    cxt.putOutValue(ent.getName(), ent.getImpl());
+                    cxt.putOutValue(ent.getName(),
+                                    ent.getImpl());
                 }
-            } else if (entryList.get(i) instanceof InoutValue || ent.getType().equals(Functionality.Type.INOUT)) {
+            } else if (ent instanceof InoutValue || ent.getType().equals(Functionality.Type.INOUT)) {
                 if (ent.isPersistent()) {
-                    setProc(cxt, ent);
+                    setProc(cxt,
+                            ent);
                 } else {
-                    cxt.putInoutValue(ent.getName(), ent.getImpl());
+                    cxt.putInoutValue(ent.getName(),
+                                      ent.getImpl());
                 }
-            } else if (entryList.get(i) instanceof Function) {
+            } else if (ent instanceof Function) {
                 if (ent.isPersistent()) {
-                    setProc(cxt, ent);
+                    setProc(cxt,
+                            ent);
                 } else {
-                    cxt.putValue(ent.getName(), ent.getImpl());
+                    cxt.putValue(ent.getName(),
+                                 ent.getImpl());
                 }
-            } else if (entryList.get(i) instanceof Entry) {
-                cxt.putValue(entryList.get(i).getName(), ent.getOut());
+            } else if (ent instanceof Entry) {
+                cxt.putValue(ent.getName(),
+                             ent.getOut());
             }
         }
     }
@@ -968,7 +976,7 @@ operator extends Operator {
     }
 
     public static List<String> names(List<? extends Identifiable> list) {
-        List<String> names = new ArrayList<String>(list.size());
+        List<String> names = new ArrayList<>(list.size());
         for (Identifiable i : list) {
             names.add(i.getName());
         }
@@ -976,7 +984,7 @@ operator extends Operator {
     }
 
     public static List<String> names(Identifiable... array) {
-        List<String> names = new ArrayList<String>(array.length);
+        List<String> names = new ArrayList<>(array.length);
         for (Identifiable i : array) {
             names.add(i.getName());
         }
@@ -984,9 +992,8 @@ operator extends Operator {
     }
 
     public static List<Function> attributes(Function... entries) {
-        List<Function> el = new ArrayList<Function>(entries.length);
-        for (Function e : entries)
-            el.add(e);
+        List<Function> el = new ArrayList<>(entries.length);
+        Collections.addAll(el, entries);
         return el;
     }
 
@@ -996,8 +1003,6 @@ operator extends Operator {
      * @param model
      * @param entries
      * @return an evaluation with a realized substitution
-     * @throws EvaluationException
-     * @throws RemoteException
      */
     public static Object bind(Object model, Arg... entries)
         throws ContextException {
@@ -1008,7 +1013,7 @@ operator extends Operator {
         return model;
     }
 
-    public static Class type(Signature signature) throws SignatureException {
+    public static Class<?> type(Signature signature) {
         return signature.getServiceType();
     }
 
@@ -1025,20 +1030,20 @@ operator extends Operator {
     }
 
     public static Selfable self(Selfable selfable, boolean state) {
-        if (selfable instanceof Selfable) {
+        if (selfable != null) {
             selfable.setSelf(state);
         }
         return selfable;
     }
 
-    public static Signature sig(String name, String operation, Class serviceType)
+    public static Signature sig(String name, String operation, Class<?> serviceType)
         throws SignatureException {
         ServiceSignature signature = sig(operation, serviceType, new Object[]{});
         signature.setName(name);
         return signature;
     }
 
-    public static SignatureDeployer deployer(String operation, Class serviceType)
+    public static SignatureDeployer deployer(String operation, Class<?> serviceType)
         throws SignatureException {
         LocalSignature builder = (LocalSignature) sig(operation, serviceType, new Object[]{});
         SignatureDeployer dpl = new SignatureDeployer(builder);
@@ -1054,7 +1059,7 @@ operator extends Operator {
         return mfi;
     }
 
-    public static ServiceSignature sig(String operation, Class serviceType)
+    public static ServiceSignature sig(String operation, Class<?> serviceType)
         throws SignatureException {
         return sig(operation, serviceType, new Object[]{});
     }
@@ -1066,7 +1071,7 @@ operator extends Operator {
         return signture;
     }
 
-    public static Signature trgSig(String operation, Class serviceType, Class target)
+    public static Signature trgSig(String operation, Class<?> serviceType, Class<?> target)
         throws SignatureException {
         Signature ts = sig(operation, serviceType, new Object[]{});
         try {
@@ -1082,13 +1087,13 @@ operator extends Operator {
         return ts;
     }
 
-    public static Signature sig(Class serviceType, String initSelector, Context context) throws SignatureException {
+    public static Signature sig(Class<?> serviceType, String initSelector, Context context) throws SignatureException {
         Signature signature = sig(serviceType, initSelector);
         signature.setScope(context);
         return signature;
     }
 
-    public static Signature sig(Class serviceType, String initSelector) throws SignatureException {
+    public static Signature sig(Class<?> serviceType, String initSelector) throws SignatureException {
         try {
             Method selectorMethod = serviceType.getDeclaredMethod(initSelector, Context.class);
             if (!Modifier.isStatic(selectorMethod.getModifiers()))
@@ -1099,7 +1104,7 @@ operator extends Operator {
         return sig(initSelector, serviceType, initSelector);
     }
 
-    public static Signature sig(String operation, Class serviceType,
+    public static Signature sig(String operation, Class<?> serviceType,
                                 String initSelector) throws SignatureException {
         try {
             return new LocalSignature(operation, serviceType, initSelector,
@@ -1137,7 +1142,8 @@ operator extends Operator {
         return sig;
     }
 
-    public static Signature sig(String name, String operation, Class serviceType, Object... args) throws SignatureException {
+    public static Signature sig(String name, String operation, Class<?> serviceType, Object... args) throws
+                                                                                                     SignatureException {
         ServiceSignature s = sig(operation, serviceType, args);
         s.setName(name);
         return s;
@@ -1329,7 +1335,7 @@ operator extends Operator {
         return newSig;
     }
 
-    public static Signature sig(Class classType, Object... items) throws SignatureException {
+    public static Signature sig(Class<?> classType, Object... items) throws SignatureException {
         Multitype serviceType = new Multitype(classType);
         return sig(serviceType, items);
     }
@@ -1344,14 +1350,16 @@ operator extends Operator {
         return signature;
     }
 
-    public static ServiceSignature op(String operation, Class serviceType, Object... items) throws SignatureException {
+    public static ServiceSignature op(String operation, Class<?> serviceType, Object... items) throws
+                                                                                               SignatureException {
         return sig(operation, serviceType, items);
     }
 
-    public static ServiceSignature sig(String operation, Class serviceType, Object... items) throws SignatureException {
+    public static ServiceSignature sig(String operation, Class<?> serviceType, Object... items) throws
+                                                                                                SignatureException {
         ProviderName providerName = null;
         Provision p = null;
-        List<Connector> connList = new ArrayList<Connector>();
+        List<Connector> connList = new ArrayList<>();
         Multitype srvType = null;
         List<Class> sigTypes = new ArrayList<>();
         Args args = null;
@@ -1388,9 +1396,9 @@ operator extends Operator {
             } else {
                 sig = new LocalSignature(operation, serviceType);
                 if (provider != null) {
-                    // loclal SessionProvider
+                    // local SessionProvider
                     if (provider instanceof SessionProvider) {
-                        Object bean = null;
+                        Object bean;
                         try {
                             bean = sig.getServiceType().newInstance();
                         } catch (InstantiationException | IllegalAccessException e) {
@@ -1568,7 +1576,7 @@ operator extends Operator {
     }
 
     public static Properties providerProperties(String propertiesFile, Object provider) throws IOException {
-        Class providerClass = null;
+        Class<?> providerClass;
         if (provider instanceof Class) {
             providerClass = (Class) provider;
         } else {
@@ -1577,12 +1585,12 @@ operator extends Operator {
         return new PropertyHelper(propertiesFile, providerClass.getClassLoader()).getProperties();
     }
 
-    public static Properties modelProperties(Class providerClass) throws IOException {
+    public static Properties modelProperties(Class<?> providerClass) throws IOException {
         String propertiesFile = System.getProperty("model.properties");
         return new PropertyHelper(propertiesFile, providerClass.getClassLoader()).getProperties();
     }
 
-    public static Properties providerProperties(Class providerClass) throws IOException {
+    public static Properties providerProperties(Class<?> providerClass) throws IOException {
         String propertiesFile = System.getProperty("provider.properties");
         return new PropertyHelper(propertiesFile, providerClass.getClassLoader()).getProperties();
     }
@@ -1653,8 +1661,7 @@ operator extends Operator {
         }
     }
 
-    public static Signature sig(Class<?> serviceType, Context.Return returnPath, ServiceDeployment deployment)
-        throws SignatureException {
+    public static Signature sig(Class<?> serviceType, Context.Return returnPath, ServiceDeployment deployment) {
         Signature signature = sig(serviceType, returnPath);
         ((ServiceSignature) signature).setDeployment(deployment);
         ((ServiceSignature) signature).setProvisionable(true);
@@ -1662,7 +1669,7 @@ operator extends Operator {
     }
 
     public static Signature sig(Class<?> serviceType, Context.Return returnPath) {
-        Signature sig = null;
+        Signature sig;
         if (serviceType.isInterface()) {
             sig = new RemoteSignature("exert", serviceType);
         } else if (Executor.class.isAssignableFrom(serviceType)) {
@@ -2245,7 +2252,7 @@ operator extends Operator {
     }
 
     // path fidelity
-    public static Fidelity<Path> pthFis(Paths paths) throws ConfigurationException {
+    public static Fidelity<Path> pthFis(Paths paths) {
         Fidelity<Path> fi = new Fidelity();
         fi.setSelects(paths);
         fi.setSelect(paths.get(0));
@@ -2253,7 +2260,7 @@ operator extends Operator {
         return fi;
     }
 
-    public static Fidelity<Path> pthFis(String... paths) throws ConfigurationException {
+    public static Fidelity<Path> pthFis(String... paths) {
         Paths fiPaths = new Paths(paths);
         Fidelity<Path> fi = new Fidelity();
         fi.setSelects(fiPaths);
@@ -2312,7 +2319,7 @@ operator extends Operator {
     public static LocalSignature sig(String operation, Object object, String initOperation,
                                      Class[] types) throws SignatureException {
         try {
-            if (object instanceof Class && ((Class) object).isInterface()) {
+            if (object instanceof Class<?> && ((Class) object).isInterface()) {
                 if (initOperation != null)
                     return new RemoteSignature(operation, (Class) object, Sorcer.getActualName(initOperation));
                 else
@@ -2358,7 +2365,7 @@ operator extends Operator {
     public static Task sigTask(Signature signature, Object... items) throws SignatureException {
         Operation operation = null;
         String name = null;
-        String selector = null;
+        String selector;
         List<String> strings = new ArrayList();
         Context context = null;
         for (Object item : items) {
@@ -2576,7 +2583,7 @@ operator extends Operator {
             task = new Task(name);
         }
 
-        ContextFidelityManager cxtMgr = null;
+        ContextFidelityManager cxtMgr;
         if (cxtPrjs.size() > 0) {
             cxtMgr = new ContextFidelityManager(task);
             Map<String, Fidelity> fiMap = new HashMap();
@@ -3186,7 +3193,7 @@ operator extends Operator {
         return new Context.Return(path, direction, paths);
     }
 
-    public static Context.Return result(String path, Class type, Path[] paths) {
+    public static Context.Return result(String path, Class<?> type, Path[] paths) {
         return new Context.Return(path, Direction.OUT, type, paths);
     }
 
@@ -3343,7 +3350,7 @@ operator extends Operator {
             this.parameterTypes = parameterTypes;
         }
 
-        public ParameterTypes(Class basicType, Class... parameterTypes) {
+        public ParameterTypes(Class<?> basicType, Class... parameterTypes) {
             Class[] types = new Class[parameterTypes.length+1];
             types[0] = basicType;
             for (int i = 0; i < parameterTypes.length; i++) {
@@ -3655,7 +3662,7 @@ operator extends Operator {
         Object target = null;
         Object provider = null;
         Signature targetSignatue = null;
-        Class providerType = signature.getServiceType();
+        Class<?> providerType = signature.getServiceType();
         if (signature.getClass() == LocalSignature.class) {
             target = ((LocalSignature) signature).getTarget();
             targetSignatue = ((LocalSignature) signature).getTargetSignature();
