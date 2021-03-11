@@ -52,8 +52,8 @@ public class DeployExertionTest implements SorcerConstants {
         assertTrue(f1.isProvisionable());
         Map<ServiceDeployment.Unique, List<OperationalString>> deployments = OperationalStringFactory.create(f1);
         String name = null;
-        for(Map.Entry<ServiceDeployment.Unique, List<OperationalString>> entry : deployments.entrySet()) {
-            if(entry.getValue().size()>0) {
+        for (Map.Entry<ServiceDeployment.Unique, List<OperationalString>> entry : deployments.entrySet()) {
+            if (entry.getValue().size()>0) {
                 name = entry.getValue().get(0).getName();
                 break;
             }
