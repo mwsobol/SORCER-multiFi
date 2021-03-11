@@ -89,7 +89,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
     }
 
     @Override
-    public void setValue(Object value) throws SetterException, RemoteException {
+    public void setValue(Object value) throws SetterException {
         if (isPersistent) {
             try {
                 if (SdbUtil.isSosURL(value)) {
@@ -254,7 +254,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
     }
 
     @Override
-    public Entry act(Arg... args) throws ServiceException, RemoteException {
+    public Entry act(Arg... args) throws ServiceException {
         Object result = this.execute(args);
         if (result instanceof Entry) {
             return (Entry)result;
@@ -264,7 +264,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
     }
 
     @Override
-    public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+    public Data act(String entryName, Arg... args) throws ServiceException {
         Object result = this.execute(args);
         if (result instanceof Entry) {
             return (Entry)result;
@@ -273,7 +273,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
         }
     }
 
-    public Object execute(Arg... args) throws ServiceException, RemoteException {
+    public Object execute(Arg... args) throws ServiceException {
         ContextDomain cxt = Arg.selectDomain(args);
         if (cxt != null) {
             // entry substitution
@@ -285,7 +285,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
     }
 
     @Override
-    public V call(Arg... args) throws EvaluationException, RemoteException {
+    public V call(Arg... args) throws EvaluationException {
         try {
             return getData(args);
         } catch (ContextException e) {
@@ -383,9 +383,9 @@ public class Entry<V> extends MultiFiSlot<String, V>
     }
 
     @Override
-    public V evaluate(Arg... args) throws EvaluationException, RemoteException {
+    public V evaluate(Arg... args) throws EvaluationException {
         try {
-            Object result = null;
+            Object result;
             if (multiFi == null && impl == null) {
                 Context context = (Context) Arg.selectDomain(args);
                 if (context != null) {
@@ -411,7 +411,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
             } else {
                 return (V) result;
             }
-        } catch (ContextException e) {
+        } catch (ContextException | RemoteException e) {
             throw new EvaluationException(e);
         }
     }

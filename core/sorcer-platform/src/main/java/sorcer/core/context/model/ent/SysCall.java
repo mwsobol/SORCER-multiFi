@@ -75,8 +75,7 @@ public class SysCall extends Prc<Context> implements Serializable {
 
     }
 
-    public Context evaluate(Arg... args) throws RemoteException,
-            InvocationException {
+    public Context evaluate(Arg... args) throws InvocationException {
         Context out = invoker.getInvokeContext();
         if (out == null)
             out = new ServiceContext(name);

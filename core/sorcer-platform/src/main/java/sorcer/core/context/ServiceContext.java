@@ -2753,7 +2753,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public void substituteInputs(Context context, String... names) throws SetterException {
 		try {
 			getInputs().append(context);
-		} catch (ContextException | RemoteException e) {
+		} catch (ContextException e) {
 			throw new SetterException(e);
 		}
 	}
@@ -2965,13 +2965,9 @@ public class ServiceContext<T> extends ServiceMogram implements
         T obj = get(path);
         if (obj instanceof Number) {
             return obj;
-        } else if (obj instanceof Entry) {
-        	if (isRevaluable) {
-				try {
-					return (T) ((Entry)obj).evaluate(args);
-				} catch (RemoteException e) {
-					throw new ContextException(e);
-				}
+		} else if (obj instanceof Entry) {
+			if (isRevaluable) {
+				return (T) ((Entry)obj).evaluate(args);
 			} else {
         		return (T) ((Entry)obj).getData(args);
 			}
@@ -3037,19 +3033,19 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
-	public Object getResponseAt(String path, Arg... entries) throws ContextException, RemoteException {
+	public Object getResponseAt(String path, Arg... entries) throws ContextException {
 		return getValue(path, entries);
 	}
 
-	public Context getInConnector(Arg... args) throws ContextException, RemoteException {
+	public Context getInConnector(Arg... args) throws ContextException {
 		return ((ModelStrategy) domainStrategy).getInConnector();
 	}
 
-	public Context getOutConnector(Arg... args) throws ContextException, RemoteException {
+	public Context getOutConnector(Arg... args) throws ContextException {
 		return ((ModelStrategy) domainStrategy).getOutConnector();
 	}
 
-	public Context getResponse(Arg... args) throws ContextException, RemoteException {
+	public Context getResponse(Arg... args) throws ContextException {
 		Context result = null;
         if (inPathProjection != null) {
             multiFiPaths = (((ServiceContext)contextFidelityManager.getDataContext().getMultiFi().getSelect()).getMultiFiPaths());
@@ -3058,7 +3054,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (morpher != null) {
 			try {
 				morpher.morph(fiManager, multiFi, this);
-			} catch (ConfigurationException | ServiceException e) {
+			} catch (ConfigurationException | ServiceException |RemoteException e) {
 				throw new ContextException(e);
 			}
 		}
@@ -3101,7 +3097,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return result;
 	}
 
-	public Object getResult() throws ContextException, RemoteException {
+	public Object getResult() throws ContextException {
 		if (((ModelStrategy) domainStrategy).outcome != null) {
 			((ModelStrategy) domainStrategy).outcome.setModeling(false);
 		}
@@ -3109,10 +3105,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Context evaluate(Context inputContext, Arg... args) throws EvaluationException, RemoteException {
+	public Context evaluate(Context inputContext, Arg... args) throws EvaluationException {
 		try {
 			if (args != null) {
-				substitute((Arg[]) args);
+				substitute(args);
 			}
 //			Context inputs = inputContext.getInputs();
 //			setValues(this, inputs);
@@ -3123,11 +3119,16 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
-	public Object evaluate(Context inputContext, String path, Arg... args) throws ContextException, RemoteException {
+	public Object evaluate(Context inputContext, String path, Arg... args) throws ContextException {
 		if (args != null) {
-			substitute((Arg[]) args);
+			substitute(args);
 		}
-		Context inputs = inputContext.getInputs();
+		Context inputs = null;
+		try {
+			inputs = inputContext.getInputs();
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 		setValues(this, inputs);
 
 		if (this instanceof Model) {
@@ -3138,7 +3139,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
-	public Context getInputs() throws ContextException, RemoteException {
+	public Context getInputs() throws ContextException {
 		List<String> paths = Contexts.getInPaths(this);
 		Context<T> inputs = new ServiceContext();
 		for (String path : paths)
@@ -3147,7 +3148,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return inputs;
 	}
 
-	public Context getAllInputs() throws ContextException, RemoteException {
+	public Context getAllInputs() throws ContextException {
 		List<String> paths = Contexts.getAllInPaths(this);
 		Context<T> inputs = new ServiceContext();
 		for (String path : paths)
@@ -3156,7 +3157,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return inputs;
 	}
 
-	public Context getOutputs() throws ContextException, RemoteException {
+	public Context getOutputs() throws ContextException {
 		List<String> paths = Contexts.getOutPaths(this);
 		Context<T> outputs = new ServiceContext();
 		for (String path : paths)
@@ -3165,7 +3166,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return outputs;
 	}
 
-	public Context getResponses(String path, Path... paths) throws ContextException, RemoteException {
+	public Context getResponses(String path, Path... paths) throws ContextException {
 		Context results = getMergedSubcontext(null, Arrays.asList(paths));
 		putValue(path, (T)results);
 		return results;
@@ -3266,7 +3267,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * @see sorcer.service.Context#putDbValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public Object putDbValue(String path, Object value) throws ContextException, RemoteException {
+	public Object putDbValue(String path, Object value) throws ContextException {
 		Prc callEntry = new Prc(path, value == null ? Context.none : value);
 		callEntry.setPersistent(true);
 		return putValue(path, (T)callEntry);
@@ -3277,7 +3278,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	@Override
 	public Object putDbValue(String path, Object value, URL datastoreUrl)
-			throws ContextException, RemoteException {
+			throws ContextException {
 		Prc callEntry = new Prc(path, value == null ? Context.none : value);
 		callEntry.setPersistent(true);
 		callEntry.setDbURL(datastoreUrl);
@@ -3307,7 +3308,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	@Override
 	public Context getContext(Context contextTemplate)
-			throws RemoteException, ContextException {
+			throws ContextException {
 		Object val = null;
 		for (String path : (List<String>)contextTemplate.getPaths()) {
 			val = asis(path);
@@ -3492,7 +3493,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 
-	public Context updateInOutPaths(In inpaths, Out outpaths) throws ContextException, RemoteException {
+	public Context updateInOutPaths(In inpaths, Out outpaths) throws ContextException {
 		if (containsPath(Condition._closure_)) {
 			remove(Condition._closure_);
 		}
@@ -3667,7 +3668,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Object execute(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws MogramException {
 		Context cxt = (Context) Arg.selectDomain(args);
 		if (cxt != null) {
 			scope = cxt;
@@ -3678,7 +3679,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Entry act(Arg... args) throws ServiceException, RemoteException {
+	public Entry act(Arg... args) throws ServiceException {
 		Object result = this.execute(args);
 		if (result instanceof Entry) {
 			return (Entry)result;
@@ -3688,7 +3689,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+	public Data act(String entryName, Arg... args) throws ServiceException {
 		Object result = this.execute(args);
 		if (result instanceof Entry) {
 			return (Entry)result;
@@ -3712,26 +3713,30 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
-	public void bindContext(Task task) throws ContextException, RemoteException {
-		ServiceContext cxt = (ServiceContext) task.getDataContext();
+	public void bindContext(Task task) throws ContextException {
+		ServiceContext cxt = task.getDataContext();
 		ServiceSignature sig = (ServiceSignature) task.getSelectedFidelity().getSelect();
 		List<Path> inPaths = null;
 		ServiceContext scopeContext = new ServiceContext();
 		if (cxt.getContextReturn() != null && cxt.getContextReturn().inPaths != null) {
-			bindRequestContext(cxt.getContextReturn().inPaths, cxt, scopeContext);
+			bindRequestContext(cxt.getContextReturn().inPaths,
+							   cxt,
+							   scopeContext);
 		}
 		if (sig.getContextReturn() != null) {
 			inPaths = sig.getContextReturn().inPaths;
 		}
 
 		if (scope != null) {
-			bindRequestContext(inPaths, cxt, scopeContext);
+			bindRequestContext(inPaths,
+							   cxt,
+							   scopeContext);
 		}
 		cxt.setScope(scopeContext);
 	}
 
 	private Context bindRequestContext(List<Path> inPaths, ServiceContext context, ServiceContext scopeContext)
-			throws ContextException, RemoteException {
+			throws ContextException {
 		if (inPaths != null) {
 			for (Path path : inPaths) {
 				Object val = context.getScopedValue(path.path);
@@ -3739,12 +3744,16 @@ public class ServiceContext<T> extends ServiceMogram implements
 						|| !context.isSuper());
 				if (path.getType().equals(Path.Type.PATH) || path.getType().equals(Path.Type.PROC)) {
 					Object sval = null;
-					if (path.getType().equals(Path.Type.PROC)) {
-						if (scope.getName().equals(path.domain)) {
+					try {
+						if (path.getType().equals(Path.Type.PROC)) {
+							if (scope.getName().equals(path.domain)) {
+								sval = scope.getValue(path);
+							}
+						} else if (scope != null) {
 							sval = scope.getValue(path);
 						}
-					} else if (scope != null) {
-						sval = scope.getValue(path);
+					} catch (RemoteException e) {
+						throw new ContextException(e);
 					}
 					if (overwrite) {
 						if (path.info != null) {
@@ -3823,7 +3832,7 @@ public class ServiceContext<T> extends ServiceMogram implements
         this.multiFiPaths = multiFiPaths;
     }
 
-    public Context getDomainData() throws ContextException, RemoteException{
+    public Context getDomainData() throws ContextException{
     	return this;
 	}
 

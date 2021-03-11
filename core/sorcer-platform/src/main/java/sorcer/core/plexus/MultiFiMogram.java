@@ -229,12 +229,16 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public void appendTrace(String info) throws RemoteException {
-        ((Mogram)fiManager.getMogram()).appendTrace(info);
+    public void appendTrace(String info) {
+        try {
+            ((Mogram)fiManager.getMogram()).appendTrace(info);
+        } catch (RemoteException remoteException) {
+            logger.warn("Problem appending trace", remoteException);
+        }
     }
 
     @Override
-    public Object execute(Arg... entries) throws MogramException, RemoteException {
+    public Object execute(Arg... entries) throws MogramException {
         return null;
     }
 

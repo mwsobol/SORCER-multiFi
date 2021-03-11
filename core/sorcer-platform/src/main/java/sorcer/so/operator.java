@@ -17,7 +17,6 @@
 package sorcer.so;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import sorcer.Operator;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ContextSelector;
@@ -287,19 +286,15 @@ public class operator extends Operator {
     }
 
     public static Object response(ContextDomain model, String path$domain) throws ContextException {
-        try {
-            String path;
-            String domain;
-            if (path$domain.indexOf("$") > 0) {
-                int ind = path$domain.indexOf("$");
-                path = path$domain.substring(0, ind);
-                domain = path$domain.substring(ind + 1);
-                return response(model, path, domain);
-            } else {
-                return ((ServiceContext) model).getResponseAt(path$domain);
-            }
-        } catch (RemoteException e) {
-            throw new ContextException(e);
+        String path;
+        String domain;
+        if (path$domain.indexOf("$") > 0) {
+            int ind = path$domain.indexOf("$");
+            path = path$domain.substring(0, ind);
+            domain = path$domain.substring(ind + 1);
+            return response(model, path, domain);
+        } else {
+            return ((ServiceContext) model).getResponseAt(path$domain);
         }
     }
 

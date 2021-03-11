@@ -143,7 +143,7 @@ public class Req extends Function<Object> implements Serviceableness,
         out = obj;
     }
 
-    public Mogram exert(Mogram mogram) throws TransactionException, MogramException, RemoteException {
+    public Mogram exert(Mogram mogram) throws MogramException {
         return exert(mogram, null);
     }
 
@@ -153,12 +153,12 @@ public class Req extends Function<Object> implements Serviceableness,
     }
 
     @Override
-    public Object getPerturbedValue(String varName) throws EvaluationException, RemoteException {
+    public Object getPerturbedValue(String varName) throws EvaluationException {
         return null;
     }
 
     @Override
-    public Object evaluate(Arg... args) throws EvaluationException, RemoteException {
+    public Object evaluate(Arg... args) throws EvaluationException {
 
         if (impl instanceof EntryCollable) {
             Entry entry = null;
@@ -217,31 +217,34 @@ public class Req extends Function<Object> implements Serviceableness,
         }
     }
 
-    private Object execMorphFidelity(MorphFidelity mFi, Arg... entries)
-            throws ServiceException, RemoteException, TransactionException {
+    private Object execMorphFidelity(MorphFidelity mFi, Arg... entries) throws ServiceException {
         Object obj = mFi.getSelect();
-        Object out = null;
+        Object out;
         if (obj instanceof Scopable) {
             ((Scopable)obj).setScope(scope);
             setValid(false);
         }
-        if (obj instanceof Function) {
-            out = ((Function) obj).evaluate(entries);
-        } else if (obj instanceof Mogram) {
-            Context cxt = ((Mogram)obj).exert(entries).getContext();
-            Object val = cxt.getValue(Context.RETURN);
-            if (val != null) {
-                return val;
+        try {
+            if (obj instanceof Function) {
+                out = ((Function) obj).evaluate(entries);
+            } else if (obj instanceof Mogram) {
+                Context cxt = ((Mogram) obj).exert(entries).getContext();
+                Object val = cxt.getValue(Context.RETURN);
+                if (val != null) {
+                    return val;
+                } else {
+                    return cxt;
+                }
+            } else if (obj instanceof Service) {
+                out = ((Service) obj).execute(entries);
             } else {
-                return cxt;
+                return obj;
             }
-        }  else if (obj instanceof Service) {
-            out = ((Service)obj).execute(entries);
-        } else {
-            return obj;
+            mFi.setChanged();
+            mFi.notifyObservers(out);
+        } catch (RemoteException e) {
+            throw new ServiceException(e);
         }
-        mFi.setChanged();
-        mFi.notifyObservers(out);
         return out;
     }
 
@@ -255,7 +258,7 @@ public class Req extends Function<Object> implements Serviceableness,
         if (sig.getContextReturn() != null) {
             incxt.setContextReturn(sig.getContextReturn());
         }
-        Context outcxt = null;
+        Context outcxt;
         try {
             outcxt = task(sig, incxt).exert().getContext();
             if (ops != null && ops.size() > 0) {
@@ -277,11 +280,15 @@ public class Req extends Function<Object> implements Serviceableness,
     }
 
     @Override
-    public Object execute(Arg... args) throws ServiceException, RemoteException {
+    public Object execute(Arg... args) throws ServiceException {
         ContextDomain mod = Arg.selectDomain(args);
         if (mod != null) {
             if (mod instanceof EntryModel && impl instanceof ValueCallable) {
-                return ((ValueCallable) impl).call((Context) mod);
+                try {
+                    return ((ValueCallable) impl).call((Context) mod);
+                } catch (RemoteException e) {
+                    throw new ServiceException(e);
+                }
             } else if (mod instanceof Context && impl instanceof SignatureEntry) {
                 return ((ServiceContext) mod).execSignature((Signature) ((SignatureEntry) impl).getImpl(), args);
             } else {

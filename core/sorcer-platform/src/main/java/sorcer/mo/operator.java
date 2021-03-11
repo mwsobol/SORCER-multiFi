@@ -95,11 +95,7 @@ public class operator {
             obj = cxt.get(path);
             v = model.get(path);
             if (v instanceof Entry) {
-                try {
-                    ((Entry) v).setValue(obj);
-                } catch (RemoteException e1) {
-                    e1.printStackTrace();
-                }
+                ((Entry) v).setValue(obj);
             } else {
                 model.putValue(path, obj);
             }
@@ -350,11 +346,7 @@ public class operator {
         throws ContextException {
         if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
             ((Context) entries[0]).setModeling(true);
-            try {
-                return new EntryModel((Context) entries[0]);
-            } catch (RemoteException e) {
-                throw new ContextException(e);
-            }
+            return new EntryModel((Context) entries[0]);
         }
         EntryModel model = new EntryModel();
         Object[] dest = new Object[entries.length + 1];
@@ -1676,7 +1668,7 @@ public class operator {
         ee.setType(Functionality.Type.EXPL);
         try {
             ee.setValue(signature);
-        } catch (SetterException | RemoteException e) {
+        } catch (SetterException e) {
             throw new EvaluationException(e);
         }
         return ee;
@@ -1689,7 +1681,7 @@ public class operator {
         try {
             mda.setValue(signature);
             mda.setImpl(instance(signature));
-        } catch (SetterException | SignatureException | RemoteException e) {
+        } catch (SetterException | SignatureException e) {
             throw new EvaluationException(e);
         }
         return mda;
@@ -1701,7 +1693,7 @@ public class operator {
         mda.setType(Functionality.Type.MDA);
         try {
             mda.setValue(signature);
-        } catch (SetterException | RemoteException e) {
+        } catch (SetterException  e) {
             throw new EvaluationException(e);
         }
         return mda;

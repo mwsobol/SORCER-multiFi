@@ -99,9 +99,9 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 	}
 
 	@Override
-	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
+	public T evaluate(Arg... args) throws EvaluationException {
 		Object val = this.impl;
-		URL url = null;
+		URL url;
 		try {
 			substitute(args);
 			if (isPersistent) {
@@ -278,9 +278,7 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 			} else {
 				en = "" + impl;
 			}
-		}catch (EvaluationException e) {
-			e.printStackTrace();
-		} catch (RemoteException e) {
+		}catch (EvaluationException | RemoteException e) {
 			e.printStackTrace();
 		}
 		return "[" + key + "=" + en + "]";
@@ -291,32 +289,42 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 		this.isPersistent = isPersistant;
 	}
 
-	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws TransactionException,
-			MogramException, RemoteException {
-		Context cxt = null;
+	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws MogramException {
+		Context cxt;
 		Context out = new ServiceContext();
-		if (mogram instanceof Model) {
-			if (impl != null && impl != Context.none)
-				add((ContextDomain) mogram, this);
-			((ServiceContext)mogram).getDomainStrategy().getResponsePaths().add(new Path(key));
-			out = (Context) ((Model)mogram).getResponse();
-		} else if (mogram instanceof ServiceContext) {
-			if (impl == null || impl == Context.none) {
-				out.putValue(key, ((Context)mogram).getValue(key));
-			} else {
-				if (impl instanceof Evaluation) {
-					this.setReactive(true);
-					((ServiceContext)mogram).putValue(key, this);
+		try {
+			if (mogram instanceof Model) {
+				if (impl != null && impl != Context.none)
+					add((ContextDomain) mogram,
+						this);
+				((ServiceContext) mogram).getDomainStrategy().getResponsePaths().add(new Path(key));
+				out = (Context) ((Model) mogram).getResponse();
+			} else if (mogram instanceof ServiceContext) {
+				if (impl == null || impl == Context.none) {
+					out.putValue(key,
+								 ((Context) mogram).getValue(key));
 				} else {
-					((ServiceContext)mogram).putValue(key, impl);
+					if (impl instanceof Evaluation) {
+						this.setReactive(true);
+						((ServiceContext) mogram).putValue(key,
+														   this);
+					} else {
+						((ServiceContext) mogram).putValue(key,
+														   impl);
+					}
+					out.putValue(key,
+								 ((ServiceContext) mogram).getValue(key));
 				}
-				out.putValue(key, ((ServiceContext) mogram).getValue(key));
+			} else if (mogram instanceof Routine) {
+				if (impl != null && impl != Context.none)
+					mogram.getContext().putValue(key,
+												 impl);
+				cxt = mogram.exert(txn).getContext();
+				out.putValue(key,
+							 cxt.getValue(key));
 			}
-		} else if (mogram instanceof Routine) {
-			if (impl != null && impl != Context.none)
-				mogram.getContext().putValue(key, impl);
-			cxt =  mogram.exert(txn).getContext();
-			out.putValue(key, cxt.getValue(key));
+		} catch (RemoteException e) {
+			throw new MogramException(e);
 		}
 		return out;
 	}
@@ -345,11 +353,7 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 
 	@Override
 	public T getValue(Arg... args) throws EvaluationException {
-		try {
-			return evaluate(args);
-		} catch (RemoteException e) {
-			throw new EvaluationException(e);
-		}
+		return evaluate(args);
 	}
 
 	public ArgSet getArgs() {
@@ -386,12 +390,12 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 	}
 
 	@Override
-	public T call(Arg... args) throws EvaluationException, RemoteException {
+	public T call(Arg... args) throws EvaluationException {
 		return evaluate(args);
 	}
 
 	@Override
-	public T getPerturbedValue(String varName) throws EvaluationException, RemoteException, ConfigurationException {
+	public T getPerturbedValue(String varName) throws EvaluationException, ConfigurationException {
 		return null;
 	}
 

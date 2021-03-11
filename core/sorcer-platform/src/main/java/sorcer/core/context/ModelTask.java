@@ -18,22 +18,19 @@ package sorcer.core.context;
 import net.jini.core.transaction.Transaction;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
-import sorcer.service.modeling.FilterException;
 import sorcer.service.modeling.Model;
 
+import java.rmi.RemoteException;
+
 /**
- *  * The SORCER model task extending the basic task implementation {@link Task}.
+ *  The SORCER model task extending the basic task implementation {@link Task}.
  * 
  * @author Mike Sobolewski
  */
 public class ModelTask extends Task {
-	
 	private static final long serialVersionUID = 1L;
-	
 	protected Model model;
-
     protected ContextSelection contextFilter;
-
 	protected ServiceContext modelContext;
 
 	public ModelTask() {
@@ -49,32 +46,28 @@ public class ModelTask extends Task {
 		addSignature(signature);
 	}
 
-	public Task doTask(Transaction txn, Arg... args) throws EvaluationException {
+	public Task doTask(Transaction txn, Arg... args) throws MogramException {
 		try {
 			if (model != null) {
-				model = ((Model) model).exert(txn, args);
+				model =model.exert(txn, args);
 			} else {
 				super.doTask(args);
 			}
-		} catch (Exception e) {
+		} catch (RemoteException e) {
 			throw new EvaluationException(e);
 		}
 		return this;
 	}
 
-	protected Context createModelContext(ServiceContext context, Signature targetSignature)
-			throws ContextException, FilterException {
+	protected Context createModelContext(ServiceContext context, Signature targetSignature) throws ContextException {
 		if (contextFilter == null)
 			return (Context) model;
 		else
 			return (Context) contextFilter.doSelect(model);
 	}
 	
-	private  Object instance(LocalSignature signature)
-			throws SignatureException {
-		
-		if (signature.getSelector() == null
-				|| signature.getSelector().equals("new"))
+	private  Object instance(LocalSignature signature) throws SignatureException {
+		if (signature.getSelector() == null || signature.getSelector().equals("new"))
 			return signature.newInstance();
 		else
 			return signature.initInstance();

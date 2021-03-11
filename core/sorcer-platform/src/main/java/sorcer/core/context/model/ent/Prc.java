@@ -165,7 +165,7 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
 	 * @see sorcer.service.Evaluation#execute(sorcer.co.tuple.Parameter[])
 	 */
 	@Override
-	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
+	public T evaluate(Arg... args) throws EvaluationException {
 		// check for a constant or cached eval
 		if (impl == null && out != null && !isPersistent) {
 			return out;
@@ -357,8 +357,7 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
 	 * @see sorcer.service.Perturbation#getPerturbedValue(java.lang.String)
 	 */
 	@Override
-	public T getPerturbedValue(String varName) throws EvaluationException,
-			RemoteException {
+	public T getPerturbedValue(String varName) throws EvaluationException{
 		return null;
 	}
 
@@ -467,7 +466,7 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
 	 * @see sorcer.service.Invocation#invoke(sorcer.service.Context, sorcer.service.Arg[])
 	 */
 	@Override
-	public T invoke(Context context, Arg... args) throws RemoteException, InvocationException {
+	public T invoke(Context context, Arg... args) throws InvocationException {
 		try {
 			Context inCxt = (Context) Arg.selectDomain(args);
 			if (inCxt != null) {
@@ -484,11 +483,7 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
 		String[] attributes = path.split(SorcerConstants.CPS);
 		if (attributes[0].equals(name)) {
 			if (attributes.length == 1)
-				try {
-					return (T) evaluate(args);
-				} catch (RemoteException e) {
-					throw new ContextException(e);
-				}
+				return (T) evaluate(args);
 		}
 		return null;
 	}
@@ -557,7 +552,7 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
 	}
 
 	@Override
-	public Object execute(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws MogramException {
 		Context cxt = (Context) Arg.selectDomain(args);
 		if (cxt != null) {
 			scope = cxt;

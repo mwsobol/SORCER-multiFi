@@ -486,8 +486,7 @@ public class ControlFlowManager {
     }
 */
 
-    public Task doFidelityTask(Task task) throws MogramException,
-            SignatureException, RemoteException, ContextException {
+    public Task doFidelityTask(Task task) throws MogramException {
         ServiceFidelity tf = (ServiceFidelity)task.getSelectedFidelity();
         task.correctBatchSignatures();
         task.startExecTime();
