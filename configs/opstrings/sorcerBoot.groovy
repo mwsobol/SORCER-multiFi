@@ -35,7 +35,7 @@ class Sorcer {
 
     static getSorcerHome() {
         String sorcerHome = System.getProperty("sorcer.home", System.getenv("SORCER_HOME"))
-        if(sorcerHome==null) {
+        if (sorcerHome == null) {
             throw new RuntimeException("The system property sorcer.home must be set, or the environment SORCER_HOME set")
         }
         sorcerHome
@@ -49,19 +49,19 @@ class Sorcer {
     }
 }
 
-def appendJars(def dlJars) {
+static def appendJars(def dlJars) {
     dlJars.addAll(getCommonDLs())
     return dlJars as String[]
 }
 
-def getCommonDLs() {
+static def getCommonDLs() {
     return ["sorcer-dl-${Sorcer.sorcerVersion}.jar",
             "jsk-dl-${Sorcer.riverVersion}.jar",
             "serviceui-${Sorcer.riverVersion}.jar",
             "commons-io-${Sorcer.commonsIoVersion}.jar"]
 }
 
-def getForkMode() {
+static def getForkMode() {
     return System.getProperty("fork.mode", "no")
 }
 
@@ -71,26 +71,26 @@ deployment(name: "Sorcer OS") {
 
     //codebase SorcerEnv.getWebsterUrl()
 
-    service(name: SorcerEnv.getActualName('Transaction Manager')) {
+    service (name: SorcerEnv.getActualName('Transaction Manager')) {
         interfaces {
             classes 'net.jini.core.transaction.server.TransactionManager'
             resources "mahalo-dl-${Sorcer.riverVersion}.jar",
                       "jsk-dl-${Sorcer.riverVersion}.jar"
         }
-        implementation(class: 'com.sun.jini.mahalo.TransientMahaloImpl') {
+        implementation (class: 'com.sun.jini.mahalo.TransientMahaloImpl') {
             resources "mahalo-${Sorcer.riverVersion}.jar"
         }
         configuration new File("${Sorcer.sorcerHome}/bin/jini/configs/mahalo.config").text
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualSpaceName(), fork:getForkMode()) {
-    //service(name: SorcerEnv.getActualSpaceName(), fork:"yes", jvmArgs: "-Xmx16G") {
+    service (name: SorcerEnv.getActualSpaceName(), fork:getForkMode()) {
+    //service (name: SorcerEnv.getActualSpaceName(), fork:"yes", jvmArgs: "-Xmx16G") {
         interfaces {
             classes 'net.jini.space.JavaSpace05'
             resources "blitz-dl-${Sorcer.blitzVersion}.jar", "blitzui-${Sorcer.blitzVersion}.jar"
         }
-        implementation(class: 'org.dancres.blitz.remote.BlitzServiceImpl') {
+        implementation (class: 'org.dancres.blitz.remote.BlitzServiceImpl') {
             resources "blitz-${Sorcer.blitzVersion}.jar",
                       "blitzui-${Sorcer.blitzVersion}.jar",
                       "serviceui-${Sorcer.riverVersion}.jar",
@@ -100,7 +100,7 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualName("Rendezvous"), fork:getForkMode()) {
+    service (name: SorcerEnv.getActualName("Rendezvous"), fork:getForkMode()) {
         interfaces {
             classes "sorcer.core.provider.Rendezvous",
                     "sorcer.core.provider.Jobber",
@@ -108,7 +108,7 @@ deployment(name: "Sorcer OS") {
                     "sorcer.core.provider.Concatenator"
             resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
         }
-        implementation(class: "sorcer.core.provider.ServiceExerter") {
+        implementation (class: "sorcer.core.provider.ServiceExerter") {
             resources "sorcer-lib-${Sorcer.sorcerVersion}.jar",
                       "rio-lib-${RioVersion.VERSION}.jar"
         }
@@ -116,12 +116,12 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualName("Cataloger"), fork:getForkMode()) {
+    service (name: SorcerEnv.getActualName("Cataloger"), fork:getForkMode()) {
         interfaces {
             classes 'sorcer.core.provider.Cataloger'
             resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
         }
-        implementation(class: 'sorcer.core.provider.cataloger.ServiceCataloger') {
+        implementation (class: 'sorcer.core.provider.cataloger.ServiceCataloger') {
             resources "sos-cataloger-${Sorcer.sorcerVersion}.jar",
                       "sorcer-lib-${Sorcer.sorcerVersion}.jar"
         }
@@ -129,12 +129,12 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualName("Exert Monitor"), fork: getForkMode()) {
+    service (name: SorcerEnv.getActualName("Exert Monitor"), fork: getForkMode()) {
         interfaces {
             classes 'sorcer.core.monitor.MonitoringManagement'
             resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
         }
-        implementation(class: 'sorcer.core.provider.exertmonitor.ExertMonitor') {
+        implementation (class: 'sorcer.core.provider.exertmonitor.ExertMonitor') {
             resources "sos-exertmonitor-${Sorcer.sorcerVersion}.jar",
                       "sorcer-lib-${Sorcer.sorcerVersion}.jar"
         }
@@ -142,23 +142,23 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualName('EvaluMon')) {
+    service (name: SorcerEnv.getActualName('EvaluMon')) {
         interfaces {
             classes 'sorcer.core.monitoring.Monitor'
             resources appendJars(["rio-lib-${RioVersion.VERSION}.jar"])
         }
-        implementation(class: 'sorcer.core.monitoring.MonitorImpl') {
+        implementation (class: 'sorcer.core.monitoring.MonitorImpl') {
             resources "sos-evalumon-${Sorcer.sorcerVersion}.jar"
         }
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualName("Logger")) {
+    service (name: SorcerEnv.getActualName("Logger")) {
         interfaces {
             classes 'sorcer.core.provider.RemoteLogger'
             resources appendJars(["sos-logger-${Sorcer.sorcerVersion}-ui.jar"])
         }
-        implementation(class: 'sorcer.core.provider.ServiceExerter') {
+        implementation (class: 'sorcer.core.provider.ServiceExerter') {
             resources "sorcer-lib-${Sorcer.sorcerVersion}.jar",
                       "sos-logger-${Sorcer.sorcerVersion}.jar",
                       "commons-io-${Sorcer.commonsIoVersion}.jar"
@@ -168,12 +168,12 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualName("System Caller")) {
+    service (name: SorcerEnv.getActualName("System Caller")) {
         interfaces {
             classes 'sorcer.core.provider.SysCaller'
             resources getCommonDLs() as String[]
         }
-        implementation(class: 'sorcer.core.provider.caller.SysCallerProvider') {
+        implementation (class: 'sorcer.core.provider.caller.SysCallerProvider') {
             resources "sos-caller-${Sorcer.sorcerVersion}.jar"/*,
                       "commons-exec-${Sorcer.commonsExecVersion}.jar"*/
         }
@@ -181,14 +181,14 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
-    if(System.getenv('SORCER_START_ALL') != null || System.getProperty('sorcer.start.all') != null) {
+    if (System.getenv('SORCER_START_ALL') != null || System.getProperty('sorcer.start.all') != null) {
 
-        service(name: SorcerEnv.getActualName("Exerter")) {
+        service (name: SorcerEnv.getActualName("Exerter")) {
             interfaces {
                 classes 'sorcer.service.Exertion'
                 resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
             }
-            implementation(class: 'sorcer.core.provider.ServiceTasker') {
+            implementation (class: 'sorcer.core.provider.ServiceTasker') {
                 resources "sorcer-lib-${Sorcer.sorcerVersion}.jar",
                           "rio-lib-${RioVersion.VERSION}.jar"
             }
@@ -196,12 +196,12 @@ deployment(name: "Sorcer OS") {
             maintain 1
         }
 
-        service(name: SorcerEnv.getActualName("Database Storage"), fork: getForkMode(), jvmArgs: "-Xmx1G") {
+        service (name: SorcerEnv.getActualName("Database Storage"), fork: getForkMode(), jvmArgs: "-Xmx1G") {
             interfaces {
                 classes 'sorcer.core.provider.DatabaseStorer'
                 resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
             }
-            implementation(class: 'sorcer.core.provider.dbp.DatabaseProvider') {
+            implementation (class: 'sorcer.core.provider.dbp.DatabaseProvider') {
                 resources "sos-db-prv-${Sorcer.sorcerVersion}.jar",
                           "sorcer-lib-${Sorcer.sorcerVersion}.jar",
                           "rio-lib-${RioVersion.VERSION}.jar"
