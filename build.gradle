@@ -15,7 +15,7 @@
  */
 
 plugins {
-    id 'org.owasp.dependencycheck' version '5.2.2' apply false
+    id 'org.owasp.dependencycheck' version '6.1.1' apply false
 }
 
 /* Grab the current branch from git and append to version */

@@ -18,6 +18,7 @@ import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Monitor;
 import sorcer.service.Strategy.Wait;
+import sorcer.util.OperatingSystemType;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -61,8 +62,12 @@ public class NetTasks {
 	public void exertOpMatchTask() throws Exception  {
 
 		Task t5 = task(sig(Adder.class, op("add",
-			match(os("Mac OS X", "Win"), app("Astros")), Strategy.Access.PULL)),
+										   match(os(OperatingSystemType.MACINTOSH,
+												   	OperatingSystemType.LINUX,
+												   	OperatingSystemType.WINDOWS),
+												 app("Astros")), Strategy.Access.PULL)),
 			cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
+		assertEquals(Strategy.Access.PULL, t5.getControlContext().getAccessType());
 
 		Routine out = exert(t5);
 		Context cxt = context(out);

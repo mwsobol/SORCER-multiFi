@@ -1,0 +1,115 @@
+/*
+ * Copyright to the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Created by Marco de Lannoy Kobayashi on 8/21/2021.
+ */
+
+version = sorcerVersion
+
+jar {
+    manifest {
+        attributes("Implementation-Title": "Service Provider Classes",
+                "Implementation-Version": sorcerVersion)
+    }
+    archiveBaseName = "bookbroker"
+    archiveClassifier = "prv"
+    dependsOn classes
+    from sourceSets.main.output
+}
+
+task servicePrvDlJar(type: Jar) {
+    manifest {
+        attributes("Implementation-Title": "Service Provider Exported Classes",
+                "Implementation-Version": sorcerVersion)
+    }
+    archiveBaseName = "bookbroker"
+    archiveClassifier = "dl"
+    dependsOn classes
+    from sourceSets.main.output
+    include('sorcer/bookbroker/**')
+    include('sorcer/bookseller/**')
+    exclude('sorcer/bookbroker/impl/**')
+    exclude('sorcer/bookseller/impl/**')
+    from sourceSets.main.resources
+    include('sorcer.jpg')
+}
+
+task serviceReqJar(type: Jar) {
+    manifest {
+        attributes("Implementation-Title": "Service Requestor",
+                "Implementation-Version": sorcerVersion)
+    }
+    archiveBaseName = "bookbroker"
+    archiveClassifier = "req"
+    dependsOn classes
+    from sourceSets.main.output
+}
+
+artifacts {
+    archives servicePrvDlJar
+    archives serviceReqJar
+}
+
+install.dependsOn(['servicePrvDlJar', 'serviceReqJar'])
+build.dependsOn(install)
+
+dependencies {
+    compile project(':sorcer-platform')
+    compile project(':sorcer-lib')
+    compile project(':sos-db-prv')
+    testCompile project(':sorcer-test')
+    testRuntime "org.rioproject:webster:${rioVersion}"
+    testRuntime libs.slf4j
+    testRuntime libs.logback
+}
+
+def deployConfig = file("configs/bookseller-prv.config")
+artifacts {
+    archives deployConfig
+}
+
+def repoPath() {
+    return "org/sorcer/bookbroker/${version}"
+}
+
+bootme {
+    description = 'Starts up a service provider'
+    starterConfig = file("${projectDir.path}/configs/StartBookBrokerConfig.groovy")
+    systemProperties = ["relative.repo.path" : repoPath(), "webster.url" : websterUrl]
+//    spawn = false
+//    debug = true
+}
+
+test {
+    description = 'Tests local and remote services with JUnit test case.'
+    systemProperty "java.rmi.server.codebase",
+            "${websterUrl}/${repoPath()}/bookbroker-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+
+    testLogging {
+        events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
+    }
+    dependsOn([install, bootme])
+    finalizedBy(haltme)
+}
+//test.enabled = false
+
+
+
+
+
+
+
