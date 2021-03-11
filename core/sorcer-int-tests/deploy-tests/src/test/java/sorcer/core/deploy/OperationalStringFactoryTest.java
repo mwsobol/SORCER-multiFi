@@ -54,7 +54,7 @@ public class OperationalStringFactoryTest {
     }
 
     @Test
-    public void testCreateDeploymentID() throws NoSuchAlgorithmException, InterruptedException {
+    public void testCreateDeploymentID()  {
         ServiceElement serviceElement = new ServiceElement();
         ServiceElement serviceElement1 = new ServiceElement();
         serviceElement.setExportBundles(new ClassBundle("on.a.planet.far.far.Away"),
@@ -72,7 +72,7 @@ public class OperationalStringFactoryTest {
 
         String id = OperationalStringFactory.createDeploymentID(serviceElement);
         String id1 = OperationalStringFactory.createDeploymentID(serviceElement1);
-        Assert.assertTrue(id.equals(id1));
+        assertEquals(id, id1);
     }
 
 
@@ -87,17 +87,22 @@ public class OperationalStringFactoryTest {
         List<OperationalString> allOperationalStrings = new ArrayList<>();
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.YES));
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.NO));
-        assertTrue("Expected 2, got " + allOperationalStrings.size(), allOperationalStrings.size() == 2);
+        assertEquals("Expected 2, got " + allOperationalStrings.size(),
+                     2,
+                     allOperationalStrings.size());
 
-        assertTrue(deployments.get(ServiceDeployment.Unique.NO).size()==2);
+        assertEquals(2,
+                     deployments.get(ServiceDeployment.Unique.NO).size());
 
         OperationalString multiply = allOperationalStrings.get(0);
         assertEquals(1, multiply.getServices().length);
         assertEquals(SorcerEnv.getActualName("Multiplier"), multiply.getServices()[0].getName());
         UndeployOption undeployOption = multiply.getUndeployOption();
         assertNotNull(undeployOption);
-        assertTrue(UndeployOption.Type.WHEN_IDLE.equals(multiply.getUndeployOption().getType()));
-        assertTrue(1L==undeployOption.getWhen());
+        assertEquals(UndeployOption.Type.WHEN_IDLE,
+                     multiply.getUndeployOption().getType());
+        assertEquals(1L,
+                     (long) undeployOption.getWhen());
 
         OperationalString federated = allOperationalStrings.get(1);
         String[] parts = federated.getName().split(";");
@@ -110,16 +115,21 @@ public class OperationalStringFactoryTest {
         for (ServiceElement se : federated.getServices()) {
             if (se.getName().startsWith("Subtractor")) {
                 subtract = se;
-                Assert.assertTrue(subtract.getPlanned() == 2);
-                Assert.assertTrue(subtract.getMaxPerMachine() == 2);
-                Assert.assertTrue(subtract.getMachineBoundary() == ServiceElement.MachineBoundary.VIRTUAL);
+                assertEquals(2,
+                             subtract.getPlanned());
+                assertEquals(2,
+                             subtract.getMaxPerMachine());
+                Assert.assertSame(subtract.getMachineBoundary(),
+                                  ServiceElement.MachineBoundary.VIRTUAL);
             }
         }
 
         assertNotNull(federated.getUndeployOption());
-        assertTrue(UndeployOption.Type.WHEN_IDLE.equals(federated.getUndeployOption().getType()));
-        assertTrue(5==federated.getUndeployOption().getWhen());
-
+        assertEquals(UndeployOption.Type.WHEN_IDLE,
+                     federated.getUndeployOption().getType());
+        assertEquals(5,
+                     (long) federated.getUndeployOption().getWhen());
+        assertNotNull(subtract);
         assertEquals(2, subtract.getPlanned());
     }
 
@@ -130,17 +140,22 @@ public class OperationalStringFactoryTest {
         List<OperationalString> allOperationalStrings = new ArrayList<>();
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.YES));
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.NO));
-        assertTrue("Expected 2, got " + allOperationalStrings.size(), allOperationalStrings.size() == 2);
+        assertEquals("Expected 2, got " + allOperationalStrings.size(),
+                     2,
+                     allOperationalStrings.size());
 
-        assertTrue(deployments.get(ServiceDeployment.Unique.NO).size()==2);
+        assertEquals(2,
+                     deployments.get(ServiceDeployment.Unique.NO).size());
 
         OperationalString multiply = allOperationalStrings.get(0);
         assertEquals(1, multiply.getServices().length);
         assertEquals(SorcerEnv.getActualName("Multiplier"), multiply.getServices()[0].getName());
         UndeployOption undeployOption = multiply.getUndeployOption();
         assertNotNull(undeployOption);
-        assertTrue(UndeployOption.Type.WHEN_IDLE.equals(multiply.getUndeployOption().getType()));
-        assertTrue(1L==undeployOption.getWhen());
+        assertEquals(UndeployOption.Type.WHEN_IDLE,
+                     multiply.getUndeployOption().getType());
+        assertEquals(1L,
+                     (long) undeployOption.getWhen());
 
         ServiceElement multiplyService = multiply.getServices()[0];
 
@@ -163,17 +178,22 @@ public class OperationalStringFactoryTest {
         Map<ServiceDeployment.Unique, List<OperationalString>> deployments = OperationalStringFactory.create(job);
         assertNotNull(deployments);
         List<OperationalString> opStrings = deployments.get(ServiceDeployment.Unique.NO);
-        assertTrue(opStrings.size()==1);
+        assertEquals(1,
+                     opStrings.size());
         OperationalString os = opStrings.get(0);
         StringBuilder sb = new StringBuilder();
         for(ServiceElement s : os.getServices()) {
             if(s.getName().startsWith("Subtract")) {
-                assertTrue(s.getProvisionType().equals(ServiceElement.ProvisionType.FIXED));
-                assertTrue(s.getPlanned()==2);
+                assertEquals(s.getProvisionType(),
+                             ServiceElement.ProvisionType.FIXED);
+                assertEquals(2,
+                             s.getPlanned());
             }
             if(s.getName().startsWith("Multiplier")) {
-                assertTrue(s.getProvisionType().equals(ServiceElement.ProvisionType.FIXED));
-                assertTrue(s.getPlanned()==1);
+                assertEquals(s.getProvisionType(),
+                             ServiceElement.ProvisionType.FIXED);
+                assertEquals(1,
+                             s.getPlanned());
             }
             sb.append("\t").append(s.getName()).append("\n\t\t")
                 .append("fiType: ").append(s.getProvisionType().name())
@@ -201,9 +221,9 @@ public class OperationalStringFactoryTest {
     }
 
     private SystemComponent[] getSystemComponents(SystemComponent[] components, String name) {
-        List<SystemComponent> sysComponents = new ArrayList<SystemComponent>();
-        for(SystemComponent s : components) {
-            if(name.equals(s.getName())) {
+        List<SystemComponent> sysComponents = new ArrayList<>();
+        for (SystemComponent s : components) {
+            if (name.equals(s.getName())) {
                 sysComponents.add(s);
             }
         }
@@ -232,13 +252,16 @@ public class OperationalStringFactoryTest {
         assertTrue(service.forkService());
         assertNotNull(service.getExecDescriptor());
         assertEquals("-Xmx4G", service.getExecDescriptor().getInputArgs());
-        assertTrue(service.getServiceBeanConfig().getConfigArgs().length==1);
+        assertEquals(1,
+                     service.getServiceBeanConfig().getConfigArgs().length);
         Configuration configuration = Configuration.getInstance(service.getServiceBeanConfig().getConfigArgs());
         String[] codebaseJars = configuration.getEntry("sorcer.core.exertion.deployment",
                                                        "codebaseJars",
                                                        String[].class);
-        assertTrue(codebaseJars.length == 1);
-        assertTrue(codebaseJars[0].equals("sorcer-tester-"+System.getProperty("sorcer.version")+"-dl.jar"));
+        assertEquals(1,
+                     codebaseJars.length);
+        assertEquals(codebaseJars[0],
+                     "sorcer-tester-" + System.getProperty("sorcer.version") + "-dl.jar");
     }
 
 }

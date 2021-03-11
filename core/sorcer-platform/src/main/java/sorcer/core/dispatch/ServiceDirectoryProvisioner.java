@@ -84,12 +84,7 @@ public class ServiceDirectoryProvisioner implements Provisioner {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T provision(Signature sig) throws ProvisioningException {
-        String typeName = null;
-        try {
-            typeName = (sig.getServiceType()!=null ? sig.getServiceType().getName() : null);
-        } catch (SignatureException e) {
-            throw new ProvisioningException(e);
-        }
+        String typeName = (sig.getServiceType()!=null ? sig.getServiceType().getName() : null);
         String name = (sig.getProviderName()!=null ? sig.getProviderName().getName() : "*");
         String version = ((sig instanceof RemoteSignature) ? ((RemoteSignature)sig).getVersion() : null);
         logger.warn("called provision {} {} {}", typeName, version, name);

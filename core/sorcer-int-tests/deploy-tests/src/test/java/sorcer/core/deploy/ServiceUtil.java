@@ -64,11 +64,11 @@ public class ServiceUtil {
                 } else {
                     String name = String.format("%s/%s", elem.getOperationalStringName(), elem.getName());
                     if(!deployedServices.contains(name)) {
-                        System.out.println(String.format("Service %s/%-24s is deployed. Planned [%s], deployed [%d]",
-                                                         elem.getOperationalStringName(),
-                                                         elem.getName(),
-                                                         elem.getPlanned(),
-                                                         numDeployed));
+                        System.out.printf("Service %s/%-24s is deployed. Planned [%s], deployed [%d]%n",
+                                          elem.getOperationalStringName(),
+                                          elem.getName(),
+                                          elem.getPlanned(),
+                                          numDeployed);
                         deployedServices.add(name);
                     }
                     deployed += elem.getPlanned();

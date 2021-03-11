@@ -60,13 +60,13 @@ public class LocalSignature extends ServiceSignature implements sig {
 
 	private Class<?>[] argTypes;
 
-	private static Logger logger = LoggerFactory.getLogger(LocalSignature.class);
+	private static final Logger logger = LoggerFactory.getLogger(LocalSignature.class);
 
 	public LocalSignature() {
 		this.multitype.providerType = Object.class;
 	}
 
-	public LocalSignature(ServiceSignature signature) throws SignatureException {
+	public LocalSignature(ServiceSignature signature) {
         this.name = signature.name;
         this.operation = signature.operation;
         this.providerName =  signature.providerName;
@@ -75,27 +75,23 @@ public class LocalSignature extends ServiceSignature implements sig {
         this.contextReturn = signature.contextReturn;
 	}
 
-	public LocalSignature(String selector, Object object, Class<?>[] argTypes,
-						  Object... args) throws InstantiationException,
-			IllegalAccessException {
+	public LocalSignature(String selector,
+						  Object object,
+						  Class<?>[] argTypes,
+						  Object... args) {
 		this(selector, object, null, argTypes, args);
 	}
 
-	public LocalSignature(Object object, String initSelector, Class<?>[] argTypes,
-						  Object... args) throws InstantiationException,
-			IllegalAccessException {
+	public LocalSignature(Object object, String initSelector, Class<?>[] argTypes, Object... args) {
 		this(null, object, initSelector, argTypes, args);
 	}
 
-	public LocalSignature(Class<?> clazz, String initSelector) throws InstantiationException,
-			IllegalAccessException {
+	public LocalSignature(Class<?> clazz, String initSelector) {
 		this.multitype.providerType = clazz;
 		setInitSelector(initSelector);
 	}
 
-	public LocalSignature(String selector, Object object, String initSelector, Class<?>[] argTypes,
-						  Object... args) throws InstantiationException,
-			IllegalAccessException {
+	public LocalSignature(String selector, Object object, String initSelector, Class<?>[] argTypes, Object... args) {
 		this();
 		if (object instanceof Class) {
 			this.multitype.providerType = (Class<?>) object;
@@ -138,8 +134,7 @@ public class LocalSignature extends ServiceSignature implements sig {
 	 * Assigns the object being a provider of this signature.
 	 * </p>
 	 *
-	 * @param target
-	 *            the  object provider to set
+	 * @param target the  object provider to set
 	 */
 	public void setTarget(Object target) {
 		this.target = target;
@@ -152,7 +147,7 @@ public class LocalSignature extends ServiceSignature implements sig {
 	 *
 	 * @return the providerClass
 	 */
-	public Class getProviderType() {
+	public Class<?> getProviderType() {
 		return multitype.providerType;
 	}
 
@@ -183,8 +178,7 @@ public class LocalSignature extends ServiceSignature implements sig {
 		this.evaluator = evaluator;
 	}
 
-	public MethodInvoker<?> createEvaluator() throws InstantiationException,
-			IllegalAccessException {
+	public MethodInvoker<?> createEvaluator() throws InstantiationException, IllegalAccessException {
 		if (target == null && multitype != null) {
 			evaluator = new MethodInvoker(multitype.providerType.newInstance(), operation.selector);
 		} else
@@ -217,8 +211,8 @@ public class LocalSignature extends ServiceSignature implements sig {
 	 * @throws SignatureException
 	 */
 	public Object newInstance() throws SignatureException {
-		Constructor<?> constructor = null;
-		Object obj = null;
+		Constructor<?> constructor;
+		Object obj;
 		try {
 			if (args == null) {
 				if (Modifier.isAbstract(multitype.providerType.getModifiers()) ||
@@ -399,11 +393,8 @@ public class LocalSignature extends ServiceSignature implements sig {
 			} catch (RemoteException e) {
 				throw new MogramException(e);
 			}
-		} try {
-			task = new ObjectTask(this, cxt);
-		} catch (SignatureException e) {
-			throw new ContextException(e);
 		}
+		task = new ObjectTask(this, cxt);
 		return task.exert(txn).getContext();
 	}
 
