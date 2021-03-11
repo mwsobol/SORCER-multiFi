@@ -23,11 +23,11 @@ import net.jini.config.EmptyConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
-import sorcer.util.ProviderLocator;
 import sorcer.util.ProviderLookup;
 import sorcer.util.Sorcer;
 
 import java.lang.reflect.Constructor;
+import java.rmi.RemoteException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -53,17 +53,17 @@ public class Accessor {
      * @throws IllegalArgumentException if the configuration arg is null.
      */
     public static synchronized DynamicAccessor create(Configuration config) {
-        if(accessor.get() == null) {
-            if(config == null)
+        if (accessor.get() == null) {
+            if (config == null)
                 throw new IllegalArgumentException("A Configuration must be provided");
-            if(System.getSecurityManager() == null)
+            if (System.getSecurityManager() == null)
                 System.setSecurityManager(new SecurityManager());
             String providerType =
                 Sorcer.getProperties().getProperty(SorcerConstants.S_SERVICE_ACCESSOR_PROVIDER_NAME);
             try {
                 logger.debug("SORCER DynamicAccessor provider: {}", providerType);
                 Class<?> type = Class.forName(providerType, true, Thread.currentThread().getContextClassLoader());
-                if(!DynamicAccessor.class.isAssignableFrom(type)){
+                if (!DynamicAccessor.class.isAssignableFrom(type)){
                     throw new IllegalArgumentException("Configured class must implement DynamicAccessor: "+providerType);
                 }
                 Constructor constructor = type.getDeclaredConstructor(Configuration.class);
@@ -76,9 +76,9 @@ public class Accessor {
     }
 
     public static synchronized DynamicAccessor createLookup() {
-        if(System.getSecurityManager() == null)
+        if (System.getSecurityManager() == null)
             System.setSecurityManager(new SecurityManager());
-        if(accessor.get() == null) {
+        if (accessor.get() == null) {
             accessor.set(new ProviderLookup());
         }
         return accessor.get();
@@ -92,7 +92,7 @@ public class Accessor {
      * @throws IllegalStateException if the DynamicAccessor instance has not been created by this utility.
      */
     public static synchronized DynamicAccessor get() {
-        if(accessor.get()==null)
+        if (accessor.get() == null)
             throw new IllegalStateException("The DynamicAccessor has not yet been created");
         return accessor.get();
     }
@@ -105,7 +105,7 @@ public class Accessor {
      * with care, as underlying discovery management cannot be configured.
      */
     public static synchronized DynamicAccessor create() {
-        if(accessor.get()==null) {
+        if (accessor.get() == null) {
             try {
                 create(EmptyConfiguration.INSTANCE);
             } catch (Exception e) {
@@ -127,8 +127,8 @@ public class Accessor {
         try {
             provider.getProviderName();
             return true;
-        } catch (Exception e) {
-            logger.debug("ServiceExerter is dead " + e.getMessage());
+        } catch (RemoteException e) {
+            logger.debug("Exerter is dead " + e.getMessage());
             return false;
         }
     }
