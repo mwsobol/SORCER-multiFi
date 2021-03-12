@@ -176,7 +176,7 @@ public class operator {
             Object obj = context.get(path);
             if (obj != null) {
                 out = (T) obj;
-                if (obj instanceof Number || obj instanceof Number || obj instanceof Boolean
+                if (obj instanceof Number || obj instanceof Boolean
                     || obj.getClass().isArray() || obj instanceof Collection) {
                     out = (T) obj;
                 } else if (obj instanceof Valuation) {
@@ -186,7 +186,7 @@ public class operator {
                 } else if (SdbUtil.isSosURL(obj)) {
                     out = (T) ((URL) obj).getContent();
                 } else if (obj instanceof Entry) {
-                    out = (T) context.getValue(path, args);
+                    out = context.getValue(path, args);
                 }
             } else {
 //                if (((ServiceContext) context).getType().equals(Functionality.Type.TRANS)) {
@@ -944,12 +944,12 @@ public class operator {
     }
 
     public static Model aneModel(String name, Object... objects)
-        throws ContextException, RemoteException {
+        throws ContextException {
         return reqModel(name, objects);
     }
 
     public static EntryModel entModel(String name, Object... objects)
-        throws RemoteException, ContextException {
+        throws  ContextException {
         EntryModel pm = new EntryModel(name);
         for (Object o : objects) {
             if (o instanceof Identifiable)
@@ -959,7 +959,7 @@ public class operator {
     }
 
     public static Object get(EntryModel pm, String parname, Arg... parametrs)
-        throws ContextException, RemoteException {
+        throws ContextException {
         Object obj = pm.asis(parname);
         if (obj instanceof Prc)
             obj = ((Prc) obj).evaluate(parametrs);
@@ -972,7 +972,7 @@ public class operator {
         RequestModel model = null;
         FidelityManager fiManager = null;
         List<Metafidelity> metaFis = new ArrayList<>();
-        List<Req> morphFiEnts = new ArrayList();
+        List<Req> morphFiEnts = new ArrayList<>();
         List<Fidelity> fis = new ArrayList<>();
         Projection inPathPrj = null;
         Projection outPathPrj = null;
@@ -1050,7 +1050,7 @@ public class operator {
             model.setFidelityManager(fiManager);
             fiManager.init(metaFis);
             fiManager.add(fis);
-            MorphFidelity mFi = null;
+            MorphFidelity mFi;
             if ((morphFiEnts.size() > 0)) {
                 for (Req morphFiEnt : morphFiEnts) {
                     mFi = (MorphFidelity) morphFiEnt.getImpl();
@@ -1131,7 +1131,7 @@ public class operator {
         return null;
     }
 
-    public static Context setDmnCxt(Request request, String domainName, Context context) throws ContextException {
+    public static Context setDmnCxt(Request request, String domainName, Context context) {
         if (request instanceof Context) {
             try {
                 return addDomainContext((Context)request, context, domainName);
@@ -1169,7 +1169,7 @@ public class operator {
 
     public static void setOut(Service request, Context object) {
         if (request instanceof Collaboration) {
-            ((Collaboration) request).setOutput((Context)object);
+            ((Collaboration) request).setOutput(object);
         } else if (request instanceof Slot) {
             ((Slot)request).setOut(object);
         }
@@ -1234,11 +1234,11 @@ public class operator {
         return (String) context.get(Functionality.Type.DOMAIN.toString());
     }
 
-    public static SignatureDomain domain(Signature signature) throws ContextException {
+    public static SignatureDomain domain(Signature signature) {
         return new SignatureDomain(signature);
     }
 
-    public static SignatureDomain domain(String name, Signature signature) throws ContextException {
+    public static SignatureDomain domain(String name, Signature signature) {
         return new SignatureDomain(name, signature);
     }
 

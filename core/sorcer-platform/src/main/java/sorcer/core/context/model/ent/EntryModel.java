@@ -104,8 +104,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		isRevaluable = true;
 	}
 
-    public EntryModel(Identifiable... objects) throws RemoteException,
-            ContextException {
+    public EntryModel(Identifiable... objects) throws ContextException {
         this();
         add(objects);
     }
@@ -275,7 +274,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		return ent;
 	}
 
-	public EntryModel add(List<Identifiable> objects) throws RemoteException, ContextException {
+	public EntryModel add(List<Identifiable> objects) throws ContextException {
 		Identifiable[] objs = new Identifiable[objects.size()];
 		objects.toArray(objs);
 		add(objs);
@@ -320,7 +319,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	}
 
 	@Override
-	public ContextDomain add(Identifiable... objects) throws ContextException, RemoteException {
+	public ContextDomain add(Identifiable... objects) throws ContextException {
 		Prc p = null;
 		boolean changed = false;
 		for (Identifiable obj : objects) {
