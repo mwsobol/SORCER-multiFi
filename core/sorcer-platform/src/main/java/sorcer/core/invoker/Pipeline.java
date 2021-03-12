@@ -54,8 +54,7 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
 	 * @see sorcer.service.Evaluation#execute(sorcer.service.Args[])
 	 */
     @Override
-    public Context evaluate(Arg... args) throws InvocationException,
-            RemoteException {
+    public Context evaluate(Arg... args) throws InvocationException {
 
         Context out = Arg.selectContext(args);
         if (out == null) {
@@ -79,8 +78,7 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
             }
         }
 
-        Context cxt = null;
-        Object opout =  null;
+        Object opout;
         for (Opservice opsrv : opservices) {
             try {
                 if (opsrv instanceof Scopable) {
@@ -146,7 +144,7 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
                     ((ServiceContext) out).put(((Identifiable) opsrv).getName(), opout);
                     invokeContext.putValue(((Identifiable) opsrv).getName(), opout);
                 }
-            } catch (ServiceException e) {
+            } catch (ServiceException | RemoteException e) {
                 throw new InvocationException(e);
             }
         }

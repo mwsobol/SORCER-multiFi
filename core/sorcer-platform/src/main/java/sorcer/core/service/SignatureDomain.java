@@ -130,8 +130,12 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public <T extends Contextion> T exert(Arg... args) throws ContextException, RemoteException {
-        return domain.exert(args);
+    public <T extends Contextion> T exert(Arg... args) throws MogramException {
+        try {
+            return domain.exert(args);
+        } catch (RemoteException e) {
+            throw new MogramException(e);
+        }
     }
 
     @Override
@@ -195,7 +199,7 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public List<ThrowableTrace> getExceptions() throws RemoteException {
+    public List<ThrowableTrace> getExceptions() {
         return domain.getExceptions();
     }
 
@@ -487,13 +491,21 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
-        return domain.evaluate(context, args);
+    public Context evaluate(Context context, Arg... args) throws MogramException {
+        try {
+            return domain.evaluate(context, args);
+        } catch (RemoteException e) {
+            throw new MogramException(e);
+        }
     }
 
     @Override
-    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
-        return domain.exert(txn, args);
+    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws MogramException {
+        try {
+            return domain.exert(txn, args);
+        } catch (RemoteException e) {
+            throw new MogramException(e);
+        }
     }
 
     @Override
@@ -512,27 +524,43 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public Context appendContext(Context context) throws ContextException, RemoteException {
-        return domain.appendContext(context);
+    public Context appendContext(Context context) throws ContextException {
+        try {
+            return domain.appendContext(context);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     @Override
-    public Context getDomainData() throws ContextException, RemoteException {
-        return domain.getDomainData();
+    public Context getDomainData() throws ContextException {
+        try {
+            return domain.getDomainData();
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     @Override
-    public Context getContext(Context contextTemplate) throws RemoteException, ContextException {
-        return domain.getContext(contextTemplate);
+    public Context getContext(Context contextTemplate) throws ContextException {
+        try {
+            return domain.getContext(contextTemplate);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     @Override
-    public Context appendContext(Context context, String path) throws ContextException, RemoteException {
-        return domain.appendContext(context, path);
+    public Context appendContext(Context context, String path) throws ContextException {
+        try {
+            return domain.appendContext(context, path);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     @Override
-    public Context getContext(String path) throws ContextException, RemoteException {
+    public Context getContext(String path) throws ContextException {
         return domain.getContext();
     }
 
@@ -582,8 +610,12 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public <T extends Contextion> T exert(T exertion, Transaction txn, Arg... args) throws ContextException, RemoteException {
-        return domain.exert(exertion, txn, args);
+    public <T extends Contextion> T exert(T exertion, Transaction txn, Arg... args) throws MogramException {
+        try {
+            return domain.exert(exertion, txn, args);
+        } catch (RemoteException e) {
+            throw new MogramException(e);
+        }
     }
 
     @Override

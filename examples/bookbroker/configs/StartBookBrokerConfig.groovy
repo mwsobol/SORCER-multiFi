@@ -47,7 +47,6 @@ class StartAll {
             def configArg = ["${configPath}/${provider}-prv.config"]
             def codebase = "${relativeRepoPath}/bookbroker-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
-            println "===> useHttps: $useHttps"
             descriptors << new SorcerServiceDescriptor(codebase,
                     policy,
                     "${buildLibPath}/bookbroker-${sorcerVersion}-prv.jar",

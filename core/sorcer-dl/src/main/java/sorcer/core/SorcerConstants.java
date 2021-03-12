@@ -272,6 +272,8 @@ public interface SorcerConstants {
 
 	String S_SERVICE_ACCESSOR_PROVIDER_NAME = "provider.lookup.accessor";
 
+	String S_PROVIDER_CACHE_NAME = "provider.cache";
+
 	String SORCER_HOME = "sorcer.home";
 
 	// discovery and lookup

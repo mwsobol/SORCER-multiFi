@@ -64,7 +64,7 @@ public class InvokerTest {
 			logger.info("update y: " + exec(y));
 			return (double)exec(x) + (double)exec(y) + (double)exec(pm, "z");
 		}
-	};
+	}
 
 	@Before
 	public void initProcModel() throws Exception {
@@ -75,8 +75,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void lambdaInvoker() throws RemoteException, ContextException,
-			SignatureException, RoutineException {
+	public void lambdaInvoker() throws Exception {
 		Evaluator invoker = invoker("fxn",
 				cxt ->  (double) value(cxt, "x") + (double) value(cxt, "y") + 30,
 				context(val("x", 10.0), val("y", 20.0)),
@@ -103,7 +102,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void groovyInvokerTest() throws RemoteException, ContextException {
+	public void groovyInvokerTest() throws Exception {
 		EntryModel pm = entModel("prc-model");
 		add(pm, prc("x", 10.0), prc("y", 20.0));
 		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
@@ -114,7 +113,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void lambdaInvokerTest() throws RemoteException, ContextException {
+	public void lambdaInvokerTest() throws Exception {
 		EntryModel pm = entModel("model");
 		add(pm, prc("x", 10.0), prc("y", 20.0));
 		add(pm, invoker("fxn", cxt -> (double)value(cxt, "x") + (double)value(cxt, "y") + 30));
@@ -155,8 +154,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void invokeProcTest() throws RemoteException, ContextException,
-			SignatureException, RoutineException {
+	public void invokeProcTest() throws Exception{
 
 		Prc x1 = prc("x1", 1.0);
 		// logger.info("invoke eval:" + invoke(x1));
@@ -164,8 +162,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void invokeProcArgTest() throws RemoteException, ContextException,
-			SignatureException, RoutineException {
+	public void invokeProcArgTest() throws Exception {
 		Prc x1, x2, y;
 		x1 = prc("x1", 1.0);
 		x2 = prc("x2", 2.0);
@@ -177,8 +174,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void cmdInvokerTest() throws SignatureException, RoutineException,
-			ContextException, IOException {
+	public void cmdInvokerTest() throws Exception {
 		String riverVersion = System.getProperty("river.version");
 		String sorcerVersion = System.getProperty("sorcer.version");
 		String slf4jVersion = System.getProperty("slf4j.version");
@@ -217,7 +213,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void conditionalInvoker() throws RemoteException, ContextException {
+	public void conditionalInvoker() throws Exception {
 		final EntryModel pm = new EntryModel("prc-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
@@ -266,7 +262,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void optInvokerTest1() throws RemoteException, ContextException {
+	public void optInvokerTest1() throws Exception {
 		EntryModel pm = new EntryModel("prc-model");
 
 		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
@@ -286,7 +282,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void optInvokerTest2() throws RemoteException, ContextException {
+	public void optInvokerTest2() throws Exception {
 		// Java 8 lambdas style
 		EntryModel pm = new EntryModel("prc-model");
 
@@ -307,7 +303,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void smlOptInvokerTest() throws RemoteException, ContextException {
+	public void smlOptInvokerTest() throws Exception {
 		EntryModel pm = entModel("prc-model");
 		add(pm,
 				val("x", 10.0),
@@ -324,7 +320,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void altInvokerTest() throws RemoteException, ContextException {
+	public void altInvokerTest() throws Exception {
 		EntryModel pm = new EntryModel("prc-model");
 		pm.putValue("x", 30.0);
 		pm.putValue("y", 20.0);
@@ -384,7 +380,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void multiOptAltInvokerTest() throws RemoteException, ContextException {
+	public void multiOptAltInvokerTest() throws Exception {
 		EntryModel pm = entModel("prc-model");
 		// add(pm, entry("x", 10.0), entry("y", 20.0), prc("x2", 50.0),
 		// prc("y2", 40.0), prc("x3", 50.0), prc("y3", 60.0));

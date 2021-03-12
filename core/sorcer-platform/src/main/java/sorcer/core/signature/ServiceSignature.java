@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.eo.operator.*;
@@ -49,7 +48,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	static final long serialVersionUID = -8527094638557595398L;
 
 	/** our logger. */
-	protected final static Logger logger = Log.getSorcerLog();
+	private final static Logger logger = Log.getSorcerLog();
 
 	protected String name;
 
@@ -62,10 +61,10 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	protected Context.Return contextReturn;
 
 	// the indicated usage of this signature
-	protected Set<Kind> rank = new HashSet<Kind>();
+	protected Set<Kind> rank = new HashSet<>();
 
 	// dependency management for this Signature
-	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
+	protected List<Evaluation> dependers = new ArrayList<>();
 
 	// Must initialize to ANY to have correct JavaSpace workers behavior
 	// to have domains with providerName/serviceInfo specified going to
@@ -158,7 +157,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
         execType = Type.PRO;
     }
 
-	public void setExertion(Routine exertion) throws RoutineException {
+	public void setExertion(Routine exertion) {
 		this.exertion = exertion;
 	}
 
@@ -189,8 +188,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	public void addRank(List<Kind> kinds) {
-		for (Kind k : kinds)
-			rank.add(k);
+		rank.addAll(kinds);
 	}
 
 	public boolean isKindOf(Kind kind) {
@@ -213,11 +211,11 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
         return multitype;
     }
 
-	public Class getServiceType() throws SignatureException {
+	public Class<?> getServiceType() {
 		return this.multitype.getProviderType();
 	}
 
-	public void setServiceType(Class serviceType) {
+	public void setServiceType(Class<?> serviceType) {
 		this.multitype.providerType = serviceType;
 	}
 
@@ -278,8 +276,8 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 			NoSuchMethodException, IllegalArgumentException,
 			InstantiationException, IllegalAccessException,
 			InvocationTargetException {
-		Constructor<? extends Object> constructor;
-		Class<? extends Object> sigClass = signature.getClass();
+		Constructor<?> constructor;
+		Class<?> sigClass = signature.getClass();
 		constructor = sigClass.getConstructor(signature.getClass());
 		Object sig = constructor.newInstance(signature);
 
@@ -323,12 +321,8 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	public void setActive(Operating state) {
-		if (state == Operating.YES || state == Operating.TRUE) {
-			isActive = true;
-		} else {
-			isActive = false;
-		}
-		logger.info("Setting "+name+" Active to: "+isActive);
+		isActive = state == Operating.YES || state == Operating.TRUE;
+		logger.info("Setting " + name + " Active to: " + isActive);
 	}
 
 	public String[] getContextTemplateIDs() {
@@ -359,9 +353,8 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	public void removeContextTemplateID(String id) {
 		if (contextTemplateIDs == null)
 			return;
-		List<String> v = new ArrayList<String>();
-		for (int i = 0; i < contextTemplateIDs.length; i++)
-			v.add(contextTemplateIDs[i]);
+		List<String> v = new ArrayList<>();
+		Collections.addAll(v, contextTemplateIDs);
 		v.remove(id);
 		if (contextTemplateIDs.length != v.size()) {
 			contextTemplateIDs = new String[v.size()];
@@ -390,11 +383,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		if (operation.selector == null && multitype == null) {
 			return false;
 		}
-		Method[] methods = null;
-		if (multitype.providerType.isInterface())
-			methods = multitype.providerType.getMethods();
-		else
-			methods = multitype.providerType.getMethods();
+		Method[] methods = multitype.providerType.getMethods();
 
 		for (Method m : methods) {
 			if (m.getName().equals(operation.selector)) {
@@ -405,10 +394,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	public boolean hasContextTemplate() {
-		if (contextTemplateIDs != null)
-			return true;
-		else
-			return false;
+		return contextTemplateIDs != null;
 	}
 
 	public boolean isProcessType() {
@@ -469,7 +455,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	@Override
-	public void close() throws RemoteException, IOException {
+	public void close() throws IOException {
 		// implemented in subclasses
 	}
 
@@ -547,12 +533,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	public void setProvisionable(Provision isProvisionable) {
-		if (isProvisionable == Provision.YES
-				|| isProvisionable == Provision.TRUE) {
-			this.operation.isProvisionable = true;
-		} else {
-			this.operation.isProvisionable = false;
-		}
+		this.operation.isProvisionable = isProvisionable == Provision.YES || isProvisionable == Provision.TRUE;
 	}
 
 	public boolean isShellRemote() {
@@ -565,11 +546,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 
 
 	public void setShellRemote(Strategy.Shell shellExec) {
-		if (shellExec == Strategy.Shell.REMOTE) {
-			this.isShellRemote = true;
-		} else {
-			this.isShellRemote = false;
-		}
+		this.isShellRemote = shellExec == Strategy.Shell.REMOTE;
 	}
 
 	@Override
@@ -623,18 +600,16 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	@Override
-	public Context exert(Contextion mogram, Transaction txn, Arg... args)
-		throws ContextException, RemoteException {
-		Context cxt = null;
+	public Context exert(Contextion mogram, Transaction txn, Arg... args) throws MogramException {
+		Context cxt;
 		if (mogram instanceof Context) {
 			cxt = (Context)mogram;
 		} else {
-			cxt = (Context) context(exert(mogram, txn, args));
+			cxt = context(exert(mogram, txn, args));
 		}
-		Task out = null;
+		Task out;
 		out = task(this, cxt);
-		Object result = null;
-		result = exert(out);
+		Object result = exert(out);
 		if (result instanceof Context) {
 			return (Context) result;
 		} else {
@@ -642,7 +617,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		}
 	}
 
-	public Context exert(Contextion mogram) throws ContextException, RemoteException {
+	public Context exert(Contextion mogram) throws MogramException {
 		return exert(mogram, null);
 	}
 
@@ -696,9 +671,8 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	@Override
 	public void addDependers(Evaluation... dependers) {
 		if (this.dependers == null)
-			this.dependers = new ArrayList<Evaluation>();
-		for (Evaluation depender : dependers)
-			this.dependers.add(depender);
+			this.dependers = new ArrayList<>();
+		Collections.addAll(this.dependers, dependers);
 	}
 
 	@Override
@@ -716,7 +690,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		throw new MogramException("Signature service exec should be implemented in subclasses");
 	}
 	
-	public Entry act(Arg... args) throws ServiceException, RemoteException {
+	public Entry act(Arg... args) throws ServiceException {
 		Object result = this.execute(args);
 		if (result instanceof Entry) {
 			return (Entry)result;
@@ -725,7 +699,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		}
 	}
 
-	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+	public Data act(String entryName, Arg... args) throws ServiceException {
 		Object result = this.execute(args);
 		if (result instanceof Entry) {
 			return (Entry)result;

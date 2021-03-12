@@ -54,9 +54,9 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
      * @throws RemoteException
      *             if remote call causes an error
      */
-    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException;
+    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws MogramException, RemoteException;
 
-    public <T extends Contextion> T exert(Arg... args) throws ContextException, RemoteException;
+    public <T extends Contextion> T exert(Arg... args) throws MogramException, RemoteException;
 
     public int getIndex();
 
@@ -97,7 +97,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
      * Returns the list of traces of thrown exceptions from this mogram.
      * @return ThrowableTrace list
      */
-    public List<ThrowableTrace> getExceptions() throws RemoteException;
+    public List<ThrowableTrace> getExceptions();
 
     public void reportException(String message, Throwable t);
 

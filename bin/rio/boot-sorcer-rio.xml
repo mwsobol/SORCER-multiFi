@@ -62,6 +62,7 @@
             <jvmarg value="-XX:MaxPermSize=256m"/>
             <jvmarg value="-Xms512m"/>
             <jvmarg value="-Xmx1024m"/>
+            <sysproperty key="sorcer.start.all" value="true"/>
             <sysproperty key="fork.mode" value="${fork.mode}"/>
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false"/>
             <sysproperty key="java.security.policy" value="${rio.home}/policy/policy.all"/>

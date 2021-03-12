@@ -1,13 +1,10 @@
 package sorcer.core.deploy;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.experimental.categories.Category;
 import org.rioproject.deploy.DeployAdmin;
 import org.rioproject.monitor.ProvisionMonitor;
 import org.rioproject.opstring.OperationalStringException;
 import org.rioproject.opstring.OperationalStringManager;
-import org.sorcer.test.TestsRequiringRio;
 
 import java.rmi.RemoteException;
 
@@ -22,10 +19,10 @@ class DeploySetup {
         System.out.println("Waited "+(System.currentTimeMillis()-t0)+" millis for ProvisionMonitor discovery");
         DeployAdmin deployAdmin = (DeployAdmin) monitor.getAdmin();
         OperationalStringManager manager = null;
-        while(manager==null) {
+        while (manager == null) {
             try {
                 manager = deployAdmin.getOperationalStringManager(SORCER_OPSTRING);
-            } catch(OperationalStringException e) {
+            } catch (OperationalStringException e) {
                 Thread.sleep(500);
             }
         }
@@ -50,7 +47,7 @@ class DeploySetup {
     }
 
     static void undeploy(DeployAdmin deployAdmin, String s) throws RemoteException, OperationalStringException {
-        if(deployAdmin.hasDeployed(s)) {
+        if (deployAdmin.hasDeployed(s)) {
             System.out.println("===> Undeploy: "+s);
             deployAdmin.undeploy(s);
         }

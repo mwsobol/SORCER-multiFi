@@ -29,7 +29,7 @@ public class Admin implements Service, Administration {
 
     public Admin(Governance governance, Administration rule) {
         this.governance = governance;
-        this.rule = this.rule;
+        this.rule = rule;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class Admin implements Service, Administration {
         }
     }
 
-    public void execDependencies(String path, Arg... args) throws ContextException {
+    public void execDependencies(String path, Arg... args) {
         Map<String, List<ExecDependency>> dpm = ((ModelStrategy) governance.getDomainStrategy()).getDependentDomains();
         if (dpm != null && dpm.get(path) != null) {
             List<ExecDependency> del = dpm.get(path);
@@ -81,8 +81,6 @@ public class Admin implements Service, Administration {
                                 }
                             } catch (ServiceException e) {
                                 e.printStackTrace();
-                            } catch (RemoteException e) {
-                                throw new ContextException(e);
                             }
                         }
                     }

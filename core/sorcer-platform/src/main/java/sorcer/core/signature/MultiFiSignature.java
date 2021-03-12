@@ -72,12 +72,12 @@ public class MultiFiSignature extends MultiFiSlot<String, Signature> implements 
     }
 
     @Override
-    public Class getServiceType() throws SignatureException {
+    public Class<?> getServiceType() {
         return ((Signature)impl).getServiceType();
     }
 
     @Override
-    public void setServiceType(Class serviceType) {
+    public void setServiceType(Class<?> serviceType) {
         ((Signature)impl).setServiceType(serviceType);
     }
 
@@ -92,7 +92,7 @@ public class MultiFiSignature extends MultiFiSlot<String, Signature> implements 
     }
 
     @Override
-    public Class[] getMatchTypes() {
+    public Class<?>[] getMatchTypes() {
         return ((Signature)impl).getMatchTypes();
     }
 
@@ -126,7 +126,7 @@ public class MultiFiSignature extends MultiFiSlot<String, Signature> implements 
     }
 
     @Override
-    public void close() throws RemoteException, IOException {
+    public void close() throws IOException {
         ((Signature)impl).close();
     }
 
@@ -184,7 +184,11 @@ public class MultiFiSignature extends MultiFiSlot<String, Signature> implements 
 
 
     @Override
-    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
-        return ((Signature)multiFi.getSelect()).exert(mogram, txn, args);
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws MogramException {
+        try {
+            return ((Signature)multiFi.getSelect()).exert(mogram, txn, args);
+        } catch (RemoteException e) {
+            throw new MogramException(e);
+        }
     }
 }

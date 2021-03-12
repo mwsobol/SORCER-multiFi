@@ -44,9 +44,15 @@ public class Region extends Collaboration {
     }
 
     @Override
-    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
+    public Context evaluate(Context context, Arg... args) throws MogramException {
         if (children.size() == 1) {
-            output =  children.values().iterator().next().evaluate(context, args);
+            try {
+                output =  children.values().iterator().next().evaluate(context, args);
+            } catch (MogramException e) {
+                e.printStackTrace();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         } else {
             output = super.evaluate(context, args);
         }

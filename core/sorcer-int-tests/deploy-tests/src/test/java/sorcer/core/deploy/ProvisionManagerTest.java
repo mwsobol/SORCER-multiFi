@@ -56,11 +56,13 @@ public class ProvisionManagerTest {
         ProvisionManager provisionManager = new ProvisionManager(f1);
         assertTrue(provisionManager.deployServicesSync());
         List<String> deployed = provisionManager.getDeploymentNames();
-        assertTrue(deployed.size()==2);
+        assertEquals(2,
+                     deployed.size());
         provisionManager.undeploy();
         assertFalse(provisionManager.getDeployAdmin().hasDeployed(deployed.get(0)));
         assertFalse(provisionManager.getDeployAdmin().hasDeployed(deployed.get(1)));
-        assertTrue(provisionManager.getDeploymentNames().size()==0);
+        assertEquals(0,
+                     provisionManager.getDeploymentNames().size());
     }
 
     @Test(timeout = 90000)
@@ -68,12 +70,12 @@ public class ProvisionManagerTest {
         banner("testConcurrentDeploy2");
         Job f1 = JobUtil.createJob();
         List<ProvisionManager> provisionManagers = new ArrayList<>();
-        for(int i=0; i<100; i++) {
+        for (int i=0; i<100; i++) {
             provisionManagers.add(new ProvisionManager(f1));
         }
         System.out.println("Created "+provisionManagers.size()+" ProvisionManagers");
         List<Future<Boolean>> futures = new ArrayList<>();
-        for(ProvisionManager provisionManager : provisionManagers) {
+        for (ProvisionManager provisionManager : provisionManagers) {
             Callable<Boolean> exertionVerifier = new DeployVerifier(provisionManager);
             FutureTask<Boolean> task = new FutureTask<>(exertionVerifier);
             futures.add(task);
@@ -87,11 +89,13 @@ public class ProvisionManagerTest {
         System.out.println("Got provisionManager: " + provisionManager);
         List<String> deployed = provisionManager.getDeploymentNames();
         System.out.println("Deployed: " + deployed);
-        assertTrue(deployed.size()==2);
+        assertEquals(2,
+                     deployed.size());
         provisionManager.undeploy();
         assertFalse(provisionManager.getDeployAdmin().hasDeployed(deployed.get(0)));
         assertFalse(provisionManager.getDeployAdmin().hasDeployed(deployed.get(1)));
-        assertTrue(provisionManager.getDeploymentNames().size()==0);
+        assertEquals(0,
+                     provisionManager.getDeploymentNames().size());
     }
 
     @Test(timeout = 90000)
@@ -108,14 +112,14 @@ public class ProvisionManagerTest {
             new Thread(task).start();
         }
         System.out.println("Created "+futures.size()+" threads to bang on one ProvisionManager");
-        for(Future<Boolean> future : futures) {
+        for (Future<Boolean> future : futures) {
             assertTrue(future.get());
         }
         List<String> deployed = provisionManager.getDeploymentNames();
         StringBuilder sb = new StringBuilder();
         int i = 1;
-        for(String d : deployed) {
-            if(sb.length()>0)
+        for (String d : deployed) {
+            if (sb.length()>0)
                 sb.append("\n");
             sb.append("[").append(i++).append("] ").append(d);
         }
@@ -143,10 +147,9 @@ public class ProvisionManagerTest {
     }
 
     private void banner(String name) {
-        StringBuilder b = new StringBuilder();
-        b.append("***********************************************\n");
-        b.append(name).append("\n");
-        b.append("***********************************************");
-        System.out.println(b.toString());
+        String b = "***********************************************\n" +
+                name + "\n" +
+                "***********************************************";
+        System.out.println(b);
     }
 }

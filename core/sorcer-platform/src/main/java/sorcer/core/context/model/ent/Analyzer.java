@@ -83,7 +83,7 @@ public class Analyzer extends Entry<Analysis> implements Controller, Analysis {
             } else if (impl == null) {
                 throw new InvocationException("No MDA analysis available!");
             }
-        } catch (ContextException | SignatureException e) {
+        } catch (MogramException | SignatureException e) {
             throw new EvaluationException(e);
         }
     }

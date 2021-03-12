@@ -95,11 +95,7 @@ public class operator {
             obj = cxt.get(path);
             v = model.get(path);
             if (v instanceof Entry) {
-                try {
-                    ((Entry) v).setValue(obj);
-                } catch (RemoteException e1) {
-                    e1.printStackTrace();
-                }
+                ((Entry) v).setValue(obj);
             } else {
                 model.putValue(path, obj);
             }
@@ -144,8 +140,7 @@ public class operator {
         return entValue(context, path);
     }
 
-    public static Object value(Request request, String path,
-                               Arg... args) throws ContextException {
+    public static Object value(Request request, String path, Arg... args) {
         if (request instanceof Governance) {
             return ((Governance) request).getOutput().get(path);
         }
@@ -350,11 +345,7 @@ public class operator {
         throws ContextException {
         if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
             ((Context) entries[0]).setModeling(true);
-            try {
-                return new EntryModel((Context) entries[0]);
-            } catch (RemoteException e) {
-                throw new ContextException(e);
-            }
+            return new EntryModel((Context) entries[0]);
         }
         EntryModel model = new EntryModel();
         Object[] dest = new Object[entries.length + 1];
@@ -377,7 +368,7 @@ public class operator {
         return model;
     }
 
-    public static Model responseClear(Model model) throws ContextException {
+    public static Model responseClear(Model model) {
         ((ServiceContext) model).getDomainStrategy().getResponsePaths().clear();
         return model;
     }
@@ -498,13 +489,13 @@ public class operator {
         }
     }
 
-    public static Mogram setResponse(Mogram mogram, Path... mogramPaths) throws ContextException {
+    public static Mogram setResponse(Mogram mogram, Path... mogramPaths) {
         List<Path> paths = Arrays.asList(mogramPaths);
         mogram.getDomainStrategy().setResponsePaths(paths);
         return mogram;
     }
 
-    public static Mogram setResponse(Mogram mogram, String... mogramPaths) throws ContextException {
+    public static Mogram setResponse(Mogram mogram, String... mogramPaths) {
         List<Path> paths = new ArrayList();
         for (String ps : mogramPaths) {
             paths.add(new Path(ps));
@@ -530,7 +521,7 @@ public class operator {
         return mogram;
     }
 
-    public static ServiceContext out(Contextion contextion) throws ContextException {
+    public static ServiceContext out(Contextion contextion) throws ServiceException {
         if (contextion instanceof Node) {
             return (ServiceContext) contextion.getOutput();
         } else if (contextion instanceof Governance) {
@@ -552,15 +543,15 @@ public class operator {
         }
     }
 
-    public static Context out(Collaboration collab, String domain) throws ContextException {
+    public static Context out(Collaboration collab, String domain) {
         return collab.getOutputs().select(domain);
     }
 
-    public static Context in(Collaboration collab, Context in) throws ContextException {
+    public static Context in(Collaboration collab, Context in) {
         return collab.setInput(in);
     }
 
-    public static void traced(Mogram mogram, boolean isTraced) throws ContextException {
+    public static void traced(Mogram mogram, boolean isTraced)  {
         ((FidelityManager) mogram.getFidelityManager()).setTraced(isTraced);
     }
 
@@ -1135,11 +1126,7 @@ public class operator {
 
     public static Context dmnCxt(Request request, String domainName) {
         if (request instanceof Context) {
-            try {
-                return getDomainContext((Context)request, domainName);
-            } catch (ContextException e) {
-                throw new RuntimeException(e);
-            }
+            return getDomainContext((Context)request, domainName);
         }
         return null;
     }
@@ -1391,13 +1378,13 @@ public class operator {
         return collab;
     }
 
-    public static ContextList componentContexts(String name, Context... data) throws ContextException {
+    public static ContextList componentContexts(String name, Context... data) {
         ContextList contextList = new ContextList(data);
         contextList.setName(name);
         return contextList;
     }
 
-    public static ContextList componentContexts(Context... data) throws ContextException {
+    public static ContextList componentContexts(Context... data) {
         ContextList contextList = new ContextList(data);
         return contextList;
     }
@@ -1595,8 +1582,7 @@ public class operator {
         return fi;
     }
 
-    public static Supervisor sup(String name, Supervision supervisor)
-        throws EvaluationException {
+    public static Supervisor sup(String name, Supervision supervisor) {
         return new Supervisor(name, supervisor);
     }
 
@@ -1611,8 +1597,7 @@ public class operator {
         return sFi;
     }
 
-    public static Analysis mda(String name, Analysis mda)
-        throws EvaluationException {
+    public static Analysis mda(String name, Analysis mda) {
         return new Analyzer(name, mda);
     }
 
@@ -1649,7 +1634,7 @@ public class operator {
         ee.setType(Functionality.Type.EXPL);
         try {
             ee.setValue(signature);
-        } catch (SetterException | RemoteException e) {
+        } catch (SetterException e) {
             throw new EvaluationException(e);
         }
         return ee;
@@ -1662,7 +1647,7 @@ public class operator {
         try {
             mda.setValue(signature);
             mda.setImpl(instance(signature));
-        } catch (SetterException | SignatureException | RemoteException e) {
+        } catch (SetterException | SignatureException e) {
             throw new EvaluationException(e);
         }
         return mda;
@@ -1674,21 +1659,21 @@ public class operator {
         mda.setType(Functionality.Type.MDA);
         try {
             mda.setValue(signature);
-        } catch (SetterException | RemoteException e) {
+        } catch (SetterException  e) {
             throw new EvaluationException(e);
         }
         return mda;
     }
 
-    public static ContextList getDomainContexts(Context context) throws ContextException {
+    public static ContextList getDomainContexts(Context context) {
         return (ContextList) context.get(Context.COMPONENT_CONTEXT_PATH);
     }
 
-    public static DispatcherList getDomainDispatchers(Context context) throws ContextException {
+    public static DispatcherList getDomainDispatchers(Context context) {
         return (DispatcherList) context.get(Context.COMPONENT_DISPATCHER_PATH);
     }
 
-    public static Context getDomainContext(ContextDomain context, String domain) throws ContextException {
+    public static Context getDomainContext(ContextDomain context, String domain) {
         if (context instanceof Transdomain) {
             return ((Transdomain)context).getChildrenContexts().get(domain);
         } else if (context instanceof Context) {
@@ -1700,7 +1685,7 @@ public class operator {
         return null;
     }
 
-    public static Dispatch getDomainDispatcher(Context context, String domain) throws ContextException {
+    public static Dispatch getDomainDispatcher(Context context, String domain) {
         if (context instanceof ServiceContext) {
             Object domainDispatchers = context.get(Context.COMPONENT_DISPATCHER_PATH);
             if (domainDispatchers instanceof DispatcherList && ((DispatcherList) domainDispatchers).size() > 0) {
@@ -1722,7 +1707,7 @@ public class operator {
         return disp;
     }
 
-    public static Context addDomainContext(Context context, Context domainContext) throws ContextException {
+    public static Context addDomainContext(Context context, Context domainContext) {
         if (context instanceof ServiceContext) {
             Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
             if (domainContexts == null) {
@@ -1737,7 +1722,7 @@ public class operator {
         return null;
     }
 
-    public static Dispatch addDomainDispatcher(Context context, Dispatch domainDispatcher) throws ContextException {
+    public static Dispatch addDomainDispatcher(Context context, Dispatch domainDispatcher) {
         if (context instanceof ServiceContext) {
             Object domainDispatchers = context.get(Context.COMPONENT_DISPATCHER_PATH);
             if (domainDispatchers == null) {
@@ -1752,7 +1737,7 @@ public class operator {
         return null;
     }
 
-    public static Context updateDomainContext(Context context, Context domainContext) throws ContextException {
+    public static Context updateDomainContext(Context context, Context domainContext) {
         if (context instanceof ServiceContext) {
             ContextList domainContexts = (ContextList) context.get(Context.COMPONENT_CONTEXT_PATH);
             Context edc = domainContexts.select(domainContext.getName());
@@ -1766,7 +1751,7 @@ public class operator {
         return context;
     }
 
-    public static Context setDomainContext(Context context, Context domainContext) throws ContextException {
+    public static Context setDomainContext(Context context, Context domainContext) {
         if (context instanceof ServiceContext) {
             Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
             if (domainContexts == null) {
@@ -1780,7 +1765,7 @@ public class operator {
         return null;
     }
 
-    public static Dispatch setDomainDispatcher(Context context, Dispatch domainDispatcher) throws ContextException {
+    public static Dispatch setDomainDispatcher(Context context, Dispatch domainDispatcher) {
         if (context instanceof ServiceContext) {
             Object domainDispatchers = context.get(Context.COMPONENT_DISPATCHER_PATH);
             if (domainDispatchers == null) {
@@ -1794,7 +1779,7 @@ public class operator {
         return null;
     }
 
-    public static void removeDomainContext(Context context, String domain) throws ContextException {
+    public static void removeDomainContext(Context context, String domain) {
         if (context instanceof ServiceContext) {
             Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
             if (domainContexts instanceof ContextList && ((ContextList) domainContexts).size() > 0) {
@@ -1803,7 +1788,7 @@ public class operator {
         }
     }
 
-    public static void removeDomainDispatchers(Context context, String domain) throws ContextException {
+    public static void removeDomainDispatchers(Context context, String domain) {
         if (context instanceof ServiceContext) {
             Object domainDispatchers = context.get(Context.COMPONENT_DISPATCHER_PATH);
             if (domainDispatchers instanceof DispatcherList && ((DispatcherList) domainDispatchers).size() > 0) {

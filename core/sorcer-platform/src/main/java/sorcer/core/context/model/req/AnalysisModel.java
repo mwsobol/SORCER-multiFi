@@ -142,7 +142,7 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
                 dataContext.putValue(Functionality.Type.DOMAIN.toString(), key);
                 analyzerFi.getSelect().analyze(this, dataContext);
             }
-        } catch (ServiceException | TransactionException | ConfigurationException | RemoteException e) {
+        } catch (ServiceException | TransactionException | RemoteException e) {
             throw new EvaluationException(e);
         }
         return dataContext;

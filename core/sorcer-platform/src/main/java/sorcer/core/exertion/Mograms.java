@@ -22,7 +22,6 @@ import net.jini.id.UuidFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.signature.RemoteSignature;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
@@ -38,65 +37,65 @@ public class Mograms implements SorcerConstants {
 	public static boolean isCatalogSingleton(Job job) {
 		ControlContext cc = job.getControlContext();
 		return job.size() == 1
-				&& Access.PUSH.equals(cc.get(cc.EXERTION_ACCESS));
+				&& Access.PUSH.equals(cc.get(ControlContext.EXERTION_ACCESS));
 	}
 
 	public static boolean isCatalogParallel(Job job) {
 		ControlContext cc = job.getControlContext();
-		return Flow.PAR.equals(cc.get(cc.EXERTION_FLOW))
-				&& Access.PUSH.equals(cc.get(cc.EXERTION_ACCESS));
+		return Flow.PAR.equals(cc.get(ControlContext.EXERTION_FLOW))
+				&& Access.PUSH.equals(cc.get(ControlContext.EXERTION_ACCESS));
 	}
 
 	public static boolean isCatalogSequential(Job job) {
 		ControlContext cc = job.getControlContext();
-		return Flow.SEQ.equals(cc.get(cc.EXERTION_FLOW))
-				&& Access.PUSH.equals(cc.get(cc.EXERTION_ACCESS));
+		return Flow.SEQ.equals(cc.get(ControlContext.EXERTION_FLOW))
+				&& Access.PUSH.equals(cc.get(ControlContext.EXERTION_ACCESS));
 	}
 
 	public static boolean isCatalogBlock(Routine exertion) {
 		ControlContext cc = (ControlContext)exertion.getControlContext();
 		return exertion instanceof Block
-				&& Access.PUSH.equals(cc.get(cc.EXERTION_ACCESS));
+				&& Access.PUSH.equals(cc.get(ControlContext.EXERTION_ACCESS));
 	}
 
 	public static boolean isSpaceBlock(Routine exertion) {
 		ControlContext cc = (ControlContext)exertion.getControlContext();
 		return exertion instanceof Block
-				&& Access.PULL.equals(cc.get(cc.EXERTION_ACCESS));
+				&& Access.PULL.equals(cc.get(ControlContext.EXERTION_ACCESS));
 	}
 	
 	public static boolean isSWIFSequential(Job job) {
 		ControlContext cc = job.getControlContext();
-		return Flow.SEQ.equals(cc.get(cc.EXERTION_FLOW))
-				&& Access.SWIF.equals(cc.get(cc.EXERTION_ACCESS));
+		return Flow.SEQ.equals(cc.get(ControlContext.EXERTION_FLOW))
+				&& Access.SWIF.equals(cc.get(ControlContext.EXERTION_ACCESS));
 	}
 
 	public static boolean isSpaceSequential(Job job) {
 		ControlContext cc = job.getControlContext();
-		return Flow.SEQ.equals(cc.get(cc.EXERTION_FLOW))
-				&& Access.PULL.equals(cc.get(cc.EXERTION_ACCESS));
+		return Flow.SEQ.equals(cc.get(ControlContext.EXERTION_FLOW))
+				&& Access.PULL.equals(cc.get(ControlContext.EXERTION_ACCESS));
 	}
 
 	public static boolean isSpaceParallel(Job job) {
 		ControlContext cc = job.getControlContext();
-		return Flow.PAR.equals(cc.get(cc.EXERTION_FLOW))
-				&& Access.PULL.equals(cc.get(cc.EXERTION_ACCESS));
+		return Flow.PAR.equals(cc.get(ControlContext.EXERTION_FLOW))
+				&& Access.PULL.equals(cc.get(ControlContext.EXERTION_ACCESS));
 	}
 	
 	public static boolean isSpaceSingleton(Job job) {
 		ControlContext cc = job.getControlContext();
 		return job.size() == 1
-				&& Access.PULL.equals(cc.get(cc.EXERTION_ACCESS));
+				&& Access.PULL.equals(cc.get(ControlContext.EXERTION_ACCESS));
 	}
 
 	public static boolean isParallel(Job job) {
 		ControlContext cc = job.getControlContext();
-		return Flow.PAR.equals(cc.get(cc.EXERTION_FLOW));
+		return Flow.PAR.equals(cc.get(ControlContext.EXERTION_FLOW));
 	}
 
 	public static boolean isSequential(Job job) {
 		ControlContext cc = job.getControlContext();
-		return Flow.SEQ.equals(cc.get(cc.EXERTION_FLOW));
+		return Flow.SEQ.equals(cc.get(ControlContext.EXERTION_FLOW));
 	}
 
 	public static boolean isMonitorable(Job job) {
@@ -146,11 +145,10 @@ public class Mograms implements SorcerConstants {
 	public static void removeExceptions(Job job) throws ContextException {
 		removeExceptions(job.getContext());
 		for (int i = 0; i < job.size(); i++) {
-			if (((Subroutine) job.get(i)).isJob())
+			if (job.get(i).isJob())
 				removeExceptions((Job) job.get(i));
 			else
-				removeExceptions(((Subroutine) job.get(i))
-						.getContext());
+				removeExceptions(job.get(i).getContext());
 		}
 	}
 
@@ -171,12 +169,12 @@ public class Mograms implements SorcerConstants {
 	public static void replaceNullIDs(Routine ex) throws ContextException {
 		if (ex == null)
 			return;
-		if (((Subroutine) ex).isJob()) {
+		if (ex.isJob()) {
 			Job job = (Job) ex;
 			if (job.getId() == null)
 				job.setId(getId());
 			if (job.getContext().getId() == null)
-				((ServiceContext)job.getContext()).setId(getId());
+				job.getContext().setId(getId());
 			for (int i = 0; i < job.size(); i++)
 				replaceNullIDs(job.get(i));
 		} else
@@ -188,7 +186,7 @@ public class Mograms implements SorcerConstants {
 			task.setId(getId());
 		if (task.getContext() != null) {
 			if (task.getContext().getId() == null)
-				((ServiceContext)task.getContext()).setId(getId());
+				task.getContext().setId(getId());
 		}
 	}
 
@@ -213,21 +211,17 @@ public class Mograms implements SorcerConstants {
 			throw new RoutineException("No Method For Routine e=" + ex);
 
 		ExertionEnvelop eenv = ExertionEnvelop.getTemplate();
-		try {
-			eenv.serviceType = ((RemoteSignature) ex.getProcessSignature()).getServiceType();
-		} catch (SignatureException e) {
-			throw new RoutineException(e);
-		}
+		eenv.serviceType = ex.getProcessSignature().getServiceType();
 		eenv.providerName = ex.getProcessSignature().getProviderName().getName();
 		eenv.exertion = ex;
 		eenv.exertionID = ex.getId();
-		eenv.isJob = new Boolean(ex.isJob());
-		eenv.state = new Integer(Exec.INITIAL);
+		eenv.isJob = ex.isJob();
+		eenv.state = Exec.INITIAL;
 		return eenv;
 	}
 
 	public static List<Context> getTaskContexts(Routine ex) throws ContextException {
-		List<Context> v = new ArrayList<Context>();
+		List<Context> v = new ArrayList<>();
 		collectTaskContexts(ex, v);
 		return v;
 	}
@@ -238,7 +232,7 @@ public class Mograms implements SorcerConstants {
 			contexts.add(exertion.getDataContext());
 		else if (exertion instanceof Job) {
 			contexts.add(exertion.getDataContext());
-			for (int i = 0; i < ((Job) exertion).getMograms().size(); i++)
+			for (int i = 0; i < exertion.getMograms().size(); i++)
 				collectTaskContexts(((Job) exertion).get(i),
 					contexts);
 		} else if (exertion instanceof Task || exertion instanceof Block) {

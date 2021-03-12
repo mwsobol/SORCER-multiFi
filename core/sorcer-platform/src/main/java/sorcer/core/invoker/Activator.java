@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes", "unused"})
 public class Activator extends ServiceInvoker<Double> implements Activation {
 
     private static final long serialVersionUID = 1L;
@@ -74,13 +74,8 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
     }
 
     @Override
-    public Double evaluate(Arg... entries) throws InvocationException, RemoteException,
-            InvocationException {
-        try {
-            return activate(entries);
-        } catch (EvaluationException e) {
-            throw new InvocationException(e);
-        }
+    public Double evaluate(Arg... entries) throws InvocationException {
+        return activate(entries);
     }
 
     public boolean isRectified() {
@@ -99,7 +94,7 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
         this.weights = weights;
     }
 
-    public Double activate(Arg... entries) throws EvaluationException {
+    public Double activate(Arg... entries) {
         for (Arg arg : entries) {
             if (arg instanceof Entry) {
                 if (((Entry) arg).getType() == Functionality.Type.THRESHOLD
@@ -114,8 +109,7 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
         }
         double sum = 0.0;
         for (String name : args.getNames()) {
-            double in = 0;
-            in = (double) ((Entry)invokeContext.get(name)).getOut();
+            double in = (double) ((Entry)invokeContext.get(name)).getOut();
             double wt = (double) weights.get(name);
             sum = sum + (in * wt);
         }

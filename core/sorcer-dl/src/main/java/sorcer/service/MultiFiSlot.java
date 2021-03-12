@@ -98,7 +98,7 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
         this.impl = impl;
     }
 
-    public Object execute(Arg... entries) throws ServiceException, RemoteException {
+    public Object execute(Arg... entries) throws ServiceException {
         return impl;
     }
 

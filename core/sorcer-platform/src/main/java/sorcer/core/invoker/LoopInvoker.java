@@ -19,8 +19,6 @@ package sorcer.core.invoker;
 
 import sorcer.service.*;
 
-import java.rmi.RemoteException;
-
 /**
  * The loop Invoker invokes its target while its condition is true. Other types
  * of looping types depend on parameters provided as described for each
@@ -97,7 +95,7 @@ public class LoopInvoker<V> extends ServiceInvoker<V> implements ConditionalInvo
 	}
 
 	@Override
-	public V evaluate(Arg... args) throws EvaluationException, RemoteException {
+	public V evaluate(Arg... args) throws EvaluationException {
 		V obj = null;
 		try {
 			if (condition == null) {

@@ -70,43 +70,38 @@ public class ProviderLocator {
 	/**
 	 * Locates a service via Unicast discovery
 	 * 
-	 * @param lusHost
-	 *            The key of the host where a Jini lookup service is running
-	 * @param serviceClass
-	 *            The class object representing the interface of the service
-	 * @throws MalformedURLException
-	 * @throws IOException
-	 * @throws ClassNotFoundException
+	 * @param lusHost The key of the host where a Jini lookup service is running
+	 * @param serviceClass The class object representing the interface of the service
+	 * @throws IOException communication issues
+	 * @throws ClassNotFoundException could not load class
 	 * @return The proxy to the discovered service
 	 */
-	public static Object getService(String lusHost, Class serviceClass)
-			throws java.io.IOException,
-			ClassNotFoundException {
+	public static Object getService(String lusHost, Class<?> serviceClass)
+			throws java.io.IOException, ClassNotFoundException {
 
 		LookupLocator loc = new LookupLocator("jini://" + lusHost);
 		ServiceRegistrar reggie = loc.getRegistrar();
 		ServiceTemplate tmpl = new ServiceTemplate(null,
-				new Class[] { serviceClass }, null);
+												   new Class[] { serviceClass }, null);
 		return reggie.lookup(tmpl);
 
 	}
 
 	/**
 	 * Locates a service via Unicast discovery
-	 * 
-	 * @param lusHost
-	 * @param serviceClass
-	 * @param serviceName
-	 * @return proxy or <code>null</code>
-	 * @throws java.net.MalformedURLException
-	 * @throws java.io.IOException
-	 * @throws ClassNotFoundException
+	 *
+	 * @param lusHost The key of the host where a Jini lookup service is running
+	 * @param serviceClass The class object representing the interface of the service
+	 * @param matchTypes match on types
+	 * @throws IOException communication issues
+	 * @throws ClassNotFoundException could not load class
+	 * @return The proxy to the discovered service
 	 */
-	public static Object getService(String lusHost, Class serviceClass, Class[] matchTypes,
+	public static Object getService(String lusHost, Class<?> serviceClass, Class<?>[] matchTypes,
 									String serviceName) throws
 			java.io.IOException, ClassNotFoundException {
 
-		Class[] types =  new Class[] { serviceClass };
+		Class<?>[] types =  new Class<?>[] { serviceClass };
 		if (matchTypes != null && matchTypes.length > 0) {
 			ParameterTypes allTypes = new ParameterTypes(serviceClass, matchTypes);
 			types = allTypes.parameterTypes;
@@ -130,13 +125,11 @@ public class ProviderLocator {
 	 * 
 	 * @param serviceClass
 	 *            The class object representing the interface of the service
-	 * @throws IOException
-	 * @throws InterruptedException
-	 * @return
+	 * @throws IOException communication issues
+	 * @throws InterruptedException interrupted
+	 * @return service
 	 */
-	public static Object getService(Class serviceClass)
-			throws java.io.IOException, InterruptedException {
-
+	public static Object getService(Class<?> serviceClass) throws java.io.IOException, InterruptedException {
 		return getService(serviceClass, null, null, null, Long.MAX_VALUE);
 	}
 
@@ -144,13 +137,12 @@ public class ProviderLocator {
      * Locates the first matching service via multicast discovery;
      * for compatibility with other provider accessors.
      *
-     * @param serviceClass
-     *            The class object representing the interface of the service
-     * @throws IOException
-     * @throws InterruptedException
-     * @return
+     * @param serviceClass The class object representing the interface of the service
+	 * @throws IOException communication issues
+	 * @throws InterruptedException interrupted
+     * @return service
      */
-    public static Exerter getProvider(Class serviceClass)
+    public static Exerter getProvider(Class<?> serviceClass)
             throws java.io.IOException, InterruptedException {
 
         return (Exerter)getService(serviceClass, null, null, null, Long.MAX_VALUE);
@@ -163,11 +155,11 @@ public class ProviderLocator {
 	 *            The class object representing the interface of the service
 	 * @param waitTime
 	 *            How to wait for the service to be discovered
-	 * @throws IOException
-	 * @throws InterruptedException
-	 * @return
+	 * @throws IOException communication issues
+	 * @throws InterruptedException interrupted
+	 * @return service
 	 */
-	public static Object getService(Class serviceClass, long waitTime)
+	public static Object getService(Class<?> serviceClass, long waitTime)
 			throws java.io.IOException, InterruptedException {
 
 		return getService(serviceClass, null, null, null, waitTime);
@@ -180,21 +172,21 @@ public class ProviderLocator {
 	 *            The class object representing the interface of the service
 	 * @param serviceName
 	 *            The Tag attribute of the service
-	 * @throws IOException
-	 * @throws InterruptedException
-	 * @return
+	 * @throws IOException communication issues
+	 * @throws InterruptedException interrupted
+	 * @return service
 	 */
-	public static Object getService(Class serviceClass, Class[] matchTypes, String serviceName, String[] groups,
+	public static Object getService(Class<?> serviceClass, Class<?>[] matchTypes, String serviceName, String[] groups,
 			long waitTime) throws java.io.IOException, InterruptedException {
 
 		ProviderLocator sl = new ProviderLocator();
 		return sl.getServiceImpl(serviceClass, matchTypes, serviceName, groups, waitTime);
 	}
 
-	private Object getServiceImpl(Class serviceClass, Class[] matchTypes, String serviceName, String[] groups,
+	private Object getServiceImpl(Class<?> serviceClass, Class<?>[] matchTypes, String serviceName, String[] groups,
 			long waitTime) throws java.io.IOException, InterruptedException {
 
-		Class[] types =  new Class[] { serviceClass };
+		Class<?>[] types =  new Class<?>[] { serviceClass };
 		if (matchTypes != null && matchTypes.length > 0) {
 			ParameterTypes allTypes = new ParameterTypes(serviceClass, matchTypes);
 			types = allTypes.parameterTypes;
@@ -207,7 +199,7 @@ public class ProviderLocator {
 
 		template = new ServiceTemplate(null, types, entry);
 
-		LookupDiscovery disco = null;
+		LookupDiscovery disco;
         // no groups then use ALL_GROUPS
 		if (groups != null && groups.length > 0) {
 			disco = new LookupDiscovery(groups);
@@ -231,14 +223,15 @@ public class ProviderLocator {
 
     public ServiceItem[] getServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter, String[] groups) {
         String[] locators = SorcerEnv.getLookupLocators();
-        List<ServiceItem> result = new ArrayList<ServiceItem>();
+        List<ServiceItem> result = new ArrayList<>();
         for (String locator : locators) {
             try {
                 LookupLocator loc = new LookupLocator("jini://" + locator);
                 ServiceRegistrar reggie = loc.getRegistrar();
                 ServiceMatches matches = reggie.lookup(template, maxMatches);
                 result.addAll(Arrays.asList(matches.items));
-                if (result.size() >= maxMatches) break;
+                if (result.size() >= maxMatches)
+                	break;
             } catch (MalformedURLException e) {
                 log.warn("Malformed URL", e);
             } catch (ClassNotFoundException e) {
@@ -267,7 +260,9 @@ public class ProviderLocator {
             } catch (InterruptedException ignored) {
                 //ignored
             } finally {
-                disco.terminate();
+            	if (disco != null) {
+					disco.terminate();
+				}
             }
         }
 
@@ -288,7 +283,6 @@ public class ProviderLocator {
 	}
 
 	private void findService(ServiceRegistrar lus) {
-
 		try {
 			synchronized (lock) {
 				proxy = lus.lookup(template);
@@ -318,8 +312,7 @@ public class ProviderLocator {
 	 * @see
 	 * sorcer.service.DynamicAccessor#getServiceItem(sorcer.service.Signature)
 	 */
-	public ServiceItem getServiceItem(Signature signature)
-			throws SignatureException {
+	public ServiceItem getServiceItem(Signature signature) throws SignatureException {
 		throw new SignatureException("Not implemented by this service accessor");
 	}
 
@@ -340,9 +333,9 @@ public class ProviderLocator {
 					locators = SorcerEnv.getLookupLocators();
 				for (String locator : locators) {
 					proxy = getService(locator,
-                            signature.getServiceType(), signature.getMatchTypes(), signature
-                            .getProviderName().getName());
-					if (proxy != null && proxy instanceof Service)
+									   signature.getServiceType(), signature.getMatchTypes(),
+									   signature.getProviderName().getName());
+					if (proxy instanceof Service)
 						break;
                 }
 			} else {
@@ -352,11 +345,11 @@ public class ProviderLocator {
 		} catch (Exception ioe) {
 			throw new SignatureException(ioe);
 		} 
-		if (proxy == null || !(proxy instanceof Service)) {
-			throw new SignatureException("Cannot find service for: "
-					+ signature);
-		} else
+		if (!(proxy instanceof Service)) {
+			throw new SignatureException("Cannot find service for: " + signature);
+		} else {
 			return (Service) proxy;
+		}
 	}
 
     public static Exerter getProvider(Signature signature) throws SignatureException {

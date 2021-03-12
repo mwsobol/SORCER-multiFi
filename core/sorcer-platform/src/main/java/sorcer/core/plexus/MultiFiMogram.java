@@ -25,10 +25,7 @@ import sorcer.core.context.model.ent.Ref;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A metasystem is represented by a mogram with multiple projections of its
@@ -100,31 +97,31 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public <T extends Contextion> T exert(Transaction txn, Arg... entries) throws ContextException, RemoteException {
+    public <T extends Contextion> T exert(Transaction txn, Arg... entries) throws MogramException {
         Mogram mogram = (Mogram) morphFidelity.getSelect();
         mogram.getContext().setScope(scope);
-        T out = mogram.exert(txn, entries);
-        morphFidelity.setChanged();
-        morphFidelity.notifyObservers(out);
-        return out;
+        try {
+            T out = mogram.exert(txn,
+                                 entries);
+            morphFidelity.setChanged();
+            morphFidelity.notifyObservers(out);
+            return out;
+        } catch (RemoteException e) {
+            throw new MogramException(e);
+        }
     }
 
     @Override
-    public <T extends Contextion> T exert(Arg... entries) throws ContextException, RemoteException {
+    public <T extends Contextion> T exert(Arg... entries) throws MogramException {
         return exert(null, entries);
     }
 
     @Override
-    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
-        Mogram mog = null;
-        try {
-            dataContext.substitute(context);
-            dataContext.substitute(args);
-            mog = exert(args);
-            return mog.getContext();
-        } catch (MogramException e) {
-            throw new EvaluationException(e);
-        }
+    public Context evaluate(Context context, Arg... args) throws MogramException {
+        dataContext.substitute(context);
+        dataContext.substitute(args);
+        Mogram mog = exert(args);
+        return mog.getContext();
     }
 
     @Override
@@ -157,8 +154,14 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public List<ThrowableTrace> getExceptions() throws RemoteException {
-        return ((Mogram)fiManager.getMogram()).getExceptions();
+    public List<ThrowableTrace> getExceptions() {
+        try {
+            return ((Mogram)fiManager.getMogram()).getExceptions();
+        } catch (RemoteException e) {
+            logger.warn("Could not get mogram", e);
+        }
+        List<ThrowableTrace> list = new ArrayList<>();
+        return list;
     }
 
     @Override
@@ -226,12 +229,16 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public void appendTrace(String info) throws RemoteException {
-        ((Mogram)fiManager.getMogram()).appendTrace(info);
+    public void appendTrace(String info) {
+        try {
+            ((Mogram)fiManager.getMogram()).appendTrace(info);
+        } catch (RemoteException remoteException) {
+            logger.warn("Problem appending trace", remoteException);
+        }
     }
 
     @Override
-    public Object execute(Arg... entries) throws MogramException, RemoteException {
+    public Object execute(Arg... entries) throws MogramException {
         return null;
     }
 

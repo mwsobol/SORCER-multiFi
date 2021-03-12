@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
  */
 public interface Domain extends Mogram, Dependency, mog, cxtn {
 
-	public String getDomainName();
+	String getDomainName();
 
     /**
      * Returns an execute of the domain at the returnPath as is
@@ -40,7 +40,7 @@ public interface Domain extends Mogram, Dependency, mog, cxtn {
      * @return this model execute at the returnPath
      * @throws ModelException
      */
-    public Object asis(String path) throws ContextException;
+    Object asis(String path) throws ContextException;
 
 	/**
 	 * Returns an input connector as a map of input paths of this domain mapped to output paths of the sender.
@@ -51,7 +51,7 @@ public interface Domain extends Mogram, Dependency, mog, cxtn {
 	 * @throws ContextException
 	 * @throws RemoteException
 	 */
-	public Context getInConnector(Arg... args) throws ContextException, RemoteException;
+	Context getInConnector(Arg... args) throws ContextException, RemoteException;
 
 	/**
 	 * Returns a output connector as a map of output paths of tis domain mapped to input paths of the receiver.
@@ -62,7 +62,7 @@ public interface Domain extends Mogram, Dependency, mog, cxtn {
 	 * @throws ContextException
 	 * @throws RemoteException
 	 */
-	public Context getOutConnector(Arg... args) throws ContextException, RemoteException;
+	Context getOutConnector(Arg... args) throws ContextException, RemoteException;
 
 	/**
 	 * Returns a execute of the object at the returnPath od this domain
@@ -73,13 +73,13 @@ public interface Domain extends Mogram, Dependency, mog, cxtn {
 	 * @return this domain execute at the returnPath
 	 * @throws ContextException, RemoteException
 	 */
-	public Object getValue(String path, Arg... args) throws ContextException, RemoteException;
+	Object getValue(String path, Arg... args) throws ContextException, RemoteException;
 
-	public void setParent(Contextion parent);
+	void setParent(Contextion parent);
 
-	public Contextion getParent();
+	Contextion getParent();
 
-	public void execDependencies(String path, Arg... args) throws ContextException;
+	void execDependencies(String path, Arg... args) throws ContextException;
 
-	public boolean isChanged();
+	boolean isChanged();
 }

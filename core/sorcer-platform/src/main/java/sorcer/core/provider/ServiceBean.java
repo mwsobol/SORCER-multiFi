@@ -28,5 +28,5 @@ public interface ServiceBean extends Service {
      * A service bean can use service provider functionality
      * via the injected provider during creation of the bean.
      */
-    public void init(Exerter provider);
+    void init(Exerter provider);
 }

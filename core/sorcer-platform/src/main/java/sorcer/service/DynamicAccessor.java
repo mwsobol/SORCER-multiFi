@@ -57,7 +57,7 @@ public interface DynamicAccessor {
     Object getService(ServiceID serviceID);
 
     /**
-     * Returns a service provider registered with serviceID.
+     * Returns a service provider.
      *
      * @param signature A Signature
      *
