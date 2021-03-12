@@ -1791,6 +1791,25 @@ operator extends Operator {
         return fi;
     }
 
+    public static MultiProjection prjFis(Projection select) {
+        return prjFis(null,  select);
+    }
+
+    public static MultiProjection prjFis(Projection... projections) {
+        MultiProjection fi = new MultiProjection(projections);
+        fi.fiType = Fi.Type.PROJECTION;
+        return fi;
+    }
+
+    public static MultiProjection prjFis(String name, Projection select) {
+        if (name != null) {
+            select.setName(name);
+        }
+        MultiProjection fi = new MultiProjection(select);
+        fi.fiType = Fi.Type.PROJECTION;
+        return fi;
+    }
+
     public static NodeFidelity rndFi(String name, Object... objects) {
         NodeFidelity fi = new NodeFidelity(name);
         for (Object obj : objects) {
@@ -1817,7 +1836,7 @@ operator extends Operator {
 
     public static MultiSlot cxtFi(Slot... fis) {
         MultiSlot fi = new MultiSlot(fis);
-        fi.fiType = Fi.Type.DISPATCHER;
+        fi.fiType = Fi.Type.CONTEXT;
         return fi;
     }
 
@@ -1883,19 +1902,6 @@ operator extends Operator {
             ((ServiceSignature)select).setName(name);
         }
         fi.fiType = Fi.Type.DISPATCHER;
-        return fi;
-    }
-
-    public static MultiProjection projFi(Projection select) {
-        return projFi(null, select);
-    }
-
-    public static MultiProjection projFi(String name, Projection select) {
-        if (name != null) {
-            select.setName(name);
-        }
-        MultiProjection fi = new MultiProjection(select);
-        fi.fiType = Fi.Type.PROJECTION;
         return fi;
     }
 
