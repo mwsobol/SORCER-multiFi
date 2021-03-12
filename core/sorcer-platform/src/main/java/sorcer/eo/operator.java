@@ -1785,14 +1785,8 @@ operator extends Operator {
         return fi;
     }
 
-    public static Fidelity cxtFi(String name) {
-        MultiSlot fi = new MultiSlot(name);
-        fi.fiType = Fi.Type.CONTEXT;
-        return fi;
-    }
-
-    public static MultiSlot prjFi(String name) {
-        MultiSlot fi = new MultiSlot(name);
+    public static Fidelity prjFi(String name) {
+        Fidelity fi = new Fidelity(name);
         fi.fiType = Fi.Type.PROJECTION;
         return fi;
     }
@@ -1808,6 +1802,36 @@ operator extends Operator {
                 fi.setDispatcherFi((MultiSlot)obj);
             }
         }
+        return fi;
+    }
+
+    public static Fidelity cxtFi(String name) {
+        Fidelity fi = new Fidelity(name);
+        fi.fiType = Fi.Type.CONTEXT;
+        return fi;
+    }
+
+    public static MultiSlot cxtFi(Object select) {
+        return cxtFi(null,  select);
+    }
+
+    public static MultiSlot cxtFi(Slot... fis) {
+        MultiSlot fi = new MultiSlot(fis);
+        fi.fiType = Fi.Type.DISPATCHER;
+        return fi;
+    }
+
+    public static MultiSlot cxtFi(String name, Object select) {
+        MultiSlot fi = null;
+        if (name == null) {
+            fi = new MultiSlot(slot(((Identifiable) select).getName(), select));
+        } else {
+            fi = new MultiSlot(slot(name, select));
+        }
+        if (select instanceof Signature && name != null) {
+            ((ServiceSignature)select).setName(name);
+        }
+        fi.fiType = Fi.Type.CONTEXT;
         return fi;
     }
 
@@ -1832,44 +1856,31 @@ operator extends Operator {
         return cxt;
     }
 
-    public static MultiSlot cxtFi(Slot... fis) {
-        MultiSlot fi = new MultiSlot(fis);
-        fi.fiType = Fi.Type.CONTEXT;
+    public static Fidelity dspFi(String name) {
+        Fidelity fi = new Fidelity(name);
+        fi.fiType = Fi.Type.DISPATCHER;
         return fi;
     }
 
-    public static MultiSlot cxtFi(Object select) {
-        return cxtFi(null, select);
-
+    public static MultiSlot dspFi(Slot... fis) {
+        MultiSlot fi = new MultiSlot(fis);
+        fi.fiType = Fi.Type.DISPATCHER;
+        return fi;
     }
-    public static MultiSlot cxtFi(String name, Object select) {
+
+    public static MultiSlot dspFi(Object select) {
+        return dspFi(null,  select);
+    }
+
+    public static MultiSlot dspFi(String name, Object select) {
         MultiSlot fi = null;
         if (name == null) {
             fi = new MultiSlot(slot(((Identifiable) select).getName(), select));
         } else {
             fi = new MultiSlot(slot(name, select));
         }
-        fi.fiType = Fi.Type.CONTEXT;
-        return fi;
-    }
-
-
-    public static MultiSlot rndFi(Slot... fis) {
-        MultiSlot fi = new MultiSlot(fis);
-        fi.fiType = Fi.Type.DISPATCHER;
-        return fi;
-    }
-
-    public static MultiSlot rndFi(Object select) {
-        return rndFi(null, select);
-    }
-
-    public static MultiSlot rndFi(String name, Object select) {
-        MultiSlot fi = null;
-        if (name == null) {
-            fi = new MultiSlot(slot(((Identifiable) select).getName(), select));
-        } else {
-            fi = new MultiSlot(slot(name, select));
+        if (select instanceof Signature && name != null) {
+            ((ServiceSignature)select).setName(name);
         }
         fi.fiType = Fi.Type.DISPATCHER;
         return fi;

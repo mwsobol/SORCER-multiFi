@@ -1,4 +1,4 @@
-package builder;
+package sml.builder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,6 @@ import sorcer.service.modeling.Model;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.setValue;
 import static sorcer.ent.operator.*;
-import static sorcer.eo.operator.alt;
 import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.fi;

@@ -31,8 +31,7 @@ import static sorcer.ent.operator.*;
 import static sorcer.so.operator.*;
 
 /**
- * Created b
- * y Mike Sobolewski on 10/26/15.
+ * Created by Mike Sobolewski on 03/211/21.
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
@@ -729,10 +728,12 @@ public class ModelMultiFidelities {
                 value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
         Node morphDis = rnd(
-            rndFi("morph3", cxtn(sig(ModelMultiFidelities.class, "getMorphingModel")), mdlDispatch));
+            rndFi("morpher3",
+                cxtnFi("cxtn1", sig(ModelMultiFidelities.class, "getMorphingModel")),
+                dspFi("dspt1", mdlDispatch)));
 
         // out is the discipline output
-        Context out  = eval(morphDis, fi("cxtn1", "dspt1"));
+        Context out  = eval(morphDis);
 
         assertTrue(value(out, "morpher3").equals(920.0));
     }

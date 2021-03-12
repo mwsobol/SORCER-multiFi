@@ -1,21 +1,13 @@
 package sorcer.sml.collaborations;
 
-import builder.CollabBuilder;
-import builder.MuiltidisciplinaryBuilder;
+import sml.builder.CollabBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.arithmetic.provider.impl.AveragerImpl;
-import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.invoker.Pipeline;
 import sorcer.core.service.Collaboration;
-import sorcer.core.service.Governance;
-import sorcer.mo.operator;
 import sorcer.service.*;
 
 import static org.junit.Assert.assertEquals;

@@ -1,4 +1,4 @@
-package builder;
+package sml.builder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +8,6 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.invoker.Pipeline;
 import sorcer.core.service.Governance;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.fi;
 import sorcer.service.modeling.mog;
@@ -24,7 +23,7 @@ import static sorcer.mo.operator.*;
 import static sorcer.so.operator.response;
 
 /**
- * @author Mike Sobolewski
+ * @author Mike Sobolewski 03/11/2021
  */
 public class MuiltidisciplinaryBuilder {
 
@@ -39,7 +38,7 @@ public class MuiltidisciplinaryBuilder {
 				value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
 		Node morphDis = rnd("morphModelDisc",
-			rndFi("mmd", cxtnFi("cxtn1", sig(MuiltidisciplinaryBuilder.class, "getMorphingModel")), operator.rndFi(mdlDispatch)));
+			rndFi("mmd", cxtnFi("cxtn1", sig(MuiltidisciplinaryBuilder.class, "getMorphingModel")), dspFi(mdlDispatch)));
 
 		return morphDis;
 	}
@@ -157,11 +156,11 @@ public class MuiltidisciplinaryBuilder {
 			rndFi("plDisc1",
 				cxtnFi("cxtn1", sig("getPipeline1",  MuiltidisciplinaryBuilder.class)),
 				cxtFi("cxt1", cxt1),
-				operator.rndFi("dspt1", evalTask)),
+				dspFi("dspt1", evalTask)),
 			rndFi("plDisc2",
 				cxtnFi("cxtn2", sig("getPipeline2",  MuiltidisciplinaryBuilder.class)),
 				cxtFi("cxt2", cxt2),
-				operator.rndFi("dspt2", blockDispatch)));
+				dspFi("dspt2", blockDispatch)));
 
 		return plDisc;
 	}

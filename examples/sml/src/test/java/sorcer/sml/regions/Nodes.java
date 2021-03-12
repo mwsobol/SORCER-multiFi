@@ -1,6 +1,6 @@
 package sorcer.sml.regions;
 
-import builder.MuiltidisciplinaryBuilder;
+import sml.builder.MuiltidisciplinaryBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ import static sorcer.mo.operator.value;
 import static sorcer.so.operator.*;
 
 /**
- * Created by Mike Sobolewski on 12/22/19.
+ * Created by Mike Sobolewski on 03/11/2021.
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
@@ -87,7 +87,7 @@ public class Nodes {
                 value(cxt, "lambdaOut") < 500.0), pipeline("cxtn1")));
 
         Node plDis = rnd("pln-nd",
-            rndFi("pln-nd", cxtnFi("cxtn1", opspl), rndFi("dspt1", plDispatch)));
+            rndFi("pln-nd", cxtnFi("cxtn1", opspl), dspFi("dspt1", plDispatch)));
 
         setContext(opspl, context("mfprc",
             inVal("lambdaOut", 20.0),
