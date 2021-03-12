@@ -387,7 +387,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
     }
 
     private Object evalMogram(MogramEntry mogramEntry, String path, Arg... entries)
-            throws MogramException, RemoteException {
+            throws ServiceException, RemoteException {
         Mogram mogram = (Mogram) mogramEntry.getImpl();
 		mogram.setScope(this);
         Mogram out = mogram.exert(entries);
@@ -499,7 +499,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
                 getResponse(args);
                 return this;
             }
-        } catch (RemoteException | SignatureException | MogramException e) {
+        } catch (RemoteException | SignatureException | ServiceException e) {
             if (e instanceof ContextException) {
                 throw (ContextException)e;
             }

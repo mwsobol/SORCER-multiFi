@@ -390,7 +390,7 @@ public class LocalSignature extends ServiceSignature implements sig {
 		} else {
 			try {
 				cxt = context(((Mogram) mogram).exert());
-			} catch (RemoteException e) {
+			} catch (ServiceException | RemoteException e) {
 				throw new MogramException(e);
 			}
 		}

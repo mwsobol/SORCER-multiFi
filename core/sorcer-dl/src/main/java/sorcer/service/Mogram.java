@@ -56,7 +56,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
      */
     public <T extends Contextion> T exert(Transaction txn, Arg... args) throws MogramException, RemoteException;
 
-    public <T extends Contextion> T exert(Arg... args) throws MogramException, RemoteException;
+    public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException;
 
     public int getIndex();
 
@@ -68,7 +68,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
 
     public Signature getProcessSignature();
 
-    public Mogram deploy(List<Signature> builders) throws MogramException, ConfigurationException;
+    public Mogram deploy(List<Signature> builders) throws ServiceException, ConfigurationException;
     /**
      * Returns a status of this mogram.
      *

@@ -38,7 +38,9 @@ public class MuiltidisciplinaryBuilder {
 				value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
 		Node morphDis = rnd("morphModelDisc",
-			rndFi("mmd", cxtnFi("cxtn1", sig(MuiltidisciplinaryBuilder.class, "getMorphingModel")), dspFi(mdlDispatch)));
+			rndFi("mmd",
+				cxtnFi("cxtn1", sig(MuiltidisciplinaryBuilder.class, "getMorphingModel")),
+				dspFi(mdlDispatch)));
 
 		return morphDis;
 	}

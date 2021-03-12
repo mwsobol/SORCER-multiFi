@@ -19,7 +19,6 @@ package sorcer.core.context.model.ent;
 
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
-import sorcer.service.modeling.Finalization;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Initialization;
 
@@ -60,7 +59,7 @@ public class Initializer extends Entry<Initialization> implements Controller, In
     }
 
     @Override
-    public void initialize(Context context, Arg... args) throws ContextException {
+    public void initialize(Context context, Arg... args) throws ServiceException {
         try {
             if (impl != null && impl instanceof Initialization) {
                 ((Initialization) impl).initialize(context, args);
@@ -71,7 +70,7 @@ public class Initializer extends Entry<Initialization> implements Controller, In
                 throw new InvocationException("No Initializer available!");
             }
         } catch (ContextException | SignatureException e) {
-            throw new EvaluationException(e);
+            throw new ServiceException(e);
         }
     }
 

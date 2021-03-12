@@ -875,7 +875,7 @@ public class ProviderDelegate {
 	}
 
 	public Task doTask(Task task, Transaction transaction, Arg... args)
-		throws MogramException, SignatureException, RemoteException {
+		throws ServiceException, SignatureException, RemoteException {
 		// prepare a default net batch task (has all sigs of PROC multitype)
 		// and make the last signature as master PROC multitype only.
 		task.correctBatchSignatures();
@@ -973,7 +973,7 @@ public class ProviderDelegate {
 		return (Task) forwardTask(task, provider);
 	}
 
-	private Context apdProcess(Task task) throws RoutineException, SignatureException, ContextException {
+	private Context apdProcess(Task task) throws RoutineException, ContextException {
 		return processContinousely(task, task.getApdProcessSignatures());
 	}
 
@@ -1271,7 +1271,7 @@ public class ProviderDelegate {
 	}
 
 	protected Subroutine forwardTask(Subroutine task,
-									 Exerter requestor) throws MogramException,
+									 Exerter requestor) throws ServiceException,
 		RemoteException, SignatureException, ContextException {
 		// check if we do not look with the same exertion
 		Service recipient = null;
@@ -1341,7 +1341,7 @@ public class ProviderDelegate {
 		return null;
 	}
 
-	public static Job doJob(Job job) throws MogramException, RemoteException {
+	public static Job doJob(Job job) throws ServiceException, RemoteException {
 		String jobberName = job.getRendezvousName();
 		Jobber jobber;
 		try {
@@ -1356,7 +1356,7 @@ public class ProviderDelegate {
 		}
 
 		Job outJob;
-		outJob = ((Exertion)jobber).exert(job, null);
+		outJob = jobber.exert(job, null);
 		return outJob;
 	}
 

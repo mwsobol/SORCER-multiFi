@@ -122,7 +122,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 					result = exert(transaction, null, entries);
 				}
 			}
-		} catch (RemoteException | SignatureException e) {
+		} catch (RemoteException | SignatureException | ServiceException e) {
 			if (result != null) {
 				((Mogram)result).reportException(e);
 			} else {
@@ -341,7 +341,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 				} else {
 					try {
 						return new ControlFlowManager().doTask((Task) exertion);
-					} catch (SignatureException | TransactionException | RemoteException e) {
+					} catch (SignatureException | TransactionException | RemoteException | ServiceException e) {
 						throw new MogramException(e);
 					}
 				}
@@ -362,7 +362,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 					} else if (exertion instanceof Block) {
 						return ((Block) exertion).doBlock(transaction, args);
 					}
-				} catch (SignatureException | TransactionException | RemoteException e) {
+				} catch (SignatureException | TransactionException | RemoteException | ServiceException e) {
 					throw new MogramException(e);
 				}
 			}
@@ -456,7 +456,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		Routine result;
 		try {
 			result = provider.exert(exertion, transaction, entries);
-		} catch (RemoteException e) {
+		} catch (RemoteException | ServiceException e) {
 			throw new MogramException(e);
 		}
 		if (result != null && result.getExceptions().size() > 0) {
@@ -479,7 +479,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 
 	private Routine serviceMutualExclusion(Exerter provider,
 										   Routine exertion, Transaction transaction)
-			throws RemoteException, TransactionException, MogramException {
+		throws RemoteException, TransactionException, ServiceException {
 		ServiceID mutexId = provider.getProviderID();
 		if (locker == null) {
 			locker = Accessor.get().getService(null, MutualExclusion.class);
@@ -802,7 +802,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 	}
 
 	public <T extends Mogram> T exert(Service srv, Mogram mog, Transaction txn)
-			throws TransactionException, MogramException, RemoteException {
+		throws TransactionException, ServiceException, RemoteException {
 		this.service = srv;
 		this.mogram = mog;
 		if (service instanceof Signature) {
@@ -832,8 +832,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			((Mogram) service).setScope(cxt);
 			return (T) exert((Mogram) service);
 		} else try {
-			if (service instanceof RemoteSignature
-                    && ((Signature) service).getServiceType() == RemoteServiceShell.class) {
+			if (((Signature) service).getServiceType() == RemoteServiceShell.class) {
                 Exerter prv = (Exerter) Accessor.get().getService((Signature) service);
                 return (T) prv.exert(mogram, txn).getContext();
             } else if (service instanceof Prc) {
@@ -842,7 +841,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
                 ((Context)mogram).putValue(((Prc)service).getName(), val);
                 return (T) mogram;
             }
-		} catch (SignatureException e) {
+		} catch (SignatureException | ServiceException e) {
 			throw new MogramException(e);
 		}
 		return (T) ((Exertion)service).exert(mogram, txn);

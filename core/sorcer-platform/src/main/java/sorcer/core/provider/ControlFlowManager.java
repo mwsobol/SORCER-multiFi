@@ -250,8 +250,8 @@ public class ControlFlowManager {
      * @throws TransactionException
      * @throws ContextException
      */
-    public Task doTask(Task task) throws RemoteException, MogramException,
-            SignatureException, TransactionException, ContextException {
+    public Task doTask(Task task) throws RemoteException, ServiceException,
+        SignatureException, TransactionException {
         Task result;
         if (task.getControlContext().getAccessType() == Access.PULL) {
             result = (Task)doRendezvousExertion(task);
@@ -266,8 +266,8 @@ public class ControlFlowManager {
         return result;
     }
 
-	public Block doBlock(Block block) throws RemoteException, MogramException,
-			SignatureException, TransactionException, ContextException {
+	public Block doBlock(Block block) throws RemoteException, ServiceException,
+        SignatureException, TransactionException {
         if (concatenator == null) {
             String spacerName = block.getRendezvousName();
             if (spacerName != null) {
@@ -295,7 +295,7 @@ public class ControlFlowManager {
      * @throws RemoteException
      * @throws RoutineException
      */
-    public Mogram doRendezvousExertion(Subroutine xrt) throws RemoteException, MogramException {
+    public Mogram doRendezvousExertion(Subroutine xrt) throws RemoteException {
         try {
             if (xrt.isSpacable()) {
                 logger.info("exertion isSpacable");
@@ -339,7 +339,7 @@ public class ControlFlowManager {
                 logger.info("job exerted = " + job);
                 return job;
             }
-        } catch (TransactionException e) {
+        } catch (TransactionException | ServiceException e) {
             logger.error( "Error", e);
         }
         return null;

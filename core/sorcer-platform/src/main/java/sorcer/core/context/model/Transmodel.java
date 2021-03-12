@@ -42,5 +42,5 @@ public interface Transmodel extends Model, Transdomain, Configurable {
     public void addChildrenContexts(ContextList componentContexts);
 
     public void execDependencies(String path, Context inContext, Arg... args)
-        throws MogramException, RemoteException, TransactionException;
+        throws ServiceException;
 }

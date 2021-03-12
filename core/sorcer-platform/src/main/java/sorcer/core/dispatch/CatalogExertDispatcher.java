@@ -267,7 +267,6 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 
 	private Block execBlock(Block block, Arg... args)
 			throws MogramException {
-
 		try {
 		    if (((ServiceSignature)block.getProcessSignature()).isRemote()) {
                 ServiceTemplate st = new ServiceTemplate(null, new Class[]{Concatenator.class}, null);
@@ -314,7 +313,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                     ? provider.getProviderName() + " " : "")
                     + "executed block: " +  block.getName() + " governor: " + getClass().getName());
 			return out;
-		} catch (RemoteException | DispatchException ex) {
+		} catch (RemoteException | DispatchException | ServiceException ex) {
 			throw new MogramException(ex);
 		}
 	}

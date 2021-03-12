@@ -847,6 +847,11 @@ public class operator {
         return add((Context) model, objects);
     }
 
+    public static NodeFidelity add(Node node, NodeFidelity nodeFi) {
+        node.getMultiFi().getSelects().add(nodeFi);
+        return nodeFi;
+    }
+
     public static Context add(Context context, Identifiable... objects)
         throws RemoteException, ContextException {
         if (context instanceof Model) {
@@ -1107,10 +1112,6 @@ public class operator {
         return servers;
     }
 
-//    public static Node rnd(DscFidelity fidelity) {
-//        return new ServiceNode(fidelity);
-//    }
-
     public static Region rgn(Governance gov, String name) {
         return gov.getRegion(name);
     }
@@ -1119,8 +1120,7 @@ public class operator {
         return (String) context.get(Functionality.Type.REGION.toString());
     }
 
-
-    public static void analyze(Collaboration collab, Context context) throws ContextException {
+    public static void analyze(Collaboration collab, Context context) throws ServiceException {
         collab.analyze(context);
     }
 
@@ -1488,7 +1488,7 @@ public class operator {
         Dependency dependency = null;
         ExecDeps execDeps = null;
         Paths nodePaths = null;
-        Context govContext = null;
+        Context inContext = null;
 
         List<Object> dataList = new ArrayList<>();
         for (Object o : data) {
@@ -1501,7 +1501,7 @@ public class operator {
             } else if (o instanceof Node) {
                 nodes.add((Node) o);
             } else if (o instanceof DataContext) {
-                govContext = (Context) o;
+                inContext = (Context) o;
             } else if (o instanceof Dependency) {
                 dependency = (Dependency) o;
             } else if (o instanceof ExecDeps) {
@@ -1517,8 +1517,8 @@ public class operator {
         if (nodes.size() == 1 && (name == null || name.contains("unknown"))) {
             rgn.setName(nodes.get(0).getName());
         }
-        if (govContext != null) {
-            rgn.setInput(govContext);
+        if (inContext != null) {
+            rgn.setInput(inContext);
         }
         Object[] names = new Object[nodes.size()];
 

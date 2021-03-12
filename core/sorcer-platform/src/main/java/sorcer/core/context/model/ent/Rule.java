@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski on 02/03/21.
  */
-public class Rule extends Entry<Administration> implements Controller, Administration {
+public class Rule extends Entry<Hypervision> implements Controller, Hypervision {
 
     private static final long serialVersionUID = 1L;
 
@@ -39,7 +39,7 @@ public class Rule extends Entry<Administration> implements Controller, Administr
 
     private Signature signature;
 
-    public Rule(String name, Administration executive)  {
+    public Rule(String name, Hypervision executive)  {
         this.key = name;
         this.impl = executive;
         this.type = Functionality.Type.EXECUTION;
@@ -51,7 +51,7 @@ public class Rule extends Entry<Administration> implements Controller, Administr
         this.type = Functionality.Type.EXECUTION;
     }
 
-    public Rule(String name, Administration executive, Context context) {
+    public Rule(String name, Hypervision executive, Context context) {
         this.key = name;
         scope = context;
         this.impl = executive;
@@ -75,11 +75,11 @@ public class Rule extends Entry<Administration> implements Controller, Administr
         this.supervisors = supervisors;
     }
 
-    public Administration getExecutive() {
-        return (Administration) impl;
+    public Hypervision getExecutive() {
+        return (Hypervision) impl;
     }
 
-    public void setExecutive(Administration executive) {
+    public void setExecutive(Hypervision executive) {
         impl = executive;
     }
 
@@ -88,16 +88,16 @@ public class Rule extends Entry<Administration> implements Controller, Administr
     }
 
     @Override
-    public Context admin(Context context, Arg... args) throws ExecutiveException, RemoteException {
+    public Context hypervise(Context context, Arg... args) throws ExecutiveException, ServiceException {
         Context out = ((Governance) contextion).getOutput();
         try {
-            if (impl != null && impl instanceof Administration) {
+            if (impl != null && impl instanceof Hypervision) {
                 if (supervisors == null) {
-                    out = ((Administration) impl).admin(context, args);
+                    out = ((Hypervision) impl).hypervise(context, args);
                 }
             } else if (signature != null) {
                 impl = ((LocalSignature) signature).initInstance();
-                out = ((Administration) impl).admin(context);
+                out = ((Hypervision) impl).hypervise(context);
             } else if (impl == null) {
                 throw new InvocationException("No rule available!");
             }

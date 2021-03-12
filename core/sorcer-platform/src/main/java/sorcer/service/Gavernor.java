@@ -13,21 +13,21 @@ import java.util.Map;
 
 import static sorcer.co.operator.path;
 
-public class Admin implements Service, Administration {
+public class Gavernor implements Service, Hypervision {
 
     protected Governance governance;
 
-    protected Administration rule;
+    protected Hypervision rule;
 
-    public Admin() {
+    public Gavernor() {
         // do nothing
     }
 
-    public Admin(Governance governance) {
+    public Gavernor(Governance governance) {
         this.governance = governance;
     }
 
-    public Admin(Governance governance, Administration rule) {
+    public Gavernor(Governance governance, Hypervision rule) {
         this.governance = governance;
         this.rule = rule;
     }
@@ -56,12 +56,12 @@ public class Admin implements Service, Administration {
                 analyzer.analyze(governance, governance.getInput());
             }
             return governance.getOutput();
-        } catch (ConfigurationException e) {
+        } catch (ConfigurationException | AnalysisException | RemoteException e) {
             throw new ServiceException(e);
         }
     }
 
-    public void execDependencies(String path, Arg... args) {
+    public void execDependencies(String path, Arg... args) throws ServiceException {
         Map<String, List<ExecDependency>> dpm = ((ModelStrategy) governance.getDomainStrategy()).getDependentDomains();
         if (dpm != null && dpm.get(path) != null) {
             List<ExecDependency> del = dpm.get(path);
@@ -79,7 +79,7 @@ public class Admin implements Service, Administration {
                                 } else {
                                     governance.getOutput().append(disc.getOutput());
                                 }
-                            } catch (ServiceException e) {
+                            } catch (AnalysisException | RemoteException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -90,17 +90,17 @@ public class Admin implements Service, Administration {
         }
     }
 
-    public Administration getRule() {
+    public Hypervision getRule() {
         return rule;
     }
 
-    public void setRule(Administration rule) {
+    public void setRule(Hypervision rule) {
         this.rule = rule;
     }
 
 
     @Override
-    public Context admin(Context input, Arg... args) throws ExecutiveException, RemoteException {
+    public Context hypervise(Context input, Arg... args) throws ExecutiveException, RemoteException {
         try {
             if (governance.getInput() == null)  {
                 governance.setInput(input);
@@ -108,15 +108,15 @@ public class Admin implements Service, Administration {
                 governance.getInput().substitute(input);
             }
             Context outCxt = (Context) execute(args);
-            Administration executive = null;
+            Hypervision executive = null;
             Context tmpCxt;
             if (governance.getExecutiveFi() != null) {
                 executive = governance.getExecutiveFi().getSelect();
-                tmpCxt = executive.admin(input, args);
+                tmpCxt = executive.hypervise(input, args);
                 outCxt.appendContext(tmpCxt);
             }
             if (rule != null) {
-                tmpCxt = rule.admin(outCxt);
+                tmpCxt = rule.hypervise(outCxt);
                 outCxt.appendContext(tmpCxt);
             }
             return outCxt;

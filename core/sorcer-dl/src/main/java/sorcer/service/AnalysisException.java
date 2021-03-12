@@ -14,43 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sorcer.service.modeling;
-
-import sorcer.service.Context;
+package sorcer.service;
 
 @SuppressWarnings("rawtypes")
-public class SuperviseException extends Exception {
+public class AnalysisException extends Exception {
 
     static final long serialVersionUID = 1L;
 
     private Context context;
 
-    public SuperviseException() {
+    public AnalysisException() {
     }
 
-    public SuperviseException(String msg) {
+    public AnalysisException(String msg) {
         super(msg);
     }
 
-    public SuperviseException(Context context) {
+    public AnalysisException(Context context) {
         this.context = context;
     }
 
-    public SuperviseException(String msg, Context context) {
+    public AnalysisException(String msg, Context context) {
         super(msg);
         this.context = context;
     }
 
-    public SuperviseException(Exception exception) {
+    public AnalysisException(Exception exception) {
         super(exception);
     }
 
-    public SuperviseException(String msg, Exception e) {
+    public AnalysisException(String msg, Exception e) {
         super(msg, e);
 
     }
 
-    public SuperviseException(String msg, Context context, Exception e) {
+    public AnalysisException(String msg, Context context, Exception e) {
         super(msg, e);
         this.context = context;
     }

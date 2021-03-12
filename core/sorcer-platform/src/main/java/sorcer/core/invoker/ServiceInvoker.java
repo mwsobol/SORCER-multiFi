@@ -665,7 +665,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	}
 
 	@Override
-	public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws MogramException {
+	public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ServiceException {
 		if (mogram instanceof Mogram) {
 			try {
 				invokeContext = mogram.exert(txn, args).getContext();

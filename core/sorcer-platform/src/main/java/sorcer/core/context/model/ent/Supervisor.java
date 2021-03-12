@@ -20,8 +20,8 @@ package sorcer.core.context.model.ent;
 import sorcer.core.service.Governance;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
+import sorcer.service.modeling.ExecutiveException;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.SuperviseException;
 
 import java.rmi.RemoteException;
 
@@ -76,7 +76,7 @@ public class Supervisor extends Entry<Supervision> implements Controller, Superv
     }
 
     @Override
-    public Context supervise(Context context, Arg... args) throws SuperviseException, RemoteException {
+    public Context supervise(Context context, Arg... args) throws ServiceException, RemoteException {
         Context out = ((Governance) contextion).getOutput();
         try {
             if (impl != null && impl instanceof Supervision) {
@@ -91,8 +91,8 @@ public class Supervisor extends Entry<Supervision> implements Controller, Superv
             } else if (impl == null) {
                 throw new InvocationException("No supervisor available!");
             }
-        } catch (ContextException | SignatureException | RemoteException e) {
-            throw new SuperviseException(e);
+        } catch (ContextException | SignatureException | ExecutiveException |  RemoteException e) {
+            throw new ServiceException(e);
         }
         return out;
     }

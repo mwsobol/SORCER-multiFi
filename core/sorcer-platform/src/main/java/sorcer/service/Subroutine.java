@@ -134,7 +134,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      *
      * @see sorcer.service.Service#service(sorcer.service.Mogram)
      */
-    public <T extends Mogram> T  service(T mogram) throws MogramException {
+    public <T extends Mogram> T  service(T mogram) throws ServiceException {
         if (mogram == null)
             return exert();
         else {

@@ -29,7 +29,7 @@ public class ExertCallable implements Callable<Routine> {
 	}
 
 	public Routine call() throws RemoteException, TransactionException,
-			MogramException {
+		ServiceException {
 		if (exertion != null)
 			return exertion.exert();
 

@@ -17,13 +17,12 @@ package sorcer.service;
  */
 
 import sorcer.service.modeling.ExecutiveException;
-import sorcer.service.modeling.SuperviseException;
 
 import java.rmi.RemoteException;
 
-public interface Administration {
+public interface Hypervision {
 
-    public Context admin(Context context, Arg... args) throws ExecutiveException,
+    public Context hypervise(Context context, Arg... args) throws ServiceException, ExecutiveException,
             RemoteException;
 
 }

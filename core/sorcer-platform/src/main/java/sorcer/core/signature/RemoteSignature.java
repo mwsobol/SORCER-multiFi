@@ -432,7 +432,7 @@ public class RemoteSignature extends LocalSignature implements sig {
 				out = exert(task(this, cxt));
 				return out;
 			}
-		} catch (SignatureException | RemoteException ex) {
+		} catch (SignatureException | ServiceException | RemoteException ex) {
 			throw new MogramException(ex);
 		}
 		return context(result);

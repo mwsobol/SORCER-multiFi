@@ -44,7 +44,7 @@ public class Region extends Collaboration {
     }
 
     @Override
-    public Context evaluate(Context context, Arg... args) throws MogramException {
+    public Context evaluate(Context context, Arg... args) throws ServiceException {
         if (children.size() == 1) {
             try {
                 output =  children.values().iterator().next().evaluate(context, args);

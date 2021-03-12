@@ -339,16 +339,16 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		return out;
 	}
 
-	public Context evaluateDomain(String domainName, Context context) throws MogramException {
+	public Context evaluateDomain(String domainName, Context context) throws ServiceException {
 		return evaluateDomain(children.get(domainName), context);
 	}
 
-	public Context evaluateDomain(Request request, Context context) throws MogramException {
+	public Context evaluateDomain(Request request, Context context) throws ServiceException {
 			return response((Mogram) request, context);
 	}
 
 	@Override
-	public Context evaluate(Context context, Arg... args) throws MogramException {
+	public Context evaluate(Context context, Arg... args) throws ServiceException {
 		Context out = null;
 		try {
 			input = getInput();
@@ -397,7 +397,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		return out;
 	}
 
-	public void analyze(Context context) throws ContextException {
+	public void analyze(Context context) throws ServiceException {
 		Context collabOut;
 		if (((ServiceContext)context).getColabType() == Strategy.Colab.BBinCxt) {
 			collabOut = input;
@@ -472,7 +472,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 				((ServiceContext) collabOut).put(Context.DOMAIN_OUTPUTS_PATH, outputs);
 				output = collabOut;
 			}
-		} catch (ServiceException | SignatureException | RemoteException | DispatchException e) {
+		} catch (SignatureException | RemoteException | DispatchException | AnalysisException e) {
 			throw new ContextException(e);
 		}
 	}
@@ -527,7 +527,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	}
 
 	@Override
-	public Context exert(Transaction txn, Arg... args) throws MogramException {
+	public Context exert(Transaction txn, Arg... args) throws ServiceException {
 		return evaluate(input, args);
 	}
 

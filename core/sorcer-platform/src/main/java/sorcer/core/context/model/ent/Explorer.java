@@ -99,7 +99,7 @@ public class Explorer extends Entry<Exploration> implements Controller, Explorat
     }
 
     @Override
-    public Context explore(Context context) throws ContextException, ExploreException, RemoteException {
+    public Context explore(Context context) throws ServiceException, ExploreException, RemoteException {
         // use output for explorer after collaboration
         Context output = null;
         try {
@@ -111,7 +111,7 @@ public class Explorer extends Entry<Exploration> implements Controller, Explorat
                 ((Collaboration) contextion).analyze(context);
                 output = ((Collaboration) contextion).getOutput();
                 output.putValue(Functionality.Type.COLLABORATION.toString(), contextion.getName());
-                ((ServiceContext)output).remove(Functionality.Type.DOMAIN.toString());
+                output.remove(Functionality.Type.DOMAIN.toString());
             } else if (analyzerFi != null) {
                 Analysis analyzer = analyzerFi.getSelect();
                 analyzer.analyze(contextion, context);
@@ -128,7 +128,7 @@ public class Explorer extends Entry<Exploration> implements Controller, Explorat
             } else if (impl == null) {
                 throw new InvocationException("No explorer available!");
             }
-        } catch (SignatureException | DispatchException | ServiceException e) {
+        } catch (SignatureException | AnalysisException | DispatchException | ServiceException e) {
             throw new ContextException(e);
         }
         return output;

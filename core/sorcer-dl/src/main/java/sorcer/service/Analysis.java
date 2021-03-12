@@ -17,12 +17,14 @@
 
 package sorcer.service;
 
+import java.rmi.RemoteException;
+
 /**
  * Created by Mike Sobolewski on 6/3/17.
  */
 @FunctionalInterface
 public interface Analysis {
 
-    void analyze(Request request, Context context) throws MogramException;
+    void analyze(Request request, Context context) throws ServiceException, AnalysisException, RemoteException;
 
 }

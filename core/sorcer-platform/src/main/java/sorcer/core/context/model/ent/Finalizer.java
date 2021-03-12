@@ -59,7 +59,7 @@ public class Finalizer extends Entry<Finalization> implements Controller, Finali
     }
 
     @Override
-    public void finalize(Context context, Arg... args) throws EvaluationException {
+    public void finalize(Context context, Arg... args) throws ServiceException {
         try {
             if (impl != null && impl instanceof Finalization) {
                 ((Finalization) impl).finalize(context, args);
@@ -70,7 +70,7 @@ public class Finalizer extends Entry<Finalization> implements Controller, Finali
                 throw new InvocationException("No Finalizer available!");
             }
         } catch (ContextException | SignatureException e) {
-            throw new EvaluationException(e);
+            throw new ServiceException(e);
         }
     }
 }
