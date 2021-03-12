@@ -66,7 +66,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
     protected Contextion parent;
 
     // dependency management for this disciline
-    protected List<Evaluation> dependers = new ArrayList<Evaluation>();
+    protected List<Evaluation> dependers = new ArrayList<>();
 
     // default instance new Return(Context.RETURN);
     protected Context.Return contextReturn;
@@ -207,7 +207,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
                 clear();
             }
             List<Fidelity> fis = Arg.selectFidelities(args);
-            if (fis != null && fis.size() > 0) {
+            if (fis.size() > 0) {
                 try {
                     selectFidelity(fis.get(0));
                 } catch (ConfigurationException e) {
@@ -251,7 +251,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
             }
 
             return getOutput();
-        } catch (DispatchException | ConfigurationException |RemoteException e) {
+        } catch (DispatchException | ConfigurationException | RemoteException e) {
             throw new ServiceException(e);
         }
     }

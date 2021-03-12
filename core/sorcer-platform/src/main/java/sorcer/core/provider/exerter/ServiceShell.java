@@ -66,7 +66,7 @@ import static sorcer.eo.operator.*;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class ServiceShell implements Service, Activity, Exertion, Client, Callable<Object>, RemoteServiceShell {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
-	private Service service;ContextFidelity
+	private Service service;
 	private Mogram mogram;
 	private File mogramSource;
 	private Transaction transaction;
@@ -76,7 +76,6 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 	private static final ProviderCache providerCache = ProviderCache.get();
 
 	public ServiceShell() {
-		//setupProxyCache();
 	}
 
 	public ServiceShell(Mogram mogram) {

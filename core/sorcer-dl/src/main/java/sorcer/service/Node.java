@@ -30,14 +30,14 @@ public interface Node extends Discipline, Dependency, cxtn {
      *
      * @throws ServiceException
      */
-    public Service getContextion() throws ServiceException;
+    Service getContextion() throws ServiceException;
 
     /**
      * Returns an executed contextion of this discipline
      *
      * @throws ServiceException
      */
-    public Service getOutContextion();
+    Service getOutContextion();
 
     /**
      * Returns a dispatcher to dispatch this discipline
@@ -45,7 +45,7 @@ public interface Node extends Discipline, Dependency, cxtn {
      * @return a dispatcher of this discipline
      * @throws RoutineException
      */
-    public Dispatch getDispatcher() throws RoutineException;
+    Dispatch getDispatcher() throws RoutineException;
 
     /**
      * Returns an executed dispatcherof this discipline
@@ -53,7 +53,7 @@ public interface Node extends Discipline, Dependency, cxtn {
      * @return an executed dispatcher of this discipline
      * @throws RoutineException
      */
-    public Dispatch getOutDispatcher();
+    Dispatch getOutDispatcher();
 
     /**
      * Returns a discipline input context.
@@ -61,30 +61,30 @@ public interface Node extends Discipline, Dependency, cxtn {
      * @return a current input context
      * @throws ContextException
      */
-    public Context getInput() throws ContextException;
+    Context getInput() throws ContextException;
 
     /**
      * Returns an output context of this discipline.
      *
      * @return a current output context
-     * @throws ContextException
+     * @throws ServiceException
      */
-    public Context getOutput(Arg... args) throws ContextException;
+    Context getOutput(Arg... args) throws ContextException;
 
     /**
      * Returns a builder of this discipline to be used for replication
      * of this discipline when needed.
      * */
-    public Signature getBuilder();
+    Signature getBuilder();
 
-    public Context getInConnector();
+    Context getInConnector();
 
-    public void setInConnector(Context inConnector);
+    void setInConnector(Context inConnector);
 
-    public Context getOutConnector();
+    Context getOutConnector();
 
-    public void setOutConnector(Context outConnector);
+    void setOutConnector(Context outConnector);
 
-    public Contextion getParent();
+    Contextion getParent();
 
 }

@@ -524,27 +524,43 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public Context appendContext(Context context) throws ContextException, RemoteException {
-        return domain.appendContext(context);
+    public Context appendContext(Context context) throws ContextException {
+        try {
+            return domain.appendContext(context);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     @Override
-    public Context getDomainData() throws ContextException, RemoteException {
-        return domain.getDomainData();
+    public Context getDomainData() throws ContextException {
+        try {
+            return domain.getDomainData();
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     @Override
-    public Context getContext(Context contextTemplate) throws RemoteException, ContextException {
-        return domain.getContext(contextTemplate);
+    public Context getContext(Context contextTemplate) throws ContextException {
+        try {
+            return domain.getContext(contextTemplate);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     @Override
-    public Context appendContext(Context context, String path) throws ContextException, RemoteException {
-        return domain.appendContext(context, path);
+    public Context appendContext(Context context, String path) throws ContextException {
+        try {
+            return domain.appendContext(context, path);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     @Override
-    public Context getContext(String path) throws ContextException, RemoteException {
+    public Context getContext(String path) throws ContextException {
         return domain.getContext();
     }
 
