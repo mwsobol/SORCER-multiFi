@@ -8,6 +8,7 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.invoker.Pipeline;
 import sorcer.core.service.Governance;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.fi;
 import sorcer.service.modeling.mog;
@@ -38,8 +39,7 @@ public class MuiltidisciplinaryBuilder {
 				value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
 		Node morphDis = rnd("morphModelDisc",
-			cxtnFi("cxtn1", sig("cxtn1", MuiltidisciplinaryBuilder.class, "getMorphingModel")),
-			dspFi("dspt1", mdlDispatch));
+			rndFi("mmd", cxtnFi("cxtn1", sig(MuiltidisciplinaryBuilder.class, "getMorphingModel")), operator.rndFi(mdlDispatch)));
 
 		return morphDis;
 	}
@@ -157,12 +157,11 @@ public class MuiltidisciplinaryBuilder {
 			rndFi("plDisc1",
 				cxtnFi("cxtn1", sig("getPipeline1",  MuiltidisciplinaryBuilder.class)),
 				cxtFi("cxt1", cxt1),
-				dspFi("dspt1", evalTask)),
-
+				operator.rndFi("dspt1", evalTask)),
 			rndFi("plDisc2",
 				cxtnFi("cxtn2", sig("getPipeline2",  MuiltidisciplinaryBuilder.class)),
 				cxtFi("cxt2", cxt2),
-				dspFi("dspt2", blockDispatch)));
+				operator.rndFi("dspt2", blockDispatch)));
 
 		return plDisc;
 	}
@@ -206,7 +205,7 @@ public class MuiltidisciplinaryBuilder {
 	static public Governance getMultidiscGovernance1() throws Exception {
 
 		Governance govc = gov("multidisc",
-			rgn(instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1"))),
+			rgn(instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class))),
 			rgn(instance(sig("getMultiFiPipelineDiscipline", MuiltidisciplinaryBuilder.class), fi("plDisc1"))));
 
 		return govc;
@@ -235,7 +234,7 @@ public class MuiltidisciplinaryBuilder {
 		);
 
 		Governance mdisc = gov("multidisc",
-			rgn(instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1"))),
+			rgn(instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class))),
 			rgn(instance(sig("getMultiFiPipelineDiscipline", MuiltidisciplinaryBuilder.class), fi("plDisc1"))),
 			govcCxt);
 

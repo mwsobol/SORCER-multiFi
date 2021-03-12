@@ -49,7 +49,6 @@ import sorcer.service.Projection;
 import sorcer.core.signature.*;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
-import sorcer.service.NodeFidelity;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.modeling.*;
@@ -275,6 +274,10 @@ operator extends Operator {
 
     public static Context cxt(Object... items) throws ContextException {
         return context(items);
+    }
+
+    public static Contextion cxtn(Signature signature) throws SignatureException {
+        return (Contextion) ((LocalSignature) signature).initInstance();
     }
 
     public static ServiceContext context(Object... items) throws ContextException {
@@ -1109,7 +1112,7 @@ operator extends Operator {
         try {
             return new LocalSignature(operation, serviceType, initSelector,
                 (Class<?>[]) null, (Object[]) null);
-        } catch (Exception e) {
+         } catch (Exception e) {
             throw new SignatureException(e);
         }
     }
@@ -1779,33 +1782,29 @@ operator extends Operator {
         return fi;
     }
 
-    public static NodeFidelity rndFi(Fidelity... fidelities) {
-        NodeFidelity fi = new NodeFidelity(fidelities);
-        fi.fiType = Fi.Type.DISCIPLINE;
-        return fi;
-    }
-    public static NodeFidelity rndFi(String name, Fidelity... fidelities) {
-        NodeFidelity fi = new NodeFidelity(name, fidelities);
-        fi.fiType = Fi.Type.DISCIPLINE;
-        return fi;
-    }
-
     public static Fidelity cxtFi(String name) {
-        Fidelity fi = new Fidelity(name);
+        MultiSlot fi = new MultiSlot(name);
         fi.fiType = Fi.Type.CONTEXT;
         return fi;
     }
 
-    public static Fidelity prjFi(String name) {
-        Fidelity fi = new Fidelity(name);
+    public static MultiSlot prjFi(String name) {
+        MultiSlot fi = new MultiSlot(name);
         fi.fiType = Fi.Type.PROJECTION;
         return fi;
     }
 
-    public static Fidelity cxtFi(String name, Object select) {
-        Fidelity fi = new Fidelity(name);
-        fi.setSelect(select);
-        fi.fiType = Fi.Type.CONTEXT;
+    public static NodeFidelity rndFi(String name, Object... objects) {
+        NodeFidelity fi = new NodeFidelity(name);
+        for (Object obj : objects) {
+            if (obj instanceof MultiSlot && ((MultiSlot)obj).getFiType().equals(Fi.Type.CONTEXTION)) {
+                fi.setContextionFi((MultiSlot)obj);
+            } else  if (obj instanceof MultiSlot && ((MultiSlot)obj).getFiType().equals(Fi.Type.CONTEXT)) {
+                fi.setContextFi((MultiSlot)obj);
+            } else if (obj instanceof MultiSlot && ((MultiSlot)obj).getFiType().equals(Fi.Type.DISPATCHER)) {
+                fi.setDispatcherFi((MultiSlot)obj);
+            }
+        }
         return fi;
     }
 
@@ -1830,36 +1829,80 @@ operator extends Operator {
         return cxt;
     }
 
-    public static Fidelity dspFi(String name) {
-        Fidelity fi = new Fidelity(name);
+    public static MultiSlot cxtFi(Slot... fis) {
+        MultiSlot fi = new MultiSlot(fis);
+        fi.fiType = Fi.Type.CONTEXT;
+        return fi;
+    }
+
+    public static MultiSlot cxtFi(Object select) {
+        return cxtFi(null, select);
+
+    }
+    public static MultiSlot cxtFi(String name, Object select) {
+        MultiSlot fi = null;
+        if (name == null) {
+            fi = new MultiSlot(slot(((Identifiable) select).getName(), select));
+        } else {
+            fi = new MultiSlot(slot(name, select));
+        }
+        fi.fiType = Fi.Type.CONTEXT;
+        return fi;
+    }
+
+
+    public static MultiSlot rndFi(Slot... fis) {
+        MultiSlot fi = new MultiSlot(fis);
         fi.fiType = Fi.Type.DISPATCHER;
         return fi;
     }
 
-    public static Fidelity dspFi(String name, Object select) {
-        Fidelity fi = new Fidelity(name);
-        fi.setSelect(select);
+    public static MultiSlot rndFi(Object select) {
+        return rndFi(null, select);
+    }
+
+    public static MultiSlot rndFi(String name, Object select) {
+        MultiSlot fi = null;
+        if (name == null) {
+            fi = new MultiSlot(slot(((Identifiable) select).getName(), select));
+        } else {
+            fi = new MultiSlot(slot(name, select));
+        }
         fi.fiType = Fi.Type.DISPATCHER;
         return fi;
     }
 
-    public static Fidelity projFi(String name, Object select) {
-        Fidelity fi = new Fidelity(name);
-        fi.setSelect(select);
+    public static MultiProjection projFi(Projection select) {
+        return projFi(null, select);
+    }
+
+    public static MultiProjection projFi(String name, Projection select) {
+        if (name != null) {
+            select.setName(name);
+        }
+        MultiProjection fi = new MultiProjection(select);
         fi.fiType = Fi.Type.PROJECTION;
         return fi;
     }
 
-    public static Fidelity cxtnFi(String name) {
-        Fidelity fi = new Fidelity(name);
+    public static MultiSlot cxtnFi(Slot... fis) {
+        MultiSlot fi = new MultiSlot(fis);
         fi.fiType = Fi.Type.CONTEXTION;
         return fi;
     }
 
-    public static Fidelity cxtnFi(String name, Object select) {
-        Fidelity fi = new Fidelity(name);
-        fi.setSelect(select);
-        if (select instanceof Signature) {
+    public static MultiSlot cxtnFi(Object select) {
+        return cxtnFi(null,  select);
+    }
+
+    public static MultiSlot cxtnFi(String name, Object select) {
+        MultiSlot fi = null;
+        if (name == null) {
+            fi = new MultiSlot(slot(((Identifiable) select).getName(), select));
+        } else {
+            fi = new MultiSlot(slot(name, select));
+        }
+        if (select instanceof Signature && name != null) {
             ((ServiceSignature)select).setName(name);
         }
         fi.fiType = Fi.Type.CONTEXTION;
@@ -3846,6 +3889,16 @@ operator extends Operator {
 
     public static Signature driverSig(Signature signature) {
         ((ServiceSignature)signature).addRank(Kind.DRIVER);
+        return signature;
+    }
+
+    public static Signature cxtnSig(Signature signature) {
+        ((ServiceSignature)signature).addRank(Kind.CONTEXTION);
+        return signature;
+    }
+
+    public static Signature dspSig(Signature signature) {
+        ((ServiceSignature)signature).addRank(Kind.DISPATCHER);
         return signature;
     }
 

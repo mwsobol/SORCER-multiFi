@@ -23,33 +23,21 @@ import net.jini.id.UuidFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.signature.LocalSignature;
-import sorcer.core.signature.ServiceSignature;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Getter;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *  Implements a service discipline as out-multiFi-dispatch
  */
-public class ServiceNode implements Node, Getter<Service> {
+public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Getter<Object> {
 
     protected Uuid disciplineId;
 
     protected String  name;
-
-    protected Map<String, NodeFidelity> disciplineFidelities = new HashMap<>();
-
-    protected ServiceFidelity contextMultiFi;
-
-    protected ServiceFidelity dispatchMultiFi;
-
-    protected ServiceFidelity contextionMultiFi;
 
     // the input of this discipline
     protected Context input;
@@ -77,8 +65,6 @@ public class ServiceNode implements Node, Getter<Service> {
 
     protected Contextion parent;
 
-    protected Context scope;
-
     // dependency management for this disciline
     protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
@@ -94,158 +80,46 @@ public class ServiceNode implements Node, Getter<Service> {
     public ServiceNode() {
         disciplineId = UuidFactory.generate();
         serviceStrategy = new ModelStrategy(this);
+        multiFi = new ServiceFidelity();
     }
 
-    public ServiceNode(Routine... dispatchs) {
-        contextionMultiFi = new ServiceFidelity(dispatchs);
+    public ServiceNode(String name) {
+        this.name = name;
+        disciplineId = UuidFactory.generate();
+        serviceStrategy = new ModelStrategy(this);
+        multiFi = new ServiceFidelity();
+        ((ServiceFidelity)multiFi).setName(name);
     }
 
-    public ServiceNode(Fidelity contextionFi, Fidelity dispatchFi) {
-        this(contextionFi, dispatchFi, null);
-    }
-
-    public ServiceNode(Fidelity contextionFi, Fidelity dispatchFi, Fidelity contextFi) {
-        Routine dispatch = (Routine) dispatchFi.getSelect();
-        dispatch.setName(dispatchFi.getName());
-        Service service = (Service)contextionFi.getSelect();
-        if (service instanceof Signature) {
-            ((ServiceSignature)service).setName(contextionFi.getName());
-        } else if (service instanceof Request) {
-            ((Request)service).setName(contextionFi.getName());
-        }
-        dispatchMultiFi = new ServiceFidelity(new Routine[] { dispatch });
-        contextionMultiFi = new ServiceFidelity(new Service[] { service});
-
-        if (contextFi != null) {
-            Context context = (Context)contextFi.getSelect();
-            context.setName(contextFi.getName());
-            contextMultiFi = new ServiceFidelity(new Service[] {context});
-        }
-    }
-
-    public ServiceNode(Service service, Routine dispatch) {
-        contextionMultiFi = new ServiceFidelity(new Service[] { service });
-        dispatchMultiFi = new ServiceFidelity(new Service[] { dispatch });
-    }
-
-    public ServiceNode(Service[] services, Routine[] dispatchs) {
-        contextionMultiFi = new ServiceFidelity(services);
-        dispatchMultiFi = new ServiceFidelity(dispatchs);
-    }
-
-    public ServiceNode(List<Service> services, List<Routine> dispatchs) {
-        Routine[] cArray = new Routine[dispatchs.size()];
-        Service[] pArray = new Routine[services.size()];
-        contextionMultiFi = new ServiceFidelity(services.toArray(cArray));
-        dispatchMultiFi = new ServiceFidelity(dispatchs.toArray(pArray));
-    }
-
-    public void add(Service service, Routine dispatch) {
-        add(service, dispatch, null);
-    }
-
-    public void add(Service service, Routine dispatch, Context context) {
-        contextionMultiFi.getSelects().add(service);
-        dispatchMultiFi.getSelects().add(dispatch);
-        if (context != null) {
-            contextMultiFi.getSelects().add(context);
-        }
-    }
-
-    public void add(Fidelity serviceFi, Fidelity dispatchFi) {
-        add(serviceFi, dispatchFi, null);
-    }
-
-    @Override
-    public void add(Fidelity serviceFi, Fidelity dispatchFi, Fidelity contextFi) {
-        Routine dispatch = null;
-        if (dispatchFi != null) {
-            dispatch = (Routine) dispatchFi.getSelect();
-        }
-        if (dispatch != null) {
-            dispatch.setName(dispatchFi.getName());
-        }
-        Service service = null;
-        if (serviceFi != null) {
-            service = (Service)serviceFi.getSelect();
-        }
-        if (service instanceof Signature) {
-            ((ServiceSignature)service).setName(serviceFi.getName());
-        } else if (service instanceof Request) {
-            ((Request)service).setName(serviceFi.getName());
-        }
-        if (dispatch != null) {
-//            ((Routine)dispatchFi.getSelect()).setName(dispatchFi.getName());
-            dispatchMultiFi.getSelects().add(dispatch);
-        }
-        if (service != null) {
-//            ((Contextion)serviceFi.getSelect()).setName(serviceFi.getName());
-            contextionMultiFi.getSelects().add(service);
-        }
-        if (contextFi != null && contextFi.getSelect() != null) {
-            ((Context)contextFi.getSelect()).setName(contextFi.getName());
-            contextMultiFi.getSelects().add((Service) contextFi.getSelect());
-        }
+    public ServiceNode(String name, NodeFidelity[] fidelities) {
+        this(name);
+        multiFi.getSelects().addAll(Arrays.asList(fidelities));
     }
 
     @Override
     public Service getContextion() {
-        // if no contextion then dispatch is standalone
-        if (contextionMultiFi == null || contextionMultiFi.returnSelect() == null) {
-            return null;
-        }
-        return contextionMultiFi.getSelect();
+        return ((NodeFidelity)multiFi.getSelect()).getContextion();
     }
 
     @Override
-    public Context getInput() throws ContextException {
-        // if no contextMultiFi then return direct input
-        if (contextMultiFi == null || contextMultiFi.getSelect() == null) {
-            return input;
-        }
-        input = (Context) contextMultiFi.getSelect();
+    public Context getInput() {
         return input;
-    }
-
-    @Override
-    public ServiceFidelity getContextMultiFi() {
-        return contextMultiFi;
-    }
-
-    public void setContextMultiFi(ServiceFidelity contextMultiFi) {
-        this.contextMultiFi = contextMultiFi;
-    }
-
-    @Override
-    public ServiceFidelity getContextionMultiFi() {
-        return contextionMultiFi;
     }
 
     public Service getOutContextion() {
         return out;
     }
 
-    public Context getContextionConext() throws ContextException {
+    public Context getContextionContext() throws ContextException {
         return ((Contextion)out).getContext();
     }
 
     @Override
     public Routine getDispatcher() {
-        return (Routine) dispatchMultiFi.getSelect();
-    }
-
-    @Override
-    public ServiceFidelity getDispatcherMultiFi() {
-        return dispatchMultiFi;
+        return ((NodeFidelity)multiFi.getSelect()).getDispatcher();
     }
 
     public Context setInput(Context input) throws ContextException {
-        if (contextMultiFi == null) {
-            contextMultiFi = new ServiceFidelity();
-        }
-        contextMultiFi.getSelects().add(input);
-        contextMultiFi.setSelect(input);
-
         this.input = input;
         return input;
     }
@@ -281,6 +155,16 @@ public class ServiceNode implements Node, Getter<Service> {
         }
 
         return output;
+    }
+
+    @Override
+    public void setContext(Context input) throws ContextException {
+        this.input = input;
+    }
+
+    @Override
+    public Context appendContext(Context context) throws ContextException, RemoteException {
+        return input.appendContext(context);
     }
 
     public Routine getOutDispatcher() {
@@ -331,11 +215,8 @@ public class ServiceNode implements Node, Getter<Service> {
                 }
             }
             Routine xrt = getDispatcher();
-            Context cxt = null;
-            if (contextMultiFi != null) {
-                cxt = (Context) contextMultiFi.getSelect();
-            }
-            if (cxt != null) {
+            Context cxt = ((NodeFidelity)multiFi.getSelect()).getContext();
+            if (cxt != null && xrt != null) {
                 xrt.setContext(cxt);
             }
             if (input != null) {
@@ -346,10 +227,10 @@ public class ServiceNode implements Node, Getter<Service> {
                 }
             }
             out = this.getContextion();
-            if (out != null) {
+            if (out != null && xrt != null) {
                 xrt.dispatch(out);
             }
-            // realize  contextion if not dispatched
+            // realize contextion if not dispatched
             if (out instanceof LocalSignature && cxt != null) {
                 try {
                     out = (Contextion) ((LocalSignature)out).initInstance();
@@ -363,7 +244,11 @@ public class ServiceNode implements Node, Getter<Service> {
                     throw new ConfigurationException(e);
                 }
             }
-            outDispatcher = xrt.exert();
+            if (xrt != null) {
+                outDispatcher = xrt.exert();
+            } else if (out != null) {
+                output = ((Contextion)out).evaluate(cxt, args);
+            }
 
             return getOutput();
         } catch (DispatchException | ConfigurationException |RemoteException e) {
@@ -373,30 +258,7 @@ public class ServiceNode implements Node, Getter<Service> {
 
     @Override
     public void selectFidelity(Fidelity fi) throws ConfigurationException {
-        if (fi.getPath().isEmpty()) {
-            NodeFidelity discFi = disciplineFidelities.get(fi.getName());
-            dispatchMultiFi.selectSelect(discFi.getDispatcherFi().getName());
-            if (contextionMultiFi != null && discFi.getContextionFi() != null) {
-                contextionMultiFi.findSelect(discFi.getContextionFi().getName());
-            } else {
-                contextionMultiFi.setSelect(null);
-            }
-            if (contextMultiFi != null) {
-                if (discFi.getContextFi() != null) {
-                    contextMultiFi.findSelect(discFi.getContextFi().getName());
-                } else {
-                    contextMultiFi.setSelect(null);
-                }
-            }
-        } else {
-            dispatchMultiFi.selectSelect(fi.getPath());
-            if (contextionMultiFi != null) {
-                contextionMultiFi.selectSelect(fi.getName());
-            }
-            if (contextMultiFi != null) {
-                contextMultiFi.selectSelect((String) fi.getSelect());
-            }
-        }
+        multiFi.selectSelect(fi.getName());
     }
 
     @Override
@@ -407,11 +269,6 @@ public class ServiceNode implements Node, Getter<Service> {
     @Override
     public ServiceStrategy getDomainStrategy() {
         return serviceStrategy;
-    }
-
-    @Override
-    public List<Contextion> getContextions(List<Contextion> contextionList) {
-        return ((Contextion)contextionMultiFi.getSelect()).getContextions(contextionList);
     }
 
     public void setContextReturn() {
@@ -456,12 +313,6 @@ public class ServiceNode implements Node, Getter<Service> {
         this.name = name;
     }
 
-    @Override
-    public Fi getMultiFi() {
-        return dispatchMultiFi;
-    }
-
-
     public Morpher getMorpher() {
         return morpher;
     }
@@ -470,9 +321,16 @@ public class ServiceNode implements Node, Getter<Service> {
         this.morpher = morpher;
     }
 
-    @Override
-    public Context<Object> getContext(String path) throws ContextException, RemoteException {
-        return ((Mogram) contextionMultiFi.getSelect(path)).getContext();
+    public Context<Object> getContext(String dscName) throws ContextException {
+        try {
+            return ((NodeFidelity) multiFi.selectSelect(dscName)).getContext();
+        } catch (ConfigurationException e) {
+            throw new ContextException(e);
+        }
+    }
+
+    public Context<Object> getContext() {
+        return ((NodeFidelity) multiFi.getSelect()).getContext();
     }
 
     @Override
@@ -495,25 +353,6 @@ public class ServiceNode implements Node, Getter<Service> {
     @Override
     public Contextion exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
         return evaluate(input, args);
-    }
-
-    @Override
-    public Context getContext() throws ContextException {
-        return input;
-    }
-
-    @Override
-    public void setContext(Context input) throws ContextException {
-        setInput(input);
-    }
-
-    public Map<String, NodeFidelity> getDisciplineFidelities() {
-        return disciplineFidelities;
-    }
-
-    @Override
-    public Context appendContext(Context context) throws ContextException, RemoteException {
-        return input.appendContext(context);
     }
 
     @Override
@@ -574,6 +413,11 @@ public class ServiceNode implements Node, Getter<Service> {
         return outPathProjection;
     }
 
+    @Override
+    public List<Contextion> getContextions(List<Contextion> contextionList) {
+        return null;
+    }
+
     public void setOutPathProjection(Projection outPathProjection) {
         this.outPathProjection = outPathProjection;
     }
@@ -595,13 +439,4 @@ public class ServiceNode implements Node, Getter<Service> {
         return dependers;
     }
 
-    @Override
-    public Context getScope() {
-        return scope;
-    }
-
-    @Override
-    public void setScope(Context scope) {
-        this.scope = scope;
-    }
 }

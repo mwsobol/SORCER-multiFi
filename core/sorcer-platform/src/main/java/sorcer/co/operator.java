@@ -76,8 +76,8 @@ public class operator extends Operator {
 		return new Tuple2<T1,T2>( x1, x2 );
 	}
 
-	public static <String,Oobject> Slot<String, Object> slot(String x1) {
-		return new Slot<String,Object>( x1 );
+	public static Slot<String,Object> bet(String x1, Object x2 ){
+		return new Slot(x1, x2 );
 	}
 
 	public static <String,O> Slot<String,O> slot(String x1, O x2 ){

@@ -1108,18 +1108,9 @@ public class operator {
         return servers;
     }
 
-    public static Node rnd(Service server, Routine consumer) {
-        return new ServiceNode(server, consumer);
-    }
-
-    public static Node rnd(Service[] servers, Routine[] clients) {
-        return new ServiceNode(servers, clients);
-    }
-
-    public static Node rnd(List<Service> servers,
-                           List<Routine> clients) {
-        return new ServiceNode(servers, clients);
-    }
+//    public static Node rnd(DscFidelity fidelity) {
+//        return new ServiceNode(fidelity);
+//    }
 
     public static Region rgn(Governance gov, String name) {
         return gov.getRegion(name);
@@ -1256,51 +1247,33 @@ public class operator {
         return new SignatureDomain(name, signature);
     }
 
-    public static Node rnd(Fidelity... discFis) {
-        return rnd((String) null, discFis);
+    public static Node rnd(NodeFidelity... discFis) {
+        return rnd(null, discFis);
     }
 
-    public static Node rnd(String name, Fidelity... discFis) {
-        ServiceNode srvDisc = null;
-        if (discFis[0] instanceof NodeFidelity) {
-            srvDisc = new ServiceNode(((NodeFidelity) discFis[0]).getContextionFi(),
-                ((NodeFidelity) discFis[0]).getDispatcherFi(),
-                ((NodeFidelity) discFis[0]).getContextFi());
-            srvDisc.getDisciplineFidelities().put(discFis[0].getName(), (NodeFidelity) discFis[0]);
-            for (int i = 1; i < discFis.length; i++) {
-                srvDisc.add(((NodeFidelity) discFis[i]).getContextionFi(),
-                    ((NodeFidelity) discFis[i]).getDispatcherFi(),
-                    ((NodeFidelity) discFis[i]).getContextFi());
-                srvDisc.getDisciplineFidelities().put(discFis[i].getName(), (NodeFidelity) discFis[i]);
-            }
-        } else {
-            srvDisc = new ServiceNode(discFis[0], discFis[1]);
-        }
-        if (name != null) {
-            srvDisc.setName(name);
-        }
-        return srvDisc;
+    public static Node rnd(String name, NodeFidelity... discFis) {
+        return new ServiceNode(name, discFis);
     }
 
-    public static Node add(Node disciplne, Service server, Routine client) {
-        disciplne.add(server, client, null);
-        return disciplne;
-    }
+//    public static Node add(Node disciplne, Service server, Routine client) {
+//        disciplne.add(server, client, null);
+//        return disciplne;
+//    }
 
-    public static Node add(Node disciplne, Fidelity providerFi, Fidelity clientFi) {
-        disciplne.add(providerFi, clientFi, null);
-        return disciplne;
-    }
+//    public static Node add(Node disciplne, Fidelity providerFi, Fidelity clientFi) {
+//        disciplne.add(providerFi, clientFi, null);
+//        return disciplne;
+//    }
 
-    public static Node add(Node disciplne, Service server, Routine client, Context context) {
-        disciplne.add(server, client, context);
-        return disciplne;
-    }
+//    public static Node add(Node disciplne, Service server, Routine client, Context context) {
+//        disciplne.add(server, client, context);
+//        return disciplne;
+//    }
 
-    public static Node add(Node disciplne, Fidelity providerFi, Fidelity clientFi, Fidelity contextFi) {
-        disciplne.add(providerFi, clientFi, contextFi);
-        return disciplne;
-    }
+//    public static Node add(Node disciplne, Fidelity providerFi, Fidelity clientFi, Fidelity contextFi) {
+//        disciplne.add(providerFi, clientFi, contextFi);
+//        return disciplne;
+//    }
 
     public static Collaboration clb(Object... data) throws ContextException {
         if (data[0] instanceof Context &&

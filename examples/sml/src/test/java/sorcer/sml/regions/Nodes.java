@@ -19,11 +19,9 @@ import static sorcer.ent.operator.*;
 import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.fi;
-import static sorcer.co.operator.get;
 import static sorcer.eo.operator.loop;
 import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.*;
-import static sorcer.mo.operator.model;
 import static sorcer.mo.operator.out;
 import static sorcer.mo.operator.value;
 import static sorcer.so.operator.*;
@@ -78,7 +76,7 @@ public class Nodes {
         Opservice sigOut = sig("multiply", MultiplierImpl.class,
             result("z", inPaths("lambdaOut", "exprOut")));
 
-        Pipeline opspl = pl(
+        Pipeline opspl = pl("cxtn1",
             lambdaOut,
             exprOut,
             sigOut);
@@ -88,9 +86,8 @@ public class Nodes {
             loop(condition(cxt -> (double)
                 value(cxt, "lambdaOut") < 500.0), pipeline("cxtn1")));
 
-        Node plDis = rnd(
-            cxtnFi("cxtn1", opspl),
-            dspFi("dspt1", plDispatch));
+        Node plDis = rnd("pln-nd",
+            rndFi("pln-nd", cxtnFi("cxtn1", opspl), rndFi("dspt1", plDispatch)));
 
         setContext(opspl, context("mfprc",
             inVal("lambdaOut", 20.0),
@@ -98,7 +95,7 @@ public class Nodes {
             inVal("y", 80.0)));
 
         // out is the discipline output
-        Context out  = eval(plDis, fi("cxtn1", "dspt1"));
+        Context out  = eval(plDis);
 
         logger.info("pipeline out: " + out);
         assertEquals(570.0, value(out, "lambdaOut"));
@@ -110,9 +107,9 @@ public class Nodes {
     public void morphModelDiscipline() throws Exception {
 
         // evaluate a discipline specified by a signature
-        Context out  = eval(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1"));
+        Context out  = eval(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class));
 
-        logger.info("morphModelDiscipline cxt1:dspt1: " + out);
+        logger.info("morphModelDiscipline: " + out);
         assertTrue(value(out, "morpher3").equals(920.0));
     }
 
@@ -123,9 +120,9 @@ public class Nodes {
             MuiltidisciplinaryBuilder.class);
 
         // first fidelity
-        Context out = eval(discSig, fi("plDisc1"));
+        Context out = eval(discSig);
 
-        logger.info("pipeline cxtn1:dspt1:cxt1: " + out);
+        logger.info("pipeline: " + out);
 
         assertEquals(20.0, value(out, "x"));
         assertEquals(80.0, value(out, "y"));
@@ -143,7 +140,7 @@ public class Nodes {
         // first fidelity
         Context out = eval(discSig, fi("plDisc2"));
 
-        logger.info(" pipeline cxtn2:dspt2:cxt2: " + out);
+        logger.info(" pipeline: " + out);
 
         assertEquals(20.0, value(out, "x"));
         assertEquals(80.0, value(out, "y"));

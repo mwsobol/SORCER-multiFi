@@ -22,20 +22,20 @@ import java.util.List;
 
 public interface Fi<T> extends Identifiable, Service {
 
-    final static int e = 0;
-    final static int s = 1;
-    final static int r = 2;
-    final static int c = 3;
-    final static int m = 4;
-    final static int v =  5;
-    final static int vFi = 6;
-    final static int ev =  7;
-    final static int gt =  8;
-    final static int st =  9;
-    final static int gr = 10;
-    final static int dVar = 11;
+    int e = 0;
+    int s = 1;
+    int r = 2;
+    int c = 3;
+    int m = 4;
+    int v =  5;
+    int vFi = 6;
+    int ev =  7;
+    int gt =  8;
+    int st =  9;
+    int gr = 10;
+    int dVar = 11;
 
-    public enum Type implements Arg {
+    enum Type implements Arg {
         VAL, ENTRY, SIG, REF, MORPH, VAR, VAR_FI, PROC, SRV, ANE, EVALUATOR, GETTER, SETTER, GRADIENT, DERIVATIVE,
         MULTI, REQUEST, RESPONSE, UPDATE, ADD, REPLACE, DELETE, SELECT, META, NAME, SOA, IF, IF_SOA, SYS, CONTEXT,
         MODEL, PATH, IN_PATH, OUT_PATH, MDA, SUP, ANALYZER, EXPLORER, CONFIG, DISCIPLINE, DISPATCHER, CONTEXTION,
@@ -65,38 +65,38 @@ public interface Fi<T> extends Identifiable, Service {
         }
 	}
 
-    public T getSelect();
+    T getSelect();
 
-    public T get(int index);
+    T get(int index);
 
-	public int size();
+	int size();
 
-    public T selectSelect(String fiName) throws ConfigurationException;
+    T selectSelect(String fiName) throws ConfigurationException;
 
-    public List<T> getSelects();
+    List<T> getSelects();
 
-    public void addSelect(T select);
+    void addSelect(T select);
 
-    public String getPath();
+    String getPath();
 
-    public void setPath(String path);
+    void setPath(String path);
 
-    public void setSelect(T select);
+    void setSelect(T select);
 
-	public void removeSelect(T select);
+	void removeSelect(T select);
 
-    public boolean isValid();
+    boolean isValid();
 
-    public Type getFiType();
+    Type getFiType();
 
-    public boolean isChanged();
+    boolean isChanged();
 
-    public void setChanged(boolean state);
+    void setChanged(boolean state);
 
-	public void clearFi();
+	void clearFi();
 
 	// inner fidelity otherwise self
-    public Fidelity getFidelity();
+    Fidelity getFidelity();
 
 }
 

@@ -1346,8 +1346,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				// follow link, add paths
 				link = (ContextLink) get(key);
 				try {
-					subcntxt = getLinkedContext(link)
-							.getContext(link.getOffset());
+					subcntxt = getLinkedContext(link) .getContext(link.getOffset());
 				} catch (RemoteException ex) {
 					throw new ContextException(ex);
 				}
@@ -1551,8 +1550,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				link = (ContextLink) get(key);
 				// getValue subcontext for recursion
 				try {
-					subcntxt = getLinkedContext(link)
-							.getContext(link.getOffset());
+					subcntxt = getLinkedContext(link).getContext(link.getOffset());
 				} catch (RemoteException ex) {
 					throw new ContextException(ex);
 				}
