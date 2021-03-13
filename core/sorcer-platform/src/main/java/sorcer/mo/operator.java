@@ -1499,6 +1499,12 @@ public class operator {
             if (o instanceof String) {
                 name = (String) o;
             } else if (o instanceof Node) {
+                // initialize node if thr instance was created frm builder signature
+                if (((Node)o).getName() == null) {
+                    NodeFidelity fi = (NodeFidelity) ((Node)o).getMultiFi().get(0);
+                    ((Node)o).getMultiFi().setSelect(fi);
+                    ((Node)o).setName(fi.getName());
+                }
                 nodes.add((Node) o);
             } else if (o instanceof DataContext) {
                 inContext = (Context) o;
