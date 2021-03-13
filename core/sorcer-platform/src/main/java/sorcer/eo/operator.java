@@ -1810,12 +1810,12 @@ operator extends Operator {
     public static NodeFidelity rndFi(String name, Object... objects) {
         NodeFidelity fi = new NodeFidelity(name);
         for (Object obj : objects) {
-            if (obj instanceof MultiSlot && ((MultiSlot)obj).getFiType().equals(Fi.Type.CONTEXTION)) {
-                fi.setContextionFi((MultiSlot)obj);
-            } else  if (obj instanceof MultiSlot && ((MultiSlot)obj).getFiType().equals(Fi.Type.CONTEXT)) {
-                fi.setContextFi((MultiSlot)obj);
-            } else if (obj instanceof MultiSlot && ((MultiSlot)obj).getFiType().equals(Fi.Type.DISPATCHER)) {
-                fi.setDispatcherFi((MultiSlot)obj);
+            if (obj instanceof MultiFiVal && ((MultiFiVal)obj).getFiType().equals(Fi.Type.CONTEXTION)) {
+                fi.setContextionFi((MultiFiVal)obj);
+            } else  if (obj instanceof MultiFiVal && ((MultiFiVal)obj).getFiType().equals(Fi.Type.CONTEXT)) {
+                fi.setContextFi((MultiFiVal)obj);
+            } else if (obj instanceof MultiFiVal && ((MultiFiVal)obj).getFiType().equals(Fi.Type.DISPATCHER)) {
+                fi.setDispatcherFi((MultiFiVal)obj);
             }
         }
         return fi;
@@ -1827,22 +1827,22 @@ operator extends Operator {
         return fi;
     }
 
-    public static MultiSlot cxtFi(Object select) {
+    public static MultiFiVal cxtFi(Object select) {
         return cxtFi(null,  select);
     }
 
-    public static MultiSlot cxtFi(Slot... fis) {
-        MultiSlot fi = new MultiSlot(fis);
+    public static MultiFiVal cxtFi(Slot... fis) {
+        MultiFiVal fi = new MultiFiVal(fis);
         fi.fiType = Fi.Type.CONTEXT;
         return fi;
     }
 
-    public static MultiSlot cxtFi(String name, Object select) {
-        MultiSlot fi = null;
+    public static MultiFiVal cxtFi(String name, Object select) {
+        MultiFiVal fi = null;
         if (name == null) {
-            fi = new MultiSlot(slot(((Identifiable) select).getName(), select));
+            fi = new MultiFiVal(slot(((Identifiable) select).getName(), select));
         } else {
-            fi = new MultiSlot(slot(name, select));
+            fi = new MultiFiVal(slot(name, select));
         }
         if (select instanceof Signature && name != null) {
             ((ServiceSignature)select).setName(name);
@@ -1878,22 +1878,22 @@ operator extends Operator {
         return fi;
     }
 
-    public static MultiSlot dspFi(Slot... fis) {
-        MultiSlot fi = new MultiSlot(fis);
+    public static MultiFiVal dspFi(Slot... fis) {
+        MultiFiVal fi = new MultiFiVal(fis);
         fi.fiType = Fi.Type.DISPATCHER;
         return fi;
     }
 
-    public static MultiSlot dspFi(Object select) {
+    public static MultiFiVal dspFi(Object select) {
         return dspFi(null,  select);
     }
 
-    public static MultiSlot dspFi(String name, Object select) {
-        MultiSlot fi = null;
+    public static MultiFiVal dspFi(String name, Object select) {
+        MultiFiVal fi = null;
         if (name == null) {
-            fi = new MultiSlot(slot(((Identifiable) select).getName(), select));
+            fi = new MultiFiVal(slot(((Identifiable) select).getName(), select));
         } else {
-            fi = new MultiSlot(slot(name, select));
+            fi = new MultiFiVal(slot(name, select));
         }
         if (select instanceof Signature && name != null) {
             ((ServiceSignature)select).setName(name);
@@ -1902,22 +1902,22 @@ operator extends Operator {
         return fi;
     }
 
-    public static MultiSlot cxtnFi(Slot... fis) {
-        MultiSlot fi = new MultiSlot(fis);
+    public static MultiFiVal cxtnFi(Slot... fis) {
+        MultiFiVal fi = new MultiFiVal(fis);
         fi.fiType = Fi.Type.CONTEXTION;
         return fi;
     }
 
-    public static MultiSlot cxtnFi(Object select) {
+    public static MultiFiVal cxtnFi(Object select) {
         return cxtnFi(null,  select);
     }
 
-    public static MultiSlot cxtnFi(String name, Object select) {
-        MultiSlot fi = null;
+    public static MultiFiVal cxtnFi(String name, Object select) {
+        MultiFiVal fi = null;
         if (name == null) {
-            fi = new MultiSlot(slot(((Identifiable) select).getName(), select));
+            fi = new MultiFiVal(slot(((Identifiable) select).getName(), select));
         } else {
-            fi = new MultiSlot(slot(name, select));
+            fi = new MultiFiVal(slot(name, select));
         }
         if (select instanceof Signature && name != null) {
             ((ServiceSignature)select).setName(name);

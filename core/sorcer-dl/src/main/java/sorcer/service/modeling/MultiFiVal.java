@@ -24,16 +24,16 @@ import sorcer.service.Slot;
 /**
  * @author Mike Sobolewski 03/11/2021
  */
-public class MultiSlot extends Fidelity<Identifiable> {
+public class MultiFiVal extends Fidelity<Identifiable> {
 
-    public MultiSlot(Slot... slots) {
+    public MultiFiVal(Slot... slots) {
         if (slots.length > 0) {
             setSelects(slots);
             select = slots[0];
         }
     }
 
-    public MultiSlot(String name, Slot... slots) {
+    public MultiFiVal(String name, Slot... slots) {
         this(slots);
         this.fiName = name;
     }
