@@ -111,6 +111,8 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 	protected Contextion parent;
 
+	protected boolean isExec = true;
+
 	public Collaboration() {
         this(null);
     }
@@ -203,6 +205,15 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	public Context getContext(String path) throws ContextException, RemoteException {
 		return null;
 	}
+
+	public boolean isExec() {
+		return isExec;
+	}
+
+	public void setExec(boolean exec) {
+		isExec = exec;
+	}
+
 
 	@Override
 	public Context.Return getContextReturn() {
@@ -390,8 +401,13 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 				out = explorerFi.getSelect().explore(input);
 				((ModelStrategy) serviceStrategy).setOutcome(out);
 				strategy.setExecState(Exec.State.DONE);
+			} else if (analyzerFi != null) {
+				analyzerFi.getSelect().analyze(this, input);
+				out = input;
+				((ModelStrategy) serviceStrategy).setOutcome(out);
+				strategy.setExecState(Exec.State.DONE);
 			}
-		} catch (ConfigurationException | ContextException | ExploreException | RemoteException e) {
+		} catch (ConfigurationException | ContextException | ExploreException | RemoteException | AnalysisException e) {
 			throw new EvaluationException(e);
 		}
 		return out;
@@ -411,10 +427,10 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 				domain = children.get(path.path);
 				if (domain instanceof SignatureDomain) {
 					domain = ((SignatureDomain) domain).getDomain();
-					children.put(((Mogram)domain).getDomainName(), domain);
+					children.put(domain.getDomainName(), domain);
 				}
-				Context domainCxt = sorcer.mo.operator.getDomainContext(context, ((Mogram)domain).getDomainName());
-				Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, ((Mogram)domain).getDomainName());
+				Context domainCxt = sorcer.mo.operator.getDomainContext(context, domain.getDomainName());
+				Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getDomainName());
 				Context cxt = null;
 				if (domainCxt != null) {
 					if (domain instanceof Dispatch) {
@@ -434,7 +450,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 							throw new ContextException("response not Context");
 						}
 						collabOut.append(cxt);
-					} else if (((Mogram)domain).isExec()) {
+					} else if (domain.isExec()) {
 						if (domain instanceof Mogram) {
 							cxt = evaluateDomain(domain, domainCxt);
 						} else {
@@ -447,12 +463,14 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 					if (cxt != null) {
 						outputs.add(cxt);
 					}
-				} else if (((Mogram)domain).isExec()) {
+				} else if (domain.isExec()) {
 					if (domain instanceof Context && ((ServiceContext) domain).getType() == Functionality.Type.EXEC) {
 						// eventually add argument signatures per domain
 						cxt = (Context) domain.execute();
-					} else {
+					} else if (domain instanceof Mogram){
 						cxt = response((Mogram)domain);
+					} else {
+						cxt = (Context) domain.execute();
 					}
 					collabOut.append(cxt.getDomainData());
 					if (cxt != null) {
@@ -464,14 +482,14 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 				Analysis analyzer = analyzerFi.getSelect();
 				if (analyzerFi != null) {
-					collabOut.putValue(Functionality.Type.DOMAIN.toString(), ((Mogram)domain).getDomainName());
+					collabOut.putValue(Functionality.Type.DOMAIN.toString(), domain.getDomainName());
 					analyzer.analyze(domain, collabOut);
 				}
 
 				collabOut.setSubject(name, this);
 				((ServiceContext) collabOut).put(Context.DOMAIN_OUTPUTS_PATH, outputs);
-				output = collabOut;
 			}
+			output = collabOut;
 		} catch (SignatureException | RemoteException | DispatchException | AnalysisException e) {
 			throw new ContextException(e);
 		}
@@ -481,9 +499,9 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		// initialize domains specified by builder signatures
 		for (Discipline domain : children.values()) {
 			if (domain instanceof SignatureDomain) {
-				boolean isExec = ((Mogram)domain).isExec();
+				boolean isExec = domain.isExec();
 				domain = ((SignatureDomain) domain).getDomain();
-				children.put(((Mogram)domain).getDomainName(), domain);
+				children.put(domain.getDomainName(), domain);
 				((Mogram)domain).setExec(isExec);
 			}
 		}

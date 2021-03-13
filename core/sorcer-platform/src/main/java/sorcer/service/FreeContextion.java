@@ -47,6 +47,11 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
+	public String getDomainName() {
+		return name;
+	}
+
+	@Override
 	public Context getContext() throws ContextException {
 		return null;
 	}
@@ -88,6 +93,11 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	@Override
 	public Context getContext(String path) throws ContextException {
 		return null;
+	}
+
+	@Override
+	public boolean isExec() {
+		return false;
 	}
 
 	@Override

@@ -58,7 +58,6 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.ent.operator.*;
 
-
 /**
  * Created by Mike Sobolewski on 4/26/15.
  */
@@ -1250,25 +1249,9 @@ public class operator {
         return new ServiceNode(name, discFis);
     }
 
-//    public static Node add(Node disciplne, Service server, Routine client) {
-//        disciplne.add(server, client, null);
-//        return disciplne;
-//    }
-
-//    public static Node add(Node disciplne, Fidelity providerFi, Fidelity clientFi) {
-//        disciplne.add(providerFi, clientFi, null);
-//        return disciplne;
-//    }
-
-//    public static Node add(Node disciplne, Service server, Routine client, Context context) {
-//        disciplne.add(server, client, context);
-//        return disciplne;
-//    }
-
-//    public static Node add(Node disciplne, Fidelity providerFi, Fidelity clientFi, Fidelity contextFi) {
-//        disciplne.add(providerFi, clientFi, contextFi);
-//        return disciplne;
-//    }
+    public static Node rnd(Region region, String rndName) throws ConfigurationException {
+        return (Node) region.getChildren().get(rndName);
+    }
 
     public static Collaboration clb(Object... data) throws ContextException {
         if (data[0] instanceof Context &&
@@ -1480,9 +1463,15 @@ public class operator {
         return gov;
     }
 
-
     public static Region rgn(Object... data) throws ContextException {
+        return rgn(null, data);
+    }
+
+    public static Region rgn(String rgnName, Object... data) throws ContextException {
         String name = getUnknown();
+        if (rgnName != null) {
+            name = rgnName;
+        }
         List<Node> nodes = new ArrayList<>();
         List<ServiceFidelity> discFis = new ArrayList<>();
         Dependency dependency = null;
@@ -1541,6 +1530,13 @@ public class operator {
             }
             fiManager.setFidelities(fis);
             rgn.setFiManager(fiManager);
+        }
+
+        if (nodePaths == null) {
+            nodePaths = new Paths();
+            for (Node nd : nodes) {
+                nodePaths.add(new Path(nd.getName()));
+            }
         }
 
         if (nodePaths != null) {

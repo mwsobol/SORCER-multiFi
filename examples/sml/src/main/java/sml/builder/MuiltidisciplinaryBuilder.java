@@ -8,6 +8,7 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.invoker.Pipeline;
 import sorcer.core.service.Governance;
+import sorcer.core.service.Region;
 import sorcer.service.*;
 import sorcer.service.modeling.fi;
 import sorcer.service.modeling.mog;
@@ -203,9 +204,18 @@ public class MuiltidisciplinaryBuilder {
 		return opspl;
 	}
 
+	static public Region getMultinodeRegion() throws Exception {
+
+		Region region = rgn("multi-node",
+			instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class)),
+			instance(sig("getMultiFiPipelineDiscipline", MuiltidisciplinaryBuilder.class), fi("plDisc1")));
+
+		return region;
+	}
+
 	static public Governance getMultidiscGovernance1() throws Exception {
 
-		Governance govc = gov("multidisc",
+		Governance govc = gov("multi-disc",
 			rgn(instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class))),
 			rgn(instance(sig("getMultiFiPipelineDiscipline", MuiltidisciplinaryBuilder.class), fi("plDisc1"))));
 
@@ -234,7 +244,7 @@ public class MuiltidisciplinaryBuilder {
 				}))
 		);
 
-		Governance mdisc = gov("multidisc",
+		Governance mdisc = gov("multi-disc",
 			rgn(instance(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class))),
 			rgn(instance(sig("getMultiFiPipelineDiscipline", MuiltidisciplinaryBuilder.class), fi("plDisc1"))),
 			govcCxt);

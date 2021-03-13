@@ -101,6 +101,8 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 
 	protected Projection outPathProjection;
 
+	protected boolean isExec = true;
+
     public Governance() {
         this(null);
     }
@@ -404,6 +406,11 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 	}
 
 	@Override
+	public String getDomainName() {
+		return name;
+	}
+
+	@Override
 	public Context exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
 		return evaluate(input, args);
 	}
@@ -536,5 +543,13 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 
 	}
 
+	@Override
+	public boolean isExec() {
+		return isExec;
+	}
+
+	public void setExec(boolean exec) {
+		isExec = exec;
+	}
 
 }

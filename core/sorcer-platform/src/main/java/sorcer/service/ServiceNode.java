@@ -77,6 +77,8 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
 
     protected ServiceStrategy serviceStrategy;
 
+    protected boolean isExec = true;
+
     public ServiceNode() {
         disciplineId = UuidFactory.generate();
         serviceStrategy = new ModelStrategy(this);
@@ -351,6 +353,11 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
     }
 
     @Override
+    public String getDomainName() {
+        return name;
+    }
+
+    @Override
     public Contextion exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
         return evaluate(input, args);
     }
@@ -439,4 +446,12 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
         return dependers;
     }
 
+    @Override
+    public boolean isExec() {
+        return isExec;
+    }
+
+    public void setExec(boolean exec) {
+        isExec = exec;
+    }
 }

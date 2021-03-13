@@ -53,7 +53,9 @@ public interface Contextion extends Request, Scopable {
 	 * @throws RemoteException
 	 *             if remote call causes an error
 	 */
-	<T extends Contextion> T exert(Transaction txn, Arg... args) throws MogramException, RemoteException, ServiceException;
+	<T extends Contextion> T exert(Transaction txn, Arg... args) throws RemoteException, ServiceException;
+
+	public String getDomainName();
 
 	/**
 	 * Returns the data context of this contextion.
@@ -111,6 +113,11 @@ public interface Contextion extends Request, Scopable {
 	 */
 	Context getContext(String path) throws ContextException,
 		RemoteException;
+
+	/**
+	 * Returns true if this contextion is executable in Collaboration
+	 */
+	public boolean isExec();
 
 	/**
 	 * Returns a Context.Return that specifies a returned context

@@ -167,6 +167,11 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
     }
 
     @Override
+    public String getDomainName() {
+        return name;
+    }
+
+    @Override
     public Context invoke(Context context, Arg... args) throws EvaluationException, RemoteException {
         invokeContext = context;
         return evaluate(args);
@@ -277,6 +282,11 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
     @Override
     public Context getContext(String path) throws ContextException, RemoteException {
         return null;
+    }
+
+    @Override
+    public boolean isExec() {
+        return false;
     }
 
     @Override
