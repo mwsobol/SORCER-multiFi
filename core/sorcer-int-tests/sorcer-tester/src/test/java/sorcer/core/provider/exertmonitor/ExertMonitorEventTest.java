@@ -75,7 +75,7 @@ public class ExertMonitorEventTest {
     }
 
     @Test
-    public void testEventNotification() throws MogramException, SignatureException, RemoteException, LeaseDeniedException {
+    public void testEventNotification() throws ServiceException, SignatureException, RemoteException, LeaseDeniedException {
         SorcerPrincipal principal = new SorcerPrincipal(System.getProperty("user.name"));
         principal.setId(System.getProperty("user.name"));
         MonitoringManagement mm = Accessor.get().getService("Exert Monitor", MonitoringManagement.class);

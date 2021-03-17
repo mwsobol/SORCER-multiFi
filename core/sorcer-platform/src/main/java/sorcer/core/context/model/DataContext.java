@@ -113,7 +113,7 @@ public class DataContext<T> extends PositionalContext<T> {
                 // if not here check in the scope of it
                 obj = scope.getValue(path, args);
             }
-        } catch (IOException | MogramException | SignatureException e) {
+        } catch (IOException | ServiceException | SignatureException e) {
             throw new ContextException(e);
         }
         return (T) obj;

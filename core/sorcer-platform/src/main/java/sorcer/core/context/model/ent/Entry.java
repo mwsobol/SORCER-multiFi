@@ -101,7 +101,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
                         SdbUtil.update((URL) this.impl, value);
                     }
                 }
-            } catch (MogramException | SignatureException e) {
+            } catch (ServiceException | SignatureException e) {
                 throw new SetterException(e);
             }
         } else {

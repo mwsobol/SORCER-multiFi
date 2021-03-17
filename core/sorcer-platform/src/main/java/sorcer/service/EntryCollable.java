@@ -27,6 +27,6 @@ import java.io.Serializable;
 @FunctionalInterface
 public interface EntryCollable extends Serializable {
 
-    Entry call(Model model) throws MogramException;
+    Entry call(Model model) throws ServiceException;
 
 }

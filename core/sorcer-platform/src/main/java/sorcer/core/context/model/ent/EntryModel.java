@@ -116,7 +116,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			if (path != null) {
 				val = get(path);
 			} else {
-				Context.Return rp = Arg.getReturnPath(args);
+				Return rp = Arg.getReturnPath(args);
 				if (rp != null)
 					val = getReturnValue(rp);
 				else if (domainStrategy.getResponsePaths() != null
@@ -378,7 +378,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		Object result = null;
 		try {
 			if (context != null) {
-				Context.Return rp = ((ServiceContext)context).getContextReturn();
+				Return rp = ((ServiceContext)context).getContextReturn();
 				this.append(context);
 				// check for multiple response of this model
 				if (rp != null && rp.outPaths.size() > 0) {
@@ -429,7 +429,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		}
 	}
 
-	private Object getReturnValue(Context.Return rp) throws ContextException {
+	private Object getReturnValue(Return rp) throws ContextException {
 		Object val = null;
 		// check for multiple response of this model
 		if (rp != null && rp.outPaths.size() > 0) {
@@ -582,7 +582,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	public static Functionality[] getMarkedVariables(Context sc,
                                                      String association) throws ContextException {
 		String[] paths = Contexts.getMarkedPaths(sc, association);
-		java.util.Set nodes = new HashSet();
+		Set nodes = new HashSet();
 		Object obj;
 		for (String path : paths) {
 			try {

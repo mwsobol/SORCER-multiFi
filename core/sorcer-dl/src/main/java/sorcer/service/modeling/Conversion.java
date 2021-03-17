@@ -20,6 +20,7 @@ package sorcer.service.modeling;
 
 import sorcer.service.Arg;
 import sorcer.service.ContextException;
+import sorcer.service.ServiceException;
 
 /**
  * The functionality for data conversion.
@@ -35,6 +36,6 @@ public interface Conversion<T> {
 	 * 
 	 * @return the converted value of given vvaluealuation
 	 */
-	public Object convert(Object value) throws ContextException;
+	public Object convert(Object value) throws ServiceException;
 
 }

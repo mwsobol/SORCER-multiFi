@@ -239,7 +239,7 @@ public class operator {
                 } else {
                     ((Context) model).putValue(e.getName(), e.asis());
                 }
-            } catch (RemoteException | MogramException | SignatureException re) {
+            } catch (RemoteException | ServiceException | SignatureException re) {
                 throw new ContextException(re);
             }
             ((ServiceContext) model).setChanged(true);
@@ -1090,7 +1090,7 @@ public class operator {
         }
     }
 
-    public static void run(sorcer.util.Runner runner, Arg... args) throws SignatureException, MogramException {
+    public static void run(sorcer.util.Runner runner, Arg... args) throws SignatureException, ServiceException {
         runner.exec(args);
     }
 

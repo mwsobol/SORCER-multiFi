@@ -164,7 +164,7 @@ public class Req extends Function<Object> implements Serviceableness,
             Entry entry = null;
             try {
                 entry = ((EntryCollable) impl).call((Model) scope);
-            } catch (MogramException e) {
+            } catch (ServiceException e) {
                 throw new EvaluationException(e);
             }
             out = entry.asis();
