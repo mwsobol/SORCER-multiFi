@@ -1043,7 +1043,7 @@ public class operator extends Operator {
 		return url.getContent();
 	}
 
-	public static URL update(Object object) throws MogramException,
+	public static URL update(Object object) throws ServiceException,
 			SignatureException {
 		return SdbUtil.update(object);
 	}

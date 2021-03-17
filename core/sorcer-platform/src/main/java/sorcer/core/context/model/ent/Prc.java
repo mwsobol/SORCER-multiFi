@@ -261,7 +261,7 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
 					out = null;
 				}
 			}
-		} catch (IOException | MogramException | SignatureException e) {
+		} catch (IOException | ServiceException | SignatureException e) {
 			// make the cache invalid
 			out = null;
 			isValid = false;

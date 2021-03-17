@@ -414,11 +414,7 @@ public class CollectionOperators {
 
 		// invoke run using  Lambda object matched to interface
 		Runner r = args -> {
-			try {
-				print(exert(context(val("x", 10)), args));
-			} catch (MogramException e) {
-				e.printStackTrace();
-			}
+			print(exert(context(val("x", 10)), args));
 		};
 
 		r.exec(ent("x", "Hello"));

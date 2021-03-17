@@ -163,7 +163,7 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Setter, Comparab
                     out = null;
                 }
                 return (T) val;
-            } catch (IOException | MogramException | SignatureException e) {
+            } catch (IOException | ServiceException | SignatureException e) {
                 throw new ContextException(e);
             }
         } else if (impl instanceof Entry) {

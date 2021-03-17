@@ -19,6 +19,7 @@ package sorcer.util;
 
 import sorcer.service.Arg;
 import sorcer.service.MogramException;
+import sorcer.service.ServiceException;
 import sorcer.service.SignatureException;
 
 /**
@@ -28,6 +29,6 @@ import sorcer.service.SignatureException;
 @FunctionalInterface
 public interface Runner {
 
-    public void exec(Arg... args) throws SignatureException, MogramException;
+    public void exec(Arg... args) throws SignatureException, ServiceException;
 
 }

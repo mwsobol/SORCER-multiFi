@@ -192,7 +192,7 @@ public abstract class Block extends Transroutine {
 		return contextionList;
 	}
 
-	public URL persistContext() throws MogramException, SignatureException, ContextException {
+	public URL persistContext() throws ServiceException, SignatureException {
 		if (contextURL == null) {
 			contextURL = SdbUtil.store(dataContext);
 			dataContext = null;
