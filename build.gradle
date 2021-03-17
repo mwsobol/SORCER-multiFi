@@ -156,8 +156,9 @@ subprojects {
         repositories {
             mavenLocal()
             if (!enclave) {
+                maven { url "https://repo.repsy.io/mvn/mwsobol/sorcersoft"}
                 maven { url "https://dl.bintray.com/dreedyman/maven"}
-                maven { url "http://www.rio-project.org/maven2" }
+                maven { url "https://repo.repsy.io/mvn/dreedy/maven" }
                 mavenCentral()
             } else {
                 maven { url "http://$enclaveRepo" }
