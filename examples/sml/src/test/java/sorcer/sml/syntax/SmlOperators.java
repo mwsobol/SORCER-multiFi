@@ -72,9 +72,9 @@ public class SmlOperators {
 		mog ex2 = job(t1, job(t2, m1));
 		dmn m2 = model(m1, op1, t1, ex2);
 		dmn tm1 = tModel("name");
-		cxtn cb1 = clb("domainCollab");
-		cxtn d1 = operator.rnd("name");
-		cxtn g1 = gov("name", d1);
+		disc cb1 = clb("domainCollab");
+		disc d1 = rgn("name");
+		disc g1 = gov("name", d1);
 
 		// Object outputs
 		Object o1 = exec(op1);

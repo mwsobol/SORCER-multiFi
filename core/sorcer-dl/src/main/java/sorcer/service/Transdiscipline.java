@@ -18,10 +18,12 @@ package sorcer.service;
 
 import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.Finalization;
+import sorcer.service.modeling.cxtn;
+import sorcer.service.modeling.disc;
 
 import java.util.Map;
 
-public interface Transdiscipline extends Discipline {
+public interface Transdiscipline extends Discipline, disc, cxtn {
 
     public Map<String, Context>  getChildrenContexts();
 

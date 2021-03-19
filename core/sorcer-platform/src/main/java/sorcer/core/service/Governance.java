@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Governance implements Transdiscipline, Dependency, cxtn {
+public class Governance implements Transdiscipline, Dependency {
 
 	private static final long serialVersionUID = 1L;
 
