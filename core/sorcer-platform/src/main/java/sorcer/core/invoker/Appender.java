@@ -109,11 +109,15 @@ public class Appender extends Invoker {
     }
 
 
-    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ServiceException {
         Context inContext = null;
 
         if (mogram !=  null) {
-            inContext = ((Mogram)mogram).exert(txn, args).getContext();
+            try {
+                inContext = mogram.exert(txn, args).getContext();
+            } catch (RemoteException e) {
+                throw new ServiceException(e);
+            }
         }
         if (inContext != null) {
             inContext.append(dataContext);

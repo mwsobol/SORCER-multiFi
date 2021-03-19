@@ -60,6 +60,7 @@ include 'examples:service'
 include 'examples:exchange'
 include 'examples:coffeemaker'
 include 'examples:greeter'
+include 'examples:bookbroker'
 
 include 'distribution'
 

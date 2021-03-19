@@ -87,16 +87,14 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		this(name, expression, new ArgSet(parameters));
 	}
 
-	public GroovyInvoker(File scriptFile, Prc... parameters)
-			throws EvaluationException {
+	public GroovyInvoker(File scriptFile, Prc... parameters) {
 		this();
 		this.scriptFile = scriptFile;
 		this.args = new ArgSet(parameters);
 	}
 
 	@Override
-	public T evaluate(Arg... args) throws InvocationException,
-			RemoteException {
+	public T evaluate(Arg... args) throws InvocationException {
 		Object result = null;
 		shell = new GroovyShell(Thread.currentThread().getContextClassLoader());
 		try {
@@ -125,13 +123,13 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 					result = shell.evaluate(sb.toString());
 				}
 			}
-		} catch (ContextException e) {
-			logger.error("Error Occurred in Groovy Shell: " + e.getMessage());
+		} catch (ContextException | RemoteException e) {
+			logger.error("Error Occurred in Groovy Shell: ", e);
 		}
 		return (T) result;
 	}
 
-	private void initBindings() throws RemoteException, ContextException {
+	private void initBindings() throws ContextException, RemoteException {
 		if ((invokeContext == null || invokeContext.size() == 0) && scope !=null){
 			invokeContext = scope;
 		}
@@ -150,8 +148,8 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 			}
 		}
 		Iterator<Arg> i = args.iterator();
-		Object val = null;
-		String key = null;
+		Object val;
+		String key ;
 		while (i.hasNext()) {
 			Arg entry = i.next();
 			val = ((Evaluation)entry).evaluate();

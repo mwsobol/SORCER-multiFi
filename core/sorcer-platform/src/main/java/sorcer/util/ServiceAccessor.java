@@ -37,7 +37,6 @@ import sorcer.core.SorcerConstants;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.service.DynamicAccessor;
 import sorcer.service.Signature;
-import sorcer.service.SignatureException;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -72,18 +71,17 @@ import static sorcer.core.SorcerConstants.ANY;
 public class ServiceAccessor implements DynamicAccessor {
 	static Logger logger = LoggerFactory.getLogger(ServiceAccessor.class);
 	static long WAIT_FOR = Sorcer.getLookupWaitTime();
-    static boolean cacheEnabled = Sorcer.isLookupCacheEnabled();
+    static boolean CACHE_ENABLED = Sorcer.isLookupCacheEnabled();
 	
 	// wait for cataloger 2 sec  = LUS_REPEAT x 200
 	// since then falls back on LUSs managed by ServiceAccessor
 	// wait for service accessor 5 sec  = LUS_REPEAT x 500
-	final static int LUS_REPEAT = 10;
+	final static int LUS_REPEAT = 3;
 	private static LeaseRenewalManager lrm = null;
 	private static ServiceDiscoveryManager sdManager = null;
 	private static LookupCache lookupCache = null;
-	protected static String[] lookupGroups = Sorcer.getLookupGroups();
-	private static int MIN_MATCHES = Sorcer.getLookupMinMatches();
-	private static int MAX_MATCHES = Sorcer.getLookupMaxMatches();
+	private static final int MIN_MATCHES = Sorcer.getLookupMinMatches();
+	private static final int MAX_MATCHES = Sorcer.getLookupMaxMatches();
     protected ProviderNameUtil providerNameUtil = new SorcerProviderNameUtil();
 
     public ServiceAccessor(Configuration config) {
@@ -102,23 +100,23 @@ public class ServiceAccessor implements DynamicAccessor {
 	 * @param serviceType fiType
 	 * @return A ServiceItem
 	 */
-	public ServiceItem getServiceItem(String providerName, Class serviceType) {
+	public ServiceItem getServiceItem(String providerName, Class<?> serviceType) {
 		String name = overrideName(providerName, serviceType);
-		Class[] serviceTypes = new Class[] { serviceType };
+		Class<?>[] serviceTypes = new Class[] { serviceType };
 		Entry[] attrSets = new Entry[] { new Name(name) };
 		ServiceTemplate template = new ServiceTemplate(null, serviceTypes, attrSets);
 		return getServiceItem(template, null);
 	}
 
-	public ServiceItem getServiceItem(String providerName, Class[] serviceTypes) {
-		String name = overrideName(providerName, serviceTypes[serviceTypes.length-1]);
+	public ServiceItem getServiceItem(String providerName, Class<?>[] serviceTypes) {
+		String name = overrideName(providerName, serviceTypes[serviceTypes.length - 1]);
 		Entry[] attrSets = new Entry[] { new Name(name) };
 		ServiceTemplate template = new ServiceTemplate(null, serviceTypes, attrSets);
 		return getServiceItem(template, null);
 	}
 
 	/**
-	 * Returns a service impl matching a service template and passing a filter
+	 * Returns a service item matching a service template and passing a filter
 	 * with Jini registration groups. Note that template matching is a remote
 	 * operation - matching is done by lookup services while passing a filter is
 	 * done on the client side. Clients should provide a service filter, usually
@@ -142,9 +140,10 @@ public class ServiceAccessor implements DynamicAccessor {
             int tryNo = 0;
             while (tryNo < LUS_REPEAT) {
                 si = sdManager.lookup(template, filter, WAIT_FOR);
-                logger.info("Found [{}] instances of {}", si == null ?
-                                                          "0" :
-                                                          "1", formatServiceTemplate(template), WAIT_FOR);
+				logger.info("Found [{}] instances of {} {}",
+							si == null ? "0" : "1",
+							formatServiceTemplate(template),
+							WAIT_FOR);
                 if (si != null)
                     break;
                 tryNo++;
@@ -198,7 +197,7 @@ public class ServiceAccessor implements DynamicAccessor {
 	 * Creates a lookup cache for the existing service discovery manager
 	 */
 	private void openCache() {
-		if (cacheEnabled && lookupCache == null) {
+		if (CACHE_ENABLED && lookupCache == null) {
 			try {
 				lookupCache = sdManager.createLookupCache(null, null, null);
 			} catch (RemoteException e) {
@@ -252,14 +251,24 @@ public class ServiceAccessor implements DynamicAccessor {
 				proxy = getService(serviceType, new Entry[] { new Name(name) }, null);
 				if (proxy != null)
 					break;
-
-				Thread.sleep(WAIT_FOR);
+				Thread.sleep(getWaitTimeExp(tryNo));
 			} catch (Exception e) {
 				logger.error("Failed trying to getValue {} {}", name, serviceType.getName(), e);
 			}
 		}
 		logger.info("got LUS service [fiType={} key={}]: {}", serviceType.getName(), name, proxy);
 		return proxy;
+	}
+
+	/*
+	 * Returns the next wait interval, in milliseconds, using an exponential
+	 * backoff algorithm.
+	 */
+	private long getWaitTimeExp(int retryCount) {
+		if (0 == retryCount) {
+			return 0;
+		}
+		return ((long) Math.pow(2, retryCount) * 1000L);
 	}
 
     /**
@@ -286,7 +295,7 @@ public class ServiceAccessor implements DynamicAccessor {
 	 */
 	private LookupLocator[] getLookupLocators() {
 		String[] locURLs = SorcerEnv.getLookupLocators();
-        if (locURLs == null || locURLs.length == 0) {
+        if (locURLs.length == 0) {
             return null;
         }
         List<LookupLocator> locators = new ArrayList<>(locURLs.length);
@@ -310,7 +319,7 @@ public class ServiceAccessor implements DynamicAccessor {
 		sdManager = null;
 	}
 
-    public ServiceItem getServiceItem(Signature signature) throws SignatureException {
+    public ServiceItem getServiceItem(Signature signature) {
 		if (signature.getMatchTypes() != null) {
 			return getServiceItem(signature.getProviderName().getName(), signature.getMatchTypes());
 		} else {
@@ -318,7 +327,7 @@ public class ServiceAccessor implements DynamicAccessor {
 		}
     }
 
-    public  Object getService(Signature signature) throws SignatureException {
+    public  Object getService(Signature signature) {
         ServiceItem serviceItem = getServiceItem(signature);
         return serviceItem == null ? null : serviceItem.service;
     }
@@ -328,7 +337,7 @@ public class ServiceAccessor implements DynamicAccessor {
         return getService(serviceID, null, null);
     }
 
-    public Object getService(ServiceID serviceID, Class[] serviceTypes, Entry[] attrSets) {
+    public Object getService(ServiceID serviceID, Class<?>[] serviceTypes, Entry[] attrSets) {
         ServiceTemplate st = new ServiceTemplate(serviceID, serviceTypes, attrSets);
         return getService(st, null);
     }
@@ -396,7 +405,7 @@ public class ServiceAccessor implements DynamicAccessor {
         return sb.toString();
     }
 
-    private String overrideName(String providerName, Class serviceType) {
+    private String overrideName(String providerName, Class<?> serviceType) {
         if (providerName == null || "*".equals(providerName))
             return null;
         if (SorcerConstants.NAME_DEFAULT.equals(providerName))

@@ -32,31 +32,31 @@ import java.util.Map;
  */
 public interface FidelityManagement<T extends Service> extends RemoteEventListener, Serializable {
 
-    public Map<String, Fidelity> getFidelities() throws RemoteException;
+    Map<String, Fidelity> getFidelities() throws RemoteException;
 
-    public  Map<String, MetaFi> getMetafidelities() throws RemoteException;
+     Map<String, MetaFi> getMetafidelities() throws RemoteException;
 
-    public void morph(String... fiNames) throws EvaluationException, RemoteException;
+    void morph(String... fiNames) throws EvaluationException, RemoteException;
 
-    public void reconfigure(String... fiNames) throws EvaluationException, RemoteException, ConfigurationException;
+    void reconfigure(String... fiNames) throws EvaluationException, RemoteException, ConfigurationException;
 
-    public void reconfigure(Fidelity... fidelities) throws EvaluationException, RemoteException, ConfigurationException;
+    void reconfigure(Fidelity... fidelities) throws EvaluationException, RemoteException, ConfigurationException;
 
-    public List<Fidelity> getDefaultFidelities() throws RemoteException;
+    List<Fidelity> getDefaultFidelities() throws RemoteException;
 
-    public Contextion getMogram() throws RemoteException;
+    Contextion getMogram() throws RemoteException;
 
-    public List<Fidelity> getFiTrace() throws RemoteException;
+    List<Fidelity> getFiTrace() throws RemoteException;
 
-    public void addTrace(ServiceFidelity fi);
+    void addTrace(ServiceFidelity fi);
 
-    public void publish(Entry entry) throws RemoteException, ContextException;
+    void publish(Entry entry) throws RemoteException, ContextException;
 
-    public EventRegistration register(long eventID, String path,
+    EventRegistration register(long eventID, String path,
                                       RemoteEventListener toInform, long leaseLenght)
             throws UnknownEventException, RemoteException;
 
-    public void deregister(long eventID) throws UnknownEventException,
+    void deregister(long eventID) throws UnknownEventException,
             RemoteException;
 
 }

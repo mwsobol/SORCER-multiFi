@@ -30,12 +30,14 @@ task bootme(type: BootMe) {
 class BootMe extends DefaultTask {
     @InputFile
     File starterConfig
-    @Input @org.gradle.api.tasks.Optional
+    @Input @Optional
     def systemProperties = [:]
-    @Input @org.gradle.api.tasks.Optional
+    @Input @Optional
     boolean spawn = true
-    @Input @org.gradle.api.tasks.Optional
+    @Input @Optional
     boolean debug
+    @Input @Optional
+    int instances = 1
 
     @TaskAction
     def bootMe() {
@@ -62,7 +64,7 @@ class BootMe extends DefaultTask {
         args << '-Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.url|org.rioproject.url"'
 
         def projTestProps = ((Test)project.getTasks().getByName("test")).getSystemProperties()
-        if(projTestProps.get("org.rioproject.keystore") != null) {
+        if (projTestProps.get("org.rioproject.keystore") != null) {
             args << "-Dorg.rioproject.keystore=${projTestProps.get("org.rioproject.keystore")}"
         }
         // use distribution or project specific java.util.logging.config.file
@@ -76,7 +78,7 @@ class BootMe extends DefaultTask {
         else
             args << "-Dlogback.configurationFile=${project.sorcerDistHome}/configs/sorcer-logging.groovy"
 
-        if(!spawn)
+        if (!spawn)
             args << "-DforceConsoleLogging=true"
 
         String logName = project.path.substring(1).replaceAll(":", ".")
@@ -99,10 +101,10 @@ class BootMe extends DefaultTask {
         args << "com.sun.jini.start.ServiceStarter"
         args << "${starterConfig.path}"
 
-        if(project.logger.isInfoEnabled()) {
+        if (project.logger.isInfoEnabled()) {
             StringBuilder sb = new StringBuilder()
             for(String arg : args) {
-                if(sb.length()>0)
+                if (sb.length()>0)
                     sb.append(" ")
                 sb.append(arg)
             }
@@ -113,14 +115,17 @@ class BootMe extends DefaultTask {
         env.put("SORCER_HOME", "${project.sorcerDistHome}")
         env.put("RIO_HOME", "${project.rioHome}")
 
-        Process process = pb.start()
-        if (!spawn) {
-            process.consumeProcessOutput(System.out, System.err)
-            process.waitFor()
-        } else {
-            process.in.close()
-            process.out.close()
-            process.err.close()
+        for (int i = 0; i< instances; i++) {
+            Process process = pb.start()
+            if (!spawn) {
+                process.consumeProcessOutput(System.out, System.err)
+                process.waitFor()
+                break
+            } else {
+                process.in.close()
+                process.out.close()
+                process.err.close()
+            }
         }
     }
 }
@@ -141,12 +146,12 @@ class HaltMePlugin implements Plugin<Project> {
     static void destroy(projectId, pids)  {
         pids.each { pid ->
             String address = ConnectorAddressLink.importFrom(Integer.valueOf(pid))
-            if(address==null)
+            if (address==null)
                 startManagementAgent(pid)
             address = ConnectorAddressLink.importFrom(Integer.valueOf(pid))
-            if(address!=null) {
+            if (address!=null) {
                 JMXServiceURL jmxUrl = new JMXServiceURL(address)
-                JMXConnector jmxc = JMXConnectorFactory.connect(jmxUrl, null);
+                JMXConnector jmxc = JMXConnectorFactory.connect(jmxUrl, null)
                 MBeanServerConnection serverConnection = jmxc.getMBeanServerConnection()
                 serverConnection.queryNames(null, null).each { mBean ->
                     if (mBean.domain == "sorcer.core.provider") {
@@ -166,7 +171,7 @@ class HaltMePlugin implements Plugin<Project> {
     static def getPids(projectId) {
         def pids = []
         "jps -v".execute().text.eachLine { line ->
-            if(line.contains("project.id=${projectId}")) {
+            if (line.contains("project.id=${projectId}")) {
                 pids << line.split()[0]
             }
         }
@@ -177,7 +182,7 @@ class HaltMePlugin implements Plugin<Project> {
 
     static void kill(pids, force) {
         String command
-        if(System.getProperty("os.name").startsWith("Windows")) {
+        if (System.getProperty("os.name").startsWith("Windows")) {
             command = "taskkill /f /pid "
         } else {
             String option = force?"-9":""
@@ -193,7 +198,7 @@ class HaltMePlugin implements Plugin<Project> {
          * JAR file normally in ${java.home}/jre/lib but may be in ${java.home}/lib
          * with development/non-images builds
          */
-        String home = System.getProperty("java.home");
+        String home = System.getProperty("java.home")
         String agent = "$home/jre/lib/management-agent.jar"
         File f = new File(agent)
         if (!f.exists()) {
@@ -206,9 +211,9 @@ class HaltMePlugin implements Plugin<Project> {
         agent = f.getCanonicalPath()
         //println("Loading $agent into target JVM ...")
         try {
-            VirtualMachine.attach(pid).loadAgent(agent);
+            VirtualMachine.attach(pid).loadAgent(agent)
         } catch (Exception x) {
-            throw new IOException(x.getMessage());
+            throw new IOException(x.getMessage())
         }
     }
 

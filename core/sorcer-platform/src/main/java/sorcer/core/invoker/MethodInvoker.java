@@ -30,9 +30,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.rmi.RemoteException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Arrays;
 
 /**
  * @author Mike Sobolewski
@@ -43,8 +43,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> {
 
 	private static final long serialVersionUID = -1158778636907725414L;
 
-	final protected static Logger logger = LoggerFactory.getLogger(MethodInvoker.class
-			.getName());
+	private final static Logger logger = LoggerFactory.getLogger(MethodInvoker.class.getName());
 
 	protected String className;
 
@@ -54,7 +53,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> {
 
 	private Object[] params;
 
-	private Arg[] pars = new Arg[0];
+	private final Arg[] pars = new Arg[0];
 
 	private ContextDomain context;
 
@@ -135,8 +134,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> {
 			params = new Object[] { distributionParameter };
 	}
 
-	public MethodInvoker(String name, URL exportUrl, String className,
-			String methodName) {
+	public MethodInvoker(String name, URL exportUrl, String className, String methodName) {
 		this(name);
 		this.className = className;
 		this.exportURL = new URL[] { exportUrl };
@@ -186,8 +184,8 @@ public class MethodInvoker<T> extends ServiceInvoker<T> {
 	}
 
 	@Override
-	public T evaluate(Arg... args) throws RemoteException, InvocationException {
-		Object[] parameters = new Object[0];
+	public T evaluate(Arg... args) throws InvocationException {
+		Object[] parameters;
 		try {
 			parameters = getParameters();
 		} catch (EvaluationException e) {
@@ -205,8 +203,8 @@ public class MethodInvoker<T> extends ServiceInvoker<T> {
 
 					Constructor<?> constructor;
 					if (initObject != null) {
-						constructor = evalClass.getConstructor(new Class[]{Object.class});
-						target = constructor.newInstance(new Object[]{initObject});
+						constructor = evalClass.getConstructor(Object.class);
+						target = constructor.newInstance(initObject);
 					} else
 						target = evalClass.newInstance();
 				}
@@ -227,15 +225,16 @@ public class MethodInvoker<T> extends ServiceInvoker<T> {
 					}
 				}
 			} else {
-				if (selector == null) {
+				if (selector == null && evalClass != null) {
 					Method[] mts = evalClass.getDeclaredMethods();
 					if (mts.length == 1)
 						m = mts[0];
 				} else {
 					// exception when Arg... is not specified for the invoke
-					if (target instanceof Invocation && paramTypes.length == 1
+					if (target instanceof Invocation
+							&& paramTypes.length == 1
 							&&  paramTypes[0] == Context.class
-							&& ((selector.equals("evaluate") || selector.equals("invoke"))))	{
+							&& (selector != null && (selector.equals("evaluate") || selector.equals("invoke"))))	{
 						paramTypes = new Class[2];
 						paramTypes[0] = Context.class;
 						paramTypes[1] = Arg[].class;
@@ -245,7 +244,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> {
 						parameters = parameters2;
 					// ignore default setup for exerting domains
 					} else if (Mogram.class.isAssignableFrom(paramTypes[0])
-							&& selector.equals("exert"))	{
+							&& (selector != null && selector.equals("exert")))	{
 						paramTypes = new Class[3];
 						paramTypes[0] = Contextion.class;
 						paramTypes[1] = Transaction.class;
@@ -306,53 +305,35 @@ public class MethodInvoker<T> extends ServiceInvoker<T> {
 	}
 
 	private Object getInstance() {
-		Object instanceObj = null;
+		Object instanceObj;
 		ClassLoader cl = this.getClass().getClassLoader();
 		try {
 			miLoader = URLClassLoader.newInstance(exportURL, cl);
 			final Thread currentThread = Thread.currentThread();
 			final ClassLoader parentLoader = (ClassLoader) AccessController
-					.doPrivileged(new PrivilegedAction() {
-						public Object run() {
-							return (currentThread.getContextClassLoader());
-						}
-					});
+					.doPrivileged((PrivilegedAction) currentThread::getContextClassLoader);
 
 			try {
-				AccessController.doPrivileged(new PrivilegedAction() {
-					public Object run() {
-						currentThread.setContextClassLoader(miLoader);
-						return (null);
-					}
+				AccessController.doPrivileged((PrivilegedAction) () -> {
+					currentThread.setContextClassLoader(miLoader);
+					return (null);
 				});
-				Class<?> clazz = null;
-				try {
-					clazz = miLoader.loadClass(className);
-				} catch (ClassNotFoundException ex) {
-					ex.printStackTrace();
-					throw ex;
-				}
-
-				Constructor<?> constructor = clazz
-						.getConstructor(new Class[] { Object.class });
+				Class<?> clazz = miLoader.loadClass(className);
+				Constructor<?> constructor = clazz.getConstructor(Object.class);
 				if (initObject != null) {
-					instanceObj = constructor
-							.newInstance(new Object[] { initObject });
+					instanceObj = constructor.newInstance(initObject);
 				} else {
 					instanceObj = clazz.newInstance();
 				}
 			} finally {
-				AccessController.doPrivileged(new PrivilegedAction() {
-					public Object run() {
-						currentThread.setContextClassLoader(parentLoader);
-						return (null);
-					}
+				AccessController.doPrivileged((PrivilegedAction) () -> {
+					currentThread.setContextClassLoader(parentLoader);
+					return (null);
 				});
 			}
 		} catch (Throwable e) {
-			e.printStackTrace();
 			throw new IllegalArgumentException(
-					"Unable to instantiate method of this oject invoker: "
+					"Unable to instantiate method of this method invoker: "
 							+ e.getClass().getName() + ": "
 							+ e.getLocalizedMessage());
 		}
@@ -417,11 +398,11 @@ public class MethodInvoker<T> extends ServiceInvoker<T> {
 	}
 
 	public String describe() {
-		StringBuilder sb = new StringBuilder("\nObjectIvoker");
-		sb.append(", class key: " + className);
-		sb.append(", selector: " + selector);
-		sb.append(", target: " + target);
-		sb.append("\nargs: " + params);
+		StringBuilder sb = new StringBuilder("\nMethodInvoker");
+		sb.append(", class key: ").append(className);
+		sb.append(", selector: ").append(selector);
+		sb.append(", target: ").append(target);
+		sb.append("\nargs: ").append(Arrays.toString(params));
 
 		return sb.toString();
 	}

@@ -1,36 +1,35 @@
 package sorcer.sml.regions;
 
-import builder.MuiltidisciplinaryBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.invoker.Pipeline;
+import sml.builder.MuiltidisciplinaryBuilder;
 import sorcer.core.service.Governance;
-import sorcer.mo.operator;
+import sorcer.core.service.CollabRegion;
+import sorcer.core.service.Region;
 import sorcer.service.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.setValue;
 import static sorcer.co.operator.*;
-import static sorcer.ent.operator.*;
-import static sorcer.eo.operator.args;
-import static sorcer.eo.operator.*;
+import static sorcer.ent.operator.invoker;
+import static sorcer.ent.operator.pl;
 import static sorcer.eo.operator.fi;
-import static sorcer.co.operator.get;
 import static sorcer.eo.operator.loop;
 import static sorcer.eo.operator.result;
-import static sorcer.mo.operator.*;
-import static sorcer.mo.operator.model;
+import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.out;
 import static sorcer.mo.operator.value;
-import static sorcer.so.operator.*;
+import static sorcer.mo.operator.*;
+import static sorcer.so.operator.eval;
+import static sorcer.so.operator.exec;
 
 /**
- * Created by Mike Sobolewski on 12/22/19.
+ * Created by Mike Sobolewski on 03/13/2021.
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
@@ -39,129 +38,61 @@ public class Regions {
     private final static Logger logger = LoggerFactory.getLogger(Regions.class);
 
     @Test
-    public void opservicePipeline() throws Exception {
+    public void multiNodeRegion() throws Exception {
 
-        Opservice lambdaOut = invoker("lambdaOut",
-            (Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
-            args("x", "y"));
+        // the explicit input context with exploration/analysis
+        Context rgnCxt = context(explFi("explorer",
+            expl("explorer1",
+                (Context cxt) -> {
+                    double x1, x2, x3;
+                    String clbName = clbName(cxt);
+                    if (clbName.equals("multi-node")) {
+                        x1 = (double)value(cxt, "pl1");
+                        x2 = (double)value(cxt, "pl2");
+                        x3 = (double)value(cxt, "m1");
+                        setValue(cxt, "g1", x3/(x1 * x1));
+                        setValue(cxt, "g2", x3/(x1 + x1));
+                    }
+                    return cxt;
+                })),
+            mdaFi("analyzer",
+                (mda("analyzer1",
+                    (Request rgn, Context cxt) -> {
+                        String dmnName = dmnName(cxt);
+                        if (dmnName.equals("plDisc")) {
+                            setValue(cxt, "pl1", value(cxt, "lambdaOut"));
+                            setValue(cxt, "pl2", value(cxt, "exprOut"));
+                        } else if (dmnName.equals("morphModelDisc")) {
+                            setValue(cxt, "m1", value(cxt, "morpher3"));
+                        }
+                    }))));
 
-        Opservice exprOut = invoker("exprOut", "lambdaOut - y", args("lambdaOut", "y"));
+        Region region = (Region) instance(
+            sig("getMultinodeRegion", MuiltidisciplinaryBuilder.class));
 
-        Opservice sigOut = sig("multiply", MultiplierImpl.class,
-            result("z", inPaths("lambdaOut", "exprOut")));
+        logger.info("node morphModelDisc name: " + name(rnd(region, "morphModelDisc")));
+        logger.info("node plDisc name: " + name(rnd(region, "plDisc")));
+        assertEquals(name(rnd(region, "morphModelDisc")), "morphModelDisc");
+        assertEquals(name(rnd(region, "plDisc")), "plDisc");
 
-        Pipeline opspl = pl(
-            lambdaOut,
-            exprOut,
-            sigOut);
+        Context out = eval(region, rgnCxt);
+        logger.info("node morphModelDisc out: " + out(rnd(region, "morphModelDisc")));
+        logger.info("node plDisc out: " + out(rnd(region, "plDisc")));
+        logger.info("node out: " + out);
 
-        setContext(opspl, context("mfprc",
-            inVal("x", 20.0),
-            inVal("y", 80.0)));
-
-        Context out = (Context) exec(opspl);
-
-        logger.info("pipeline: " + out);
-        assertEquals(130.0, value(out, "lambdaOut"));
-        assertEquals(50.0, value(out, "exprOut"));
-        assertEquals(6500.0, value(out, "z"));
+        assertEquals(0.092, value(out(region), "g1"));
+        assertEquals(4.6, value(out(region), "g2"));
     }
 
     @Test
-    public void conditionalPipelineDiscipline() throws Exception {
-
-        Opservice lambdaOut = invoker("lambdaOut",
-            (Context<Double> cxt) -> value(cxt, "lambdaOut") + value(cxt, "x") + value(cxt, "y") + 10,
-            args("x", "y"));
-
-        Opservice exprOut = invoker("exprOut", "lambdaOut - y", args("lambdaOut", "y"));
-
-        Opservice sigOut = sig("multiply", MultiplierImpl.class,
-            result("z", inPaths("lambdaOut", "exprOut")));
-
-        Pipeline opspl = pl(
-            lambdaOut,
-            exprOut,
-            sigOut);
-
-        // cxtn1 is a free contextion for a discipline dispatcher
-        Block plDispatch = block(
-            loop(condition(cxt -> (double)
-                value(cxt, "lambdaOut") < 500.0), pipeline("cxtn1")));
-
-        Region plDis = operator.rgn(
-            cxtnFi("cxtn1", opspl),
-            dspFi("dspt1", plDispatch));
-
-        setContext(opspl, context("mfprc",
-            inVal("lambdaOut", 20.0),
-            inVal("x", 20.0),
-            inVal("y", 80.0)));
-
-        // out is the discipline output
-        Context out  = eval(plDis, fi("cxtn1", "dspt1"));
-
-        logger.info("pipeline out: " + out);
-        assertEquals(570.0, value(out, "lambdaOut"));
-        assertEquals(490.0, value(out, "exprOut"));
-        assertEquals(279300.0, value(out, "multiply"));
-    }
-
-    @Test
-    public void morphModelDiscipline() throws Exception {
-
-        // evaluate a discipline specified by a signature
-        Context out  = eval(sig("getMorphModelDiscipline", MuiltidisciplinaryBuilder.class), fi("cxtn1", "dspt1"));
-
-        logger.info("morphModelDiscipline cxt1:dspt1: " + out);
-        assertTrue(value(out, "morpher3").equals(920.0));
-    }
-
-    @Test
-    public void multiFiPipelineDisciplineFi_plDisc1() throws Exception {
-
-        Signature discSig = sig("getMultiFiPipelineDiscipline",
-            MuiltidisciplinaryBuilder.class);
-
-        // first fidelity
-        Context out = eval(discSig, fi("plDisc1"));
-
-        logger.info("pipeline cxtn1:dspt1:cxt1: " + out);
-
-        assertEquals(20.0, value(out, "x"));
-        assertEquals(80.0, value(out, "y"));
-        assertEquals(2000.0, value(out, "multiply"));
-        assertEquals(100.0, value(out, "lambdaOut"));
-        assertEquals(20.0, value(out, "exprOut"));
-    }
-
-    @Test
-    public void multiFiPipelineyDiscipline_plDisc2() throws Exception {
-
-        Signature discSig = sig("getMultiFiPipelineDiscipline",
-            MuiltidisciplinaryBuilder.class);
-
-        // first fidelity
-        Context out = eval(discSig, fi("plDisc2"));
-
-        logger.info(" pipeline cxtn2:dspt2:cxt2: " + out);
-
-        assertEquals(20.0, value(out, "x"));
-        assertEquals(80.0, value(out, "y"));
-        assertEquals(228800.0, value(out, "multiply"));
-        assertEquals(520.0, value(out, "lambdaOut"));
-        assertEquals(440.0, value(out, "exprOut"));
-    }
-
-    @Test
-    public void multidiscGovernance1() throws Exception {
+    public void multiRgnGovernance1() throws Exception {
 
         // the explicit input context with MDA
         Context govCxt = context(mdaFi("multidiscMdaFi",
             mda("analyzer",
                 (Request gov, Context cxt) -> {
                     double x1, x2, x3;
-                    String discName = rgn(cxt);
+                    String discName = rgnn(cxt);
                     if (discName.equals("morphModelDisc")) {
                         setValue(gov, "m1", value(cxt, "morpher3"));
                     } else if (discName.equals("plDisc")) {
@@ -180,14 +111,14 @@ public class Regions {
         Governance gov = (Governance) instance(
             sig("getMultidiscGovernance1", MuiltidisciplinaryBuilder.class));
 
-        logger.info("discipline morphModelDisc name: " + operator.rgn(gov, "morphModelDisc").getName());
-        logger.info("discipline plDisc name: " + operator.rgn(gov, "plDisc").getName());
-        assertEquals(operator.rgn(gov, "morphModelDisc").getName(), "morphModelDisc");
-        assertEquals(operator.rgn(gov, "plDisc").getName(), "plDisc");
+        logger.info("discipline morphModelDisc name: " + name(rgn(gov, "morphModelDisc")));
+        logger.info("discipline plDisc name: " + name(rgn(gov, "plDisc")));
+        assertEquals(name(rgn(gov, "morphModelDisc")), "morphModelDisc");
+        assertEquals(name(rgn(gov, "plDisc")), "plDisc");
 
         Context out = eval(gov, govCxt);
-        logger.info("gov morphModelDisc out: " + out(operator.rgn(gov, "morphModelDisc")));
-        logger.info("gov plDisc out: " + out(operator.rgn(gov, "plDisc")));
+        logger.info("gov morphModelDisc out: " + out(rgn(gov, "morphModelDisc")));
+        logger.info("gov plDisc out: " + out(rgn(gov, "plDisc")));
         logger.info("gov out: " + out);
 
         assertEquals(0.092, value(out(gov), "g1"));
@@ -195,20 +126,20 @@ public class Regions {
     }
 
     @Test
-    public void multidiscGovernance2() throws Exception {
+    public void multiRgnGovernance2() throws Exception {
         // the default input context with MDA is defined with the governance
 
         Governance gov = (Governance) instance(
             sig("getMultidiscGovernance2", MuiltidisciplinaryBuilder.class));
 
-        logger.info("discipline morphModelDisc name: " + operator.rgn(gov, "morphModelDisc").getName());
-        logger.info("discipline plDisc name: " + operator.rgn(gov, "plDisc").getName());
-        assertEquals(operator.rgn(gov, "morphModelDisc").getName(), "morphModelDisc");
-        assertEquals(operator.rgn(gov, "plDisc").getName(), "plDisc");
+        logger.info("discipline morphModelDisc name: " + name(rgn(gov, "morphModelDisc")));
+        logger.info("discipline plDisc name: " + name(rgn(gov, "plDisc")));
+        assertEquals(name(rgn(gov, "morphModelDisc")), "morphModelDisc");
+        assertEquals(name(rgn(gov, "plDisc")), "plDisc");
 
         Context out = eval(gov);
-        logger.info("gov morphModelDisc out: " + out(operator.rgn(gov, "morphModelDisc")));
-        logger.info("gov plDisc out: " + out(operator.rgn(gov, "plDisc")));
+        logger.info("gov morphModelDisc out: " + out(rgn(gov, "morphModelDisc")));
+        logger.info("gov plDisc out: " + out(rgn(gov, "plDisc")));
         logger.info("gov out: " + out);
 
         assertEquals(0.092, value(out(gov), "g1"));

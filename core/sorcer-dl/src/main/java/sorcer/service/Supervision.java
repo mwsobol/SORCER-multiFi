@@ -16,14 +16,13 @@ package sorcer.service;
  * limitations under the License.
  */
 
-import sorcer.service.modeling.SuperviseException;
+import sorcer.service.modeling.ExecutiveException;
 
 import java.rmi.RemoteException;
 
 public interface Supervision {
 
-
-    public Context supervise(Context context, Arg... args) throws SuperviseException,
+    public Context supervise(Context context, Arg... args) throws ServiceException, ExecutiveException,
             RemoteException;
 
 }

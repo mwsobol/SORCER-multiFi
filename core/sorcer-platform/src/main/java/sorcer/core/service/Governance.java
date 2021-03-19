@@ -24,11 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.AnalysisEntry;
-import sorcer.core.context.model.ent.SupervisionEntry;
+import sorcer.core.context.model.ent.Analyzer;
+import sorcer.core.context.model.ent.Supervisor;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
-import sorcer.service.Region;
+import sorcer.service.Node;
 import sorcer.service.modeling.*;
 
 import java.rmi.RemoteException;
@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Governance implements Transdiscipline, Dependency, cxtn {
+public class Governance implements Transdiscipline, Dependency {
 
 	private static final long serialVersionUID = 1L;
 
@@ -72,13 +72,15 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 
 	protected Fidelity<Supervision> supervisorFi;
 
+	protected Fidelity<Hypervision> executiveFi;
+
 	protected ServiceFidelity contextMultiFi;
 
-	protected Map<String, Region> disciplines = new HashMap<>();
+	protected Map<String, Region> regions = new HashMap<>();
 
 	protected Map<String, Context> childrenContexts;
 
-	private Governor governor;
+	private Hypervision governor;
 
 	// dependency management for this governance
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
@@ -99,6 +101,8 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 
 	protected Projection outPathProjection;
 
+	protected boolean isExec = true;
+
     public Governance() {
         this(null);
     }
@@ -110,22 +114,22 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
             this.name = name;
         }
 		serviceStrategy = new ModelStrategy(this);
-		governor = new Governor(this);
+		governor = new Gavernor(this);
     }
 
     public Governance(String name, Region[] regions) {
         this(name);
-        for (Region disc : regions) {
-                this.disciplines.put(disc.getName(), disc);
-				disciplnePaths.add(new Path(disc.getName()));
+        for (Region rgn : regions) {
+                this.regions.put(rgn.getName(), rgn);
+				disciplnePaths.add(new Path(rgn.getName()));
         }
     }
 
 	public Governance(String name, List<Region> regions) {
 		this(name);
-		for (Region disc : regions) {
-			this.disciplines.put(disc.getName(), disc);
-			disciplnePaths.add(new Path(disc.getName()));
+		for (Region rgn : regions) {
+			this.regions.put(rgn.getName(), rgn);
+			disciplnePaths.add(new Path(rgn.getName()));
 		}
 	}
 
@@ -145,12 +149,8 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
         this.disciplnePaths = disciplnePaths;
     }
 
-    public Map<String, Region> getDisciplines() {
-		return disciplines;
-	}
-
-	public Region getDiscipline(String name) {
-		return disciplines.get(name);
+    public Map<String, Region> getRegions() {
+		return regions;
 	}
 
     public Supervision getSuperviser() {
@@ -273,10 +273,10 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 		this.analyzerFi = analyzerFi;
 	}
 
-	public List<Region> getDisciplineList() {
+	public List<Region> getRegionList() {
 		List<Region> discList = new ArrayList<>();
-		for (Region disc : disciplines.values()) {
-			if (disc instanceof Region) {
+		for (Region disc : regions.values()) {
+			if (disc instanceof Node) {
 				discList.add(disc);
 			}
 		}
@@ -287,10 +287,10 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 		if(analyzerFi == null) {
 			Object mdaComponent = context.get(Context.MDA_PATH);
 			if (mdaComponent != null) {
-				if (mdaComponent instanceof AnalysisEntry) {
-					analyzerFi = new Fidelity(((AnalysisEntry) mdaComponent).getName());
-					analyzerFi.addSelect((AnalysisEntry) mdaComponent);
-					analyzerFi.setSelect((AnalysisEntry) mdaComponent);
+				if (mdaComponent instanceof Analyzer) {
+					analyzerFi = new Fidelity(((Analyzer) mdaComponent).getName());
+					analyzerFi.addSelect((Analyzer) mdaComponent);
+					analyzerFi.setSelect((Analyzer) mdaComponent);
 				} else if (mdaComponent instanceof ServiceFidelity
 					&& ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
 					analyzerFi = (Fidelity) mdaComponent;
@@ -308,10 +308,10 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 		if(supervisorFi == null) {
 			Object supComponent = context.get(Context.MDA_PATH);
 			if (supComponent != null) {
-				if (supComponent instanceof SupervisionEntry) {
-					supervisorFi = new Fidelity(((SupervisionEntry) supComponent).getName());
-					supervisorFi.addSelect((SupervisionEntry) supComponent);
-					supervisorFi.setSelect((SupervisionEntry) supComponent);
+				if (supComponent instanceof Supervisor) {
+					supervisorFi = new Fidelity(((Supervisor) supComponent).getName());
+					supervisorFi.addSelect((Supervisor) supComponent);
+					supervisorFi.setSelect((Supervisor) supComponent);
 				} else if (supComponent instanceof ServiceFidelity
 					&& ((ServiceFidelity) supComponent).getFiType().equals(Fi.Type.SUP)) {
 					supervisorFi = (Fidelity) supComponent;
@@ -323,6 +323,14 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 			output = new ServiceContext(name);
 		}
 		return supervisorFi;
+	}
+
+	public Fidelity<Hypervision> getExecutiveFi() {
+		return executiveFi;
+	}
+
+	public void setExecutiveFi(Fidelity<Hypervision> executiveFi) {
+		this.executiveFi = executiveFi;
 	}
 
 	public Context getInConnector() {
@@ -388,13 +396,18 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 
 			ModelStrategy strategy = ((ModelStrategy) cxt.getDomainStrategy());
 			strategy.setExecState(Exec.State.RUNNING);
-			governor.supervise(cxt, args);
+			governor.hypervise(cxt, args);
 			((ModelStrategy) serviceStrategy).setOutcome(output);
 			strategy.setExecState(Exec.State.DONE);
-		} catch (SuperviseException | ConfigurationException e) {
+		} catch (ConfigurationException | ExecutiveException | ServiceException e) {
 			throw new EvaluationException(e);
 		}
 		return out;
+	}
+
+	@Override
+	public String getDomainName() {
+		return name;
 	}
 
 	@Override
@@ -450,7 +463,7 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 	}
 
 	public Map<String, Region> getChildren() {
-		return disciplines;
+		return regions;
 	}
 
 	@Override
@@ -459,16 +472,12 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 	}
 
 	@Override
-	public Mogram getChild(String name) {
-		try {
-			return (Mogram) disciplines.get(name).getContextion();
-		} catch (ServiceException e) {
-			throw new RuntimeException(e);
-		}
+	public Region getChild(String name) {
+		return regions.get(name);
 	}
 
 	public Region getRegion(String name) {
-		return disciplines.get(name);
+		return regions.get(name);
 	}
 
 	@Override
@@ -501,7 +510,7 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 
 	@Override
 	public List<Contextion> getContextions(List<Contextion> contextionList) {
-		for (Contextion e : disciplines.values()) {
+		for (Contextion e : regions.values()) {
 			e.getContextions(contextionList);
 		}
 		contextionList.add(this);
@@ -534,5 +543,13 @@ public class Governance implements Transdiscipline, Dependency, cxtn {
 
 	}
 
+	@Override
+	public boolean isExec() {
+		return isExec;
+	}
+
+	public void setExec(boolean exec) {
+		isExec = exec;
+	}
 
 }

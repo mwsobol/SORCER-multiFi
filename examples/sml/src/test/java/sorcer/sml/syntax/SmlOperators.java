@@ -72,9 +72,9 @@ public class SmlOperators {
 		mog ex2 = job(t1, job(t2, m1));
 		dmn m2 = model(m1, op1, t1, ex2);
 		dmn tm1 = tModel("name");
-		cxtn cb1 = clb("domainCollab");
-		cxtn d1 = operator.rgn("name");
-		cxtn g1 = gov("name", d1);
+		disc cb1 = clb("domainCollab");
+		disc d1 = rgn("name");
+		disc g1 = gov("name", d1);
 
 		// Object outputs
 		Object o1 = exec(op1);
@@ -91,7 +91,7 @@ public class SmlOperators {
 		Object o10 = value(context(), "path");
 		Object o11 = exec(model(), "path");
 		Object o12 = exec(model(), "path", "domain");
-		Object o13 = exec(operator.rgn(), cxt());
+		Object o13 = exec(operator.rnd(), cxt());
 
 		// Entries for results of exec
 		ent e3 = execEnt(v1);
@@ -112,7 +112,7 @@ public class SmlOperators {
 		// Evaluate domains
 		cxt c4 = eval(model());
 		Context c5 = eval(ex2, context());
-		cxt c6 = eval(operator.rgn(), cxt());
+		cxt c6 = eval(operator.rnd(), cxt());
 		// Domain results
 		cxt out1 = result(model());
 		cxt out2 = result(job());

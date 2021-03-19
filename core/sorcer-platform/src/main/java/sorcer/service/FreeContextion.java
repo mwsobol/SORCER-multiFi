@@ -47,6 +47,11 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
+	public String getDomainName() {
+		return name;
+	}
+
+	@Override
 	public Context getContext() throws ContextException {
 		return null;
 	}
@@ -66,28 +71,33 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
-	public Context appendContext(Context context) throws ContextException, RemoteException {
+	public Context appendContext(Context context) throws ContextException {
 		return null;
 	}
 
 	@Override
-	public Context getDomainData() throws ContextException, RemoteException {
+	public Context getDomainData() throws ContextException {
 		return null;
 	}
 
 	@Override
-	public Context getContext(Context contextTemplate) throws RemoteException, ContextException {
+	public Context getContext(Context contextTemplate) throws ContextException {
 		return null;
 	}
 
 	@Override
-	public Context appendContext(Context context, String path) throws ContextException, RemoteException {
+	public Context appendContext(Context context, String path) throws ContextException {
 		return null;
 	}
 
 	@Override
-	public Context getContext(String path) throws ContextException, RemoteException {
+	public Context getContext(String path) throws ContextException {
 		return null;
+	}
+
+	@Override
+	public boolean isExec() {
+		return false;
 	}
 
 	@Override
@@ -140,9 +150,13 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
-	public Object execute(Arg... args) throws ServiceException, RemoteException {
+	public Object execute(Arg... args) throws ServiceException {
 		if (contextion != null) {
-			return contextion.execute(args);
+			try {
+				return contextion.execute(args);
+			} catch (RemoteException e) {
+				throw new ServiceException(e);
+			}
 		} else {
 			throw new ServiceException("contextion not bind yet");
 		}

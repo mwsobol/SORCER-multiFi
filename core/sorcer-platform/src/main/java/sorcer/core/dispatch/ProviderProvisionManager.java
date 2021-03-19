@@ -38,7 +38,7 @@ public class ProviderProvisionManager {
     private static final int MAX_ATTEMPTS = 3;
 
 
-    public static void provision(Routine exertion, SpaceParallelDispatcher spaceExertDispatcher) throws SignatureException {
+    public static void provision(Routine exertion, SpaceParallelDispatcher spaceExertDispatcher) {
         getInstance().doProvision(exertion, spaceExertDispatcher);
     }
 
@@ -48,7 +48,7 @@ public class ProviderProvisionManager {
         return instance;
     }
 
-    private void doProvision(Routine exertion, SpaceParallelDispatcher spaceExertDispatcher) throws SignatureException {
+    private void doProvision(Routine exertion, SpaceParallelDispatcher spaceExertDispatcher) {
         RemoteSignature sig = (RemoteSignature) exertion.getProcessSignature();
         // A hack to disable provisioning spacer itself
         if (!sig.getServiceType().getName().equals(Spacer.class.getName())) {
@@ -84,14 +84,9 @@ public class ProviderProvisionManager {
                     logger.info("Provisioning: " + srvToProvision.getSignature());
                     service = ServiceDirectoryProvisioner.getProvisioner().provision(srvToProvision.getSignature());
                 } catch (ProvisioningException pe) {
-                    String msg = null;
-                    try {
-                        msg = "Problem provisioning " + srvToProvision.getSignature().getServiceType()
-                                + " (" + srvToProvision.getSignature().getProviderName() + ")"
-                                + " " + pe.getMessage();
-                    } catch (SignatureException e) {
-                        e.printStackTrace();
-                    }
+                    String msg = "Problem provisioning " + srvToProvision.getSignature().getServiceType()
+                            + " (" + srvToProvision.getSignature().getProviderName() + ")"
+                            + " " + pe.getMessage();
                     logger.error(msg);
                 }
             }

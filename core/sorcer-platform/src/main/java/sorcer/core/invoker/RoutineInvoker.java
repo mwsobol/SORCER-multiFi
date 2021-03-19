@@ -31,8 +31,8 @@ import java.rmi.RemoteException;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class RoutineInvoker extends ServiceInvoker implements Invocation {
 	private static final long serialVersionUID = -8257643691945276788L;
-	private Routine exertion;
-	private String path;
+	private final Routine exertion;
+	private final String path;
 	private Routine evaluatedExertion;
 	private Transaction txn;
 	private Object updatedValue;
@@ -60,9 +60,8 @@ public class RoutineInvoker extends ServiceInvoker implements Invocation {
 	 * @see sorcer.service.Evaluation#execute(sorcer.service.Args[])
 	 */
 	@Override
-	public Object evaluate(Arg... args) throws InvocationException,
-			RemoteException {
-		Context cxt = null;
+	public Object evaluate(Arg... args) throws InvocationException {
+		Context cxt;
 		try {
 			evaluatedExertion = exertion.exert(txn);
 			Context.Return returnPath = ((ServiceContext)evaluatedExertion.getDataContext())
@@ -98,8 +97,7 @@ public class RoutineInvoker extends ServiceInvoker implements Invocation {
 		return evaluatedExertion;
 	}
 
-	public void substitute(Function... entries) throws SetterException,
-			RemoteException {
+	public void substitute(Function... entries) throws SetterException {
 		((Subroutine)exertion).substitute(entries);
 	}
 

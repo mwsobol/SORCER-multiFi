@@ -29,25 +29,25 @@ import java.rmi.RemoteException;
  */
 public interface Evaluator <T> extends Opservice, Exertion, Provider, Evaluation<T>, Scopable, Getter<T>, Activity, Identifiable {
 
-	public void addArgs(ArgSet set) throws EvaluationException, RemoteException;
+	void addArgs(ArgSet set) throws EvaluationException, RemoteException;
 	
-	public ArgSet getArgs();
+	ArgSet getArgs();
 	
-	public void setParameterTypes(Class<?>[] types);
+	void setParameterTypes(Class<?>[] types);
 	
-	public void setParameters(Object... args);
+	void setParameters(Object... args);
 
-	public void update(Setup... entries) throws ContextException;
+	void update(Setup... entries) throws ContextException;
 
-	public void setNegative(boolean negative);
+	void setNegative(boolean negative);
 
-	public void setValid(boolean state);
+	void setValid(boolean state);
 
-	public boolean isValid();
+	boolean isValid();
 
-	public boolean isChanged();
+	boolean isChanged();
 
-	public enum SPI {
+	enum SPI {
 		JEP, GROOVY, METHOD, EXERTION, OBJECT, PROXY, INDEPENDENT, DEPENDENT, SOA, NULL
 	}
 	/**
@@ -55,5 +55,5 @@ public interface Evaluator <T> extends Opservice, Exertion, Provider, Evaluation
 	 *
 	 * @return Context.Return to the return execute
 	 */
-	public Context.Return getContextReturn();
+	Context.Return getContextReturn();
 }

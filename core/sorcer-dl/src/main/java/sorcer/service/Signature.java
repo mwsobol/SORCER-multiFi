@@ -17,6 +17,8 @@
 
 package sorcer.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.provider.ProviderName;
 import sorcer.service.modeling.EvaluationComponent;
 import sorcer.service.modeling.SupportComponent;
@@ -57,14 +59,14 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 *
 	 * @return name of signature
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns an operation name of this signature.
 	 *
 	 * @return name of operation
 	 */
-	public String getSelector();
+	String getSelector();
 
 	/**
 	 * Returns a fragment of operation of this signature. It's the part
@@ -72,37 +74,37 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 *
 	 * @return fragment of operation
 	 */
-	public String getPrefix();
+	String getPrefix();
 
 	/**
 	 * Returns a service provider name.
 	 *
 	 * @return name of service provider
 	 */
-	public ProviderName getProviderName();
+	ProviderName getProviderName();
 
 	/**
 	 * Returns a service provider.
 	 *
 	 * @return name of service provider
 	 */
-	public Object getProvider() throws SignatureException;
+	Object getProvider() throws SignatureException;
 
 	/**
 	 * Returns a provider of <code>Variability</code> fiType.
 	 *
 	 * @return Variability of this service provider
 	 */
-	public Functionality<?> getVariability();
+	Functionality<?> getVariability();
 
-	public void setProviderName(ProviderName providerName);
+	void setProviderName(ProviderName providerName);
 
 	/**
 	 * Returns a service fiType name of this signature.
 	 *
 	 * @return name of service interface
 	 */
-	public Class getServiceType() throws SignatureException;
+	Class<?> getServiceType();
 
 	/**
 	 * Assigns a service type of this signature.
@@ -110,14 +112,14 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 * @param serviceType
 	 *            service serviceType
 	 */
-	public void setServiceType(Class serviceType);
+	void setServiceType(Class<?> serviceType);
 
 	/**
 	 * Returns a service multitype of this signature.
 	 *
 	 * @return service multitype
 	 */
-	public Multitype getMultitype() throws SignatureException;
+	Multitype getMultitype() throws SignatureException;
 
 	/**
 	 * Assigns a service multi of this signature.
@@ -125,7 +127,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 * @param multitype
 	 *            service multitype
 	 */
-	public void setMultitype(Multitype multitype);
+	void setMultitype(Multitype multitype);
 
 	/**
 	 * Returns an array of service types of this signature
@@ -133,7 +135,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 *
 	 * @return array of service types matched by service proxy
 	 */
-	public Class[] getMatchTypes();
+	Class<?>[] getMatchTypes();
 
 	/**
 	 * Assigns a request return of this signature with a given return path.
@@ -141,11 +143,11 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 * @param contextReturn
 	 * 			a context return
 	 */
-	public void setContextReturn(Context.Return contextReturn);
+	void setContextReturn(Context.Return contextReturn);
 
-	public void setContextReturn(String path);
+	void setContextReturn(String path);
 
-	public void setContextReturn();
+	void setContextReturn();
 
 	/**
 	 * Assigns a request return to the return execute with a return path and directional attribute.
@@ -155,21 +157,21 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 * @param direction
 	 *            the request return directional attribute
 	 */
-	public void setContextReturn(String path, Direction direction);
+	void setContextReturn(String path, Direction direction);
 
 	/**
 	 * Returns a Context.Return to the return execute by this signature.
 	 *
 	 * @return Context.Return to the return execute
 	 */
-	public Context.Return getContextReturn();
+	Context.Return getContextReturn();
 
 	/**
 	 * Returns a signature Type of this signature.
 	 *
 	 * @return a Type of this signature
 	 */
-	public Type getExecType();
+	Type getExecType();
 
 	/**
 	 * Returns a inConnector specifying output paths for existing
@@ -177,7 +179,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 *
 	 * @return a context mapping output paths to existing returnPath
 	 */
-	public Context getInConnector();
+	Context getInConnector();
 
 	/**
 	 * Assigns a signature <code>fiType</code> for this service signature.
@@ -185,7 +187,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 * @param type
 	 *            a signature fiType
 	 */
-	public Signature setType(Signature.Type type);
+	Signature setType(Signature.Type type);
 
 	/**
 	 * Returns a codebase for the code implementing this signature. The codebase
@@ -193,7 +195,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 *
 	 * @return a codebase for the code implementing this signature
 	 */
-	public String getCodebase();
+	String getCodebase();
 
 	/**
 	 * Assigns a codbase to <code>urls</code> for the code implementing this
@@ -202,39 +204,39 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 * @param urls
 	 *            a list of space separated URLS
 	 */
-	public void setCodebase(String urls);
+	void setCodebase(String urls);
 
 	/**
 	 *  Close and connectivity to the bound service provider.
 	 * @throws RemoteException
 	 * @throws IOException
 	 */
-	public void close() throws RemoteException, IOException;
+	void close() throws RemoteException, IOException;
 
 	/**
 	 * Returns a deployment for provisioning a referenced service provider;
 	 */
-	public Deployment getDeployment();
+	Deployment getDeployment();
 
 	/**
 	 * Returns an access types to a provider, synchronous (PUSH) or asynchronous (PULL);
 	 */
-	public Strategy.Access getAccessType();
+	Strategy.Access getAccessType();
 	
 	/**
 	 * There are four types of {@link Signature} operations that can be
 	 * associated with signatures: <code>PRE</code> (preprocess),
-	 * <code>PROC</code> (process/service) , <code>POST</code> (postprocess), and
+	 * <code>PRO</code> (process/service) , <code>POST</code> (postprocess), and
 	 * <code>APD_DATA</code> (append data) and code>APD_CONTROL</code> (append
-	 * control strategy). Only one <code>PROC</code> signature can be associated
-	 * with any exertion. The <code>PROC</code> signature defines an executing
-	 * provider dynamically bounded at runtime. The <code>APD_DATA</code>
-	 * signatures are invoked invoked first to getValue specified contexts from
-	 * {@link sorcer.service.Contexter}s that are appended to the task's current
+	 * control strategy). Only one <code>PRO</code> signature can be associated
+	 * with the target process. The <code>PRO</code> signature defines an executing
+	 * provider to be bounded at runtime. The <code>APD_DATA</code>
+	 * signatures are invoked first to getValue specified contexts from
+	 * {@link sorcer.service.Context}s that are appended to the task's current
 	 * context.
 	 */
-	public enum Type implements Arg {
-		PROC, PRE, POST, SRV, APD_DATA, APD_CONTROL, BUILDER;
+	enum Type implements Arg {
+		PRO, PRE, POST, SRV, APD_DATA, APD_CONTROL, BUILDER, CONTROLLER;
 
 		/* (non-Javadoc)
          * @see sorcer.service.Arg#getName()
@@ -252,7 +254,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	/**
 	 * Used to indicate if signature is active.
 	 */
-	public enum Operating implements Arg {
+	enum Operating implements Arg {
 		YES, NO, TRUE, FALSE;
 
 		/* (non-Javadoc)
@@ -268,8 +270,11 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 		}
 	}
 
-	public enum Kind implements Arg {
-		CONTEXT, DESIGN, TASKER, JOBBER, SPACER, DISPATCHER, OPTIMIZER, EXPLORER, SOLVER, DRIVER, MODEL, DISCIPLINE, MODEL_MANAGER;
+	/*enum Kind implements Arg {
+		CONTEXT, DESIGN, TASKER, JOBBER, SPACER, DISPATCHER, OPTIMIZER, EXPLORER, SOLVER, DRIVER, MODEL, DISCIPLINE, MODEL_MANAGER;*/
+	enum Kind implements Arg {
+		CONTEXT, CONTEXTION, DESIGN, TASKER, JOBBER, SPACER, DISPATCHER, OPTIMIZER,
+		EXPLORER, SOLVER, DRIVER, MODEL, DISCIPLINE, MODEL_MANAGER;
 
 		/* (non-Javadoc)
 		 * @see sorcer.service.Arg#getName()
@@ -284,7 +289,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 		}
 	}
 
-	public enum Direction implements Arg {
+	enum Direction implements Arg {
 		IN, OUT, INOUT, FROM, TO;
 
 		/* (non-Javadoc)
@@ -312,17 +317,17 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 		public Object execute(Arg... args) {
 			return this;
 		}
-	};
+	}
 
-	static final String SELF = "_self_";
-	static final String SELF_VALUE = "_self_value_";
-	static final Type SRV = Type.PROC;
-	static final Type PRE = Type.PRE;
-	static final Type POST = Type.POST;
-	static final Type APD = Type.APD_DATA;
+	String SELF = "_self_";
+	String SELF_VALUE = "_self_value_";
+	Type SRV = Type.PRO;
+	Type PRE = Type.PRE;
+	Type POST = Type.POST;
+	Type APD = Type.APD_DATA;
 
-	public static class Read extends Paths {
-		private static final long serialVersionUID = 1L;
+	class Read extends Paths {
+		static long serialVersionUID = 1L;
 
 		public Read() {
 			super();
@@ -340,8 +345,8 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 		}
 	}
 
-	public static class Write extends Paths {
-		private static final long serialVersionUID = 1L;
+	class Write extends Paths {
+		static long serialVersionUID = 1L;
 
 		public Write() {
 			super();
@@ -359,8 +364,8 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 		}
 	}
 
-	public static class State extends Paths {
-		private static final long serialVersionUID = 1L;
+	class State extends Paths {
+		static long serialVersionUID = 1L;
 
 		public State() {
 			super();
@@ -379,8 +384,8 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	}
 
 
-	public static class Append extends Paths {
-		private static final long serialVersionUID = 1L;
+	class Append extends Paths {
+		static long serialVersionUID = 1L;
 
 		public Append() {
 			super();
@@ -398,8 +403,8 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 		}
 	}
 
-	public static class SessionPaths extends ArrayList<Paths> implements Arg {
-		private static final long serialVersionUID = 1L;
+	class SessionPaths extends ArrayList<Paths> implements Arg {
+		static long serialVersionUID = 1L;
 
 		public SessionPaths() {
 			super();
@@ -430,8 +435,8 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 		}
 	}
 
-	public static class Operation implements Serializable, Arg {
-		static final long serialVersionUID = 1L;
+	class Operation implements Serializable, Arg {
+		static long serialVersionUID = 1L;
 
 		public String selector;
 
@@ -472,8 +477,9 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 		}
 	}
 
-	public static class Multitype implements Serializable, Arg {
-		static final long serialVersionUID = 1L;
+	class Multitype implements Serializable, Arg {
+		static long serialVersionUID = 1L;
+		private static final Logger logger = LoggerFactory.getLogger(Multitype.class);
 
 		public String typeName;
 
@@ -504,11 +510,11 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 			}
 		}
 
-		public Class getProviderType() throws SignatureException {
+		public Class<?> getProviderType() {
 			return getProviderType(null);
 		}
 
-		public Class getProviderType(ClassLoader loader) throws SignatureException {
+		public Class<?> getProviderType(ClassLoader loader) {
 			if (providerType != null) {
 				return providerType;
 			} else if (typeName != null) {
@@ -518,7 +524,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 					else
 						providerType = Class.forName(typeName, true, loader);
 				} catch (ClassNotFoundException e) {
-					throw new SignatureException(e);
+					logger.warn("Unable to load " + typeName, e);
 				}
 			}
 			return providerType;

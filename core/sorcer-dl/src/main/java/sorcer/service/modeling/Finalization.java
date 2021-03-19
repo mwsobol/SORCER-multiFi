@@ -19,8 +19,7 @@ package sorcer.service.modeling;
 
 import sorcer.service.Arg;
 import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Request;
+import sorcer.service.ServiceException;
 
 /**
  * Created by Mike Sobolewski on 12/19/2020.
@@ -28,6 +27,6 @@ import sorcer.service.Request;
 @FunctionalInterface
 public interface Finalization {
 
-    public void finalize(Context context, Arg... args) throws ContextException;
+    public void finalize(Context context, Arg... args) throws ServiceException;
 
 }

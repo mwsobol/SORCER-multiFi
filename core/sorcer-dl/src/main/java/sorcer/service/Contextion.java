@@ -19,6 +19,7 @@ package sorcer.service;
 
 
 import net.jini.core.transaction.Transaction;
+import sorcer.service.modeling.cxtn;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -37,10 +38,10 @@ public interface Contextion extends Request, Scopable {
 	 * to evaluate it if is still valid.
      *
      * @return the current execute of this evaluation
-     * @throws EvaluationException
+     * @throws MogramException
      * @throws RemoteException
      */
-    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException;
+    Context evaluate(Context context, Arg... args) throws MogramException, RemoteException, ServiceException;
 
 	/**
 	 * Generic federated execution called exertion by federated services.
@@ -53,7 +54,9 @@ public interface Contextion extends Request, Scopable {
 	 * @throws RemoteException
 	 *             if remote call causes an error
 	 */
-	public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException;
+	<T extends Contextion> T exert(Transaction txn, Arg... args) throws RemoteException, ServiceException;
+
+	public String getDomainName();
 
 	/**
 	 * Returns the data context of this contextion.
@@ -61,26 +64,26 @@ public interface Contextion extends Request, Scopable {
 	 * @return the data context
 	 * @throws ContextException
 	*/
-	public Context getContext() throws ContextException;
+	Context getContext() throws ContextException;
 
-	public Context getOutput(Arg... args) throws ContextException;
+	Context getOutput(Arg... args) throws ContextException;
 
 	/**
 	 * Sets the data context of this contextion.
 	 *
 	 * @throws ContextException
 	 */
-	public void setContext(Context input) throws ContextException;
+	void setContext(Context input) throws ContextException;
 
 	/**
 	 * Appends an argument context to the data context of this contextion.
 	 *
 	 * @throws ContextException
 	 */
-	public Context appendContext(Context context)
+	Context appendContext(Context context)
 		throws ContextException, RemoteException;
 
-	public Context getDomainData()
+	Context getDomainData()
 		throws ContextException, RemoteException;
 
 	/**
@@ -88,7 +91,7 @@ public interface Contextion extends Request, Scopable {
 	 * @throws ContextException
 	 * @throws RemoteException
 	 */
-	public Context getContext(Context contextTemplate)
+	Context getContext(Context contextTemplate)
 		throws RemoteException, ContextException;
 
 	/**
@@ -99,7 +102,7 @@ public interface Contextion extends Request, Scopable {
 	 * @throws ContextException
 	 * @throws RemoteException
 	 */
-	public Context appendContext(Context context, String path)
+	Context appendContext(Context context, String path)
 		throws ContextException, RemoteException;
 
 	/**
@@ -109,8 +112,13 @@ public interface Contextion extends Request, Scopable {
 	 * @throws ContextException
 	 * @throws RemoteException
 	 */
-	public Context getContext(String path) throws ContextException,
+	Context getContext(String path) throws ContextException,
 		RemoteException;
+
+	/**
+	 * Returns true if this contextion is executable in Collaboration
+	 */
+	public boolean isExec();
 
 	/**
 	 * Returns a Context.Return that specifies a returned context
@@ -118,16 +126,16 @@ public interface Contextion extends Request, Scopable {
 	 *
 	 * @return Context.Return to the return execute
 	 */
-	public Context.Return getContextReturn();
+	Context.Return getContextReturn();
 
-	public ServiceStrategy getDomainStrategy();
+	ServiceStrategy getDomainStrategy();
 
-	public Projection getInPathProjection();
+	Projection getInPathProjection();
 
-	public Projection getOutPathProjection();
+	Projection getOutPathProjection();
 
-	public List<Contextion> getContextions(List<Contextion> contextionList);
+	List<Contextion> getContextions(List<Contextion> contextionList);
 
-	public void selectFidelity(Fidelity fi) throws ConfigurationException;
+	void selectFidelity(Fidelity fi) throws ConfigurationException;
 
 }

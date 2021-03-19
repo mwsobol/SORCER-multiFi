@@ -17,7 +17,7 @@
 
 package sorcer.sml.transmodel;
 
-import builder.CollabBuilder;
+import sml.builder.CollabBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;

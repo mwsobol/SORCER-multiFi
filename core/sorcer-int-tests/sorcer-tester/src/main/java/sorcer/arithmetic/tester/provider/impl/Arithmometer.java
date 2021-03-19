@@ -13,6 +13,10 @@ import groovy.lang.GroovyShell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sorcer.arithmetic.tester.provider.Adder;
+import sorcer.arithmetic.tester.provider.Divider;
+import sorcer.arithmetic.tester.provider.Multiplier;
+import sorcer.arithmetic.tester.provider.Subtractor;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ArrayContext;
 import sorcer.core.context.Contexts;
@@ -45,10 +49,9 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	 * @param context
 	 *            input context for this operation
 	 * @return an output service context
-	 * @throws RemoteException
 	 * @throws ContextException
 	 */
-	public Context add(Context context) throws RemoteException, ContextException {
+	public Context add(Context context) throws ContextException {
 		if (context instanceof ArrayContext) {
 			return calculateFromArrayContext(context, ADD);
 		} else {
@@ -62,11 +65,10 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	 * @param context
 	 *            input context for this operation
 	 * @return an output service context
-	 * @throws RemoteException
 	 * @throws ContextException
 	 */
 	public Context subtract(Context context)
-			throws RemoteException, ContextException {
+			throws ContextException {
 		if (context instanceof ArrayContext) {
 			return calculateFromArrayContext(context, SUBTRACT);
 		} else {
@@ -80,11 +82,10 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	 * @param context
 	 *            input context for this operation
 	 * @return an output service context
-	 * @throws RemoteException
 	 * @throws ContextException
 	 */
 	public Context multiply(Context context)
-			throws RemoteException, ContextException {
+			throws ContextException {
 		if (context instanceof ArrayContext) {
 			return calculateFromArrayContext(context, MULTIPLY);
 		} else {
@@ -99,9 +100,8 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	 *            input context for this operation
 	 * @return an output service context
 	 * @throws ContextException
-	 * @throws RemoteException
 	 */
-	public Context divide(Context context) throws RemoteException, ContextException {
+	public Context divide(Context context) throws ContextException {
 		if (context instanceof ArrayContext) {
 			return calculateFromArrayContext(context, DIVIDE);
 		} else {
@@ -109,7 +109,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 		}
 	}
 
-	public Context average(Context context) throws RemoteException, ContextException {
+	public Context average(Context context) throws ContextException {
 		if (context instanceof ArrayContext) {
 			return calculateFromArrayContext(context, AVERAGE);
 		} else {
@@ -117,7 +117,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 		}
 	}
 
-	public Context calculate(Context context) throws RemoteException, ContextException {
+	public Context calculate(Context context) throws ContextException {
 		return calculateExpression(context);
 	}
 
@@ -129,14 +129,10 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	 *            service context
 	 * @param selector
 	 *            a key of arithmetic operation
-	 * @return
-	 * @throws RemoteException
 	 * @throws ContextException
-	 * @throws ContextException
-	 * @throws UnknownHostException
 	 */
 	private Context calculateFromArrayContext(Context context, String selector)
-			throws RemoteException, ContextException {
+			throws ContextException {
 		ArrayContext cxt = (ArrayContext) context;
 		try {
 			// getValue sorted list of input values
@@ -210,12 +206,10 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	 * @param selector
 	 *            a key of arithmetic operation
 	 * @return
-	 * @throws RemoteException
 	 * @throws ContextException
-	 * @throws UnknownHostException
 	 */
 	private Context calculateFromPositionalContext(Context cxt, String selector)
-			throws RemoteException, ContextException {
+			throws ContextException {
 		PositionalContext context = (PositionalContext) cxt;
 		try {
 			logger.info("arithmometer context: " + context);
@@ -235,9 +229,11 @@ public class Arithmometer implements SorcerConstants, Serializable {
 					result = (Double) revalue(cxt.getValue(rp.inPaths.get(0).path));
 					result -= (Double) revalue(cxt.getValue(rp.inPaths.get(1).path));
 				} else {
-					if (inputs.size() > 2 || inputs.size() < 2) {
+					if (inputs.size() != 2) {
 						throw new ContextException("two arguments needed for subtraction");
 					}
+					logger.info("Inputs: (1) " + revalue(context.getInValueAt(1))
+										+ " (2) " + revalue(context.getInValueAt(2)));
 					result = (Double) revalue(context.getInValueAt(1));
 					result -= (Double) revalue(context.getInValueAt(2));
 				}
@@ -246,7 +242,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				for (int i = 1; i < inputs.size(); i++)
 					result *= (Double)revalue(inputs.get(i));
 			} else if (selector.equals(DIVIDE)) {
-				if (inputs.size() > 2 || inputs.size() < 2)
+				if (inputs.size() != 2)
 					throw new ContextException("two arguments needed for division");
 
 				result = (Double)revalue(inputs.get(0));
@@ -266,7 +262,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			String outputMessage = "calculated by " + getHostname();
 			if (context.getContextReturn() != null) {
 				String outpath = context.getContextReturn().returnPath;
-				if (outpath.indexOf("${key}") >= 0) {
+				if (outpath.contains("${key}")) {
 					String out = outpath.replace("${key}",
 							context.getMogram().getName());
 					context.getContextReturn().returnPath = out;
@@ -276,8 +272,8 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			else if (outpaths.size() == 1) {
 				// put the result in the existing output contextReturn
 				String outpath = outpaths.get(0);
-				if (outpath.indexOf("${key}") >= 0) {
-					if (outpath.indexOf("${key}") >= 0) {
+				if (outpath.contains("${key}")) {
+					if (outpath.contains("${key}")) {
 						outpath = outpath.replace("${key}",
 								context.getMogram().getName());
 					}
@@ -295,7 +291,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			if (fi != null)
 				cxt.putValue("task/fidelity", fi);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.warn("Calculation problem", ex);
 			context.reportException(ex);
 			throw new ContextException(selector + " calculate exception", ex);
 		}
@@ -303,8 +299,13 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	}
 
 	private Context calculateExpression(Context context)
-			throws RemoteException, ContextException {
-		String expr = (String) context.getValue("arithmetic/expression");
+			throws ContextException {
+		String expr;
+		try {
+			expr = (String) context.getValue("arithmetic/expression");
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 		List<String> outpaths = ((ServiceContext) context).getOutPaths();
 		GroovyShell gsh = new GroovyShell();
 		Object result = gsh.evaluate(expr);
@@ -313,7 +314,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			outputMessage = "calculated by " + getHostname();
 			if (context.getContextReturn() != null) {
 				String outpath = ((ServiceContext) context).getContextReturn().returnPath;
-				if (outpath.indexOf("${key}") >= 0) {
+				if (outpath.contains("${key}")) {
 					String out = outpath.replace("${key}",
 							context.getMogram().getName());
 					context.getContextReturn().setReturnPath(out);
@@ -322,12 +323,9 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			} else if (outpaths.size() == 1) {
 				// put the result in the existing output contextReturn
 				String outpath = outpaths.get(0);
-				if (outpath.indexOf("${key}") >= 0) {
-					if (outpath.indexOf("${key}") >= 0) {
-						outpath = outpath.replace("${key}",
-								((ServiceContext) context).getMogram()
-										.getName());
-					}
+				if (outpath.contains("${key}")) {
+					outpath = outpath.replace("${key}",
+											  context.getMogram().getName());
 				}
 				context.putValue(outpath, result);
 				context.putValue(attPath(outpath, ArrayContext.DESCRIPTION),

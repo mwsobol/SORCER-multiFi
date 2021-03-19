@@ -91,16 +91,11 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 		this(name);
 		setContext(context);
 
-		try {
-			for (Signature s : signatures) {
-				if (s instanceof RemoteSignature)
-					((RemoteSignature) s).setExertion(this);
-				else
-					throw new SignatureException("Net task requires RemoteSignature: "
-							+ s);
-			}
-		} catch (RoutineException e) {
-			e.printStackTrace();
+		for (Signature s : signatures) {
+			if (s instanceof RemoteSignature)
+				((RemoteSignature) s).setExertion(this);
+			else
+				throw new SignatureException("Net task requires RemoteSignature: " + s);
 		}
 		ServiceFidelity sFi = ((ServiceFidelity)multiFi.getSelect());
 		sFi.getSelects().addAll(Arrays.asList(signatures));
@@ -115,14 +110,14 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 		return ((RemoteSignature) getProcessSignature()).getService();
 	}
 
-	public Task doTask(Transaction txn, Arg... args) throws EvaluationException {
+	public Task doTask(Transaction txn, Arg... args) throws MogramException {
 		if (delegate != null)
 			return delegate.doTask(txn, args);
 		else {
 			ServiceShell se = new ServiceShell(this);
 			try {
-				return (Task) se.exert(args);
-			} catch (MogramException | RemoteException e) {
+				return se.exert(args);
+			} catch (MogramException e) {
 				throw new EvaluationException(e);
 			}
 		}

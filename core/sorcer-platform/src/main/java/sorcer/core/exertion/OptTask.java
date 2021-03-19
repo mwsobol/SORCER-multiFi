@@ -126,11 +126,7 @@ public class OptTask extends ConditionalTask {
 	
 	@Override
 	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) {
-		try {
-			exceptions.addAll(((Mogram)target).getExceptions());
-		} catch (RemoteException e) {
-			exceptions.add(new ThrowableTrace("Problem while collecting exceptions", e));
-		}
+		exceptions.addAll(((Mogram)target).getExceptions());
 		exceptions.addAll(this.getExceptions());
 		return exceptions;
 	}

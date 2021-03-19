@@ -41,6 +41,7 @@ import static sorcer.eo.operator.*;
  *
  * Created by Mike Sobolewski
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class RemoteSignature extends LocalSignature implements sig {
 
 	private static final long serialVersionUID = 1L;
@@ -66,13 +67,13 @@ public class RemoteSignature extends LocalSignature implements sig {
 	protected List<Entry> attributes;
 
     protected String version;
-    private static Logger logger = LoggerFactory.getLogger(LocalSignature.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocalSignature.class);
 
 	public RemoteSignature() {
 		providerName = new ProviderName();
 	}
 
-	public RemoteSignature(ServiceSignature signature) throws SignatureException {
+	public RemoteSignature(ServiceSignature signature) {
 		this.name = signature.name;
 		this.operation = signature.operation;
 		this.providerName =  signature.providerName;
@@ -81,48 +82,47 @@ public class RemoteSignature extends LocalSignature implements sig {
 		this.contextReturn = signature.contextReturn;
 	}
 
-	public RemoteSignature(Class serviceType) {
+	public RemoteSignature(Class<?> serviceType) {
 		this("none", serviceType, ANY);
 	}
 	
-	public RemoteSignature(String selector, Class serviceType) {
+	public RemoteSignature(String selector, Class<?> serviceType) {
 		this(selector, serviceType, ANY);
 	}
 
 
-	public RemoteSignature(String selector, Class serviceType, ProviderName providerName) {
+	public RemoteSignature(String selector, Class<?> serviceType, ProviderName providerName) {
 		this(selector, serviceType);
 		this.providerName =  providerName;
-		execType = Type.PROC;
+		execType = Type.PRO;
 	}
 
 
-	public RemoteSignature(String selector, Class serviceType,
+	public RemoteSignature(String selector, Class<?> serviceType,
 						   String providerName) {
 		this(selector, serviceType, providerName, (Type) null);
 	}
 
-	public RemoteSignature(String selector, Class serviceType,
-						   Type methodType) throws SignatureException {
+	public RemoteSignature(String selector, Class<?> serviceType,
+						   Type methodType) {
 		this(selector, serviceType);
 		this.execType = methodType;
 	}
 
-	public RemoteSignature(String selector, Class serviceType,
-						   List<Entry> attributes, Type methodType)
-			throws SignatureException {
+	public RemoteSignature(String selector, Class<?> serviceType,
+						   List<Entry> attributes, Type methodType) {
 		this(selector, serviceType);
 		this.execType = methodType;
 		this.attributes = attributes;
 	}
 
-	public RemoteSignature(String selector, Class serviceType,
+	public RemoteSignature(String selector, Class<?> serviceType,
 						   String providerName, Type methodType) {
 
 		this(selector, serviceType, providerName, methodType, null);
 	}
 
-	public RemoteSignature(String selector, Class serviceType,
+	public RemoteSignature(String selector, Class<?> serviceType,
 						   String providerName, Type methodType, Version version) {
 		this.version = version!=null ? version.getName() : null;
 		this.multitype.providerType = serviceType;
@@ -133,7 +133,7 @@ public class RemoteSignature extends LocalSignature implements sig {
 		else
 			this.providerName = new ProviderName(providerName);
 		if (methodType == null) 
-			execType = Type.PROC;
+			execType = Type.PRO;
 		else
 			execType = methodType;
 		
@@ -145,9 +145,9 @@ public class RemoteSignature extends LocalSignature implements sig {
     */
     public RemoteSignature(String selector, String strServiceType) {
         try {
-            Class serviceType = Class.forName(strServiceType);
+            Class<?> serviceType = Class.forName(strServiceType);
             this.multitype.providerType = serviceType;
-            if (serviceType!=null) this.version = MavenUtil.findVersion(serviceType);
+            this.version = MavenUtil.findVersion(serviceType);
             setSelector(selector);
         } catch (ClassNotFoundException e) {
             logger.error("Problem creating RemoteSignature: " + e.getMessage());
@@ -160,13 +160,13 @@ public class RemoteSignature extends LocalSignature implements sig {
         if (version!=null) this.version = version;
     }
 
-    public RemoteSignature(String selector, Class serviceType, String version,
+    public RemoteSignature(String selector, Class<?> serviceType, String version,
 						   String providerName) {
         this(selector, serviceType, version, providerName, null);
     }
 
 
-    public void setExertion(Routine exertion) throws RoutineException {
+    public void setExertion(Routine exertion) {
         this.exertion = exertion;
 	}
 
@@ -191,7 +191,7 @@ public class RemoteSignature extends LocalSignature implements sig {
 	}
 
 	public void addAllAttributes(List<Entry> attributes) {
-		attributes.addAll(attributes);
+		this.attributes.addAll(attributes);
 	}
 
     public Exerter getService() throws SignatureException {
@@ -262,7 +262,7 @@ public class RemoteSignature extends LocalSignature implements sig {
 	}
 
 	public boolean equals(ServiceSignature method) {
-		return (method != null) ? toString().equals(method.toString()) : false;
+		return method != null && toString().equals(method.toString());
 	}
 
 	public int hashCode() {
@@ -278,13 +278,12 @@ public class RemoteSignature extends LocalSignature implements sig {
 	}
 
 	@Override
-	public void close() throws RemoteException, IOException {
+	public void close() throws IOException {
 		if (provider instanceof Closing)
 			((Closing)provider).close();
 	}
 
-	public Routine invokeMethod(Routine ex) throws RemoteException,
-			RoutineException {
+	public Routine invokeMethod(Routine ex) throws RoutineException {
 		// If customized method provided by Mobile Agent
 		Method m = getSubstituteMethod(new Class[] { Mogram.class });
 		try {
@@ -308,8 +307,7 @@ public class RemoteSignature extends LocalSignature implements sig {
 		}
 	}
 
-	public Context invokeMethod(Context context) throws RemoteException,
-			RoutineException {
+	public Context invokeMethod(Context context) throws RoutineException {
 		// If customized method provided by Mobile Agent
 		Method m = getSubstituteMethod(new Class[] { Context.class });
 		try {
@@ -317,14 +315,13 @@ public class RemoteSignature extends LocalSignature implements sig {
 				return ((Context) m.invoke(this, new Object[] { context }));
 
 			if (((ServiceExerter) provider).isValidMethod(operation.selector)) {
-				Context resultContext = ((ServiceExerter) provider)
+				return ((ServiceExerter) provider)
 						.getDelegate().invokeMethod(operation.selector, context);
-				return resultContext;
 			} else {
 				RoutineException eme = new RoutineException(
 						"Not supported method: " + multitype + "#" + operation.selector
 								+ " by: "
-								+ ((Exerter) provider).getProviderName());
+								+ provider.getProviderName());
 				((ServiceExerter) provider).notifyException(context.getMogram(),
 						"unsupported method", eme);
 				throw eme;
@@ -335,19 +332,19 @@ public class RemoteSignature extends LocalSignature implements sig {
 	}
 
 	@Override
-	public Context exert(Contextion mogram) throws ContextException, RemoteException {
+	public Context exert(Contextion mogram) throws MogramException {
 		return exert(mogram, null);
 	}
 
 	@Override
-	public Context exert(Contextion mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
+	public Context exert(Contextion mogram, Transaction txn, Arg... args) throws MogramException {
 		try {
-			Exerter prv = null;
+			Exerter prv;
 			if (this.isShellRemote()) {
 				prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
-				return ((Mogram)prv.exert(mogram, txn)).getContext();
+				return prv.exert(mogram, txn).getContext();
 			}
-			Context cxt = null, out = null;
+			Context cxt, out;
 			NetTask task = null;
 			if (mogram instanceof NetTask) {
 				task = (NetTask)mogram;
@@ -411,22 +408,21 @@ public class RemoteSignature extends LocalSignature implements sig {
 			if (mog != null && cxt == null) {
 				if (multitype.providerType == RemoteServiceShell.class) {
 					Exertion prv = (Exertion) Accessor.get().getService(sig(RemoteServiceShell.class));
-					result = prv.exert(mog, null, new Arg[] {});
+					result = prv.exert(mog, null);
 				} else {
 					if (mog.getProcessSignature() != null
 							&& ((ServiceSignature) mog.getProcessSignature()).isShellRemote()) {
-						Exertion prv = null;
-						prv = (Exertion) Accessor.get().getService(sig(RemoteServiceShell.class));
-						result = prv.exert(mog, null, new Arg[] {});
+						Exertion prv = (Exertion) Accessor.get().getService(sig(RemoteServiceShell.class));
+						result = prv.exert(mog, null);
 					} else {
 						result = (exert(mog));
 					}
 				}
 			} else if (cxt != null) {
-				Context out = null;
+				Context out;
 				Context.Return rp = contextReturn;
 				if (rp == null) {
-					rp = cxt.getContextReturn();;
+					rp = cxt.getContextReturn();
 				}
 				if (rp != null && rp.returnPath != null) {
 					cxt.setContextReturn(rp);
@@ -436,7 +432,7 @@ public class RemoteSignature extends LocalSignature implements sig {
 				out = exert(task(this, cxt));
 				return out;
 			}
-		} catch (SignatureException | RemoteException ex) {
+		} catch (SignatureException | ServiceException | RemoteException ex) {
 			throw new MogramException(ex);
 		}
 		return context(result);

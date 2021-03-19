@@ -76,8 +76,8 @@ public class operator extends Operator {
 		return new Tuple2<T1,T2>( x1, x2 );
 	}
 
-	public static <String,Oobject> Slot<String, Object> slot(String x1) {
-		return new Slot<String,Object>( x1 );
+	public static Slot<String,Object> fiVal(String x1, Object x2 ){
+		return new Slot(x1, x2 );
 	}
 
 	public static <String,O> Slot<String,O> slot(String x1, O x2 ){
@@ -1043,7 +1043,7 @@ public class operator extends Operator {
 		return url.getContent();
 	}
 
-	public static URL update(Object object) throws MogramException,
+	public static URL update(Object object) throws ServiceException,
 			SignatureException {
 		return SdbUtil.update(object);
 	}
@@ -1307,11 +1307,7 @@ public class operator extends Operator {
 	}
 
     public static Entry setValue(Entry entry, Object value) throws ContextException {
-        try {
-            entry.setValue(value);
-        } catch (RemoteException e) {
-            throw new ContextException(e);
-        }
+		entry.setValue(value);
         if (entry instanceof Prc) {
             Prc callEntry = (Prc)entry;
             if (callEntry.getScope() != null) {
@@ -1413,22 +1409,26 @@ public class operator extends Operator {
 		throws RoutineException {
 		Routine c = (Routine) exertion.getMogram(component);
 		try {
-			return get((Subroutine) c, path);
+			return get(c, path);
 		} catch (Exception e) {
 			throw new RoutineException(e);
 		}
 	}
-	public static Object get(Arg[] args, String path) throws EvaluationException, RemoteException {
+	public static Object get(Arg[] args, String path) throws EvaluationException {
 		for (Arg arg : args) {
-			if (arg instanceof sorcer.service.Callable && arg.getName().equals(path))
-				return ((sorcer.service.Callable)arg).call(args);
+			if (arg instanceof sorcer.service.Callable && arg.getName().equals(path)) {
+				try {
+					return ((sorcer.service.Callable)arg).call(args);
+				} catch (RemoteException e) {
+					throw new EvaluationException(e);
+				}
+			}
 		}
 		return null;
 	}
 
-	public static <T extends Object> ListContext<T> listContext(T... items)
-			throws ContextException {
-		ListContext<T> lc = new ListContext<T>();
+	public static <T extends Object> ListContext<T> listContext(T... items) throws ContextException {
+		ListContext<T> lc = new ListContext<>();
 		if (items != null) {
 			for (int i = 0; i < items.length; i++) {
 				lc.add(items[i]);
@@ -1438,7 +1438,7 @@ public class operator extends Operator {
 	}
 
     public static Map<Object, Object> dictionary(Tuple2... entries) {
-        Map<Object, Object> map = new HashMap<Object, Object>();
+        Map<Object, Object> map = new HashMap<>();
 		if (entries != null) {
 			for (Tuple2 entry : entries) {
 				map.put(entry.getName(), entry.value());
@@ -1448,7 +1448,7 @@ public class operator extends Operator {
     }
 
 	public static Map<Object, Object> dictionary(Entry... entries) {
-		Map<Object, Object> map = new HashMap<Object, Object>();
+		Map<Object, Object> map = new HashMap<>();
 		if (entries != null) {
 			for (Entry entry : entries) {
 				map.put(entry.getName(), entry.getImpl());
@@ -1545,7 +1545,7 @@ public class operator extends Operator {
 		String path = entry.getName();
 		Object o = asis(entry);
 		while (o instanceof Function && ((Entry)o).getKey().equals(path)) {
-			o = asis((Function)o);;
+			o = asis((Function)o);
 		}
 		return o;
 	}
@@ -1554,13 +1554,11 @@ public class operator extends Operator {
 		return rasis(entry);
 	}
 
-	public static Object impl(Entry entry)
-			throws ContextException {
+	public static Object impl(Entry entry) {
 		return entry.getImpl();
 	}
 
-	public static Entry setImpl(Entry entry, Object impl)
-			throws ContextException {
+	public static Entry setImpl(Entry entry, Object impl) {
 		 entry.setImpl(impl);
 		 entry.setOut(null);
 		 return entry;
@@ -1571,8 +1569,7 @@ public class operator extends Operator {
 //		return impl((ServiceContext) context,  contextReturn);
 //	}
 
-	public static Object rimpl(Context context, String path)
-			throws ConfigurationException {
+	public static Object rimpl(Context context, String path) {
 		Object obj = context.get(path);
 		if (obj instanceof Entry) {
 			return ((Entry)context.get(path)).getImpl();
@@ -1581,8 +1578,7 @@ public class operator extends Operator {
 		}
 	}
 
-	public static Object impl(Mogram context, String path)
-		throws ConfigurationException {
+	public static Object impl(Mogram context, String path) {
 		Object obj = context.get(path);
 		if (obj instanceof MultiFiSlot) {
 			return ((Entry)obj).getImpl();
@@ -1591,23 +1587,19 @@ public class operator extends Operator {
 		}
 	}
 
-	public static Object output(Slot entry)
-		throws ContextException {
+	public static Object output(Slot entry) {
 		return entry.getOut();
 	}
 
-	public static Object asis(Entry entry)
-			throws ContextException {
+	public static Object asis(Entry entry) {
 		return entry.asis();
 	}
 
-	public static Object asis(Function entry)
-			throws ContextException {
+	public static Object asis(Function entry) {
 		return entry.asis();
 	}
 
-	public static Object rasis(Context context, String path)
-			throws ContextException {
+	public static Object rasis(Context context, String path) throws ContextException {
 		Object o = context.asis(path);
 		if (o instanceof Function)
 			return rasis((Function)o);
@@ -1615,13 +1607,11 @@ public class operator extends Operator {
 			return o;
 	}
 
-	public static Object asis(Context context, String path)
-			throws ContextException {
+	public static Object asis(Context context, String path) {
 		return context.get(path);
 	}
 
-	public static Object asis(Model model, String path)
-			throws ContextException {
+	public static Object asis(Model model, String path) throws ContextException {
 		return  model.asis(path);
 	}
 
@@ -1666,8 +1656,7 @@ public class operator extends Operator {
 		return context.getPaths();
 	}
 
-	public static void remove(ServiceContext entModel, String... paths)
-			throws RemoteException, ContextException {
+	public static void remove(ServiceContext entModel, String... paths) {
 		for (String path : paths)
 			entModel.getData().remove(path);
 	}
@@ -1721,13 +1710,13 @@ public class operator extends Operator {
 	}
 
     public static Dependency domainDependency(Dependency dependee,  Evaluation... dependers) throws ContextException {
-        String path = null;
+        String path ;
         List<Dependency> dl = new ArrayList<>();
         // find dependency lists
         for (int i = 0; i < dependers.length; i++) {
             if (dependers[i] instanceof ExecDependency && ((ExecDependency) dependers[i]).getDependees() != null) {
                 ExecDependency mde = (ExecDependency) dependers[i];
-                ExecDependency de = null;
+                ExecDependency de ;
                 for (Path p : mde.getDependees()) {
                     if (mde.getType() == Type.FIDELITY) {
                         de = dep(p.getName(), (Fidelity) mde.annotation(), (List<Path>)mde.getImpl());
@@ -1746,7 +1735,7 @@ public class operator extends Operator {
             if (d != null) {
                 path = ((Identifiable)d).getName();
                 if (path != null && path.equals("self")) {
-                    ((Entry) d).setName(((ContextDomain) dependee).getName());
+                    d.setName(((ContextDomain) dependee).getName());
                 }
 
                 if (d instanceof ExecDependency && ((ExecDependency) d).getType().equals(Type.CONDITION)) {
@@ -1785,13 +1774,13 @@ public class operator extends Operator {
     }
 
 	public static Dependency funcDependency(Dependency dependee,  Evaluation... dependers) throws ContextException {
-		String path = null;
+		String path;
 		List<Dependency> dl = new ArrayList<>();
 		// find dependency lists
 		for (int i = 0; i < dependers.length; i++) {
 			if (dependers[i] instanceof ExecDependency && ((ExecDependency) dependers[i]).getDependees() != null) {
 				ExecDependency mde = (ExecDependency) dependers[i];
-				ExecDependency de = null;
+				ExecDependency de;
 				for (Path p : mde.getDependees()) {
 					if (mde.getType() == Type.FIDELITY) {
 						de = dep(p.getName(), (Fidelity) mde.annotation(), (List<Path>)mde.getImpl());
@@ -1856,7 +1845,7 @@ public class operator extends Operator {
 	public static Dependency dependsOn(Dependency dependee, Context scope, Evaluation... dependers)
 			throws ContextException {
 		if (dependee instanceof Scopable) {
-			Context context = null;
+			Context context;
 			context = ((Mogram) dependee).getScope();
 			if (context == null)
 				((Mogram) dependee).setScope(scope);

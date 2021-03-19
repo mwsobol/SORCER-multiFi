@@ -39,7 +39,7 @@ public class NetBlock extends Block implements Invocation<Object> {
 	}
 
 	public NetBlock(String name) throws SignatureException {
-		super(name, new RemoteSignature("exert", Concatenator.class, Type.PROC));
+		super(name, new RemoteSignature("exert", Concatenator.class, Type.PRO));
 	}
 	
 	public NetBlock(String name, Context context)

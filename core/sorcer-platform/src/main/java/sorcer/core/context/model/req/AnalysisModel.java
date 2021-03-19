@@ -142,7 +142,7 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
                 dataContext.putValue(Functionality.Type.DOMAIN.toString(), key);
                 analyzerFi.getSelect().analyze(this, dataContext);
             }
-        } catch (ServiceException | TransactionException | ConfigurationException | RemoteException e) {
+        } catch (ServiceException | AnalysisException | RemoteException e) {
             throw new EvaluationException(e);
         }
         return dataContext;
@@ -191,7 +191,7 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
         }
     }
 
-    public void execDependencies(String path, Context inContext, Arg... args) throws MogramException, RemoteException, TransactionException {
+    public void execDependencies(String path, Context inContext, Arg... args) throws ServiceException {
         Map<String, List<ExecDependency>> dpm = ((ModelStrategy) domainStrategy).getDependentDomains();
         if (dpm != null && dpm.get(path) != null) {
             List<Path> dpl = null;
@@ -212,7 +212,12 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
                                 dataContext.append(cxt);
                             } else {
                                 domain.setScope(dataContext);
-                                Domain child = ((Mogram)domain).exert(args);
+                                Domain child = null;
+                                try {
+                                    child = ((Mogram)domain).exert(args);
+                                } catch (RemoteException e) {
+                                    throw new ServiceException(e);
+                                }
                                 if (domain instanceof Job) {
                                     cxt = ((Job) child).getJobContext();
                                 } else if (domain instanceof Routine) {
@@ -233,7 +238,11 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
                             }
                             if (analyzerFi != null && analyzerFi.getSelect() != null) {
                                 cxt.getContext().putValue(Functionality.Type.DOMAIN.toString(), domain.getName());
-                                analyzerFi.getSelect().analyze(domain, cxt);
+                                try {
+                                    analyzerFi.getSelect().analyze(domain, cxt);
+                                } catch (AnalysisException | RemoteException e) {
+                                   throw new ServiceException(e);
+                                }
                             }
                         }
                     }

@@ -69,7 +69,7 @@ public class OptInvoker<T> extends ServiceInvoker<T> implements ConditionalInvoc
 	}
 
 	@Override
-	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
+	public T evaluate(Arg... args) throws EvaluationException {
 		try {
 			if (value != null) {
 				return value;
@@ -89,7 +89,7 @@ public class OptInvoker<T> extends ServiceInvoker<T> implements ConditionalInvoc
 		}
 	}
 	
-	public T invoke(Arg... entries) throws RemoteException, InvocationException {
+	public T invoke(Arg... entries) throws InvocationException {
 		if (value != null) {
 			return value;
 		}
@@ -125,7 +125,7 @@ public class OptInvoker<T> extends ServiceInvoker<T> implements ConditionalInvoc
 		}
 	}
 
-	private void checkInvokeContext() throws RemoteException, ContextException {
+	private void checkInvokeContext() {
 		if (target.getInvokeContext().size() == 0 && invokeContext.size() > 0) {
 			target.setInvokeContext(invokeContext);
 		}

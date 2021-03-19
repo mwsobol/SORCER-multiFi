@@ -111,27 +111,19 @@ public class Task extends Subroutine implements ElementaryRequest {
 		multiFi.setSelect(sFi);
 	}
 
-	public Task doTask(Arg... args) throws EvaluationException {
-		try {
-			return doTask(null, args);
-		} catch (MogramException e) {
-			throw new EvaluationException();
-		}
+	public Task doTask(Arg... args) throws MogramException {
+		return doTask(null, args);
 	}
 
-	public Task doTask(Transaction txn, Arg... args) throws EvaluationException {
-		try {
-			initDelegate();
-			Task done = delegate.doTask(txn, args);
-			setContext(done.getDataContext());
-			setControlContext(done.getControlContext());
-			return this;
-		} catch (SignatureException | MogramException e) {
-			throw new EvaluationException();
-		}
+	public Task doTask(Transaction txn, Arg... args) throws MogramException {
+		initDelegate();
+		Task done = delegate.doTask(txn, args);
+		setContext(done.getDataContext());
+		setControlContext(done.getControlContext());
+		return this;
 	}
 
-	public void initDelegate() throws ContextException, RoutineException, SignatureException {
+	public void initDelegate() throws MogramException {
 		if (delegate != null && multiFi.getSelect() != delegate.getMultiFi().getSelect()) {
 			delegate = null;
 			dataContext.clearReturnPath();
@@ -162,7 +154,7 @@ public class Task extends Subroutine implements ElementaryRequest {
 		}
 	}
 
-	private ServiceSignature createSignature(ServiceSignature signature) throws SignatureException {
+	private ServiceSignature createSignature(ServiceSignature signature) {
 		ServiceSignature sig;
 		if (signature.getServiceType().isInterface()) {
 			sig = new RemoteSignature(signature);
@@ -182,9 +174,8 @@ public class Task extends Subroutine implements ElementaryRequest {
 		// implement is subclasses
 	}
 
-	public void undoTask() throws RoutineException, SignatureException,
-			RemoteException {
-		throw new RoutineException("Not implemneted by this Task: " + this);
+	public void undoTask() throws RoutineException, SignatureException {
+		throw new RoutineException("Not implemented by this Task: " + this);
 	}
 
 	@Override
@@ -211,8 +202,8 @@ public class Task extends Subroutine implements ElementaryRequest {
 		this.ownerId = oid;
 		List<Service> ls = ((ServiceFidelity)multiFi.getSelect()).getSelects();
 		if (ls != null)
-			for (int i = 0; i < ls.size(); i++)
-				((RemoteSignature) ls.get(i)).setOwnerId(oid);
+			for (Service l : ls)
+				((RemoteSignature) l).setOwnerId(oid);
 		// Util.debug("Context : "+ context);
 		if (dataContext != null)
 			dataContext.setOwnerId(oid);
@@ -227,7 +218,7 @@ public class Task extends Subroutine implements ElementaryRequest {
 	}
 
 	// Just to remove if at all the places.
-	public boolean equals(Task task) throws Exception {
+	public boolean equals(Task task) {
 		return key.equals(task.key);
 	}
 
@@ -278,8 +269,8 @@ public class Task extends Subroutine implements ElementaryRequest {
 		sb.append("\n");
 		sb.append(controlContext).append("\n");
 //		sb.append(dataContext);
-		sb.append(dataContext.getName() + ": ");
-		sb.append(dataContext.getSubjectPath() + " = ");
+		sb.append(dataContext.getName()).append(": ");
+		sb.append(dataContext.getSubjectPath()).append(" = ");
 		sb.append(dataContext.getSubjectValue());
 		sb.append(dataContext.toString());
 		sb.append("\n=== DONE PRINTING TASK ===\n");
@@ -389,8 +380,7 @@ public class Task extends Subroutine implements ElementaryRequest {
 		this.isContinous = isContinous;
 	}
 
-	protected Task doBatchTask(Transaction txn) throws RemoteException,
-			MogramException, SignatureException, ContextException {
+	protected Task doBatchTask(Transaction txn) throws MogramException {
 		ControlFlowManager ep = new ControlFlowManager();
 		return ep.doFidelityTask(this);
 	}
@@ -425,14 +415,14 @@ public class Task extends Subroutine implements ElementaryRequest {
 
 	@Override
 	public List<Discipline> getMograms() {
-		List<Discipline> ml = new ArrayList();
+		List<Discipline> ml = new ArrayList<>();
 		ml.add(this);
 		return ml;
 	}
 
 	@Override
 	public List<Contextion> getContextions() {
-		List<Contextion> ml = new ArrayList<Contextion>();
+		List<Contextion> ml = new ArrayList<>();
 		ml.add(this);
 		return ml;
 	}
@@ -448,7 +438,7 @@ public class Task extends Subroutine implements ElementaryRequest {
 		List<Service> alls = ((ServiceFidelity)multiFi.getSelect()).getSelects();
 		if (alls.size() > 1) {
 			Signature lastSig = (Signature) alls.get(alls.size() - 1);
-			if (alls.size() > 1 && this.isBatch() && !(lastSig instanceof RemoteSignature)) {
+			if (this.isBatch() && !(lastSig instanceof RemoteSignature)) {
 				boolean allSrvType = true;
 				for (Service sig : alls) {
 					if (!((Signature)sig).getExecType().equals(Signature.SRV)) {

@@ -17,11 +17,7 @@
 
 package sorcer.service;
 
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Request;
-import sorcer.service.Service;
-import sorcer.service.modeling.Model;
+import java.rmi.RemoteException;
 
 /**
  * Created by Mike Sobolewski on 6/3/17.
@@ -29,6 +25,6 @@ import sorcer.service.modeling.Model;
 @FunctionalInterface
 public interface Analysis {
 
-    public void analyze(Request request, Context context) throws ContextException;
+    void analyze(Request request, Context context) throws ServiceException, AnalysisException, RemoteException;
 
 }

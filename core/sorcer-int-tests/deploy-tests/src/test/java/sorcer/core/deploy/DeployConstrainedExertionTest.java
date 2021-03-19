@@ -25,7 +25,6 @@ import org.sorcer.test.TestsRequiringRio;
 import sorcer.service.Job;
 
 import java.net.SocketException;
-import java.rmi.RemoteException;
 import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static sorcer.core.deploy.DeploySetup.monitor;
 import static sorcer.core.deploy.DeploySetup.undeploy;
 import static sorcer.core.deploy.DeploySetup.verifySorcerRunning;
@@ -84,14 +82,17 @@ public class DeployConstrainedExertionTest {
         List<OperationalString> allOperationalStrings = new ArrayList<>();
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.YES));
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.NO));
-        assertTrue("Expected 2, got " + allOperationalStrings.size(), allOperationalStrings.size() == 2);
+        assertEquals("Expected 2, got " + allOperationalStrings.size(),
+                     2,
+                     allOperationalStrings.size());
 
-        assertTrue(deployments.get(ServiceDeployment.Unique.NO).size()==2);
+        assertEquals(2,
+                     deployments.get(ServiceDeployment.Unique.NO).size());
 
         OperationalString multiply = allOperationalStrings.get(0);
         ServiceElement service = multiply.getServices()[0];
         SystemRequirements systemRequirements = service.getServiceLevelAgreements().getSystemRequirements();
-        for(int i=0; i<systemRequirements.getSystemComponents().length; i++) {
+        for (int i = 0; i < systemRequirements.getSystemComponents().length; i++) {
             System.out.println("["+i+"] "+systemRequirements.getSystemComponents()[i]);
         }
         assertEquals(3, systemRequirements.getSystemComponents().length);
@@ -103,7 +104,7 @@ public class DeployConstrainedExertionTest {
             DeployListener deployListener = new DeployListener(1);
             System.out.println("===> Deploy: "+multiply.getName());
             deployAdmin.deploy(multiply, deployListener.export());
-            deployListener.await();
+            Assert.assertTrue(deployListener.await());
             Assert.assertTrue(deployListener.success.get());
         } finally {
             undeploy(deployAdmin, multiply.getName());
@@ -122,9 +123,12 @@ public class DeployConstrainedExertionTest {
         List<OperationalString> allOperationalStrings = new ArrayList<>();
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.YES));
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.NO));
-        assertTrue("Expected 2, got " + allOperationalStrings.size(), allOperationalStrings.size() == 2);
+        assertEquals("Expected 2, got " + allOperationalStrings.size(),
+                     2,
+                     allOperationalStrings.size());
 
-        assertTrue(deployments.get(ServiceDeployment.Unique.NO).size()==2);
+        assertEquals(2,
+                     deployments.get(ServiceDeployment.Unique.NO).size());
 
         OperationalString multiply = allOperationalStrings.get(0);
         DeployAdmin deployAdmin = (DeployAdmin) monitor.getAdmin();
@@ -144,12 +148,15 @@ public class DeployConstrainedExertionTest {
         Job job = JobUtil.createJobWithIPAndOpSys(new String[]{opSys}, architecture, new String[]{hostAddress}, true);
 
         Map<ServiceDeployment.Unique, List<OperationalString>> deployments = OperationalStringFactory.create(job);
-        List<OperationalString> allOperationalStrings = new ArrayList<OperationalString>();
+        List<OperationalString> allOperationalStrings = new ArrayList<>();
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.YES));
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.NO));
-        assertTrue("Expected 2, got " + allOperationalStrings.size(), allOperationalStrings.size() == 2);
+        assertEquals("Expected 2, got " + allOperationalStrings.size(),
+                     2,
+                     allOperationalStrings.size());
 
-        assertTrue(deployments.get(ServiceDeployment.Unique.NO).size()==2);
+        assertEquals(2,
+                     deployments.get(ServiceDeployment.Unique.NO).size());
 
         OperationalString multiply = allOperationalStrings.get(0);
         DeployAdmin deployAdmin = (DeployAdmin) monitor.getAdmin();
@@ -179,7 +186,7 @@ public class DeployConstrainedExertionTest {
         }
 
         ServiceProvisionListener export() throws ExportException {
-            if(remoteRef==null) {
+            if (remoteRef==null) {
                 remoteRef = (ServiceProvisionListener) exporter.export(this);
             }
             return remoteRef;
@@ -190,36 +197,29 @@ public class DeployConstrainedExertionTest {
             remoteRef = null;
         }
 
-        void clear() {
-            long count = countDownLatch.getCount();
-            for(int i=0; i<count; i++) {
-                countDownLatch.countDown();
-            }
-        }
-
         boolean await() throws InterruptedException {
             countDownLatch.await(3, TimeUnit.SECONDS);
             return success.get();
         }
 
-        public void succeeded(ServiceBeanInstance serviceBeanInstance) throws RemoteException {
+        public void succeeded(ServiceBeanInstance serviceBeanInstance) {
             logger.info(String.format("Service [%s/%s] provisioned on machine %s",
                                       serviceBeanInstance.getServiceBeanConfig().getOperationalStringName(),
                                       serviceBeanInstance.getServiceBeanConfig().getName(),
                                       serviceBeanInstance.getHostName()));
             countDownLatch.countDown();
-            if(countDownLatch.getCount()==0) {
+            if (countDownLatch.getCount()==0) {
                 unexport();
             }
         }
 
-        public void failed(ServiceElement serviceElement, boolean resubmitted) throws RemoteException {
+        public void failed(ServiceElement serviceElement, boolean resubmitted) {
             logger.warn(String.format("Service [%s/%s] failed, undeploy",
                                          serviceElement.getServiceBeanConfig().getOperationalStringName(),
                                          serviceElement.getServiceBeanConfig().getName()));
             success.set(false);
             unexport();
-            while(countDownLatch.getCount()>0) {
+            while (countDownLatch.getCount()>0) {
                 countDownLatch.countDown();
             }
         }

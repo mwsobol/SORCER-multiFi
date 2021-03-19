@@ -20,12 +20,3 @@ dependencies {
     compile "org.rioproject:rio-platform:${rioVersion}",
             "org.slf4j:slf4j-api:${slf4jVersion}"
 }
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-artifacts {
-    archives sourcesJar
-}

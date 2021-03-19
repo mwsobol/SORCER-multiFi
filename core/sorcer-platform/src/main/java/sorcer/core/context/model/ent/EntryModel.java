@@ -36,8 +36,6 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
 
-import static sorcer.mo.operator.setValues;
-import static sorcer.so.operator.eval;
 import static sorcer.so.operator.exec;
 
 /*
@@ -99,27 +97,26 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		this.builder = builder;
 	}
 
-    public EntryModel(Context context) throws RemoteException, ContextException {
+    public EntryModel(Context context) throws ContextException {
         super(context);
         key = PROC_MODEL;
         setSubject("prc/model", new Date());
 		isRevaluable = true;
 	}
 
-    public EntryModel(Identifiable... objects) throws RemoteException,
-            ContextException {
+    public EntryModel(Identifiable... objects) throws ContextException {
         this();
         add(objects);
     }
 
-	public Object getValue(String path, Arg... args) throws EvaluationException, ContextException {
+	public Object getValue(String path, Arg... args) throws ContextException {
 		try {
 			append(args);
-			Object val = null;
+			Object val;
 			if (path != null) {
 				val = get(path);
 			} else {
-				Context.Return rp = Arg.getReturnPath(args);
+				Return rp = Arg.getReturnPath(args);
 				if (rp != null)
 					val = getReturnValue(rp);
 				else if (domainStrategy.getResponsePaths() != null
@@ -155,7 +152,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			} else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
 				((Scopable) ((Entry)val).asis()).setScope(this);
 			}
-			if (val != null && val instanceof Prc) {
+			if (val instanceof Prc) {
 				Context inCxt = (Context) Arg.selectDomain(args);
 				if (inCxt != null) {
 					isChanged = true;
@@ -228,7 +225,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		try {
 			realizeDependencies(entries);
 			return getValue((String)null, entries);
-		} catch (ContextException | RoutineException |RemoteException e) {
+		} catch (ContextException | RoutineException e) {
 			throw new EvaluationException(e);
 		}
 	}
@@ -266,7 +263,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			return new Prc(name, asis(name), this);
 	}
 
-	public Function bindEntry(Function ent) throws ContextException, RemoteException {
+	public Function bindEntry(Function ent) throws ContextException {
 		ArgSet args = ent.getArgs();
 		if (args != null) {
 			for (Arg v : args)
@@ -277,7 +274,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		return ent;
 	}
 
-	public EntryModel add(List<Identifiable> objects) throws RemoteException, ContextException {
+	public EntryModel add(List<Identifiable> objects) throws ContextException {
 		Identifiable[] objs = new Identifiable[objects.size()];
 		objects.toArray(objs);
 		add(objs);
@@ -322,7 +319,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	}
 
 	@Override
-	public ContextDomain add(Identifiable... objects) throws ContextException, RemoteException {
+	public ContextDomain add(Identifiable... objects) throws ContextException {
 		Prc p = null;
 		boolean changed = false;
 		for (Identifiable obj : objects) {
@@ -381,11 +378,11 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		Object result = null;
 		try {
 			if (context != null) {
-				Context.Return rp = ((ServiceContext)context).getContextReturn();
+				Return rp = ((ServiceContext)context).getContextReturn();
 				this.append(context);
 				// check for multiple response of this model
 				if (rp != null && rp.outPaths.size() > 0) {
-					Object val = null;
+					Object val;
 					if (rp.outPaths.size() == 1)
 						val = getValue(rp.outPaths.get(0).path);
 					else {
@@ -432,7 +429,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		}
 	}
 
-	private Object getReturnValue(Context.Return rp) throws ContextException {
+	private Object getReturnValue(Return rp) throws ContextException {
 		Object val = null;
 		// check for multiple response of this model
 		if (rp != null && rp.outPaths.size() > 0) {
@@ -470,7 +467,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 
 	public Functionality getFunc(String name) throws ContextException {
 		String key;
-		Object val = null;
+		Object val;
 		Iterator e = keyIterator();
 		while (e.hasNext()) {
 			key = (String) e.next();
@@ -489,8 +486,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		return new Prc(path, value, this);
 	}
 
-	protected void realizeDependencies(Arg... args) throws RemoteException,
-			RoutineException {
+	protected void realizeDependencies(Arg... args) throws RoutineException {
 		List<Evaluation> dependers = getModelDependers();
 		if (dependers != null && dependers.size() > 0) {
 			for (Evaluation<Object> depender : dependers) {
@@ -565,15 +561,14 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	 * Returns an enumeration of all contextReturn marking variable nodes.
 	 *
 	 * @return enumeration of marked variable nodes.
-	 * @throws ContextException
+	 * @throws ContextException exception
 	 */
 	public Enumeration getFuncPaths(Functionality var) throws ContextException {
 		String assoc = VAR_NODE_TYPE + APS + var.getName() + APS + var.getType();
 		String[] paths = Contexts.getMarkedPaths(this, assoc);
 		Vector outpaths = new Vector();
 		if (paths != null)
-			for (int i = 0; i < paths.length; i++)
-				outpaths.add(paths[i]);
+			Collections.addAll(outpaths, paths);
 
 		return outpaths.elements();
 
@@ -581,21 +576,17 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 
 	@Override
 	public Context getOutput(Arg... args) throws ContextException {
-		try {
-			return (Context)getResult();
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
+		return (Context)getResult();
 	}
 
 	public static Functionality[] getMarkedVariables(Context sc,
                                                      String association) throws ContextException {
 		String[] paths = Contexts.getMarkedPaths(sc, association);
-		java.util.Set nodes = new HashSet();
-		Object obj = null;
-		for (int i = 0; i < paths.length; i++) {
+		Set nodes = new HashSet();
+		Object obj;
+		for (String path : paths) {
 			try {
-				obj = sc.getValue(paths[i]);
+				obj = sc.getValue(path);
 			} catch (RemoteException e) {
 				throw new ContextException(e);
 			}
@@ -618,8 +609,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				+ var.getName() + APS + var.getType());
 	}
 	
-	public Context<Object> appendNew(Context<Object> context)
-			throws ContextException, RemoteException {
+	public Context<Object> appendNew(Context<Object> context) {
 		ServiceContext cxt = (ServiceContext) context;
 		Iterator<Map.Entry<String, Object>> i = cxt.entryIterator();
 		while (i.hasNext()) {
@@ -647,11 +637,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 
 	@Override
 	public Context getResponse(Context context, Arg... args) throws ContextException {
-		try {
-			evaluate(context, args);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
+		evaluate(context, args);
 		return getOutput(args);
 	}
 }

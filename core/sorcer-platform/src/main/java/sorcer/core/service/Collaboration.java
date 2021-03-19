@@ -28,11 +28,11 @@ import sorcer.core.context.ModelTask;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.OptimizerState;
 import sorcer.core.context.model.ent.Coupling;
-import sorcer.core.context.model.ent.AnalysisEntry;
-import sorcer.core.context.model.ent.ExplorationEntry;
+import sorcer.core.context.model.ent.Analyzer;
+import sorcer.core.context.model.ent.Explorer;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
-import sorcer.service.Region;
+import sorcer.service.Node;
 import sorcer.service.modeling.*;
 
 import java.rmi.RemoteException;
@@ -46,7 +46,7 @@ import static sorcer.so.operator.response;
 
 public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
-	private static final long serialVersionUID = 1L;
+	static final long serialVersionUID = 1L;
 
 	protected static Logger logger = LoggerFactory.getLogger(Collaboration.class.getName());
 
@@ -108,6 +108,10 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	protected Projection outPathProjection;
 
 	protected Model.Pattern pattern =  Model.Pattern.COLLAB;
+
+	protected Contextion parent;
+
+	protected boolean isExec = true;
 
 	public Collaboration() {
         this(null);
@@ -173,7 +177,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	}
 
 	@Override
-	public void setContext(Context input) throws ContextException {
+	public void setContext(Context input) {
 		this.input = input;
 	}
 
@@ -183,7 +187,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	}
 
 	@Override
-	public Context getDomainData() throws ContextException, RemoteException {
+	public Context getDomainData() {
 		return input;
 	}
 
@@ -193,7 +197,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	}
 
 	@Override
-	public Context appendContext(Context context, String path) throws ContextException, RemoteException {
+	public Context appendContext(Context context, String path) {
 		return null;
 	}
 
@@ -201,6 +205,15 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	public Context getContext(String path) throws ContextException, RemoteException {
 		return null;
 	}
+
+	public boolean isExec() {
+		return isExec;
+	}
+
+	public void setExec(boolean exec) {
+		isExec = exec;
+	}
+
 
 	@Override
 	public Context.Return getContextReturn() {
@@ -243,26 +256,26 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	public List<Discipline> getDisciplineList() {
 		List<Discipline> domainList = new ArrayList<>();
 		for (Discipline disc : children.values()) {
-			if (disc instanceof Region) {
+			if (disc instanceof Node) {
 				domainList.add(disc);
 			}
 		}
 		return domainList;
 	}
 
-	public Fidelity<Exploration> setExplorerFi(Context context) throws ConfigurationException {
+	public Fidelity<Exploration> setExplorerFi(Context context) {
 		if(explorerFi == null) {
 			Object exploreComponent = context.get(Context.EXPLORER_PATH);
 			if (exploreComponent != null) {
-				if (exploreComponent instanceof ExplorationEntry) {
-					explorerFi = new Fidelity(((ExplorationEntry)exploreComponent).getName());
-					explorerFi.addSelect((ExplorationEntry) exploreComponent);
-					explorerFi.setSelect((ExplorationEntry)exploreComponent);
-					((AnalysisEntry)exploreComponent).setContextion(this);
+				if (exploreComponent instanceof Explorer) {
+					explorerFi = new Fidelity(((Explorer)exploreComponent).getName());
+					explorerFi.addSelect((Explorer) exploreComponent);
+					explorerFi.setSelect((Explorer)exploreComponent);
+					((Analyzer)exploreComponent).setContextion(this);
 				} else if (exploreComponent instanceof ServiceFidelity
 					&& ((ServiceFidelity) exploreComponent).getFiType().equals(Fi.Type.EXPLORER)) {
 					explorerFi = (Fidelity) exploreComponent;
-					((ExplorationEntry)explorerFi.getSelect()).setContextion(this);
+					((Explorer)explorerFi.getSelect()).setContextion(this);
 				}
 
 			}
@@ -274,19 +287,19 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		return explorerFi;
 	}
 
-	public Fidelity<Analysis> setAnalyzerFi(Context context) throws ConfigurationException {
+	public Fidelity<Analysis> setAnalyzerFi(Context context) {
 		if(analyzerFi == null) {
 			Object mdaComponent = context.get(Context.MDA_PATH);
 			if (mdaComponent != null) {
-				if (mdaComponent instanceof AnalysisEntry) {
-					analyzerFi = new Fidelity(((AnalysisEntry)mdaComponent).getName());
-					analyzerFi.addSelect((AnalysisEntry) mdaComponent);
-					analyzerFi.setSelect((AnalysisEntry)mdaComponent);
-					((AnalysisEntry)mdaComponent).setContextion(this);
+				if (mdaComponent instanceof Analyzer) {
+					analyzerFi = new Fidelity(((Analyzer)mdaComponent).getName());
+					analyzerFi.addSelect((Analyzer) mdaComponent);
+					analyzerFi.setSelect((Analyzer)mdaComponent);
+					((Analyzer)mdaComponent).setContextion(this);
 				} else if (mdaComponent instanceof ServiceFidelity
 						&& ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
 					analyzerFi = (Fidelity) mdaComponent;
-					((AnalysisEntry)analyzerFi.getSelect()).setContextion(this);
+					((Analyzer)analyzerFi.getSelect()).setContextion(this);
 				}
 			}
 		}
@@ -337,16 +350,16 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		return out;
 	}
 
-	public Context evaluateDomain(String domainName, Context context) throws ContextException {
+	public Context evaluateDomain(String domainName, Context context) throws ServiceException {
 		return evaluateDomain(children.get(domainName), context);
 	}
 
-	public Context evaluateDomain(Request request, Context context) throws ContextException {
+	public Context evaluateDomain(Request request, Context context) throws ServiceException {
 			return response((Mogram) request, context);
 	}
 
 	@Override
-	public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
+	public Context evaluate(Context context, Arg... args) throws ServiceException {
 		Context out = null;
 		try {
 			input = getInput();
@@ -365,8 +378,8 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 						analyzerFi.selectSelect(fi.getName());
 					}
 				}
-				((AnalysisEntry)analyzerFi.getSelect()).setContextion(this);
-				logger.info("*** analyzerFi: {}", ((AnalysisEntry)analyzerFi.getSelect()).getName());
+				((Analyzer)analyzerFi.getSelect()).setContextion(this);
+				logger.info("*** analyzerFi: {}", ((Analyzer)analyzerFi.getSelect()).getName());
 			}
 			if (explorerFi != null) {
 				for (Fi fi : fis) {
@@ -374,7 +387,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 						analyzerFi.selectSelect(fi.getName());
 					}
 				}
-				((ExplorationEntry)explorerFi.getSelect()).setContextion(this);
+				((Explorer)explorerFi.getSelect()).setContextion(this);
 				logger.info("*** explorerFi: {}", ((Identifiable)explorerFi.getSelect()).getName());
 			}
 
@@ -384,17 +397,24 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 			if (explorerFi == null) {
 				setExplorerFi(input);
 			}
-			out = explorerFi.getSelect().explore(input);
-			((ModelStrategy) serviceStrategy).setOutcome(out);
-			strategy.setExecState(Exec.State.DONE);
-		} catch (ConfigurationException | ContextException | ExploreException e) {
+			if (explorerFi != null) {
+				out = explorerFi.getSelect().explore(input);
+				((ModelStrategy) serviceStrategy).setOutcome(out);
+				strategy.setExecState(Exec.State.DONE);
+			} else if (analyzerFi != null) {
+				analyzerFi.getSelect().analyze(this, input);
+				out = input;
+				((ModelStrategy) serviceStrategy).setOutcome(out);
+				strategy.setExecState(Exec.State.DONE);
+			}
+		} catch (ConfigurationException | ContextException | ExploreException | RemoteException | AnalysisException e) {
 			throw new EvaluationException(e);
 		}
 		return out;
 	}
 
-	public void analyze(Context context) throws ContextException {
-		Context collabOut = null;
+	public void analyze(Context context) throws ServiceException {
+		Context collabOut;
 		if (((ServiceContext)context).getColabType() == Strategy.Colab.BBinCxt) {
 			collabOut = input;
 		} else {
@@ -407,10 +427,10 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 				domain = children.get(path.path);
 				if (domain instanceof SignatureDomain) {
 					domain = ((SignatureDomain) domain).getDomain();
-					children.put(((Mogram)domain).getDomainName(), domain);
+					children.put(domain.getDomainName(), domain);
 				}
-				Context domainCxt = sorcer.mo.operator.getDomainContext(context, ((Mogram)domain).getDomainName());
-				Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, ((Mogram)domain).getDomainName());
+				Context domainCxt = sorcer.mo.operator.getDomainContext(context, domain.getDomainName());
+				Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getDomainName());
 				Context cxt = null;
 				if (domainCxt != null) {
 					if (domain instanceof Dispatch) {
@@ -430,7 +450,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 							throw new ContextException("response not Context");
 						}
 						collabOut.append(cxt);
-					} else if (((Mogram)domain).isExec()) {
+					} else if (domain.isExec()) {
 						if (domain instanceof Mogram) {
 							cxt = evaluateDomain(domain, domainCxt);
 						} else {
@@ -443,12 +463,14 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 					if (cxt != null) {
 						outputs.add(cxt);
 					}
-				} else if (((Mogram)domain).isExec()) {
+				} else if (domain.isExec()) {
 					if (domain instanceof Context && ((ServiceContext) domain).getType() == Functionality.Type.EXEC) {
 						// eventually add argument signatures per domain
 						cxt = (Context) domain.execute();
-					} else {
+					} else if (domain instanceof Mogram){
 						cxt = response((Mogram)domain);
+					} else {
+						cxt = (Context) domain.execute();
 					}
 					collabOut.append(cxt.getDomainData());
 					if (cxt != null) {
@@ -460,15 +482,15 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 				Analysis analyzer = analyzerFi.getSelect();
 				if (analyzerFi != null) {
-					collabOut.putValue(Functionality.Type.DOMAIN.toString(), ((Mogram)domain).getDomainName());
+					collabOut.putValue(Functionality.Type.DOMAIN.toString(), domain.getDomainName());
 					analyzer.analyze(domain, collabOut);
 				}
 
 				collabOut.setSubject(name, this);
 				((ServiceContext) collabOut).put(Context.DOMAIN_OUTPUTS_PATH, outputs);
-				output = collabOut;
 			}
-		} catch (ServiceException | SignatureException | RemoteException | DispatchException e) {
+			output = collabOut;
+		} catch (SignatureException | RemoteException | DispatchException | AnalysisException e) {
 			throw new ContextException(e);
 		}
 	}
@@ -477,9 +499,9 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		// initialize domains specified by builder signatures
 		for (Discipline domain : children.values()) {
 			if (domain instanceof SignatureDomain) {
-				boolean isExec = ((Mogram)domain).isExec();
+				boolean isExec = domain.isExec();
 				domain = ((SignatureDomain) domain).getDomain();
-				children.put(((Mogram)domain).getDomainName(), domain);
+				children.put(domain.getDomainName(), domain);
 				((Mogram)domain).setExec(isExec);
 			}
 		}
@@ -502,7 +524,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		this.contextMultiFi = contextMultiFi;
 	}
 
-	public Context getInput() throws ContextException {
+	public Context getInput() {
 		// if no contextMultiFi then return direct input
 		if (contextMultiFi == null || contextMultiFi.getSelect() == null) {
 			return input;
@@ -511,7 +533,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		return input;
 	}
 
-	public Context setInput(Context input) throws ContextException {
+	public Context setInput(Context input) {
 		if (contextMultiFi == null) {
 			contextMultiFi = new ServiceFidelity();
 		}
@@ -523,7 +545,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	}
 
 	@Override
-	public Context exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
+	public Context exert(Transaction txn, Arg... args) throws ServiceException {
 		return evaluate(input, args);
 	}
 
@@ -664,7 +686,15 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	}
 
 	@Override
-	public void selectFidelity(Fidelity fi) throws ConfigurationException {
+	public void selectFidelity(Fidelity fi) {
+	}
+
+	public Contextion getParent() {
+		return parent;
+	}
+
+	public void setParent(Contextion parent) {
+		this.parent = parent;
 	}
 
 	public List<Coupling> getCouplings() {

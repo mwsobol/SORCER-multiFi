@@ -69,7 +69,6 @@ public class Job extends Transroutine {
 
 	/**
 	 * Constructs a job and sets all default values to it.
-	 * @throws sorcer.service.SignatureException
 	 */
 	public Job() {
 		this("job-" + count++);
@@ -81,7 +80,6 @@ public class Job extends Transroutine {
 	 * 
 	 * @param name
 	 *            The key of the job.
-	 * @throws sorcer.service.SignatureException
 	 */
 	public Job(String name) {
 		super(name);
@@ -92,7 +90,7 @@ public class Job extends Transroutine {
 	 * 
 	 * @param mogram
 	 *            The first Routine of the job.
-	 * @throws ContextException 
+	 * @throws RoutineException
 	 */
 	public Job(Mogram mogram) throws RoutineException {
 		this("job-" + count++);
@@ -124,7 +122,7 @@ public class Job extends Transroutine {
 			sig = new RemoteSignature("exert", Jobber.class);
 		}
 		sig.getProviderName().setName(null);
-		sig.setType(Signature.Type.PROC);
+		sig.setType(Signature.Type.PRO);
 		ServiceFidelity sFi = new ServiceFidelity(sig);
 		sFi.setSelect(sig);
 		((ServiceFidelity)multiFi).getSelects().add(sFi);// Add the signature
@@ -324,13 +322,9 @@ public class Job extends Transroutine {
 
 	@Override
 	public List<ThrowableTrace> getExceptions() {
-		List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
+		List<ThrowableTrace> exceptions = new ArrayList<>();
 		for (Discipline ext : mograms) {
-			try {
-				exceptions.addAll(((Mogram)ext).getExceptions());
-			} catch (RemoteException e) {
-				exceptions.add(new ThrowableTrace("Problem while collecting exceptions", e));
-			}
+			exceptions.addAll(((Mogram)ext).getExceptions());
 		}
 		return exceptions;
 	}
@@ -523,19 +517,22 @@ public class Job extends Transroutine {
 	}
 	
 	@Override
-	public Object getReturnValue(Arg... entries) throws ContextException,
-			RemoteException {
+	public Object getReturnValue(Arg... entries) throws ContextException {
 		//TODO for getJobContextReturn
 		//Return rp = ((ServiceContext) dataContext).getJobContextReturn();
-		Context.Return rp = ((ServiceContext) dataContext).getContextReturn();
-		Object obj = null;
+		Context.Return rp = dataContext.getContextReturn();
+		Object obj;
 		if (rp != null) {
-			if (rp.returnPath == null || rp.returnPath.equals(Signature.SELF)) {
-				return this;
-			} else if (rp.type != null) {
-				obj = rp.type.cast(getContext().getValue(rp.returnPath));
-			} else {
-				obj = getContext().getValue(rp.returnPath);
+			try {
+				if (rp.returnPath == null || rp.returnPath.equals(Signature.SELF)) {
+					return this;
+				} else if (rp.type != null) {
+					obj = rp.type.cast(getContext().getValue(rp.returnPath));
+				} else {
+					obj = getContext().getValue(rp.returnPath);
+				}
+			} catch (RemoteException e) {
+				throw new ContextException(e);
 			}
 		} else {
 			obj = getJobContext();

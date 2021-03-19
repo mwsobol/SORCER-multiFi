@@ -43,7 +43,6 @@ public interface Exertion {
 	 * @throws MogramException    if an exertion invocation failed for any reason
 	 * @throws RemoteException
 	 */
-	public <T extends Contextion> T exert(T exertion, Transaction txn, Arg... args)
-			throws ContextException, RemoteException;
+	<T extends Contextion> T exert(T exertion, Transaction txn, Arg... args) throws ServiceException, RemoteException;
 
 }

@@ -39,8 +39,6 @@ import java.util.regex.Pattern;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Contexts implements SorcerConstants {
-
-	private static Logger logger = LoggerFactory.getLogger(Contexts.class.getName());
 	
 	// job broker
 	final static String JOBBER_IS_DIRECT = "jobber" + CPS + "is direct";

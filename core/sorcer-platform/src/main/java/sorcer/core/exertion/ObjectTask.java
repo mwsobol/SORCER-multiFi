@@ -72,20 +72,18 @@ public class ObjectTask extends Task {
 		this.description = description;
 	}
 
-	public ObjectTask(String name, Signature signature, Context context)
-			throws SignatureException {
+	public ObjectTask(String name, Signature signature, Context context) {
 		this(name, signature);
 		this.dataContext = (ServiceContext) context;
 	}
 
-	public ObjectTask(Signature signature, Context context)
-			throws SignatureException {
+	public ObjectTask(Signature signature, Context context) {
 		addSignature(signature);
 		if (context != null)
 			this.dataContext = (ServiceContext) context;
 	}
 
-	public Task doTask(Transaction txn, Arg... args) throws EvaluationException {
+	public Task doTask(Transaction txn, Arg... args) throws MogramException {
 		if (delegate != null) {
 			return delegate.doTask(txn);
 		}
@@ -122,7 +120,7 @@ public class ObjectTask extends Task {
 			Object result = null;
 			if (evaluator == null) {
 				// create a provider of this object signature
-				Object prv = null;
+				Object prv;
 				if (os.getInitSelector() == null) {
 					if (os.getTargetSignature() != null) {
 						prv = ((LocalSignature)os.getTargetSignature()).getProviderType().newInstance();
@@ -218,7 +216,7 @@ public class ObjectTask extends Task {
 
 	private Object invokeMethod(Method method, LocalSignature os)
 			throws IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, ContextException, SignatureException {
+			InvocationTargetException {
 		Object[] args = os.getArgs();
 		Class<?>[] argTypes = os.getParameterTypes();
 		Object result = null;

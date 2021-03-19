@@ -19,7 +19,6 @@ package sorcer.core.context.model.req;
 
 import groovy.lang.Closure;
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.MogramEntry;
@@ -42,7 +41,6 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.eo.operator.*;
-import static sorcer.so.operator.exec;
 import static sorcer.so.operator.execMogram;
 
 /**
@@ -113,7 +111,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
 
     public boolean isBatch() {
         for (Object s : ((ServiceFidelity)multiFi.getSelect()).getSelects()) {
-            if (s instanceof Signature && ((Signature)s).getExecType() != Signature.Type.PROC)
+            if (s instanceof Signature && ((Signature)s).getExecType() != Signature.Type.PRO)
                 return false;
         }
         return true;
@@ -364,7 +362,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
         }
         try {
             if (crp != null) {
-                Object obj = null;
+                Object obj;
                 obj = out.getValue(crp);
                 if (obj == null)
                     obj = out.getValue(path);
@@ -389,7 +387,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
     }
 
     private Object evalMogram(MogramEntry mogramEntry, String path, Arg... entries)
-            throws MogramException, RemoteException, TransactionException {
+            throws ServiceException, RemoteException {
         Mogram mogram = (Mogram) mogramEntry.getImpl();
 		mogram.setScope(this);
         Mogram out = mogram.exert(entries);
@@ -483,7 +481,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
 //    }
 
     @Override
-    public Context exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
+    public Context exert(Transaction txn, Arg... args) throws ContextException {
         Signature signature = null;
         ServiceFidelity sFi = (ServiceFidelity)multiFi.getSelect();
         try {
@@ -501,12 +499,15 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
                 getResponse(args);
                 return this;
             }
-        } catch (Exception e) {
+        } catch (RemoteException | SignatureException | ServiceException e) {
+            if (e instanceof ContextException) {
+                throw (ContextException)e;
+            }
             throw new ContextException(e);
         }
     }
 
-    public RequestModel clearOutputs() throws EvaluationException, RemoteException {
+    public RequestModel clearOutputs() {
         Iterator<Map.Entry<String, Object>> i = entryIterator();
         while (i.hasNext()) {
             Map.Entry e = i.next();

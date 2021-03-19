@@ -58,7 +58,7 @@ public class Slot<K, O> implements Identifiable, Data<O>, Arg, slot<O>, net.jini
         return out;
     }
 
-    public Object asis() throws EvaluationException, RemoteException {
+    public Object asis() throws EvaluationException {
         return out;
     }
 
@@ -109,7 +109,7 @@ public class Slot<K, O> implements Identifiable, Data<O>, Arg, slot<O>, net.jini
     }
 
     @Override
-    public Object execute(Arg... args) throws ServiceException, RemoteException {
+    public Object execute(Arg... args) throws ServiceException {
         return out;
     }
 }

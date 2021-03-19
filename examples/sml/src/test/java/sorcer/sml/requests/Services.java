@@ -105,7 +105,11 @@ public class Services {
                 setValue(x, value(cxt, "x"));
             if (value(cxt, "y") != null)
                 setValue(y, value(cxt, "y"));
-            return exec(y) + exec(x) + exec(z);
+            try {
+                return exec(y) + exec(x) + exec(z);
+            } catch (ServiceException e) {
+                throw new ContextException(e);
+            }
         }
 
         public Object execute(Arg... args) throws ServiceException, RemoteException {

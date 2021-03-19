@@ -39,34 +39,34 @@ import java.util.Properties;
  */
 public interface Exerter extends Provider, Exertion, Monitorable, AnalyticsProducer, Administrable, Remote {
 
-	public ServiceID getProviderID() throws RemoteException;
+	ServiceID getProviderID() throws RemoteException;
 
-	public String getProviderName() throws RemoteException;
+	String getProviderName() throws RemoteException;
 	
-	public Entry[] getAttributes() throws RemoteException;
+	Entry[] getAttributes() throws RemoteException;
 
-	public List<Object> getProperties() throws RemoteException;
+	List<Object> getProperties() throws RemoteException;
 
-	public String getProperty(String property) throws RemoteException;
+	String getProperty(String property) throws RemoteException;
 
-	public Properties getJavaSystemProperties() throws RemoteException;
+	Properties getJavaSystemProperties() throws RemoteException;
 
-	public boolean mutualExclusion() throws RemoteException;
+	boolean mutualExclusion() throws RemoteException;
 	
-	public String[] getGroups() throws RemoteException;
+	String[] getGroups() throws RemoteException;
 
-	public String getInfo() throws RemoteException;
+	String getInfo() throws RemoteException;
 
-	public String getDescription() throws RemoteException;
+	String getDescription() throws RemoteException;
 
-	public boolean isBusy() throws RemoteException;
+	boolean isBusy() throws RemoteException;
 
 	/**
 	 * Destroy the service, if possible, including its persistent storage.
 	 * 
 	 * @see Exerter#destroy()
 	 */
-	public void destroy() throws RemoteException;
+	void destroy() throws RemoteException;
 
 	/**
 	 * Destroy all services in this node (virtual machine) by calling each
@@ -74,18 +74,18 @@ public interface Exerter extends Provider, Exertion, Monitorable, AnalyticsProdu
 	 * 
 	 * @see Exerter#destroy()
 	 */
-	public void destroyNode() throws RemoteException;
+	void destroyNode() throws RemoteException;
 	
-	public void fireEvent() throws RemoteException;
+	void fireEvent() throws RemoteException;
 
-	public Object getProxy() throws RemoteException;
+	Object getProxy() throws RemoteException;
 
-	public void updatePolicy(Policy policy) throws RemoteException;
+	void updatePolicy(Policy policy) throws RemoteException;
 
-	public Logger getContextLogger() throws RemoteException;
+	Logger getContextLogger() throws RemoteException;
 
-	public Logger getProviderLogger() throws RemoteException;
+	Logger getProviderLogger() throws RemoteException;
 
-	public Logger getRemoteLogger() throws RemoteException;
+	Logger getRemoteLogger() throws RemoteException;
 	
 }

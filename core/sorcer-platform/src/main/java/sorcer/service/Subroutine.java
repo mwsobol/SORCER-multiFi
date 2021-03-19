@@ -134,12 +134,16 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      *
      * @see sorcer.service.Service#service(sorcer.service.Mogram)
      */
-    public <T extends Mogram> T  service(T mogram) throws TransactionException,
-            MogramException, RemoteException {
+    public <T extends Mogram> T  service(T mogram) throws ServiceException {
         if (mogram == null)
             return exert();
-        else
-            return (T) mogram.exert();
+        else {
+            try {
+                return (T) mogram.exert();
+            } catch (RemoteException e) {
+                throw new MogramException(e);
+            }
+        }
     }
 
     /*
@@ -148,8 +152,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      * @see sorcer.service.Service#service(sorcer.service.Routine,
      * net.jini.core.transaction.Transaction)
      */
-    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args)
-            throws ContextException, RemoteException {
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws MogramException {
         try {
             if (mogram instanceof Routine) {
                 Subroutine exertion = (Subroutine) mogram;
@@ -172,12 +175,11 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
             } else if (mogram instanceof Context) {
                 return (T) invoke((Context) mogram, args);
             } else {
-                getContext().appendContext(((Mogram)mogram).getContext());
+                getContext().appendContext(mogram.getContext());
             }
             return (T) exert(txn);
         } catch (Exception e) {
-            e.printStackTrace();
-            ((Mogram)mogram).getContext().reportException(e);
+            mogram.getContext().reportException(e);
             if (e instanceof Exception)
                 ((Mogram)mogram).setStatus(FAILED);
             else
@@ -188,7 +190,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     private void handleExertOutput(Subroutine exertion, Object result ) throws ContextException {
-        ServiceContext dataContext = (ServiceContext) exertion.getDataContext();
+        ServiceContext dataContext = exertion.getDataContext();
         if (result instanceof Context)
             dataContext.updateEntries((Context)result);
 
@@ -297,14 +299,9 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      * @see sorcer.service.Routine#exert(net.jini.core.transaction.Transaction,
      * sorcer.servie.Arg[])
      */
-    public Routine exert(Transaction txn, Arg... entries)
-            throws ContextException, RemoteException {
-        try {
-            substitute(entries);
-        } catch (SetterException e) {
-            logger.error("Error in exertion {}", mogramId, e);
-            throw new ContextException(e);
-        }
+    public Routine exert(Transaction txn, Arg... entries) throws MogramException {
+        substitute(entries);
+
         String prvName = null;
         for(Arg arg : entries) {
             if (arg instanceof ProviderName) {
@@ -321,7 +318,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      *
      * @see sorcer.service.Routine#exert(sorcer.core.context.Path.Entry[])
      */
-    public <T extends Contextion> T  exert(Arg... entries) throws ContextException, RemoteException {
+    public <T extends Contextion> T  exert(Arg... entries) throws MogramException {
         try {
             substitute(entries);
         } catch (SetterException e) {
@@ -563,7 +560,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         return controlContext.isExecTimeRequested();
     }
 
-    public Prc getPar(String path) throws EvaluationException, RemoteException {
+    public Prc getPar(String path) throws EvaluationException {
         return new Prc(path, this);
     }
 
@@ -683,8 +680,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      *
      * @see sorcer.service.Routine#getReturnValue(sorcer.service.Arg[])
      */
-    public Object getReturnValue(Arg... entries) throws ContextException,
-            RemoteException {
+    public Object getReturnValue(Arg... entries) throws ContextException {
         Context.Return reqPath = null;
         if (getProcessSignature() != null && getProcessSignature().getContextReturn() == null) {
             reqPath = getProcessSignature().getContextReturn();
@@ -812,7 +808,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         if (controlContext != null)
             return controlContext.getExceptions();
         else
-            return new ArrayList<ThrowableTrace>();
+            return new ArrayList<>();
     }
 
     /*
@@ -822,7 +818,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      */
     @Override
     public List<ThrowableTrace> getAllExceptions() {
-        List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
+        List<ThrowableTrace> exceptions = new ArrayList<>();
         return getExceptions(exceptions);
     }
 
@@ -833,7 +829,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     public List<Signature> getAllSignatures() {
-        List<Signature> allSigs = new ArrayList<Signature>();
+        List<Signature> allSigs = new ArrayList<>();
         List<Discipline> allExertions = getAllMograms();
         for (Discipline e : allExertions) {
             allSigs.add(((Mogram)e).getProcessSignature());
@@ -842,7 +838,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     public List<Signature> getAllTaskSignatures() {
-        List<Signature> allSigs = new ArrayList<Signature>();
+        List<Signature> allSigs = new ArrayList<>();
         List<Discipline> allExertions = getAllMograms();
         for (Discipline e : allExertions) {
             if (e instanceof Task)
@@ -852,7 +848,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     public List<ServiceDeployment> getAllDeployments() {
-        List<ServiceDeployment> allDeployments = new ArrayList<ServiceDeployment>();
+        List<ServiceDeployment> allDeployments = new ArrayList<>();
         List<Signature> allSigs = getAllNetTaskSignatures();
         for (Signature s : allSigs) {
             allDeployments.add((ServiceDeployment)s.getDeployment());
@@ -893,7 +889,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
                 sig.setServiceType(Spacer.class);
                 ((RemoteSignature) sig).setSelector("exert");
                 sig.getProviderName().setName(ANY);
-                sig.setType(Signature.Type.PROC);
+                sig.setType(Signature.Type.PRO);
                 getControlContext().setAccessType(access);
             } else if (Access.PUSH == access
                     && !getProcessSignature().getServiceType()
@@ -902,7 +898,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
                     sig.setServiceType(Jobber.class);
                     ((RemoteSignature) sig).setSelector("exert");
                     sig.getProviderName().setName(ANY);
-                    sig.setType(Signature.Type.PROC);
+                    sig.setType(Signature.Type.PRO);
                     getControlContext().setAccessType(access);
                 }
             }
@@ -920,13 +916,12 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      *
      * @see sorcer.service.Evaluation#execute()
      */
-    public Object evaluate(Arg... args) throws EvaluationException,
-            RemoteException {
-        Context cxt = null;
+    public Object evaluate(Arg... args) throws EvaluationException {
+        Context cxt;
         try {
             substitute(args);
             Routine evaluatedExertion = exert(args);
-            Context.Return rp = (Context.Return)evaluatedExertion.getDataContext()
+            Context.Return rp = evaluatedExertion.getDataContext()
                     .getContextReturn();
             if (evaluatedExertion instanceof Job) {
                 cxt = ((Job) evaluatedExertion).getJobContext();
@@ -944,7 +939,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
                     cxt.setReturnValue(cxt.getValue(rp.returnPath));
                     Context out = null;
                     if (rp.outPaths != null && rp.outPaths.size() > 0) {
-                        out = ((ServiceContext)cxt).getDirectionalSubcontext(rp.outPaths);
+                        out = cxt.getDirectionalSubcontext(rp.outPaths);
                         cxt.setReturnValue(out);
                         return out;
                     }
@@ -960,10 +955,10 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     @Override
-    public Context dispatch(Context context, Arg... args) throws DispatchException, RemoteException {
+    public Context dispatch(Context context, Arg... args) throws DispatchException {
         try {
             return evaluate(context,args);
-        } catch (EvaluationException e) {
+        } catch (MogramException e) {
             throw new DispatchException(e);
         }
     }
@@ -994,12 +989,12 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      *
      * @see sorcer.service.Evaluation#getAsIs()
      */
-    public Object asis() throws EvaluationException, RemoteException {
+    public Object asis() throws EvaluationException {
         return evaluate();
     }
 
     public Object asis(String path) throws ContextException {
-        ServiceContext cxt = null;
+        ServiceContext cxt;
         if (isJob()) {
             cxt = (ServiceContext)((Job) this).getJobContext();
         } else {
@@ -1013,7 +1008,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     public Object putValue(String path, Object value) throws ContextException {
-        Context cxt = null;
+        Context cxt;
         if (isJob()) {
             cxt = ((Job) this).getJobContext();
         } else {
@@ -1084,7 +1079,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
 
     public void addDependers(Evaluation... dependers) {
         if (this.dependers == null)
-            this.dependers = new ArrayList<Evaluation>();
+            this.dependers = new ArrayList<>();
         for (Evaluation depender : dependers)
             this.dependers.add(depender);
     }
@@ -1103,7 +1098,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     @Override
-    public Object execute(Arg... args) throws MogramException, RemoteException {
+    public Object execute(Arg... args) throws MogramException {
         Context cxt = (Context) Arg.selectDomain(args);
         if (cxt != null) {
             dataContext = (ServiceContext) cxt;
@@ -1111,6 +1106,9 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         try {
             return exec(this, args);
         } catch (ServiceException e) {
+            if (e instanceof MogramException) {
+                throw (MogramException)e;
+            }
             throw new MogramException(e);
         }
     }
@@ -1121,57 +1119,55 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
         String stdoutSep = "================================================================================\n";
-        StringBuffer info = new StringBuffer();
-        try {
-            info.append("\n" + stdoutSep)
-                    .append("[SORCER Service Routine]\n")
-                    .append("\tRoutine Type:        " + getClass().getName()
-                            + "\n")
-                    .append("\tRoutine Tag:        " + key + "\n")
-                    .append("\tRoutine Status:      " + status + "\n")
-                    .append("\tRoutine ID:          " + mogramId + "\n")
-                    .append("\tCreation Date:        " + sdf.format(creationDate) + "\n")
-                    .append("\tRuntime ID:           " + runtimeId + "\n")
-                    .append("\tParent ID:            " + parentId + "\n")
-                    .append("\tOwner ID:             " + ownerId + "\n")
-                    .append("\tSubject ID:           " + subjectId + "\n")
-                    .append("\tDiscipline ID:            " + domainId + "\n")
-                    .append("\tSubdomain ID:         " + subdomainId + "\n")
-                    .append("\tlsb ID:               " + lsbId + "\n")
-                    .append("\tmsb ID:               " + msbId + "\n")
-                    .append("\tSession ID:           " + sessionId + "\n")
-                    .append("\tDescription:          " + description + "\n")
-                    .append("\tProject:              " + projectName + "\n")
-                    .append("\tGood Until Date:      " + goodUntilDate + "\n")
-                    .append("\tAccess Class:         " + accessClass + "\n")
-                    .append("\tIs Export Controlled: " + isExportControlled + "\n")
-                    .append("\tPriority:             " + priority + "\n")
-                    .append("\tServiceExerter Tag:        "
-                            + getProcessSignature().getProviderName() + "\n")
-                    .append("\tService Type:         "
-                            + getProcessSignature().getServiceType() + "\n")
-                    .append("\tException Count:      " + getExceptionCount() + "\n")
-                    .append("\tPrincipal:            " + principal + "\n")
-                    .append(stdoutSep).append("[Control Context]\n")
-                    .append(getControlContext() + "\n").append(stdoutSep);
-        } catch (SignatureException e) {
-            e.printStackTrace();
-        }
+        StringBuilder info = new StringBuilder();
+        info.append("\n").append(stdoutSep)
+            .append("[SORCER Service Routine]\n").append("\tRoutine Type:        ").append(getClass().getName())
+            .append("\n")
+            .append("\tRoutine Tag:          ").append(key).append("\n")
+            .append("\tRoutine Status:       ").append(status).append("\n")
+            .append("\tRoutine ID:           ")
+            .append(mogramId).append("\n")
+            .append("\tCreation Date:        ").append(sdf.format(creationDate))
+            .append("\n")
+            .append("\tRuntime ID:           ").append(runtimeId).append("\n")
+            .append("\tParent ID:            ").append(parentId).append("\n")
+            .append("\tOwner ID:             ")
+            .append(ownerId).append("\n")
+            .append("\tSubject ID:           ").append(subjectId).append("\n")
+            .append("\tDiscipline ID:        ").append(domainId).append("\n")
+            .append("\tSubdomain ID:         ")
+            .append(subdomainId).append("\n")
+            .append("\tlsb ID:               ").append(lsbId).append("\n")
+            .append("\tmsb ID:               ")
+            .append(msbId).append("\n")
+            .append("\tSession ID:           ")
+            .append(sessionId).append("\n")
+            .append("\tDescription:          ").append(description).append("\n")
+            .append("\tProject:              ").append(projectName).append("\n")
+            .append("\tGood Until Date:      ")
+            .append(goodUntilDate).append("\n")
+            .append("\tAccess Class:         ").append(accessClass).append("\n")
+            .append("\tIs Export Controlled: ").append(isExportControlled).append("\n")
+            .append("\tPriority:             ").append(priority).append("\n")
+            .append("\tServiceExerter Tag:        ").append(getProcessSignature().getProviderName()).append("\n")
+            .append("\tService Type:         ").append(getProcessSignature().getServiceType()).append("\n")
+            .append("\tException Count:      ").append(getExceptionCount()).append("\n")
+            .append("\tPrincipal:            ").append(principal).append("\n")
+            .append(stdoutSep)
+            .append("[Control Context]\n").append(getControlContext()).append("\n")
+            .append(stdoutSep);
+
         String time = getControlContext().getExecTime();
         if (time != null && time.length() > 0) {
-            info.append("\nExecution Time = " + time + "\n" + stdoutSep);
+            info.append("\nExecution Time = ").append(time).append("\n").append(stdoutSep);
         }
         return info.toString();
     }
 
     @Override
-    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
-        try {
-            substitute(context);
-            return exert(args).getContext();
-        } catch (MogramException e) {
-            throw new EvaluationException(e);
-        }
+    public Context evaluate(Context context, Arg... args) throws MogramException {
+        substitute(context);
+        return exert(args).getContext();
     }
 
 }

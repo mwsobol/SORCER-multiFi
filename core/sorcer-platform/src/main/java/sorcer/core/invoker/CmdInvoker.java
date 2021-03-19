@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,7 +30,6 @@ import sorcer.core.context.model.ent.Prc;
 import sorcer.core.context.model.ent.Function;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;
-import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
 import sorcer.util.exec.CommonsExecUtil;
 import sorcer.util.exec.ExecUtils;
@@ -110,7 +108,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	 * @throws EvaluationException
 	 */
 	public CmdInvoker(String argarray[], File script, boolean background,
-			InputStream stdin, File logFile, Prc... callEntries) throws EvaluationException {
+			InputStream stdin, File logFile, Prc... callEntries) {
 		cmdarray = new String[argarray.length + 1];
 		this.scriptFile = script;
 		this.args = new ArgSet(callEntries);
@@ -139,18 +137,17 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	 *            true if the script to be run in background
 	 * @param logFile
 	 *            The standard output for the system compute
-	 * @throws EvaluationException
+	 * @throws EvaluationException if problems
 	 */
-	public CmdInvoker(String argarray[], File scriptFile, boolean background,
-			File logFile) throws EvaluationException {
+	public CmdInvoker(String[] argarray, File scriptFile, boolean background,
+					  File logFile) {
 		this(argarray, scriptFile, background, null, logFile);
 	}
 	
 	/**
 	 * Feed specified standard input to the command executing compute.
 	 */
-	public CmdInvoker(String cmd, InputStream stdin)
-			throws EvaluationException {
+	public CmdInvoker(String cmd, InputStream stdin){
 		this(cmd);
 		this.stdin = stdin;
 	}
@@ -160,15 +157,13 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	 * @see sorcer.service.Evaluation#execute(sorcer.service.Arg[])
 	 */
 	@Override
-	public CmdResult evaluate(Arg... entries) throws EvaluationException,
-			RemoteException {
+	public CmdResult evaluate(Arg... entries) throws EvaluationException {
 		CmdResult out = null;
 		if (scriptFile != null) {
 			try {
 				return execScript();
 			} catch (Exception se) {
-				throw new EvaluationException("Script invocation failed: "
-						+ cmd);
+				throw new EvaluationException("Script invocation failed: " + cmd);
 			}
 		} else {
 			try {
@@ -186,9 +181,11 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 				} else if (cmdarray != null) {
 					String command = cmdarray[0];
 					String[] args = new String[cmdarray.length-1];
-					for (int i=1;i<cmdarray.length;i++) {
-						args[i-1] = cmdarray[i];
-					}
+					System.arraycopy(cmdarray,
+									 1,
+									 args,
+									 0,
+									 cmdarray.length - 1);
 					if (stdin != null) {
 						out = CommonsExecUtil.execCommand(command, args, stdin);
 					} else {
@@ -204,7 +201,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 		return out;
 	}
 
-	public CmdResult execScript() throws IOException, InterruptedException, ContextException {
+	public CmdResult execScript() throws IOException, InterruptedException {
 		if (cmdarray != null) {
 			StringBuilder sb = new StringBuilder(cmdarray[0]);
 			for (int i = 1; i < cmdarray.length; i++)
@@ -222,30 +219,28 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 
 		final Process process = Runtime.getRuntime().exec(cmd);				
 		final PrintWriter logOut = new PrintWriter(logFile);
-		Thread scriptLogger = new Thread() {
-			public void run() {
-				String line;
-				BufferedReader in = new BufferedReader(new InputStreamReader(
-						process.getInputStream()));
-				try {
-					while ((line = in.readLine()) != null) {
-						logOut.println(line);
-						if (logOut.checkError()) {
-							System.err
-									.println("scipt execEnt log file encountered check error"
-											+ logFile);
-						}
-						logOut.flush();
+		Thread scriptLogger = new Thread(() -> {
+			String line;
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					process.getInputStream()));
+			try {
+				while ((line = in.readLine()) != null) {
+					logOut.println(line);
+					if (logOut.checkError()) {
+						System.err
+								.println("scipt execEnt log file encountered check error"
+										+ logFile);
 					}
-				} catch (IOException e) {
-					System.err
-							.println("scipt execEnt log file encountered IO error"
-									+ logFile);
+					logOut.flush();
 				}
+			} catch (IOException e) {
+				System.err
+						.println("scipt execEnt log file encountered IO error"
+								+ logFile);
 			}
-		};
+		});
 		scriptLogger.start();
-		CmdResult result = null;
+		CmdResult result;
 		if (stdin != null)
 			result = ExecUtils.execCommand(process, stdin, true);
 		else {

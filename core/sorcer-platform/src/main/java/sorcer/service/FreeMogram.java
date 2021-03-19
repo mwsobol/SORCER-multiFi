@@ -56,6 +56,7 @@ public class FreeMogram extends ServiceMogram implements FreeService {
                 mogram = (Mogram) ((LocalSignature) object).build();
                 builder = (Signature) object;
                 mogram.setBuilder(builder);
+                mogram.setName(builder.getName());
             } catch (SignatureException | MogramException e) {
                 throw new ConfigurationException(e);
             }
@@ -83,7 +84,7 @@ public class FreeMogram extends ServiceMogram implements FreeService {
     }
 
     @Override
-    public List<ThrowableTrace> getExceptions() throws RemoteException {
+    public List<ThrowableTrace> getExceptions() {
         return null;
     }
 

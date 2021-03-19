@@ -351,7 +351,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	}
 
 	@Override
-	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
+	public T evaluate(Arg... args) throws EvaluationException {
 		try {
 			if (args != null && args.length > 0) {
 				isValid = false;
@@ -596,11 +596,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 		Context cxt = (Context)Arg.selectDomain(args);
 		if (cxt !=null) {
 			invokeContext = cxt;
-			try {
-				return evaluate(args);
-			} catch (RemoteException e) {
-				throw new EvaluationException(e);
-			}
+			return evaluate(args);
 		}
 		return null;
 	}
@@ -639,11 +635,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 		Context cxt = (Context)Arg.selectDomain(args);
 		if (cxt !=null) {
 			invokeContext = cxt;
-			try {
-				return evaluate(args);
-			} catch (RemoteException e) {
-				throw new EvaluationException(e);
-			}
+			return evaluate(args);
 		}
 		return null;
 	}
@@ -668,14 +660,18 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
         this.scope =scope;
     }
 
-	public Context getDomainData() throws ContextException, RemoteException {
+	public Context getDomainData() {
 		return invokeContext;
 	}
 
 	@Override
-	public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
+	public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ServiceException {
 		if (mogram instanceof Mogram) {
-			invokeContext = ((Mogram)mogram).exert(txn, args).getContext();
+			try {
+				invokeContext = mogram.exert(txn, args).getContext();
+			} catch (RemoteException e) {
+				throw new MogramException(e);
+			}
 		}
 		Object out = null;
 		if (invokeContext != null) {

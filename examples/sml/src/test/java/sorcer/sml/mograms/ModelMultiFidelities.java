@@ -14,11 +14,10 @@ import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiMogram;
-import sorcer.mo.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.modeling.*;
-import sorcer.service.Region;
+import sorcer.service.Node;
 
 import java.rmi.RemoteException;
 
@@ -32,8 +31,7 @@ import static sorcer.ent.operator.*;
 import static sorcer.so.operator.*;
 
 /**
- * Created b
- * y Mike Sobolewski on 10/26/15.
+ * Created by Mike Sobolewski on 03/211/21.
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
@@ -729,12 +727,13 @@ public class ModelMultiFidelities {
             loop(condition(cxt -> (double)
                 value(cxt, "morpher3") < 900.0), model("cxtn1")));
 
-        Region morphDis = operator.rgn(
-            cxtnFi("cxtn1", sig("cxtn1", ModelMultiFidelities.class, "getMorphingModel")),
-            dspFi("dspt1", mdlDispatch));
+        Node morphDis = rnd(
+            rndFi("morpher3",
+                cxtnFi("cxtn1", sig(ModelMultiFidelities.class, "getMorphingModel")),
+                dspFi("dspt1", mdlDispatch)));
 
         // out is the discipline output
-        Context out  = eval(morphDis, fi("cxtn1", "dspt1"));
+        Context out  = eval(morphDis);
 
         assertTrue(value(out, "morpher3").equals(920.0));
     }

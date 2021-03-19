@@ -542,7 +542,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
             } else {
                 out = mogram.exert();
             }
-		} catch (RemoteException | SignatureException | ContextException e) {
+		} catch (RemoteException | ServiceException e) {
 			openOutPanel(SorcerUtil.stackTraceToString(e));
 			logger.warn("Error while processing mogram", e);
 			return;
@@ -557,19 +557,15 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 		if (mogram instanceof Routine) {
 			Routine exertion = (Routine)mogram;
-			try {
-				if (exertion.getExceptions().size() > 0) {
-                    openOutPanel(exertion.getExceptions().toString());
-                } else {
-                    StringBuilder sb = new StringBuilder(exertion.getContext().toString());
-                    if (debug) {
-                        sb.append("\n");
-                        sb.append(((Subroutine) exertion).getControlInfo().toString());
-                    }
-                    openOutPanel(sb.toString());
-                }
-			} catch (RemoteException e) {
-				throw new ContextException(e);
+			if (exertion.getExceptions().size() > 0) {
+				openOutPanel(exertion.getExceptions().toString());
+			} else {
+				StringBuilder sb = new StringBuilder(exertion.getContext().toString());
+				if (debug) {
+					sb.append("\n");
+					sb.append(((Subroutine) exertion).getControlInfo().toString());
+				}
+				openOutPanel(sb.toString());
 			}
 		} else {
 			openOutPanel(mogram.toString());

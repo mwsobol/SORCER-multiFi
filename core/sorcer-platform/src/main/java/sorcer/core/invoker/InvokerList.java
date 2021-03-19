@@ -136,20 +136,15 @@ public class InvokerList extends ArrayList<ServiceInvoker> {
 	}
 
 	public List<Tuple2<String, Object>> getEntries() throws EvaluationException {
-		List<Tuple2<String, Object>> entries = new ArrayList<Tuple2<String, Object>>(
-				size());
+		List<Tuple2<String, Object>> entries = new ArrayList<>(size());
 		for (int i = 0; i < size(); i++) {
-			try {
 				entries.add(new Tuple2(get(i).getName(), get(i).evaluate()));
-			} catch (RemoteException e) {
-				throw new EvaluationException(e);
-			}
 		}
 		return entries;
 	}
 
-	public List<Object> getValues() throws EvaluationException, RemoteException {
-		List<Object> values = new ArrayList<Object>(size());
+	public List<Object> getValues() throws EvaluationException {
+		List<Object> values = new ArrayList<>(size());
 		for (int i = 0; i < size(); i++) {
 			values.add(get(i).evaluate());
 		}

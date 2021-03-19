@@ -13,7 +13,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Coupling;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.AnalysisEntry;
+import sorcer.core.context.model.ent.Analyzer;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.ContextFidelityManager;
@@ -77,7 +77,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected Differentiator differentiator;
     protected Differentiator fdDifferentiator;
     protected Differentiator globalDifferentiator;
-    protected Fidelity<AnalysisEntry> mdaFi;
+    protected Fidelity<Analyzer> mdaFi;
     protected List<Coupling> couplings;
     protected ContextSelector contextSelector;
     protected boolean isExec = true;
@@ -170,7 +170,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         subdomainId = "0";
         accessClass = PUBLIC;
         isExportControlled = Boolean.FALSE;
-        status = new Integer(INITIAL);
+        status = INITIAL;
         principal = new SorcerPrincipal(System.getProperty("user.name"));
         principal.setId(principal.getName());
         setSubject(principal);
@@ -230,7 +230,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public List<String> getAllMogramIds() {
-        List<String> mogIdsList = new ArrayList<String>();
+        List<String> mogIdsList = new ArrayList<>();
         for (Discipline mo : getAllMograms()) {
             mogIdsList.add(mo.getId().toString());
         }
@@ -324,12 +324,12 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
+    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws MogramException {
         return null;
     }
 
     @Override
-    public <T extends Contextion> T exert(Arg... args) throws ContextException, RemoteException {
+    public <T extends Contextion> T exert(Arg... args) throws MogramException {
         return null;
     }
 
@@ -405,18 +405,16 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     private void setSubject(Principal principal) {
         if (principal == null)
             return;
-        Set<Principal> principals = new HashSet<Principal>();
+        Set<Principal> principals = new HashSet<>();
         principals.add(principal);
-        subject = new Subject(true, principals, new HashSet(), new HashSet());
+        subject = new Subject(true, principals, new HashSet<>(), new HashSet<>());
     }
 
     public SorcerPrincipal getSorcerPrincipal() {
         if (subject == null)
             return null;
         Set<Principal> principals = subject.getPrincipals();
-        Iterator<Principal> iterator = principals.iterator();
-        while (iterator.hasNext()) {
-            Principal p = iterator.next();
+        for (Principal p : principals) {
             if (p instanceof SorcerPrincipal)
                 return (SorcerPrincipal) p;
         }
@@ -438,18 +436,18 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public long getMsbId() {
-        return (msbId == null) ? -1 : msbId.longValue();
+        return msbId == null ? -1 : msbId;
     }
 
     public void setLsbId(long leastSig) {
         if (leastSig != -1) {
-            lsbId = new Long(leastSig);
+            lsbId = leastSig;
         }
     }
 
     public void setMsbId(long mostSig) {
         if (mostSig != -1) {
-            msbId = new Long(mostSig);
+            msbId = mostSig;
         }
     }
 
@@ -473,7 +471,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
         Signature sig = null;
         for (Object s : selectedFi.selects) {
-            if (s instanceof Signature && ((Signature)s).getExecType() == Signature.Type.PROC) {
+            if (s instanceof Signature && ((Signature)s).getExecType() == Signature.Type.PRO) {
                 sig = (Signature)s;
                 break;
             }
@@ -498,17 +496,17 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         }
     }
 
-    private void trimNotSerializableSignatures(Fidelity<Signature> fidelity) throws SignatureException {
+    private void trimNotSerializableSignatures(Fidelity<Signature> fidelity) {
         if (fidelity.getSelect() instanceof Signature) {
             Iterator<Signature> i = fidelity.getSelects().iterator();
             while (i.hasNext()) {
                 Signature sig = i.next();
-                Class prvType = sig.getServiceType();
+                Class<?> prvType = sig.getServiceType();
                 if (!prvType.isInterface()
                     && !Serializable.class.isAssignableFrom(prvType)) {
                     i.remove();
                     if (sig == fidelity.getSelect()) {
-                        fidelity.setSelect((Signature) null);
+                        fidelity.setSelect(null);
                     }
                     logger.warn("removed not serializable signature for: {}", prvType);
                 }
@@ -517,7 +515,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public List<Signature> getApdProcessSignatures() {
-        List<Signature> sl = new ArrayList<Signature>();
+        List<Signature> sl = new ArrayList<>();
         for (Object s : ((ServiceFidelity)multiFi.getSelect()).getSelects()) {
             if (s instanceof Signature && ((Signature)s).getExecType() == Signature.Type.APD_DATA)
                 sl.add((Signature)s);
@@ -526,7 +524,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public List<Signature> getPreprocessSignatures() {
-        List<Signature> sl = new ArrayList<Signature>();
+        List<Signature> sl = new ArrayList<>();
         for (Object s : ((ServiceFidelity)multiFi.getSelect()).getSelects()) {
             if (s instanceof Signature && ((Signature)s).getExecType() == Signature.Type.PRE)
                 sl.add((Signature)s);
@@ -535,7 +533,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public List<Signature> getPostprocessSignatures() {
-        List<Signature> sl = new ArrayList<Signature>();
+        List<Signature> sl = new ArrayList<>();
         for (Object s : ((ServiceFidelity)multiFi.getSelect()).getSelects()) {
             if (s instanceof Signature && ((Signature)s).getExecType() == Signature.Type.POST)
                 sl.add((Signature)s);
@@ -587,11 +585,11 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public void isExportControlled(boolean b) {
-        isExportControlled = new Boolean(b);
+        isExportControlled = b;
     }
 
     public boolean isExportControlled() {
-        return isExportControlled.booleanValue();
+        return isExportControlled;
     }
 
     public Date getGoodUntilDate() {
@@ -673,8 +671,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.isInitializable = isInitializable;
     }
 
-    public Mogram setExecPath(ExecPath execPath)
-            throws ContextException {
+    public Mogram setExecPath(ExecPath execPath) {
         this.execPath = execPath;
         return this;
     }
@@ -749,8 +746,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public String toString() {
-        StringBuffer info = new StringBuffer()
-                .append(this.getClass().getName()).append(": " + key);
+        StringBuilder info = new StringBuilder()
+                .append(this.getClass().getName()).append(": ").append(key);
         info.append("\n  status=").append(status);
         info.append(", mogram ID=").append(mogramId);
         return info.toString();
@@ -834,7 +831,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.contextFidelityManager = contextFidelityManager;
     }
 
-    public FidelityManagement getRemoteFidelityManager() throws RemoteException {
+    public FidelityManagement getRemoteFidelityManager() {
         return getFidelityManager();
     }
 
@@ -880,7 +877,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
                             }
                         }
                     } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.SELECT) {
-                        Mogram mog = null;
+                        Mogram mog;
                         if (((Fidelity) a).getPath() != null && ((Fidelity) a).getPath().length() > 0) {
                             mog = (Mogram) this.getComponentMogram(((Fidelity) a).getPath());
                         } else {
@@ -922,7 +919,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public Fidelity selectMetafidelity(Fidelity fidelity) throws ConfigurationException {
-        Metafidelity metaFi = null;
+        Metafidelity metaFi;
         Fidelity fi = fidelity;
         if (fidelity.fiType.equals(Fi.Type.META) && fidelity.getSelect() == null) {
             if (multiMetaFi != null) {
@@ -931,7 +928,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
             } else {
                 metaFi = (Metafidelity) fidelity;
             }
-            Mogram mog = null;
+            Mogram mog;
             for (Object obj : metaFi.selects) {
                 if (((Fidelity) obj).getPath() != null && ((Fidelity) obj).getPath().length() > 0) {
                     mog = (Mogram) this.getComponentMogram(((Fidelity) obj).getPath());
@@ -1010,17 +1007,18 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
             Pool[] pools = (Pool[]) config.getEntry(Pools.COMPONENT, Pools.FI_POOL, Pool[].class);
             Pool<Fidelity, Service> pool = new Pool<>();
             pool.setFiType(Fi.Type.VAR_FI);
-            for (int i = 0; i < pools.length; i++) {
-                pool.putAll((Map<? extends Fidelity, ? extends ServiceFidelity>) pools[i]);
+            for (Pool value : pools) {
+                pool.putAll((Map<? extends Fidelity, ? extends ServiceFidelity>) value);
             }
             Pools.putFiPool(this, pool);
 
             List[] projections = (List[]) config.getEntry(Pools.COMPONENT, Pools.FI_PROJECTIONS, List[].class);
             Map<String, ServiceFidelity> metafidelities =
                     ((FidelityManager) getFidelityManager()).getMetafidelities();
-            for (int i = 0; i < projections.length; i++) {
-                for (Projection po : (List<Projection>) projections[i]) {
-                    metafidelities.put(po.getName(), po);
+            for (List list : projections) {
+                for (Projection po : (List<Projection>) list) {
+                    metafidelities.put(po.getName(),
+                                       po);
                 }
             }
         } catch (net.jini.config.ConfigurationException e) {
@@ -1049,14 +1047,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.couplings = couplings;
     }
 
-    public Fidelity<Analysis> getAnalysisFi(Context context) throws ConfigurationException {
+    public Fidelity<Analysis> getAnalysisFi(Context context) {
         Fidelity<Analysis> analysisFi = null;
             Object mdaComponent = context.get(Context.MDA_PATH);
             if (mdaComponent != null) {
-                if (mdaComponent instanceof AnalysisEntry) {
-                    analysisFi = new Fidelity(((AnalysisEntry)mdaComponent).getName());
-                    analysisFi.addSelect((AnalysisEntry) mdaComponent);
-                    analysisFi.setSelect((AnalysisEntry)mdaComponent);
+                if (mdaComponent instanceof Analyzer) {
+                    analysisFi = new Fidelity(((Analyzer)mdaComponent).getName());
+                    analysisFi.addSelect((Analyzer) mdaComponent);
+                    analysisFi.setSelect((Analyzer)mdaComponent);
                 } else if (mdaComponent instanceof ServiceFidelity
                     && ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
                     analysisFi = (Fidelity) mdaComponent;
@@ -1065,14 +1063,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return analysisFi;
     }
 
-    public Fidelity<AnalysisEntry> setMdaFi(Context context) throws ConfigurationException {
+    public Fidelity<Analyzer> setMdaFi(Context context) {
        if(mdaFi == null) {
            Object mdaComponent = context.get(Context.MDA_PATH);
            if (mdaComponent != null) {
-               if (mdaComponent instanceof AnalysisEntry) {
-                   mdaFi = new Fidelity(((AnalysisEntry)mdaComponent).getName());
-                   mdaFi.addSelect((AnalysisEntry) mdaComponent);
-                   mdaFi.setSelect((AnalysisEntry)mdaComponent);
+               if (mdaComponent instanceof Analyzer) {
+                   mdaFi = new Fidelity(((Analyzer)mdaComponent).getName());
+                   mdaFi.addSelect((Analyzer) mdaComponent);
+                   mdaFi.setSelect((Analyzer)mdaComponent);
                } else if (mdaComponent instanceof ServiceFidelity
                        && ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
                    mdaFi = (Fidelity) mdaComponent;
@@ -1082,12 +1080,12 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
        return mdaFi;
     }
 
-    public Fidelity<AnalysisEntry> getMdaFi() {
+    public Fidelity<Analyzer> getMdaFi() {
         return mdaFi;
     }
 
     @Override
-    public String getProjectionFi(String projectionName) throws ContextException, RemoteException {
+    public String getProjectionFi(String projectionName) {
         return ((FidelityManager)fiManager).getProjectionFi(projectionName);
     }
 
@@ -1114,12 +1112,12 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public void update(Setup... contextEntries) throws ContextException, RemoteException {
+    public void update(Setup... contextEntries) throws ContextException {
         // implement in subclasses
     }
 
     @Override
-    public Entry act(Arg... args) throws ServiceException, RemoteException {
+    public Entry act(Arg... args) throws ServiceException {
         Object result = this.execute(args);
         if (result instanceof Entry) {
             return (Entry)result;
@@ -1129,7 +1127,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+    public Data act(String entryName, Arg... args) throws ServiceException {
         Object result = this.execute(args);
         if (result instanceof Entry) {
             return (Entry)result;
@@ -1201,11 +1199,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public boolean equals(Object object) {
-        if (object instanceof Mogram && mogramId.equals(((Mogram) object).getId())) {
-            return true;
-        } else {
-            return false;
-        }
+        return object instanceof Mogram && mogramId.equals(((Mogram) object).getId());
     }
 
     @Override
@@ -1275,8 +1269,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public void substitute(Arg... args) throws SetterException, RemoteException {
-            dataContext.substitute(args);
+    public void substitute(Arg... args) throws SetterException {
+        dataContext.substitute(args);
     }
 
     /**
@@ -1293,11 +1287,11 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return false;
     }
 
-    public Context getInConnector(Arg... args) throws ContextException, RemoteException {
+    public Context getInConnector(Arg... args) throws ContextException {
         return null;
     }
 
-    public Context getOutConnector(Arg... args) throws ContextException, RemoteException {
+    public Context getOutConnector(Arg... args) throws ContextException {
         return null;
     }
 
@@ -1379,7 +1373,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.isSuper = mogram.isSuper;
         this.isInitializable = mogram.isInitializable;
         this.dbUrl = mogram.dbUrl;
-        this.multiMetaFi = mogram.multiMetaFi;
         this.serviceMorphFidelity = mogram.serviceMorphFidelity;
         this.principal = mogram.principal;
         this.serviceFidelitySelector = mogram.serviceFidelitySelector;

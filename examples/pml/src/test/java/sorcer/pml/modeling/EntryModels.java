@@ -401,15 +401,12 @@ public class EntryModels {
 		add(pm, x, y, z);
 
 		// update vars x and y that loop condition (var z) depends on
-		Callable update = new Callable() {
-			public Double call() throws ContextException,
-					InterruptedException, RemoteException {
-				while ((Double) x.evaluate() < 60.0) {
-					x.setValue((Double) x.evaluate() + 1.0);
-					y.setValue((Double) y.evaluate() + 1.0);
-				}
-				return (Double) exec(x) + (Double) exec(y) + (Double)exec(pm, "z");
+		Callable update = () -> {
+			while (x.evaluate() < 60.0) {
+				x.setValue(x.evaluate() + 1.0);
+				y.setValue( y.evaluate() + 1.0);
 			}
+			return exec(x) + exec(y) + (Double)exec(pm, "z");
 		};
 
 		add(pm, callableInvoker("prc", update));

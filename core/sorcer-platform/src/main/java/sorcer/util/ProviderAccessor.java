@@ -109,7 +109,7 @@ public class ProviderAccessor extends ServiceAccessor {
      *            a provider service multitype (interface)
      * @return a SORCER provider service
      */
-    public Exerter getProvider(Class serviceType) throws SignatureException {
+    public Exerter getProvider(Class<?> serviceType) throws SignatureException {
 		return getProvider(new RemoteSignature(serviceType));
 	}
 

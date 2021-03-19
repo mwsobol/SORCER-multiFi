@@ -11,7 +11,7 @@ public class ArithmeticImpl implements Arithmetic {
 
 //public class ArithmeticImpl implements Arithmetic, Adder {
 	
-	private Arithmometer arithmometer = new Arithmometer();
+	private final Arithmometer arithmometer = new Arithmometer();
 
 	/*
 	 * (non-Javadoc)
@@ -19,8 +19,7 @@ public class ArithmeticImpl implements Arithmetic {
 	 * @see junit.sorcer.core.provider.Adder#add(sorcer.service.Context)
 	 */
 	@Override
-	public Context add(Context context) throws RemoteException,
-			ContextException {
+	public Context add(Context context) throws ContextException {
 		return arithmometer.add(context);
 	}
 

@@ -205,7 +205,7 @@ public class Snr extends Function<Double> implements Invocation<Double>,
 	}
 
     @Override
-    public Double evaluate(Arg... args) throws EvaluationException, RemoteException {
+    public Double evaluate(Arg... args) throws EvaluationException {
 	    if (((Activator)impl).getArgs().size() > 0) {
             out = ((Activator)impl).activate(args);
         }
@@ -247,8 +247,7 @@ public class Snr extends Function<Double> implements Invocation<Double>,
 	 * @see sorcer.service.Invocation#invoke(sorcer.service.Context, sorcer.service.Arg[])
 	 */
 	@Override
-    public Double invoke(Context context, Arg... args) throws RemoteException,
-            InvocationException {
+    public Double invoke(Context context, Arg... args) throws InvocationException {
         try {
             if (context != null) {
                 if (((Activator)impl).getInvokeContext() == null)
@@ -305,13 +304,13 @@ public class Snr extends Function<Double> implements Invocation<Double>,
 	/* (non-Javadoc)
 	 * @see sorcer.service.Scopable#setScope(java.lang.Object)
 	 */
-	public void setScope(Object scope) throws RemoteException {
+	public void setScope(Object scope) {
 		this.scope = (Context)scope;
 
 	}
 
 	@Override
-	public Double execute(Arg... args) throws MogramException, RemoteException {
+	public Double execute(Arg... args) throws MogramException {
 		Context cxt = (Context) Arg.selectDomain(args);
 		if (cxt != null) {
 			scope = cxt;

@@ -1079,21 +1079,13 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 	}
 
 	/**
-	 * Defines rediness of the provider: true if this provider is ready to
+	 * Defines readiness of the provider: true if this provider is ready to
 	 * compute the incoming exertion, otherwise false.
 	 *
 	 * @return true if the provider is redy to exert the exertion
 	 */
 	public boolean isReady(Routine exertion) {
 		return true;
-	}
-
-	public String getProviderOsName() {
-		if (bean != null && bean instanceof ProviderSupport) {
-			return ((ProviderSupport)bean).getProviderOsName();
-		} else {
-			return null;
-		}
 	}
 
 	private String[] providerCurrentContextList(String interfaceName) {

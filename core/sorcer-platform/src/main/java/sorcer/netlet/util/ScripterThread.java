@@ -107,7 +107,7 @@ public class ScripterThread extends Thread {
             } else if (target != null) {
                 logger.info(">>>>>>>>>>> eval result: " + target);
             }
-        } catch (CompilationFailedException | RemoteException | MogramException e) {
+        } catch (CompilationFailedException | ServiceException e) {
             e.printStackTrace();
         }
     }

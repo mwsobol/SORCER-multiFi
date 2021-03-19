@@ -54,9 +54,9 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
      * @throws RemoteException
      *             if remote call causes an error
      */
-    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException;
+    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws MogramException, RemoteException;
 
-    public <T extends Contextion> T exert(Arg... args) throws ContextException, RemoteException;
+    public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException;
 
     public int getIndex();
 
@@ -68,7 +68,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
 
     public Signature getProcessSignature();
 
-    public Mogram deploy(List<Signature> builders) throws MogramException, ConfigurationException;
+    public Mogram deploy(List<Signature> builders) throws ServiceException, ConfigurationException;
     /**
      * Returns a status of this mogram.
      *
@@ -97,7 +97,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
      * Returns the list of traces of thrown exceptions from this mogram.
      * @return ThrowableTrace list
      */
-    public List<ThrowableTrace> getExceptions() throws RemoteException;
+    public List<ThrowableTrace> getExceptions();
 
     public void reportException(String message, Throwable t);
 
@@ -225,7 +225,6 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
      * Return a subdomain name
      */
 	public String getSubdomainName();
-
 
     /**
      * Returns a ebalated value at teh path
@@ -391,11 +390,6 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
 	 * Returns true if this exertion is composed of other exertions.
 	 */
 	public boolean isCompound();
-
-    /**
-     * Returns true if this exertion is executable in Collaboration
-     */
-    public boolean isExec();
 
     public void setExec(boolean exec);
 }
