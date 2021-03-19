@@ -25,8 +25,7 @@ import sorcer.core.context.*;
 import sorcer.core.context.model.Transmodel;
 import sorcer.core.context.model.req.AnalysisModel;
 import sorcer.core.plexus.ContextFidelityManager;
-import sorcer.core.service.Region;
-import sorcer.core.service.SignatureDomain;
+import sorcer.core.service.*;
 import sorcer.service.Analysis;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.EntryModel;
@@ -39,8 +38,6 @@ import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.service.Collaboration;
-import sorcer.core.service.Governance;
 import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
@@ -1250,7 +1247,7 @@ public class operator {
     }
 
     public static Node rnd(Region region, String rndName) throws ConfigurationException {
-        return (Node) region.getChildren().get(rndName);
+        return (Node) ((Collaboration)region).getChildren().get(rndName);
     }
 
     public static Collaboration clb(Object... data) throws ContextException {
@@ -1411,7 +1408,7 @@ public class operator {
         Object[] names = new Object[regions.size()];
 
         for (int i = 0; i < regions.size(); i++) {
-            (regions.get(i)).setParent(gov);
+            ((Collaboration)(regions.get(i))).setParent(gov);
             names[i] = regions.get(i).getName();
         }
 
@@ -1508,12 +1505,12 @@ public class operator {
             }
         }
 
-        Region rgn = new Region(name, nodes);
+        Region rgn = new CollabRegion(name, nodes);
         if (nodes.size() == 1 && (name == null || name.contains("unknown"))) {
             rgn.setName(nodes.get(0).getName());
         }
         if (inContext != null) {
-            rgn.setInput(inContext);
+            ((Collaboration)rgn).setInput(inContext);
         }
         Object[] names = new Object[nodes.size()];
 
@@ -1526,10 +1523,10 @@ public class operator {
             Map<String, ServiceFidelity> fis = new HashMap<>();
             for (ServiceFidelity discFi : discFis) {
                 fis.put(discFi.getName(), discFi);
-                rgn.getChildren().put(discFi.getName(), (Region) discFi.getSelect());
+                ((Collaboration)rgn).getChildren().put(discFi.getName(), (Region) discFi.getSelect());
             }
             fiManager.setFidelities(fis);
-            rgn.setFiManager(fiManager);
+            ((Collaboration)rgn).setFiManager(fiManager);
         }
 
         if (nodePaths == null) {
@@ -1541,14 +1538,14 @@ public class operator {
 
         if (nodePaths != null) {
             nodePaths.name = rgn.getName();
-            rgn.setDomainPaths(nodePaths);
+            ((Collaboration)rgn).setDomainPaths(nodePaths);
         }
 
         if (dependency == null && names.length > 0) {
             if (nodePaths != null) {
-                sorcer.co.operator.dependsOn(rgn, ent(rgn.getName(), nodePaths));
+                sorcer.co.operator.dependsOn((Collaboration)rgn, ent(rgn.getName(), nodePaths));
             } else {
-                sorcer.co.operator.dependsOn(rgn, ent(rgn.getName(), paths(names)));
+                sorcer.co.operator.dependsOn((Collaboration)rgn, ent(rgn.getName(), paths(names)));
             }
         } else {
             List<Evaluation> entries = dependency.getDependers();
@@ -1568,9 +1565,9 @@ public class operator {
             }
 
             if (execDeps.getType().equals(Functionality.Type.FUNCTION)) {
-                sorcer.co.operator.dependsOn(rgn, execDeps.deps);
+                sorcer.co.operator.dependsOn((Collaboration)rgn, execDeps.deps);
             } else if (execDeps.getType().equals(Functionality.Type.NODE)) {
-                sorcer.co.operator.dependsOn(rgn, execDeps.deps);
+                sorcer.co.operator.dependsOn((Collaboration)rgn, execDeps.deps);
             }
         }
 

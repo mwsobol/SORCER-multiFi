@@ -7,9 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sml.builder.MuiltidisciplinaryBuilder;
-import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.core.invoker.Pipeline;
 import sorcer.core.service.Governance;
+import sorcer.core.service.CollabRegion;
 import sorcer.core.service.Region;
 import sorcer.service.*;
 
