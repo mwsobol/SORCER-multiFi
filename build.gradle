@@ -157,7 +157,6 @@ subprojects {
             mavenLocal()
             if (!enclave) {
                 maven { url "https://repo.repsy.io/mvn/mwsobol/sorcersoft"}
-                maven { url "https://dl.bintray.com/dreedyman/maven"}
                 maven { url "https://repo.repsy.io/mvn/dreedy/maven" }
                 mavenCentral()
             } else {
