@@ -1,6 +1,5 @@
 package sorcer.core.context.model.req;
 
-import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecDependency;
@@ -22,7 +21,7 @@ import static sorcer.mo.operator.result;
 /**
  * Created by Mike Sobolewski on 12/28/2019.
  */
-public class AnalysisModel extends RequestModel implements Transmodel, Configurable {
+public class ExploreModel extends RequestModel implements Transmodel, Configurable {
 
     private static final Logger logger = LoggerFactory.getLogger(Transmodel.class);
 
@@ -36,24 +35,24 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
 
     protected Fidelity<Exploration> explorerFi;
 
-    public AnalysisModel() {
+    public ExploreModel() {
         super();
         type = Functionality.Type.TRANS;
     }
 
-    public AnalysisModel(String name) {
+    public ExploreModel(String name) {
         super(name);
         type = Functionality.Type.TRANS;
     }
 
-    public static AnalysisModel instance(Signature builder) throws SignatureException {
-        AnalysisModel model = AnalysisModel.instance(null, builder);
+    public static ExploreModel instance(Signature builder) throws SignatureException {
+        ExploreModel model = ExploreModel.instance(null, builder);
         model.setEvaluated(false);
         return model;
     }
 
-    public static AnalysisModel instance(String name, Signature builder) throws SignatureException {
-        AnalysisModel model = (AnalysisModel) sorcer.co.operator.instance(builder);
+    public static ExploreModel instance(String name, Signature builder) throws SignatureException {
+        ExploreModel model = (ExploreModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         if (name != null) {
             model.setName(name);
@@ -62,13 +61,13 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
         return model;
     }
 
-    public AnalysisModel(String name, List<Transmodel> models) {
+    public ExploreModel(String name, List<Transmodel> models) {
         super(name);
         for (Transmodel vm : models)
             children.put(vm.getName(), vm);
     }
 
-    public AnalysisModel(String name, Transmodel... models) {
+    public ExploreModel(String name, Transmodel... models) {
         super(name);
         for (Transmodel vm : models)
             children.put(vm.getName(), vm);
