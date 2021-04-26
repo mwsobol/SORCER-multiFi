@@ -23,7 +23,7 @@ import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
 import sorcer.core.context.*;
 import sorcer.core.context.model.Transmodel;
-import sorcer.core.context.model.req.AnalysisModel;
+import sorcer.core.context.model.req.ExploreModel;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.service.*;
 import sorcer.service.Analysis;
@@ -772,7 +772,7 @@ public class operator {
         for (Object fi : modelFis) {
             dataList.remove(fi);
         }
-        Transmodel transModel = new AnalysisModel(name);
+        Transmodel transModel = new ExploreModel(name);
         try {
             transModel.addChildren(domains);
             Object[] names = new Object[domains.size()];
