@@ -51,6 +51,7 @@ public class DataService implements FileURLHandler {
     private static final Logger logger = LoggerFactory.getLogger(DataService.class.getName());
     public static final String DATA_DIR = "sorcer.data.dir";
     public static final String DATA_URL = "sorcer.data.url";
+    public static final String DATA_PORT = "sorcer.data.port";
 
     /**
      * Get the DataService that is bound to the platform code server.
@@ -84,7 +85,7 @@ public class DataService implements FileURLHandler {
      * @param roots The roots to provide access to.
      */
     public DataService(final String... roots) {
-        this(0, roots);
+        this(Integer.parseInt(System.getProperty(DATA_PORT, "0")), roots);
     }
 
     /**
