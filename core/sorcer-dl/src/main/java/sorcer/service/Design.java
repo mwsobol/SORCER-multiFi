@@ -1,6 +1,6 @@
 /*
- * Copyright 2020 the original author or authors.
- * Copyright 2020 SorcerSoft.org.
+ * Copyright 2021 the original author or authors.
+ * Copyright 2021 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package sorcer.service;
 
-public interface Discipline extends Contextion, Design {
-
-}
+/**
+ * An top-level common interface for all design service in SORCER.
+ * Design services are frontend services created by multidisciplinary
+ * designers. Standalone design services that are aggregated
+ * multidisciplinary services are called transdisciplines.
+ *
+ * @author Mike Sobolewski, 05/12/2021
+ */
+public interface Design extends Development, Identifiable {
+        public Fidelity<Development> getDeveloperFi();
+    }

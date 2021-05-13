@@ -1,6 +1,7 @@
+package sorcer.service;
 /*
- * Copyright 2020 the original author or authors.
- * Copyright 2020 SorcerSoft.org.
+ * Copyright 2021 the original author or authors.
+ * Copyright 20121 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sorcer.service;
 
-public interface Discipline extends Contextion, Design {
+/**
+ * A contract related to design development.
+ *
+ * @author Mike Sobolewski 05/12/2021
+ */
+import sorcer.service.modeling.ExecutiveException;
+
+import java.rmi.RemoteException;
+
+public interface Development {
+
+    public Context develop(Context context, Arg... args) throws ServiceException, ExecutiveException,
+            RemoteException;
 
 }

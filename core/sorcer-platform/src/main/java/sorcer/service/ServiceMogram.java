@@ -24,10 +24,7 @@ import sorcer.core.provider.ServiceExerter;
 import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.modeling.Data;
-import sorcer.service.modeling.Finalization;
-import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.*;
 import sorcer.util.GenericUtil;
 import sorcer.util.Pool;
 import sorcer.util.Pools;
@@ -141,6 +138,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected ServiceContext dataContext;
 
     protected Fidelity<Finalization> finalizerFi;
+
+    protected Fidelity<Development> developerFi;
 
     protected transient Exerter provider;
 
@@ -1295,6 +1294,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return null;
     }
 
+    public Fidelity<Development> getDeveloperFi() {
+        return developerFi;
+    }
+
+    public void setDeveloperFi(Fidelity<Development> developerFi) {
+        this.developerFi = developerFi;
+    }
+
     public void execDependencies(String path, Arg... args) throws ContextException {
         // implement in subclasses
     }
@@ -1390,5 +1397,10 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.isExec = mogram.isExec;
 
         return this;
+    }
+
+    @Override
+    public Context develop(Context context, Arg... args) throws ServiceException, ExecutiveException, RemoteException {
+        return null;
     }
 }

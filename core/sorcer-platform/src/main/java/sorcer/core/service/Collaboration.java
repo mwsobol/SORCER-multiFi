@@ -81,6 +81,8 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 	protected Fidelity<Exploration> explorerFi;
 
+	protected Fidelity<Development> developerFi;
+
 	protected Map<String, Discipline> children = new HashMap<>();
 
 	protected List<Coupling> couplings;
@@ -214,6 +216,13 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		isExec = exec;
 	}
 
+	public Fidelity<Development> getDeveloperFi() {
+		return developerFi;
+	}
+
+	public void setDeveloperFi(Fidelity<Development> developerFi) {
+		this.developerFi = developerFi;
+	}
 
 	@Override
 	public Context.Return getContextReturn() {
@@ -707,5 +716,10 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 	public Functionality.Type getType() {
 		return Functionality.Type.COLLABORATION;
+	}
+
+	@Override
+	public Context develop(Context context, Arg... args) throws ServiceException, ExecutiveException, RemoteException {
+		return null;
 	}
 }

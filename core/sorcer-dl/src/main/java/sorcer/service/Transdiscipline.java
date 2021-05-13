@@ -35,4 +35,6 @@ public interface Transdiscipline extends Discipline, disc, cxtn {
 
     public Fidelity<Exploration> getExplorerFi();
 
+    public Fidelity<Development> getDeveloperFi();
+
 }

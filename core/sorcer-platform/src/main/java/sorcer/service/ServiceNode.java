@@ -23,6 +23,7 @@ import net.jini.id.UuidFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.signature.LocalSignature;
+import sorcer.service.modeling.ExecutiveException;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Getter;
 import sorcer.service.modeling.Model;
@@ -453,5 +454,15 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
 
     public void setExec(boolean exec) {
         isExec = exec;
+    }
+
+    @Override
+    public Context develop(Context context, Arg... args) throws ServiceException, ExecutiveException, RemoteException {
+        return null;
+    }
+
+    @Override
+    public Fidelity<Development> getDeveloperFi() {
+        return null;
     }
 }

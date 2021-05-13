@@ -21,6 +21,7 @@ import net.jini.id.Uuid;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
+import sorcer.service.modeling.ExecutiveException;
 import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
@@ -651,5 +652,15 @@ public class SignatureDomain implements Domain {
     @Override
     public void substitute(Arg... entries) throws SetterException, RemoteException {
         domain.substitute(entries);
+    }
+
+    @Override
+    public Context develop(Context context, Arg... args) throws ServiceException, ExecutiveException, RemoteException {
+        return null;
+    }
+
+    @Override
+    public Fidelity<Development> getDeveloperFi() {
+        return null;
     }
 }
