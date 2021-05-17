@@ -280,6 +280,46 @@ operator extends Operator {
         return (Contextion) ((LocalSignature) signature).initInstance();
     }
 
+    public static Context dgnCxt(Object... items) throws ContextException {
+        List<Object> itemArray = new ArrayList(items.length);
+        for (Object obj : items) {
+            itemArray.add(obj);
+        }
+        Signature dSig = null;
+        Design dsg = null;
+        Fidelity<Development> devFi = null;
+
+        Iterator<Object> it = itemArray.iterator();
+        while (it.hasNext()) {
+            Object obj = it.next();
+            if ((obj instanceof Signature) && ((ServiceSignature)obj).isKindOf(Kind.DESIGN)) {
+                dSig = (Signature)obj;
+            } else if (obj instanceof Design) {
+                dsg = (Design)obj;
+            } else if ((obj instanceof ServiceFidelity) &&  ((ServiceFidelity)obj).getFiType().equals(Fi.Type.DEV)) {
+                devFi = (Fidelity)obj;
+            }
+            it.remove();
+        }
+
+        itemArray.add(0, Context.Type.DESIGN);
+        Object[] cxtItems = new Object[itemArray.size()];
+        itemArray.toArray(cxtItems);
+        DesignContext dCxt = (DesignContext) domainContext(cxtItems);
+
+        if (dSig != null) {
+            dCxt.setDesignSignature(dSig);
+        }
+        if (dsg != null) {
+            dCxt.setDesign(dsg);
+        }
+        if (devFi != null) {
+            dCxt.setDeveloperFi(devFi);
+        }
+        dCxt.setType(Functionality.Type.DESIGN);
+        return dCxt;
+    }
+
     public static ServiceContext context(Object... items) throws ContextException {
         if (items.length == 1 && items[0] instanceof Signature) {
             try {
@@ -327,7 +367,7 @@ operator extends Operator {
             return new PositionalContext((String) entries[0]);
         } else if (entries.length == 2 && entries[0] instanceof String
             && entries[1] instanceof Routine) {
-            return (ServiceContext) ((Transroutine) entries[1]).getComponentMogram(
+            return ((Transroutine) entries[1]).getComponentMogram(
                 (String) entries[0]).getContext();
         } else if (entries[0] instanceof Context && entries[1] instanceof List) {
             return ((ServiceContext) entries[0]).getDirectionalSubcontext((List)entries[1]);
@@ -443,7 +483,9 @@ operator extends Operator {
         }
 
         if (cxt == null) {
-            if (types.contains(Context.Type.ARRAY)) {
+             if (types.contains(Context.Type.DESIGN)) {
+                cxt = new DesignContext(name);
+            } else if (types.contains(Context.Type.ARRAY)) {
                 if (subject != null)
                     cxt = new ArrayContext(name, subject.getName(), subject.getImpl());
                 else

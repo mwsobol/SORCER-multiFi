@@ -8,6 +8,8 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.*;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.core.Dispatcher;
+import sorcer.core.context.model.ent.Developer;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
@@ -701,40 +703,5 @@ public class ModelMultiFidelities {
         assertTrue(value(out, "mFi3").equals(9.0));
         assertTrue(value(out, "mFi4").equals(100.0));
         assertTrue(value(out, "morpher3").equals(110.0));
-    }
-
-    @Test
-    public void morphingFidelitiesLoop() throws Exception {
-        mog mdl = getMorphingModel();
-
-        Block mdlBlock = block(
-            loop(condition(cxt -> (double)
-                    value(cxt, "morpher3") < 900.0), mdl));
-
-//        logger.info("DEPS: " + printDeps(mdl));
-        mdlBlock = exert(mdlBlock, fi("multiply", "mFi1"));
-//        logger.info("block context: " + context(mdlBlock));
-//        logger.info("result: " + getValue(context(mdlBlock), "mFi4"));
-
-        assertTrue(value(context(mdlBlock), "morpher3").equals(920.0));
-    }
-
-    @Test
-    public void morphingDiscipline() throws Exception {
-
-        // cxtn1 is a free contextion for a discipline dispatcher
-        Block mdlDispatch = block(
-            loop(condition(cxt -> (double)
-                value(cxt, "morpher3") < 900.0), model("cxtn1")));
-
-        Node morphDis = rnd(
-            rndFi("morpher3",
-                cxtnFi("cxtn1", sig(ModelMultiFidelities.class, "getMorphingModel")),
-                dspFi("dspt1", mdlDispatch)));
-
-        // out is the discipline output
-        Context out  = eval(morphDis);
-
-        assertTrue(value(out, "morpher3").equals(920.0));
     }
 }

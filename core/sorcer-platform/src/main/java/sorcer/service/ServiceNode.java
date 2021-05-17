@@ -457,7 +457,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
     }
 
     @Override
-    public Context develop(Context context, Arg... args) throws ServiceException, ExecutiveException, RemoteException {
+    public Context develop(Design design, Context context) throws ServiceException, ExecutiveException, RemoteException {
         return null;
     }
 

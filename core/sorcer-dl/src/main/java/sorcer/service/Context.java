@@ -962,7 +962,7 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 	public void setContextReturn(Return requestPath);
 
 	public enum Type {
-		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY
+		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY, DESIGN
 	}
 
 	final static String PARAMETER_TYPES = "context/parameter/types";

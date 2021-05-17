@@ -1600,6 +1600,7 @@ public class operator {
         return new Analyzer(name, mda);
     }
 
+
     public static ServiceFidelity mdaFi(String name, Analysis... mdaEntries) {
         Analyzer[] entries = new Analyzer[mdaEntries.length];
         for (int i = 0; i < mdaEntries.length; i++) {
@@ -1609,6 +1610,21 @@ public class operator {
         mdaFi.setName(name);
         mdaFi.setType(Fi.Type.MDA);
         return mdaFi;
+    }
+
+    public static Development dev(String name, Development development) {
+        return new Developer(name, development);
+    }
+
+    public static ServiceFidelity devFi(String name, Development... devEntries) {
+        Developer[] entries = new Developer[devEntries.length];
+        for (int i = 0; i < devEntries.length; i++) {
+            entries[i] = (Developer) devEntries[i];
+        }
+        ServiceFidelity devFi = new ServiceFidelity(entries);
+        devFi.setName(name);
+        devFi.setType(Fi.Type.DEV);
+        return devFi;
     }
 
     public static ServiceFidelity explFi(String name, Exploration... explEntries) {

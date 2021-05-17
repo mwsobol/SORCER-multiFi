@@ -36,9 +36,9 @@ public class Developer extends Entry<Development> implements Controller, Develop
 
     private Signature signature;
 
-    public Developer(String name, Development develper)  {
+    public Developer(String name, Development development)  {
         this.key = name;
-        this.impl = develper;
+        this.impl = development;
         this.type = Functionality.Type.DEVELOPER;
     }
 
@@ -76,18 +76,18 @@ public class Developer extends Entry<Development> implements Controller, Develop
     }
 
     @Override
-    public Context develop(Context context, Arg... args) throws ServiceException, ExecutiveException, RemoteException {
+    public Context develop(Design design, Context context) throws ServiceException, ExecutiveException, RemoteException {
         Context out = ((Governance) contextion).getOutput();
         try {
             if (impl != null && impl instanceof Development) {
                 if (contextion == null) {
-                    out = ((Development) impl).develop(context, args);
+                    out = ((Development) impl).develop(design, context);
                 } else {
-                    out = ((Development) impl).develop(context, args);
+                    out = ((Development) impl).develop(design, context);
                 }
             } else if (signature != null) {
                 impl = ((LocalSignature) signature).initInstance();
-                out = ((Development) impl).develop(context);
+                out = ((Development) impl).develop(design, context);
             } else if (impl == null) {
                 throw new InvocationException("No developer available!");
             }

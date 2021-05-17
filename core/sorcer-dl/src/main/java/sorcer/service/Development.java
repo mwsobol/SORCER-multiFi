@@ -25,9 +25,10 @@ import sorcer.service.modeling.ExecutiveException;
 
 import java.rmi.RemoteException;
 
+@FunctionalInterface
 public interface Development {
 
-    public Context develop(Context context, Arg... args) throws ServiceException, ExecutiveException,
+    public Context develop(Design design, Context context) throws ServiceException, ExecutiveException,
             RemoteException;
 
 }
