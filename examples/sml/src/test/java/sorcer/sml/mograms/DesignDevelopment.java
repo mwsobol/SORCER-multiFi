@@ -168,7 +168,7 @@ public class DesignDevelopment {
             disciplineSig(sig(DesignDevelopment.class, "getMorphingModel")),
             devFi("morphDevFi",
                 dev("morphDev1",
-                    (Design dgn, Context dcxt) -> {
+                    (Design dgn, Context intent) -> {
                         Block mdlBlock = block(
                             loop(condition(cxt -> (double)
                                 value(cxt, "morpher3") < 900.0), (Contextion) dgn));
