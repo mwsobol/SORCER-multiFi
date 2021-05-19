@@ -20,6 +20,7 @@ import net.jini.core.transaction.Transaction;
 import sorcer.Operator;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ContextSelector;
+import sorcer.core.context.DesignContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.DataContext;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static sorcer.mo.operator.dev;
 import static sorcer.mo.operator.value;
 
 /**
@@ -334,6 +336,7 @@ public class operator extends Operator {
         return ((Mogram)domain).getDataContext().append(context);
     }
 
+
     public static ServiceContext response(Mogram mogram, Object... items) throws ServiceException {
         if (mogram instanceof Routine) {
             return exertionResponse((Routine) mogram, items);
@@ -358,9 +361,15 @@ public class operator extends Operator {
             } catch (RemoteException e) {
                 throw new ContextException(e);
             }
+        } else if (mogram instanceof ContextDomain &&  ((ServiceMogram)mogram).getType().equals(Functionality.Type.DESIGN)) {
+            return developDsign((DesignContext) mogram, items);
         } else {
             return modelResponse((ContextDomain) mogram, items);
         }
+    }
+
+    public static ServiceContext dev(Request request, Object... items) throws ServiceException {
+        return eval(request, items);
     }
 
     public static ServiceContext eval(Request request, Object... items) throws ServiceException {
@@ -383,6 +392,21 @@ public class operator extends Operator {
             out = eval(request, (Context)null);
         }
         return (ServiceContext)out;
+    }
+
+    public static ServiceContext developDsign(DesignContext designContext, Object... items) throws ContextException {
+        Development developer = designContext.getDeveloperFi().getSelect();
+        Design design = null;
+        try {
+            if (designContext.getDesignSignature() != null) {
+                design =  (Design) ((LocalSignature)designContext.getDesignSignature()).initInstance();
+            } else {
+                design = designContext.getDesign();
+            }
+            return (ServiceContext) developer.develop(design, designContext.getIntent());
+        } catch (SignatureException | ExecutiveException | ServiceException | RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     public static ServiceContext modelResponse(ContextDomain model, Object... items) throws ContextException {

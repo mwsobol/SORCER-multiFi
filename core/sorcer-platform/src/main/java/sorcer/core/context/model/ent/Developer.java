@@ -17,7 +17,6 @@
 
 package sorcer.core.context.model.ent;
 
-import sorcer.core.service.Governance;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.ExecutiveException;
@@ -32,7 +31,7 @@ public class Developer extends Entry<Development> implements Controller, Develop
 
     private static final long serialVersionUID = 1L;
 
-    private Contextion contextion;
+    private Design design;
 
     private Signature signature;
 
@@ -55,12 +54,12 @@ public class Developer extends Entry<Development> implements Controller, Develop
         this.type = Functionality.Type.DEVELOPER;
     }
 
-    public Contextion getContextion() {
-        return contextion;
+    public Design getDesign() {
+        return design;
     }
 
-    public void setContextion(Contextion contextion) {
-        this.contextion = contextion;
+    public void setDesign(Design design) {
+        this.design = design;
     }
 
     public Development getDeveloper() {
@@ -77,10 +76,11 @@ public class Developer extends Entry<Development> implements Controller, Develop
 
     @Override
     public Context develop(Design design, Context context) throws ServiceException, ExecutiveException, RemoteException {
-        Context out = ((Governance) contextion).getOutput();
+        this.design = design;
+        Context out = null;
         try {
             if (impl != null && impl instanceof Development) {
-                if (contextion == null) {
+                if (this.design == null) {
                     out = ((Development) impl).develop(design, context);
                 } else {
                     out = ((Development) impl).develop(design, context);

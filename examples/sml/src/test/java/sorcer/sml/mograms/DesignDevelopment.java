@@ -30,13 +30,13 @@ import static sorcer.mo.operator.*;
 import static sorcer.so.operator.*;
 
 /**
- * Created by Mike Sobolewski on 03/211/21.
+ * Created by Mike Sobolewski on 05/20/21.
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class EmergentMultiFiModels {
+public class DesignDevelopment {
 
-    private final static Logger logger = LoggerFactory.getLogger(EmergentMultiFiModels.class);
+    private final static Logger logger = LoggerFactory.getLogger(DesignDevelopment.class);
 
     public static mog getMorphingModel() throws Exception {
 
@@ -152,7 +152,7 @@ public class EmergentMultiFiModels {
 
         Node morphDis = rnd(
             rndFi("morpher3",
-                cxtnFi("cxtn1", sig(EmergentMultiFiModels.class, "getMorphingModel")),
+                cxtnFi("cxtn1", sig(DesignDevelopment.class, "getMorphingModel")),
                 dspFi("dspt1", mdlDispatch)));
 
         // out is the discipline output
@@ -165,13 +165,13 @@ public class EmergentMultiFiModels {
     public void morphingDesign() throws Exception {
 
         Context designContext = dgnCxt(
-            disciplineSig(sig(EmergentMultiFiModels.class, "getMorphingModel")),
+            disciplineSig(sig(DesignDevelopment.class, "getMorphingModel")),
             devFi("morphDevFi",
                 dev("morphDev1",
-                    (Design dgn, Context cxt) -> {
+                    (Design dgn, Context dcxt) -> {
                         Block mdlBlock = block(
-                            loop(condition(bcxt -> (double)
-                                value(bcxt, "morpher3") < 900.0), (Contextion) dgn));
+                            loop(condition(cxt -> (double)
+                                value(cxt, "morpher3") < 900.0), (Contextion) dgn));
                         mdlBlock = exert(mdlBlock, fi("multiply", "mFi1"));
                         return context(mdlBlock);
                     }),
@@ -179,13 +179,13 @@ public class EmergentMultiFiModels {
                     (Design dgn, Context cxt) -> {
                         Block mdlBlock = block(
                             loop(condition(bcxt -> (double)
-                                value(bcxt, "morpher3") < 800.0), (Contextion) dgn));
+                                value(bcxt, "morpher3") < 900.0), (Contextion) dgn));
                         mdlBlock = exert(mdlBlock, fi("multiply", "mFi1"));
                         return context(mdlBlock);
                     }))
         );
 
-        Context out = eval(designContext);
+        Context out = dev(designContext, fi("morphDev1"));
         assertTrue(value(out, "morpher3").equals(920.0));
     }
 }

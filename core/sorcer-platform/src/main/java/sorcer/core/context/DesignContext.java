@@ -32,6 +32,7 @@ public class DesignContext extends ServiceContext {
 
     private Signature designSignature;
 
+    private Context intent;
 
     public DesignContext(String name) {
         super(name);
@@ -45,7 +46,12 @@ public class DesignContext extends ServiceContext {
     public void setDeveloperFi(Fidelity<Development> developerFi) {
         this.developerFi = developerFi;
     }
-
+    public Context getIntent() {
+        return intent;
+    }
+    public void setIntent(Context intent) {
+        this.intent = intent;
+    }
     public Design getDesign() {
         return design;
     }
