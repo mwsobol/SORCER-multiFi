@@ -285,17 +285,17 @@ operator extends Operator {
         for (Object obj : items) {
             itemArray.add(obj);
         }
-        Signature dSig = null;
-        Design dsg = null;
+        Signature disciplineSig = null;
+        Discipline discipline = null;
         Fidelity<Development> devFi = null;
 
         Iterator<Object> it = itemArray.iterator();
         while (it.hasNext()) {
             Object obj = it.next();
             if ((obj instanceof Signature) && ((ServiceSignature)obj).isKindOf(Kind.DESIGN)) {
-                dSig = (Signature)obj;
-            } else if (obj instanceof Design) {
-                dsg = (Design)obj;
+                disciplineSig = (Signature)obj;
+            } else if (obj instanceof Discipline) {
+                discipline = (Discipline) obj;
             } else if ((obj instanceof ServiceFidelity) &&  ((ServiceFidelity)obj).getFiType().equals(Fi.Type.DEV)) {
                 devFi = (Fidelity)obj;
             }
@@ -307,11 +307,11 @@ operator extends Operator {
         itemArray.toArray(cxtItems);
         DesignContext dCxt = (DesignContext) domainContext(cxtItems);
 
-        if (dSig != null) {
-            dCxt.setDesignSignature(dSig);
+        if (disciplineSig != null) {
+            dCxt.setDesignSignature(disciplineSig);
         }
-        if (dsg != null) {
-            dCxt.setDesign(dsg);
+        if (discipline != null) {
+            dCxt.setDiscipline(discipline);
         }
         if (devFi != null) {
             dCxt.setDeveloperFi(devFi);

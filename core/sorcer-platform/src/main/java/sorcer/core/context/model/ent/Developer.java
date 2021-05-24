@@ -31,7 +31,7 @@ public class Developer extends Entry<Development> implements Controller, Develop
 
     private static final long serialVersionUID = 1L;
 
-    private Design design;
+    private Discipline discipline;
 
     private Signature signature;
 
@@ -54,12 +54,12 @@ public class Developer extends Entry<Development> implements Controller, Develop
         this.type = Functionality.Type.DEVELOPER;
     }
 
-    public Design getDesign() {
-        return design;
+    public Discipline getDiscipline() {
+        return discipline;
     }
 
-    public void setDesign(Design design) {
-        this.design = design;
+    public void setDiscipline(Discipline discipline) {
+        this.discipline = discipline;
     }
 
     public Development getDeveloper() {
@@ -75,19 +75,19 @@ public class Developer extends Entry<Development> implements Controller, Develop
     }
 
     @Override
-    public Context develop(Design design, Context context) throws ServiceException, ExecutiveException, RemoteException {
-        this.design = design;
+    public Context develop(Discipline discipline, Context context) throws ServiceException, ExecutiveException, RemoteException {
+        this.discipline = discipline;
         Context out = null;
         try {
             if (impl != null && impl instanceof Development) {
-                if (this.design == null) {
-                    out = ((Development) impl).develop(design, context);
+                if (this.discipline == null) {
+                    out = ((Development) impl).develop(discipline, context);
                 } else {
-                    out = ((Development) impl).develop(design, context);
+                    out = ((Development) impl).develop(discipline, context);
                 }
             } else if (signature != null) {
                 impl = ((LocalSignature) signature).initInstance();
-                out = ((Development) impl).develop(design, context);
+                out = ((Development) impl).develop(discipline, context);
             } else if (impl == null) {
                 throw new InvocationException("No developer available!");
             }

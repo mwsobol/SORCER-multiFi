@@ -28,7 +28,7 @@ public class DesignContext extends ServiceContext {
 
     private Fidelity<Development> developerFi;
 
-    private Design design;
+    private Discipline discipline;
 
     private Signature designSignature;
 
@@ -52,12 +52,12 @@ public class DesignContext extends ServiceContext {
     public void setIntent(Context intent) {
         this.intent = intent;
     }
-    public Design getDesign() {
-        return design;
+    public Discipline getDiscipline() {
+        return discipline;
     }
 
-    public void setDesign(Design design) {
-        this.design = design;
+    public void setDiscipline(Discipline discipline) {
+        this.discipline = discipline;
     }
 
     public Signature getDesignSignature() {

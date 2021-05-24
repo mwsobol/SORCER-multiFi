@@ -1,4 +1,4 @@
-package sorcer.sml.mograms;
+package sorcer.sml.disciplines;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -168,18 +168,18 @@ public class DesignDevelopment {
             disciplineSig(sig(DesignDevelopment.class, "getMorphingModel")),
             devFi("morphDevFi",
                 dev("morphDev1",
-                    (Design dgn, Context intent) -> {
+                    (Discipline discipline, Context intent) -> {
                         Block mdlBlock = block(
                             loop(condition(cxt -> (double)
-                                value(cxt, "morpher3") < 900.0), (Contextion) dgn));
+                                value(cxt, "morpher3") < 900.0), (Contextion) discipline));
                         mdlBlock = exert(mdlBlock, fi("multiply", "mFi1"));
                         return context(mdlBlock);
                     }),
                 dev("morphDev2",
-                    (Design dgn, Context cxt) -> {
+                    (Discipline discipline, Context cxt) -> {
                         Block mdlBlock = block(
                             loop(condition(bcxt -> (double)
-                                value(bcxt, "morpher3") < 900.0), (Contextion) dgn));
+                                value(bcxt, "morpher3") < 900.0), (Contextion) discipline));
                         mdlBlock = exert(mdlBlock, fi("multiply", "mFi1"));
                         return context(mdlBlock);
                     }))

@@ -396,14 +396,14 @@ public class operator extends Operator {
 
     public static ServiceContext developDsign(DesignContext designContext, Object... items) throws ContextException {
         Development developer = designContext.getDeveloperFi().getSelect();
-        Design design = null;
+        Discipline discipline = null;
         try {
             if (designContext.getDesignSignature() != null) {
-                design =  (Design) ((LocalSignature)designContext.getDesignSignature()).initInstance();
+                discipline =  (Discipline) ((LocalSignature)designContext.getDesignSignature()).initInstance();
             } else {
-                design = designContext.getDesign();
+                discipline = designContext.getDiscipline();
             }
-            return (ServiceContext) developer.develop(design, designContext.getIntent());
+            return (ServiceContext) developer.develop(discipline, designContext.getIntent());
         } catch (SignatureException | ExecutiveException | ServiceException | RemoteException e) {
             throw new ContextException(e);
         }

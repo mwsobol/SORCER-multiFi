@@ -1398,9 +1398,4 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
         return this;
     }
-
-    @Override
-    public Context develop(Design design, Context context) throws ServiceException, ExecutiveException, RemoteException {
-        return null;
-    }
 }

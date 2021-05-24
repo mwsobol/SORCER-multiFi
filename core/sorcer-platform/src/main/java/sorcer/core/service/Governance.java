@@ -563,8 +563,4 @@ public class Governance implements Transdiscipline, Dependency {
 		this.developerFi = developerFi;
 	}
 
-	@Override
-	public Context develop(Design design, Context context) throws ServiceException, ExecutiveException, RemoteException {
-		return null;
-	}
 }

@@ -17,14 +17,26 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.ExecutiveException;
+
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+
 /**
- * An top-level common interface for all design service in SORCER.
+ * An top-level common interface for all design services in SORCER.
  * Design services are frontend services created by multidisciplinary
- * designers. Standalone design services that are aggregated
- * multidisciplinary services are called transdisciplines.
+ * designers. Standalone design services that are multidisciplinary
+ * services are called transdisciplines.
  *
- * @author Mike Sobolewski, 05/12/2021
+ * @author Mike Sobolewski, 05/23/2021
  */
-public interface Design extends Development, Identifiable {
-        public Fidelity<Development> getDeveloperFi();
-    }
+public interface Design extends Contextion, Remote {
+
+    public Context getContext() throws ContextException;
+
+    public Discipline getDiscipline() throws RemoteException;;
+
+    public Fidelity<Development> getDeveloperFi() throws RemoteException;
+
+    public Context design(Discipline discipline, Context context) throws ServiceException, RemoteException;
+}

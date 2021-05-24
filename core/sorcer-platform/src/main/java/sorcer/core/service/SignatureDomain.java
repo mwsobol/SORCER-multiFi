@@ -36,6 +36,7 @@ public class SignatureDomain implements Domain {
     private Domain domain;
     protected Contextion parent;
     protected boolean isExec = true;
+
     public SignatureDomain() {
 
     }
@@ -56,7 +57,7 @@ public class SignatureDomain implements Domain {
 
     public Domain getDomain() throws SignatureException {
         if (domain == null) {
-            domain = (Domain)((LocalSignature) signature).initInstance();
+            domain = (Domain) ((LocalSignature) signature).initInstance();
             // domain = (Domain) sorcer.co.operator.instance(signature);
             if (name != null) {
                 domain.setDomainName(name);
@@ -206,7 +207,7 @@ public class SignatureDomain implements Domain {
 
     @Override
     public void reportException(String message, Throwable t) {
-        domain.reportException(message,t);
+        domain.reportException(message, t);
     }
 
     @Override
@@ -481,6 +482,7 @@ public class SignatureDomain implements Domain {
     public void setExec(boolean exec) {
         this.isExec = exec;
     }
+
     @Override
     public void execDependencies(String path, Arg... args) throws ContextException {
         domain.execDependencies(path, args);
@@ -652,15 +654,5 @@ public class SignatureDomain implements Domain {
     @Override
     public void substitute(Arg... entries) throws SetterException, RemoteException {
         domain.substitute(entries);
-    }
-
-    @Override
-    public Context develop(Design design, Context context) throws ServiceException, ExecutiveException, RemoteException {
-        return null;
-    }
-
-    @Override
-    public Fidelity<Development> getDeveloperFi() {
-        return null;
     }
 }

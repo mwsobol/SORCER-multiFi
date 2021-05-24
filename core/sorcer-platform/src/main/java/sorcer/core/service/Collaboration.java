@@ -718,8 +718,4 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		return Functionality.Type.COLLABORATION;
 	}
 
-	@Override
-	public Context develop(Design design, Context context) throws ServiceException, ExecutiveException, RemoteException {
-		return null;
-	}
 }
