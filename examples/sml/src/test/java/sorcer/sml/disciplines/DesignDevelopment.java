@@ -162,16 +162,16 @@ public class DesignDevelopment {
     }
 
     @Test
-    public void morphingDesign() throws Exception {
+    public void developingDesign() throws Exception {
 
-        Context designContext = dgnCxt(
+        Context designIntent = dznCxt(
             disciplineSig(sig(DesignDevelopment.class, "getMorphingModel")),
             devFi("morphDevFi",
                 dev("morphDev1",
                     (Discipline discipline, Context intent) -> {
                         Block mdlBlock = block(
                             loop(condition(cxt -> (double)
-                                value(cxt, "morpher3") < 900.0), (Contextion) discipline));
+                                value(cxt, "morpher3") < 900.0), discipline));
                         mdlBlock = exert(mdlBlock, fi("multiply", "mFi1"));
                         return context(mdlBlock);
                     }),
@@ -179,13 +179,14 @@ public class DesignDevelopment {
                     (Discipline discipline, Context cxt) -> {
                         Block mdlBlock = block(
                             loop(condition(bcxt -> (double)
-                                value(bcxt, "morpher3") < 900.0), (Contextion) discipline));
+                                value(bcxt, "morpher3") < 900.0), discipline));
                         mdlBlock = exert(mdlBlock, fi("multiply", "mFi1"));
                         return context(mdlBlock);
                     }))
         );
 
-        Context out = dev(designContext, fi("morphDev1"));
+        Design desg = dzn(designIntent);
+        Context out = dev(desg, fi("morphDev1"));
         assertTrue(value(out, "morpher3").equals(920.0));
     }
 }

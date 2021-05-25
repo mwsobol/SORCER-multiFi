@@ -72,8 +72,6 @@ public class Governance implements Transdiscipline, Dependency {
 
 	protected Fidelity<Supervision> supervisorFi;
 
-	protected Fidelity<Development> developerFi;
-
 	protected Fidelity<Hypervision> executiveFi;
 
 	protected ServiceFidelity contextMultiFi;
@@ -552,15 +550,6 @@ public class Governance implements Transdiscipline, Dependency {
 
 	public void setExec(boolean exec) {
 		isExec = exec;
-	}
-
-	@Override
-	public Fidelity<Development> getDeveloperFi() {
-		return developerFi;
-	}
-
-	public void setDeveloperFi(Fidelity<Development> developerFi) {
-		this.developerFi = developerFi;
 	}
 
 }

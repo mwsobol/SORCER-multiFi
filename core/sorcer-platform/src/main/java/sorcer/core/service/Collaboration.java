@@ -216,10 +216,6 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		isExec = exec;
 	}
 
-	public Fidelity<Development> getDeveloperFi() {
-		return developerFi;
-	}
-
 	public void setDeveloperFi(Fidelity<Development> developerFi) {
 		this.developerFi = developerFi;
 	}

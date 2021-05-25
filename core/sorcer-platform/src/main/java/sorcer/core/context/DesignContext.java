@@ -17,9 +17,8 @@
 
 package sorcer.core.context;
 
-import sorcer.core.context.model.ent.Developer;
 import sorcer.service.*;
-import sorcer.service.modeling.Exploration;
+import sorcer.service.modeling.Functionality;
 
 /**
  * @author Mike Sobolewski, 05/20/2021
@@ -30,12 +29,17 @@ public class DesignContext extends ServiceContext {
 
     private Discipline discipline;
 
-    private Signature designSignature;
+    private Signature disciplineSignature;
 
-    private Context intent;
+    private Signature disciplineIntentSignature;
+
+    private Context disciplineIntent;
+
+    private Context developmentIntent;
 
     public DesignContext(String name) {
         super(name);
+        type = Functionality.Type.DESIGN;
     }
 
     @Override
@@ -46,12 +50,23 @@ public class DesignContext extends ServiceContext {
     public void setDeveloperFi(Fidelity<Development> developerFi) {
         this.developerFi = developerFi;
     }
-    public Context getIntent() {
-        return intent;
+
+    public Context getDisciplineIntent() {
+        return disciplineIntent;
     }
-    public void setIntent(Context intent) {
-        this.intent = intent;
+
+    public void setDisciplineIntent(Context disciplineIntent) {
+        this.disciplineIntent = disciplineIntent;
     }
+
+    public Context getDevelopmentIntent() {
+        return developmentIntent;
+    }
+
+    public void setDevelopmentIntent(Context developmentIntent) {
+        this.developmentIntent = developmentIntent;
+    }
+
     public Discipline getDiscipline() {
         return discipline;
     }
@@ -60,11 +75,20 @@ public class DesignContext extends ServiceContext {
         this.discipline = discipline;
     }
 
-    public Signature getDesignSignature() {
-        return designSignature;
+    public Signature getDisciplineSignature() {
+        return disciplineSignature;
     }
 
-    public void setDesignSignature(Signature designSignature) {
-        this.designSignature = designSignature;
+    public void setDisciplineSignature(Signature disciplineSignature) {
+        this.disciplineSignature = disciplineSignature;
     }
+
+    public Signature getDisciplineIntentSignature() {
+        return disciplineIntentSignature;
+    }
+
+    public void setDisciplineIntentSignature(Signature disciplineIntentSignature) {
+        this.disciplineIntentSignature = disciplineIntentSignature;
+    }
+
 }

@@ -18,6 +18,9 @@
 package sorcer.service;
 
 import sorcer.service.modeling.ExecutiveException;
+import sorcer.service.modeling.Exploration;
+import sorcer.service.modeling.Finalization;
+import sorcer.service.modeling.Initialization;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -38,5 +41,9 @@ public interface Design extends Contextion, Remote {
 
     public Fidelity<Development> getDeveloperFi() throws RemoteException;
 
-    public Context design(Discipline discipline, Context context) throws ServiceException, RemoteException;
+    public Context design(Discipline discipline, Context context) throws DesignException, RemoteException;
+
+    public Fidelity<Initialization> getInitializerFi();
+
+    public Fidelity<Finalization> getFinalizerFi();
 }

@@ -33,6 +33,7 @@ import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.service.Collaboration;
 import sorcer.core.service.Governance;
+import sorcer.core.service.Transdesign;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.Exertion;
 import sorcer.core.provider.exerter.ServiceShell;
@@ -45,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static sorcer.mo.operator.dev;
 import static sorcer.mo.operator.value;
 
 /**
@@ -368,28 +368,59 @@ public class operator extends Operator {
         }
     }
 
+    public static Transdesign dzn(String name) throws ServiceException {
+        return new Transdesign(name);
+    }
+
+    public static Transdesign dzn(Context designIntent) throws ServiceException {
+        try {
+            return new Transdesign(null, designIntent);
+        } catch (SignatureException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    public static Transdesign dzn(String name, Context dznContext) throws ServiceException {
+        try {
+            return new Transdesign(name, dznContext);
+        } catch (SignatureException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    public static Transdesign dzn(String name, Discipline discipline, Context discContext, Development developer) throws ServiceException {
+        return new Transdesign(name, discipline, discContext, developer);
+    }
+
+    public static Transdesign dzn(Discipline discipline, Context discContext, Development developer) throws ServiceException {
+        return new Transdesign(null, discipline, discContext, developer);
+    }
+
     public static ServiceContext dev(Request request, Object... items) throws ServiceException {
         return eval(request, items);
     }
 
     public static ServiceContext eval(Request request, Object... items) throws ServiceException {
         Context out = null;
-        if (request instanceof Mogram) {
-            out = response((Mogram)request, items);
-        } else if(items.length == 1) {
-            if (items[0] instanceof Context) {
-                out = eval(request, (Context) items[0]);
-            } else  if (items[0] instanceof Signature) {
-                //&& ((ServiceSignature)items[0]).isKindOf(Signature.Kind.CONTEXT)) {
-                try {
+        try {
+            if (request instanceof Mogram) {
+                out = response((Mogram)request, items);
+            } else if (request instanceof Design) {
+                Development developer = ((Transdesign)request).getDeveloperFi().getSelect();
+                out = developer.develop(((Transdesign)request).getDiscipline(), ((Transdesign)request).getDisciplineIntent());
+            } else if(items.length == 1) {
+                if (items[0] instanceof Context) {
+                    out = eval(request, (Context) items[0]);
+                } else  if (items[0] instanceof Signature) {
+                    //&& ((ServiceSignature)items[0]).isKindOf(Signature.Kind.CONTEXT)) {
                     Context cxt = (Context) ((LocalSignature)items[0]).initInstance();
                     out = eval(request, cxt);
-                } catch (SignatureException e) {
-                    throw new ContextException(e);
                 }
+            } else if(items.length == 0) {
+                out = eval(request, (Context)null);
             }
-        } else if(items.length == 0) {
-            out = eval(request, (Context)null);
+        } catch (SignatureException | RemoteException | ExecutiveException e) {
+            throw new ContextException(e);
         }
         return (ServiceContext)out;
     }
@@ -398,12 +429,12 @@ public class operator extends Operator {
         Development developer = designContext.getDeveloperFi().getSelect();
         Discipline discipline = null;
         try {
-            if (designContext.getDesignSignature() != null) {
-                discipline =  (Discipline) ((LocalSignature)designContext.getDesignSignature()).initInstance();
+            if (designContext.getDisciplineSignature() != null) {
+                discipline =  (Discipline) ((LocalSignature)designContext.getDisciplineSignature()).initInstance();
             } else {
                 discipline = designContext.getDiscipline();
             }
-            return (ServiceContext) developer.develop(discipline, designContext.getIntent());
+            return (ServiceContext) developer.develop(discipline, designContext.getDisciplineIntent());
         } catch (SignatureException | ExecutiveException | ServiceException | RemoteException e) {
             throw new ContextException(e);
         }

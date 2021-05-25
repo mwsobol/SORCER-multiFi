@@ -280,7 +280,7 @@ operator extends Operator {
         return (Contextion) ((LocalSignature) signature).initInstance();
     }
 
-    public static Context dgnCxt(Object... items) throws ContextException {
+    public static Context dznCxt(Object... items) throws ContextException {
         List<Object> itemArray = new ArrayList(items.length);
         for (Object obj : items) {
             itemArray.add(obj);
@@ -308,7 +308,7 @@ operator extends Operator {
         DesignContext dCxt = (DesignContext) domainContext(cxtItems);
 
         if (disciplineSig != null) {
-            dCxt.setDesignSignature(disciplineSig);
+            dCxt.setDisciplineSignature(disciplineSig);
         }
         if (discipline != null) {
             dCxt.setDiscipline(discipline);
