@@ -360,7 +360,7 @@ public class LocalSignature extends ServiceSignature implements sig {
 				((Modeling)obj).isolateModel(inContext);
 				((Modeling)obj).setContext(inContext);
 				((Modeling)obj).initializeBuilder();
-			} catch (ContextException e) {
+			} catch (ContextException | RemoteException e) {
 				logger.error("instance creation failed", e);
 				throw new SignatureException("Build isolation failed", this, e);
 			}
@@ -377,12 +377,12 @@ public class LocalSignature extends ServiceSignature implements sig {
 	}
 
 	@Override
-	public Context exert(Contextion mogram) throws MogramException {
+	public Context exert(Contextion mogram) throws ServiceException {
 		return exert(mogram, null);
 	}
 
 	@Override
-	public Context exert(Contextion mogram, Transaction txn, Arg... args) throws MogramException {
+	public Context exert(Contextion mogram, Transaction txn, Arg... args) throws ServiceException {
 		Context cxt;
 		ObjectTask task;
 		if (mogram instanceof Context) {
@@ -399,7 +399,7 @@ public class LocalSignature extends ServiceSignature implements sig {
 	}
 
 	@Override
-	public Object execute(Arg... args) throws MogramException {
+	public Object execute(Arg... args) throws ServiceException {
 		Mogram mog = Arg.selectMogram(args);
 		if (mog == null && contextReturn != null) {
 			mog = contextReturn.getDataContext();

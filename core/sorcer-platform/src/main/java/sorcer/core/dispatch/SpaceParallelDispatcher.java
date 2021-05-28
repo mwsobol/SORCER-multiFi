@@ -80,10 +80,14 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     protected List<Discipline> getInputExertions() throws ContextException {
         if (xrt instanceof Job)
             return Mograms.getInputExertions((Job) xrt);
-        else if (xrt instanceof Block)
-            return ((Mogram)xrt).getAllMograms();
-        else
-            return null;
+        else if (xrt instanceof Block) {
+            try {
+                return ((Mogram)xrt).getAllMograms();
+            } catch (RemoteException e) {
+                throw new ContextException(e);
+            }
+        }
+        return null;
     }
 
     @Override

@@ -97,7 +97,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public <T extends Contextion> T exert(Transaction txn, Arg... entries) throws MogramException {
+    public <T extends Contextion> T exert(Transaction txn, Arg... entries) throws ServiceException {
         Mogram mogram = (Mogram) morphFidelity.getSelect();
         mogram.getContext().setScope(scope);
         try {
@@ -112,12 +112,12 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public <T extends Contextion> T exert(Arg... entries) throws MogramException {
+    public <T extends Contextion> T exert(Arg... entries) throws ServiceException {
         return exert(null, entries);
     }
 
     @Override
-    public Context evaluate(Context context, Arg... args) throws MogramException {
+    public Context evaluate(Context context, Arg... args) throws ServiceException {
         dataContext.substitute(context);
         dataContext.substitute(args);
         Mogram mog = exert(args);

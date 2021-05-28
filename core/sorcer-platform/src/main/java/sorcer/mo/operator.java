@@ -225,10 +225,10 @@ public class operator {
 
     public static ContextDomain setValues(ContextDomain model, Entry... entries) throws ContextException {
         for (Entry e : entries) {
-            Object v = model.asis(e.getName());
-            Object nv = e.asis();
-            String en = e.getName();
             try {
+                Object v = model.asis(e.getName());
+                Object nv = e.asis();
+                String en = e.getName();
                 if (v instanceof Setter) {
                     ((Setter) v).setValue(nv);
                 } else if (SdbUtil.isSosURL(v)) {
@@ -275,7 +275,12 @@ public class operator {
 
     public static Model setValue(Model model, String entName, String path, Object value)
         throws ContextException {
-        Object entry = model.asis(entName);
+        Object entry = null;
+        try {
+            entry = model.asis(entName);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
         if (entry instanceof Setup) {
             ((Setup) entry).setEntry(path, value);
         } else {
@@ -286,7 +291,12 @@ public class operator {
 
     public static Model setValue(Model model, String entName, Function... entries)
         throws ContextException {
-        Object entry = model.asis(entName);
+        Object entry = null;
+        try {
+            entry = model.asis(entName);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
         if (entry != null) {
             if (entry instanceof Setup) {
                 for (Function e : entries) {
@@ -500,7 +510,7 @@ public class operator {
         return mogram;
     }
 
-    public static void init(ContextDomain model, Arg... args) throws ContextException {
+    public static void init(ContextDomain model, Arg... args) throws ContextException, RemoteException {
         // initialize a model
         Map<String, List<ExecDependency>> depMap = ((ModelStrategy) model.getDomainStrategy()).getDependentPaths();
         Paths paths = Arg.selectPaths(args);
@@ -832,7 +842,7 @@ public class operator {
                 dest[i + 1] = dataList.get(i);
             }
             reqModel(dest);
-        } catch (ContextException | SignatureException e) {
+        } catch (ContextException | SignatureException | RemoteException e) {
             throw new EvaluationException(e);
         }
         return transModel;
@@ -1189,11 +1199,11 @@ public class operator {
         return domain.isExec();
     }
 
-    public static Domain notExec(Domain domain)  {
+    public static Domain notExec(Domain domain) throws RemoteException {
         domain.setExec(false);
         return domain;
     }
-    public static Domain setExec(Domain domain)  {
+    public static Domain setExec(Domain domain) throws RemoteException {
         domain.setExec(true);
         return domain;
     }
@@ -1287,7 +1297,12 @@ public class operator {
             }
         }
 
-        Collaboration collab = new Collaboration(name, domains);
+        Collaboration collab = null;
+        try {
+            collab = new Collaboration(name, domains);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
         collab.setDomainName(name);
         if (collabContext != null) {
             collab.setInput(collabContext);
@@ -1295,7 +1310,11 @@ public class operator {
         Object[] names = new Object[domains.size()];
 
         for (int i = 0; i < domains.size(); i++) {
-            domains.get(i).setParent(collab);
+            try {
+                domains.get(i).setParent(collab);
+            } catch (RemoteException e) {
+                throw new ContextException(e);
+            }
             names[i] = domains.get(i).getName();
         }
 

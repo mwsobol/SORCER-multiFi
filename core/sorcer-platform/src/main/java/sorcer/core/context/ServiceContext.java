@@ -1588,7 +1588,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return links;
 	}
 
-	public Context execSignature(Signature sig, Arg... items) throws MogramException {
+	public Context execSignature(Signature sig, Arg... items) throws ServiceException {
 		if (sig.getContextReturn() == null)
 			throw new MogramException("No signature return contextReturn defined!");
 		Context.Return rp = sig.getContextReturn();
@@ -1742,7 +1742,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			Iterator it = ((ServiceContext)context).entryIterator();
 			while (it.hasNext()) {
 				Map.Entry e = (Map.Entry) it.next();
-				putInValue((String) e.getKey(), asis((String) e.getValue()));
+				putInValue((String) e.getKey(), (T) asis((String) e.getValue()));
 				if (!isRedundant) {
 					removePath((String) e.getValue());
 				}
@@ -2836,7 +2836,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		MonitorUtil.checkpoint(this);
 	}
 
-	public T asis(String path) {
+	public Object asis(String path) {
         T val = null;
         synchronized (this) {
             if (isRevaluable == true) {
@@ -2861,7 +2861,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
     @Override
     public T asis(Path path) throws ContextException {
-        return asis(path.path);
+        return (T) asis(path.path);
     }
 
     @Override

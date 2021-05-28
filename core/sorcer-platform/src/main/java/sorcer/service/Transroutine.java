@@ -219,7 +219,7 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 		    getContext().substitute(context);
 			Routine out = exert(args);
 			return out.getContext();
-		} catch (MogramException | RemoteException e) {
+		} catch (ServiceException | RemoteException e) {
 			throw new EvaluationException(e);
 		}
 	}

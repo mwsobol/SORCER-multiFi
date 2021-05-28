@@ -26,6 +26,7 @@ import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
 
+import java.rmi.RemoteException;
 import java.util.*;
 
 public class Mograms implements SorcerConstants {
@@ -136,7 +137,11 @@ public class Mograms implements SorcerConstants {
 		cc.setGoodUntilDate(sc.getGoodUntilDate());
 		cc.setDomainId(sc.getDomainId());
 		cc.setSubdomainId(sc.getSubdomainId());
-		cc.setDomainName(sc.getDomainName());
+		try {
+			cc.setDomainName(sc.getDomainName());
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		cc.setMetacontext(sc.getMetacontext());
 		cc.isPersistantTaskAssociated = ((ServiceContext) sc).isPersistantTaskAssociated;
 		return cc;
@@ -228,15 +233,19 @@ public class Mograms implements SorcerConstants {
 
 	// For Recursion
 	private static void collectTaskContexts(Routine exertion, List<Context> contexts) throws ContextException {
-		if (exertion.isConditional())
-			contexts.add(exertion.getDataContext());
-		else if (exertion instanceof Job) {
-			contexts.add(exertion.getDataContext());
-			for (int i = 0; i < exertion.getMograms().size(); i++)
-				collectTaskContexts(((Job) exertion).get(i),
-					contexts);
-		} else if (exertion instanceof Task || exertion instanceof Block) {
-			contexts.add(exertion.getDataContext());
+		try {
+			if (exertion.isConditional())
+				contexts.add(exertion.getDataContext());
+			else if (exertion instanceof Job) {
+				contexts.add(exertion.getDataContext());
+				for (int i = 0; i < exertion.getMograms().size(); i++)
+					collectTaskContexts(((Job) exertion).get(i),
+						contexts);
+			} else if (exertion instanceof Task || exertion instanceof Block) {
+				contexts.add(exertion.getDataContext());
+			}
+		} catch (RemoteException e) {
+			throw new ContextException(e);
 		}
 	}
 }

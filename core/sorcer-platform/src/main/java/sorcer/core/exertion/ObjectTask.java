@@ -83,7 +83,7 @@ public class ObjectTask extends Task {
 			this.dataContext = (ServiceContext) context;
 	}
 
-	public Task doTask(Transaction txn, Arg... args) throws MogramException {
+	public Task doTask(Transaction txn, Arg... args) throws MogramException, ServiceException {
 		if (delegate != null) {
 			return delegate.doTask(txn);
 		}

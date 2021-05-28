@@ -753,8 +753,12 @@ public class operator extends Operator {
 	}
 
 	public static Function prc(Model model, String path) throws ContextException {
-        return new Function(path, model.asis(path));
-    }
+		try {
+			return new Function(path, model.asis(path));
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
+	}
 
 	public static <T extends Service> Req ent(String name, MorphFidelity fidelity) {
         fidelity.setPath(name);

@@ -1612,7 +1612,11 @@ public class operator extends Operator {
 	}
 
 	public static Object asis(Model model, String path) throws ContextException {
-		return  model.asis(path);
+		try {
+			return  model.asis(path);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 	}
 
     public static Copier copier(ContextDomain fromContext, Arg[] fromEntries,
@@ -2033,23 +2037,32 @@ public class operator extends Operator {
 		if (!(model instanceof ContextDomain)) {
 			throw new SignatureException("Signature does not specify te ContextDomain: " + signature);
 		}
-		if (model instanceof Model) {
-			((Model)model).setBuilder(signature);
+		try {
+			if (model instanceof Model) {
+				((Model)model).setBuilder(signature);
+			}
+		} catch (ServiceException | RemoteException e) {
+			throw new SignatureException(e);
 		}
 		return (ContextDomain) model;
 	}
 
-	public static Mogram instance(Mogram mogram, Arg... args) throws SignatureException, MogramException {
-		Signature builder = mogram.getBuilder(args);
-		if (builder == null) {
-			throw new SignatureException("No signature builder for: " + mogram.getName());
+	public static Mogram instance(Mogram mogram, Arg... args) throws SignatureException, ServiceException {
+		Signature builder = null;
+		try {
+			builder = mogram.getBuilder(args);
+			if (builder == null) {
+				throw new SignatureException("No signature builder for: " + mogram.getName());
+			}
+			Mogram mog = (Mogram) sorcer.co.operator.instance(builder);
+			mog.setBuilder(builder);
+			Tag name = (Arg.getName(args));
+			if (name != null)
+				mog.setName(name.getName());
+			return mog;
+		} catch (RemoteException e) {
+			throw new ServiceException(e);
 		}
-		Mogram mog = (Mogram) sorcer.co.operator.instance(builder);
-		mog.setBuilder(builder);
-		Tag name = (Arg.getName(args));
-		if (name != null)
-			mog.setName(name.getName());
-		return mog;
 	}
 
 	public static Tag tag(Object object) {
@@ -2072,7 +2085,7 @@ public class operator extends Operator {
         return new Index(index, type);
     }
 
-	public static String dmnName(Object identifiable) {
+	public static String dmnName(Object identifiable) throws RemoteException {
 		String dname = null;
 		if (identifiable instanceof Domain) {
 			dname = ((Domain) identifiable).getDomainName();

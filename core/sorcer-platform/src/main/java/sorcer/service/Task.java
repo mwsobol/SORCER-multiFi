@@ -111,11 +111,11 @@ public class Task extends Subroutine implements ElementaryRequest {
 		multiFi.setSelect(sFi);
 	}
 
-	public Task doTask(Arg... args) throws MogramException {
+	public Task doTask(Arg... args) throws ServiceException {
 		return doTask(null, args);
 	}
 
-	public Task doTask(Transaction txn, Arg... args) throws MogramException {
+	public Task doTask(Transaction txn, Arg... args) throws MogramException, ServiceException {
 		initDelegate();
 		Task done = delegate.doTask(txn, args);
 		setContext(done.getDataContext());
@@ -380,7 +380,7 @@ public class Task extends Subroutine implements ElementaryRequest {
 		this.isContinous = isContinous;
 	}
 
-	protected Task doBatchTask(Transaction txn) throws MogramException {
+	protected Task doBatchTask(Transaction txn) throws ServiceException {
 		ControlFlowManager ep = new ControlFlowManager();
 		return ep.doFidelityTask(this);
 	}

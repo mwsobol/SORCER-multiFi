@@ -21,7 +21,6 @@ import net.jini.id.Uuid;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
-import sorcer.service.modeling.ExecutiveException;
 import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
@@ -81,7 +80,7 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public Object asis(String path) throws ContextException {
+    public Object asis(String path) throws ContextException, RemoteException {
         return domain.asis((path));
     }
 
@@ -101,7 +100,7 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public void setParent(Contextion parent) {
+    public void setParent(Contextion parent) throws RemoteException {
         if (domain == null) {
             this.parent = parent;
         } else {
@@ -151,7 +150,7 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public Contextion getParent() {
+    public Contextion getParent() throws RemoteException {
         return domain.getParent();
     }
 
@@ -306,7 +305,7 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public String getDomainName() {
+    public String getDomainName() throws RemoteException {
         if (domain != null) {
             return domain.getDomainName();
         } else {
@@ -440,37 +439,37 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public List<Discipline> getAllMograms() {
+    public List<Discipline> getAllMograms() throws RemoteException {
         return domain.getAllMograms();
     }
 
     @Override
-    public List<Contextion> getAllContextions() {
+    public List<Contextion> getAllContextions() throws RemoteException {
         return domain.getAllContextions();
     }
 
     @Override
-    public Signature getBuilder(Arg... args) throws MogramException {
+    public Signature getBuilder(Arg... args) throws ServiceException, RemoteException {
         return domain.getBuilder(args);
     }
 
     @Override
-    public void applyFidelity(String name) {
+    public void applyFidelity(String name) throws RemoteException {
         domain.applyFidelity(name);
     }
 
     @Override
-    public void setBuilder(Signature builder) throws MogramException {
+    public void setBuilder(Signature builder) throws ServiceException, RemoteException {
         domain.setBuilder(builder);
     }
 
     @Override
-    public boolean isConditional() {
+    public boolean isConditional() throws RemoteException {
         return domain.isConditional();
     }
 
     @Override
-    public boolean isCompound() {
+    public boolean isCompound() throws RemoteException {
         return domain.isCompound();
     }
 
@@ -484,12 +483,12 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public void execDependencies(String path, Arg... args) throws ContextException {
+    public void execDependencies(String path, Arg... args) throws ContextException, RemoteException {
         domain.execDependencies(path, args);
     }
 
     @Override
-    public boolean isChanged() {
+    public boolean isChanged() throws ContextException, RemoteException {
         return domain.isChanged();
     }
 
@@ -503,11 +502,11 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws MogramException {
+    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ServiceException {
         try {
             return domain.exert(txn, args);
         } catch (RemoteException e) {
-            throw new MogramException(e);
+            throw new ServiceException(e);
         }
     }
 
@@ -522,7 +521,7 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public void setContext(Context input) throws ContextException {
+    public void setContext(Context input) throws ContextException, RemoteException {
         domain.setContext(input);
     }
 

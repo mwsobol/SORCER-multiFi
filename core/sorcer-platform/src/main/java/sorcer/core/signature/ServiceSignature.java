@@ -600,7 +600,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	@Override
-	public Context exert(Contextion mogram, Transaction txn, Arg... args) throws MogramException {
+	public Context exert(Contextion mogram, Transaction txn, Arg... args) throws MogramException, ServiceException {
 		Context cxt;
 		if (mogram instanceof Context) {
 			cxt = (Context)mogram;
@@ -617,7 +617,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		}
 	}
 
-	public Context exert(Contextion mogram) throws MogramException {
+	public Context exert(Contextion mogram) throws MogramException, ServiceException {
 		return exert(mogram, null);
 	}
 
@@ -686,7 +686,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	@Override
-	public Object execute(Arg... args) throws MogramException {
+	public Object execute(Arg... args) throws MogramException, ServiceException {
 		throw new MogramException("Signature service exec should be implemented in subclasses");
 	}
 	

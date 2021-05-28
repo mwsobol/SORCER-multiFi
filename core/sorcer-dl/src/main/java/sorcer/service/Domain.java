@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
  */
 public interface Domain extends Mogram, Dependency, mog, cxtn {
 
-	String getDomainName();
+	String getDomainName() throws RemoteException;
 
     /**
      * Returns an execute of the domain at the returnPath as is
@@ -37,10 +37,10 @@ public interface Domain extends Mogram, Dependency, mog, cxtn {
      *
      * @param path
      *            the variable name
-     * @return this model execute at the returnPath
      * @throws ModelException
+	 * @return
      */
-    Object asis(String path) throws ContextException;
+    Object asis(String path) throws ContextException, RemoteException;
 
 	/**
 	 * Returns an input connector as a map of input paths of this domain mapped to output paths of the sender.
@@ -75,11 +75,11 @@ public interface Domain extends Mogram, Dependency, mog, cxtn {
 	 */
 	Object getValue(String path, Arg... args) throws ContextException, RemoteException;
 
-	void setParent(Contextion parent);
+	Contextion getParent() throws RemoteException;
 
-	Contextion getParent();
+	void setParent(Contextion parent) throws RemoteException;
 
-	void execDependencies(String path, Arg... args) throws ContextException;
+	void execDependencies(String path, Arg... args) throws ContextException, RemoteException;
 
-	boolean isChanged();
+	boolean isChanged() throws ContextException, RemoteException;
 }

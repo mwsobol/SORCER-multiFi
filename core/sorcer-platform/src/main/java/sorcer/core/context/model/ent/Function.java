@@ -289,7 +289,7 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 		this.isPersistent = isPersistant;
 	}
 
-	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws MogramException {
+	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws ServiceException {
 		Context cxt;
 		Context out = new ServiceContext();
 		try {
@@ -324,7 +324,7 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 							 cxt.getValue(key));
 			}
 		} catch (RemoteException e) {
-			throw new MogramException(e);
+			throw new ServiceException(e);
 		}
 		return out;
 	}

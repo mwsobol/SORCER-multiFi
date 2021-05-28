@@ -328,7 +328,11 @@ public class operator extends Operator {
 
     public static Context outcome(Contextion domain, Context context, Arg... args) throws ServiceException {
         if (domain instanceof Model) {
-            return ((Model) domain).getResponse(context, args);
+            try {
+                return ((Model) domain).getResponse(context, args);
+            } catch (RemoteException e) {
+                throw new ServiceException(e);
+            }
         } else if (domain instanceof Routine) {
             ((Routine)domain).getDataContext().append(context);
             return exertionResponse((Routine) domain, (Object[])args);

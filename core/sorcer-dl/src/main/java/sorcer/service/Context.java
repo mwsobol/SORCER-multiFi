@@ -764,10 +764,10 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 	 *
 	 * @param path
 	 *            the attribute-based path
-	 * @return the value as-is at the path
 	 * @throws ContextException
+	 * @return
 	 */
-	public T asis(String path);
+	public Object asis(String path);
 
 	public T asis(Path path) throws ContextException;
 

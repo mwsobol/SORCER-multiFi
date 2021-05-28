@@ -67,7 +67,7 @@ public abstract class Block extends Transroutine {
 	}
 	
 	public abstract Block doBlock(Transaction txn, Arg... args) throws RoutineException,
-		SignatureException, RemoteException, TransactionException, MogramException;
+		SignatureException, RemoteException, TransactionException, MogramException, ServiceException;
 	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
@@ -325,13 +325,13 @@ public abstract class Block extends Transroutine {
 				}
 			}
 			updateConditions();
-		} catch (ContextException ex) {
+		} catch (ContextException | RemoteException ex) {
 			ex.printStackTrace();
 			throw new SetterException(ex);
 		}
 	}
 	
-	private void updateConditions() throws ContextException {
+	private void updateConditions() throws ContextException, RemoteException {
 		for (Discipline mogram : mograms) {
 			if (mogram instanceof Mogram && ((Mogram)mogram).isConditional()) {
 				if (mogram instanceof OptTask) {

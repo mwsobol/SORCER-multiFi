@@ -99,7 +99,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         afterExec(result);
     }
 
-    protected Task execTask(Task task, Arg... args) throws MogramException,
+    protected Task execTask(Task task, Arg... args) throws ServiceException,
             SignatureException, RemoteException {
 		if (task instanceof NetTask) {
 			return execServiceTask(task, args);

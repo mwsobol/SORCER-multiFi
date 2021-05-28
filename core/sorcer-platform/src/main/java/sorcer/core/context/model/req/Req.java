@@ -143,7 +143,7 @@ public class Req extends Function<Object> implements Serviceableness,
         out = obj;
     }
 
-    public Mogram exert(Mogram mogram) throws MogramException {
+    public Mogram exert(Mogram mogram) throws ServiceException {
         return exert(mogram, null);
     }
 

@@ -68,7 +68,7 @@ public class NetJob extends Job implements Invocation<Object> {
 	 * @see sorcer.service.Job#doJob(net.jini.core.transaction.Transaction)
 	 */
 	@Override
-	public Job doJob(Transaction txn) throws MogramException,
+	public Job doJob(Transaction txn) throws ServiceException,
 			SignatureException, RemoteException, TransactionException {
 		ServiceShell se = new ServiceShell(this);
 		return (Job)se.exert(txn, null);

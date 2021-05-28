@@ -56,7 +56,7 @@ public interface Contextion extends Request, Scopable {
 	 */
 	<T extends Contextion> T exert(Transaction txn, Arg... args) throws RemoteException, ServiceException;
 
-	public String getDomainName();
+	public String getDomainName() throws RemoteException;
 
 	/**
 	 * Returns the data context of this contextion.
@@ -73,7 +73,7 @@ public interface Contextion extends Request, Scopable {
 	 *
 	 * @throws ContextException
 	 */
-	void setContext(Context input) throws ContextException;
+	void setContext(Context input) throws ContextException, RemoteException;
 
 	/**
 	 * Appends an argument context to the data context of this contextion.

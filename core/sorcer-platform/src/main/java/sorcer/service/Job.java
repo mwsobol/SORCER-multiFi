@@ -182,7 +182,7 @@ public class Job extends Transroutine {
 	}
 
     public Job doJob(Transaction txn) throws MogramException,
-            SignatureException, RemoteException, TransactionException {
+            SignatureException, RemoteException, TransactionException, ServiceException {
         if (delegate == null) {
             if (delegate == null) {
                 Signature ps = (Signature) ((ServiceFidelity)multiFi.getSelect()).getSelect();

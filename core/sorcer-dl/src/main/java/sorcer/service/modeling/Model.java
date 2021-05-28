@@ -53,13 +53,13 @@ public interface Model extends ContextDomain, mog, dmn, cxtn {
      * @throws ContextException
      * @throws RemoteException
      */
-    public Context getResponse(Context context, Arg... args) throws ContextException;
+    public Context getResponse(Context context, Arg... args) throws ContextException, RemoteException;
 
     /**
      * Sets a buider of this model to be used for replication it when needed.
      *
      * @param signature
      */
-    public void setBuilder(Signature signature);
+    public void setBuilder(Signature signature)  throws ServiceException, RemoteException;
 
 }

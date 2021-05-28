@@ -356,8 +356,7 @@ public class ControlFlowManager {
      * @throws RoutineException
      * @throws RemoteException
      */
-    public Task doConditional(Routine exertion) throws RemoteException,
-            MogramException, SignatureException {
+    public Task doConditional(Routine exertion) throws ServiceException {
         return ((Task) exertion).doTask();
     }
 
@@ -486,7 +485,7 @@ public class ControlFlowManager {
     }
 */
 
-    public Task doFidelityTask(Task task) throws MogramException {
+    public Task doFidelityTask(Task task) throws ServiceException {
         ServiceFidelity tf = (ServiceFidelity)task.getSelectedFidelity();
         task.correctBatchSignatures();
         task.startExecTime();

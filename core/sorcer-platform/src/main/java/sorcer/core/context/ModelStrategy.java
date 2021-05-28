@@ -265,8 +265,8 @@ public class ModelStrategy implements ServiceStrategy, Serializable {
     }
 
 
-    public <T extends Mogram> Mogram exert(Transaction txn, Arg... entries) throws TransactionException, MogramException, RemoteException {
-        return ((Mogram)target).exert(txn, entries);
+    public <T extends Mogram> Mogram exert(Transaction txn, Arg... entries) throws TransactionException, ServiceException, RemoteException {
+        return target.exert(txn, entries);
     }
 
     public <T extends Mogram> Mogram exert(Arg... entries) throws TransactionException, ServiceException, RemoteException {

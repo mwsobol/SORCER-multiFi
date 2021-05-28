@@ -18,7 +18,6 @@
 package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,7 +105,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
                         cxtn = (Contextion)((LocalSignature) service).build();
                         cxtn.setName(((Signature)service).getName());
                         cxtn.setContext(dataContext);
-                    } catch (SignatureException | ContextException e) {
+                    } catch (SignatureException | ContextException | RemoteException e) {
                         throw new DispatchException(e);
                     }
                 }
@@ -299,7 +298,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      * @see sorcer.service.Routine#exert(net.jini.core.transaction.Transaction,
      * sorcer.servie.Arg[])
      */
-    public Routine exert(Transaction txn, Arg... entries) throws MogramException {
+    public Routine exert(Transaction txn, Arg... entries) throws ServiceException {
         substitute(entries);
 
         String prvName = null;
@@ -318,7 +317,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      *
      * @see sorcer.service.Routine#exert(sorcer.core.context.Path.Entry[])
      */
-    public <T extends Contextion> T  exert(Arg... entries) throws MogramException {
+    public <T extends Contextion> T  exert(Arg... entries) throws ServiceException {
         try {
             substitute(entries);
         } catch (SetterException e) {
@@ -958,7 +957,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     public Context dispatch(Context context, Arg... args) throws DispatchException {
         try {
             return evaluate(context,args);
-        } catch (MogramException e) {
+        } catch (ServiceException e) {
             throw new DispatchException(e);
         }
     }
@@ -1098,7 +1097,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     @Override
-    public Object execute(Arg... args) throws MogramException {
+    public Object execute(Arg... args) throws MogramException, ServiceException {
         Context cxt = (Context) Arg.selectDomain(args);
         if (cxt != null) {
             dataContext = (ServiceContext) cxt;
@@ -1165,7 +1164,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     @Override
-    public Context evaluate(Context context, Arg... args) throws MogramException {
+    public Context evaluate(Context context, Arg... args) throws ServiceException {
         substitute(context);
         return exert(args).getContext();
     }

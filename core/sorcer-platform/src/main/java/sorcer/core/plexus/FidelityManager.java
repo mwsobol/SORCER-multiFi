@@ -169,12 +169,12 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         this.mogram = mogram;
     }
 
-    public <M extends Mogram> M exert(M mogram, Transaction txn, Arg... args) throws TransactionException, MogramException, RemoteException {
+    public <M extends Mogram> M exert(M mogram, Transaction txn, Arg... args) throws ServiceException, TransactionException, RemoteException {
         this.mogram = mogram;
         return (M) mogram.exert(txn);
     }
 
-    public <T extends Mogram> T exert(T mogram) throws TransactionException, MogramException, RemoteException {
+    public <T extends Mogram> T exert(T mogram) throws TransactionException, ServiceException, RemoteException {
         return exert(mogram, null);
     }
 
@@ -250,7 +250,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
                         ((Mogram)mogram).applyFidelity(path);
                     }
                 }
-            } catch (ConfigurationException e) {
+            } catch (ConfigurationException | RemoteException e) {
                 throw new EvaluationException(e);
             }
         }

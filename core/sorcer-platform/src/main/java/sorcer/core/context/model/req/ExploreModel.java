@@ -81,7 +81,7 @@ public class ExploreModel extends RequestModel implements Transmodel, Configurab
         this.childrenPaths = childrenPaths;
     }
 
-    public void addChildren(List<Domain> domains) {
+    public void addChildren(List<Domain> domains) throws RemoteException {
         for (Domain vm : domains) {
             this.children.put(vm.getName(), vm);
             vm.setParent(this);

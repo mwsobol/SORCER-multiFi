@@ -54,7 +54,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
      * @throws RemoteException
      *             if remote call causes an error
      */
-    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws MogramException, RemoteException;
+    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ServiceException, RemoteException;
 
     public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException;
 
@@ -62,7 +62,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
 
     public void setIndex(int i);
 
-    public Contextion getParent();
+    public Contextion getParent() throws RemoteException;
 
     public void setParentId(Uuid parentId);
 
@@ -213,7 +213,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
 
 	/**
 	 */
-	public String getDomainName();
+	public String getDomainName() throws RemoteException;
 
 	/**
 	 * @param name
@@ -362,9 +362,9 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
 	 * Returns the list of all nested component exertions/
 	 * @return Routine list
 	 */
-	public List<Discipline> getAllMograms();
+	public List<Discipline> getAllMograms() throws RemoteException;
 
-	public List<Contextion> getAllContextions();
+	public List<Contextion> getAllContextions() throws RemoteException;
 
 	/**
      *  Returns a signature builder that returns instances of this model.
@@ -375,21 +375,21 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
      * @throws ContextException
      * @throws RemoteException
      */
-    public Signature getBuilder(Arg... args) throws MogramException;
+    public Signature getBuilder(Arg... args) throws ServiceException, RemoteException;
 
-    public void applyFidelity(String name);
+    public void applyFidelity(String name) throws RemoteException;
 
-    public void setBuilder(Signature builder) throws MogramException;
+    public void setBuilder(Signature builder) throws ServiceException,  RemoteException;
 
 	/**
 	 * Returns true if this exertion is a branching or looping exertion.
 	 */
-	public boolean isConditional();
+	public boolean isConditional() throws RemoteException;
 
 	/**
 	 * Returns true if this exertion is composed of other exertions.
 	 */
-	public boolean isCompound();
+	public boolean isCompound() throws RemoteException;
 
-    public void setExec(boolean exec);
+    public void setExec(boolean exec) throws RemoteException;
 }

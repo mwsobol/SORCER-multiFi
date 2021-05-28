@@ -2781,7 +2781,7 @@ operator extends Operator {
         return task;
     }
 
-    public static List<Discipline> mograms(Discipline mogram) {
+    public static List<Discipline> mograms(Discipline mogram) throws RemoteException {
         if (mogram instanceof Mogram) {
             return ((Mogram)mogram).getAllMograms();
         } else {
@@ -3200,7 +3200,7 @@ operator extends Operator {
         return exertion.getComponentMogram(componentExertionName);
     }
 
-    public static Discipline tracable(Mogram mogram) {
+    public static Discipline tracable(Mogram mogram) throws RemoteException {
         List<Discipline> mograms = mogram.getAllMograms();
         for (Discipline m : mograms) {
             ((Routine) m).getControlContext().setTracable(true);
@@ -3208,7 +3208,7 @@ operator extends Operator {
         return mogram;
     }
 
-    public static List<String> trace(Mogram mogram) {
+    public static List<String> trace(Mogram mogram) throws RemoteException {
         List<Discipline> mograms = mogram.getAllMograms();
         List<String> trace = new ArrayList<String>();
         for (Discipline m : mograms) {

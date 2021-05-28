@@ -338,7 +338,7 @@ public class Contexts implements SorcerConstants {
 		return false;
 	}
 
-	public static String getTitle(Context cntxt) {
+	public static String getTitle(Context cntxt) throws RemoteException {
 		String domainName = cntxt.getDomainName();
 		String subdomainName = cntxt.getSubdomainName();
 		return cntxt.getName() + ", "

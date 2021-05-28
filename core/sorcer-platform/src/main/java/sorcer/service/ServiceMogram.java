@@ -323,12 +323,12 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws MogramException {
+    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ServiceException {
         return null;
     }
 
     @Override
-    public <T extends Contextion> T exert(Arg... args) throws MogramException {
+    public <T extends Contextion> T exert(Arg... args) throws ServiceException {
         return null;
     }
 

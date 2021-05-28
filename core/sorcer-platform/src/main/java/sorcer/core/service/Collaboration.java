@@ -128,14 +128,14 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		serviceStrategy = new ModelStrategy(this);
     }
 
-    public Collaboration(String name, Domain[] domains) {
+    public Collaboration(String name, Domain[] domains) throws RemoteException {
         this(name);
         for (Domain domain : domains) {
                 this.children.put(domain.getDomainName(), domain);
         }
     }
 
-	public Collaboration(String name, List<Domain> domains) {
+	public Collaboration(String name, List<Domain> domains) throws RemoteException {
 		this(name);
 		for (Domain domain : domains) {
 			this.children.put(domain.getDomainName(), domain);
@@ -506,8 +506,12 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 			if (domain instanceof SignatureDomain) {
 				boolean isExec = domain.isExec();
 				domain = ((SignatureDomain) domain).getDomain();
-				children.put(domain.getDomainName(), domain);
-				((Mogram)domain).setExec(isExec);
+				try {
+					children.put(domain.getDomainName(), domain);
+					((Mogram)domain).setExec(isExec);
+				} catch (RemoteException e) {
+					throw new SignatureException(e);
+				}
 			}
 		}
 	}
