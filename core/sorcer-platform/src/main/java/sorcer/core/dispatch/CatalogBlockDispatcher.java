@@ -64,7 +64,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         super.doExec(args);
 		try {
 			Condition.cleanupScripts(xrt);
-		} catch (ContextException e) {
+		} catch (ContextException | RemoteException e) {
 			throw new RoutineException(e);
 		}
 	}

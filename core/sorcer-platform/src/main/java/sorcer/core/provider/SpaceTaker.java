@@ -334,7 +334,7 @@ public class SpaceTaker implements Runnable {
 	protected boolean isAbandoned(Routine exertion) {
 		if (space != null) {
 			ExertionEnvelop ee = new ExertionEnvelop();
-			ee.parentID = exertion.getParentId();
+			ee.parentID = ((ServiceMogram)exertion).getParentId();
 			ee.state = Exec.POISONED;
 			try {
 				if (space.readIfExists(ee, null, JavaSpace.NO_WAIT) != null) {

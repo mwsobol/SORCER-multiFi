@@ -152,7 +152,7 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 		return getMograms(allMograms);
 	}
 
-	public List<Contextion> getAllContextions() {
+	public List<Contextion> getAllContextions() throws RemoteException {
 		List<Contextion> allContextions = new ArrayList<>();
 		return getContextions(allContextions);
 	}
@@ -165,7 +165,7 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 		return mogramList;
 	}
 
-	public List<Contextion> getContextions(List<Contextion> contextionList) {
+	public List<Contextion> getContextions(List<Contextion> contextionList) throws RemoteException {
 		for (Discipline e : mograms) {
 			e.getContextions(contextionList);
 		}

@@ -348,7 +348,7 @@ public class operator {
     }
 
     public static EntryModel entModel(Object... entries)
-        throws ContextException {
+        throws ContextException, RemoteException {
         if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
             ((Context) entries[0]).setModeling(true);
             return new EntryModel((Context) entries[0]);
@@ -419,7 +419,7 @@ public class operator {
         return out;
     }
 
-    public static ServiceContext result(Mogram mogram) throws ContextException {
+    public static ServiceContext result(Mogram mogram) throws ContextException, RemoteException {
         if (mogram instanceof ContextDomain) {
             return (ServiceContext) ((ServiceContext) mogram).getDomainStrategy().getOutcome();
         } else if (mogram instanceof Routine) {
@@ -495,13 +495,13 @@ public class operator {
         }
     }
 
-    public static Mogram setResponse(Mogram mogram, Path... mogramPaths) {
+    public static Mogram setResponse(Mogram mogram, Path... mogramPaths) throws RemoteException {
         List<Path> paths = Arrays.asList(mogramPaths);
         mogram.getDomainStrategy().setResponsePaths(paths);
         return mogram;
     }
 
-    public static Mogram setResponse(Mogram mogram, String... mogramPaths) {
+    public static Mogram setResponse(Mogram mogram, String... mogramPaths) throws RemoteException {
         List<Path> paths = new ArrayList();
         for (String ps : mogramPaths) {
             paths.add(new Path(ps));
@@ -527,7 +527,7 @@ public class operator {
         return mogram;
     }
 
-    public static ServiceContext out(Contextion contextion) throws ServiceException {
+    public static ServiceContext out(Contextion contextion) throws ServiceException, RemoteException {
         if (contextion instanceof Node) {
             return (ServiceContext) contextion.getOutput();
         } else if (contextion instanceof Governance) {
@@ -676,7 +676,7 @@ public class operator {
         return new FreeContextion(name, Functionality.Type.PIPELINE);
     }
 
-    public static Model model(Object... items) throws ContextException {
+    public static Model model(Object... items) throws ContextException, RemoteException {
         String name = "unknown" + count++;
         boolean hasEntry = false;
         boolean aneType = false;
@@ -950,7 +950,7 @@ public class operator {
     }
 
     public static Model aneModel(String name, Object... objects)
-        throws ContextException {
+        throws ContextException, RemoteException {
         return reqModel(name, objects);
     }
 
@@ -972,7 +972,7 @@ public class operator {
         return obj;
     }
 
-    public static Model reqModel(Object... items) throws ContextException {
+    public static Model reqModel(Object... items) throws ContextException, RemoteException {
         sorcer.eo.operator.Complement complement = null;
         Fidelity<Path> responsePaths = null;
         RequestModel model = null;
@@ -1195,7 +1195,7 @@ public class operator {
         return (String) context.get(Functionality.Type.DOMAIN.toString());
     }
 
-    public static boolean isExec(Domain domain)  {
+    public static boolean isExec(Domain domain) throws RemoteException {
         return domain.isExec();
     }
 
@@ -1260,7 +1260,7 @@ public class operator {
         return (Node) ((Collaboration)region).getChildren().get(rndName);
     }
 
-    public static Collaboration clb(Object... data) throws ContextException {
+    public static Collaboration clb(Object... data) throws ContextException, RemoteException {
         if (data[0] instanceof Context &&
                 ((Context)data[0]).getSubjectValue() instanceof Collaboration) {
             return (Collaboration) ((Context)data[0]).getSubjectValue();
@@ -1388,7 +1388,7 @@ public class operator {
         return contextList;
     }
 
-    public static Governance gov(Object... data) throws ContextException {
+    public static Governance gov(Object... data) throws ContextException, RemoteException {
         String name = getUnknown();
         List<Region> regions = new ArrayList<>();
         List<ServiceFidelity> discFis = new ArrayList<>();
@@ -1479,11 +1479,11 @@ public class operator {
         return gov;
     }
 
-    public static Region rgn(Object... data) throws ContextException {
+    public static Region rgn(Object... data) throws ContextException, RemoteException {
         return rgn(null, data);
     }
 
-    public static Region rgn(String rgnName, Object... data) throws ContextException {
+    public static Region rgn(String rgnName, Object... data) throws ContextException, RemoteException {
         String name = getUnknown();
         if (rgnName != null) {
             name = rgnName;

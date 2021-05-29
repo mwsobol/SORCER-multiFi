@@ -502,17 +502,18 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 	public void initializeDomains() throws SignatureException {
 		// initialize domains specified by builder signatures
-		for (Discipline domain : children.values()) {
-			if (domain instanceof SignatureDomain) {
-				boolean isExec = domain.isExec();
-				domain = ((SignatureDomain) domain).getDomain();
-				try {
+		try {
+			for (Discipline domain : children.values()) {
+				if (domain instanceof SignatureDomain) {
+					boolean isExec = domain.isExec();
+					domain = ((SignatureDomain) domain).getDomain();
+
 					children.put(domain.getDomainName(), domain);
-					((Mogram)domain).setExec(isExec);
-				} catch (RemoteException e) {
-					throw new SignatureException(e);
+					((Mogram) domain).setExec(isExec);
 				}
 			}
+		} catch (RemoteException e) {
+			throw new SignatureException(e);
 		}
 	}
 
@@ -656,7 +657,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	}
 
 	@Override
-	public List<Contextion> getContextions(List<Contextion> contextionList) {
+	public List<Contextion> getContextions(List<Contextion> contextionList) throws RemoteException {
 		for (Contextion e : getChildren().values()) {
 			e.getContextions(contextionList);
 		}

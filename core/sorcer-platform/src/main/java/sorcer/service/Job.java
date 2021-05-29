@@ -173,10 +173,10 @@ public class Job extends Transroutine {
 		try {
 			controlContext.registerExertion((Mogram)ex);
 			((Mogram)ex).getDataContext().setScope(dataContext);
-		} catch (ContextException e) {
+		} catch (ContextException | RemoteException e) {
 			throw new RoutineException(e);
 		}
-		((Mogram)ex).setParentId(getId());
+		((ServiceMogram)ex).setParentId(getId());
 //		((ServiceMogram)ex).setParent(this);
 		return this;
 	}

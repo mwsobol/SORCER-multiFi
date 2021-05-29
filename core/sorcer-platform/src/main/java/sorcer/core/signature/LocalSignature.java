@@ -399,7 +399,7 @@ public class LocalSignature extends ServiceSignature implements sig {
 	}
 
 	@Override
-	public Object execute(Arg... args) throws ServiceException {
+	public Object execute(Arg... args) throws ServiceException, RemoteException {
 		Mogram mog = Arg.selectMogram(args);
 		if (mog == null && contextReturn != null) {
 			mog = contextReturn.getDataContext();

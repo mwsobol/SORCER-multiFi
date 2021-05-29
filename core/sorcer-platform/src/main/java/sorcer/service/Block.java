@@ -78,10 +78,10 @@ public abstract class Block extends Transroutine {
 		((Mogram)mogram).setIndex(mograms.indexOf(mogram));
 		try {
 			controlContext.registerExertion((Mogram)mogram);
-		} catch (ContextException e) {
+		} catch (ContextException | RemoteException e) {
 			throw new RoutineException(e);
 		}
-		((Mogram)mogram).setParentId(getId());
+		((ServiceMogram)mogram).setParentId(getId());
 		return this;
 	}
 
@@ -184,7 +184,7 @@ public abstract class Block extends Transroutine {
 	}
 
 	@Override
-	public List<Contextion> getContextions(List<Contextion> contextionList) {
+	public List<Contextion> getContextions(List<Contextion> contextionList) throws RemoteException {
 		for (Contextion e : mograms) {
 			e.getContextions(contextionList);
 		}
@@ -192,7 +192,7 @@ public abstract class Block extends Transroutine {
 		return contextionList;
 	}
 
-	public URL persistContext() throws ServiceException, SignatureException {
+	public URL persistContext() throws ServiceException, SignatureException, RemoteException {
 		if (contextURL == null) {
 			contextURL = SdbUtil.store(dataContext);
 			dataContext = null;
@@ -260,7 +260,7 @@ public abstract class Block extends Transroutine {
 		return getChild(path);
 	}
 	
-	public Object putBlockValue(String path, Object value) throws ContextException {
+	public Object putBlockValue(String path, Object value) throws ContextException, RemoteException {
 		String[] attributes = SorcerUtil.pathToArray(path);
 		// remove the leading attribute of the current exertion
 		if (attributes[0].equals(getName())) {

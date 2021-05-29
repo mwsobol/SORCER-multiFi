@@ -34,6 +34,7 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
+import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -154,7 +155,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
         return dispatcher;
     }
 
-    protected boolean isSpaceSequential(Mogram mogram) {
+    protected boolean isSpaceSequential(Mogram mogram) throws RemoteException {
         if(mogram instanceof Job) {
             Job job = (Job) mogram;
             return Mograms.isSpaceSingleton(job) || Mograms.isSpaceSequential(job);

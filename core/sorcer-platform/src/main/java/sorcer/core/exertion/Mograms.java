@@ -125,7 +125,7 @@ public class Mograms implements SorcerConstants {
 		cc.setName(sc.getName());
 		cc.setId(sc.getId());
 		cc.setParentPath(sc.getParentPath());
-		cc.setParentId((sc.getParentId() == null) ? null : sc.getParentId());
+		cc.setParentId((((ServiceMogram)sc).getParentId() == null) ? null : ((ServiceMogram)sc).getParentId());
 		cc.setSubject(sc.getSubjectPath(), sc.getSubjectValue());
 		cc.setLastUpdateDate(sc.getLastUpdateDate());
 		cc.setDescription(sc.getDescription());

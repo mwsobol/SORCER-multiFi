@@ -109,7 +109,7 @@ public class Slot<K, O> implements Identifiable, Data<O>, Arg, slot<O>, net.jini
     }
 
     @Override
-    public Object execute(Arg... args) throws ServiceException {
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
         return out;
     }
 }

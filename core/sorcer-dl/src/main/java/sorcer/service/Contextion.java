@@ -64,9 +64,9 @@ public interface Contextion extends Request, Scopable {
 	 * @return the data context
 	 * @throws ContextException
 	*/
-	Context getContext() throws ContextException;
+	Context getContext() throws ContextException, RemoteException;
 
-	Context getOutput(Arg... args) throws ContextException;
+	Context getOutput(Arg... args) throws ContextException, RemoteException;
 
 	/**
 	 * Sets the data context of this contextion.
@@ -118,7 +118,7 @@ public interface Contextion extends Request, Scopable {
 	/**
 	 * Returns true if this contextion is executable in Collaboration
 	 */
-	public boolean isExec();
+	public boolean isExec() throws RemoteException;
 
 	/**
 	 * Returns a Context.Return that specifies a returned context
@@ -126,16 +126,16 @@ public interface Contextion extends Request, Scopable {
 	 *
 	 * @return Context.Return to the return execute
 	 */
-	Context.Return getContextReturn();
+	Context.Return getContextReturn() throws RemoteException;
 
-	ServiceStrategy getDomainStrategy();
+	ServiceStrategy getDomainStrategy() throws RemoteException;
 
-	Projection getInPathProjection();
+	Projection getInPathProjection() throws RemoteException;
 
-	Projection getOutPathProjection();
+	Projection getOutPathProjection() throws RemoteException;
 
-	List<Contextion> getContextions(List<Contextion> contextionList);
+	List<Contextion> getContextions(List<Contextion> contextionList) throws RemoteException;
 
-	void selectFidelity(Fidelity fi) throws ConfigurationException;
+	void selectFidelity(Fidelity fi) throws ConfigurationException, RemoteException;
 
 }

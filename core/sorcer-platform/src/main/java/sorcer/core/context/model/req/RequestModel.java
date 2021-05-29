@@ -350,7 +350,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
         return value;
     }
 
-    public Object evalSignature(Signature sig, String path, Arg... args) throws ServiceException {
+    public Object evalSignature(Signature sig, String path, Arg... args) throws ServiceException, RemoteException {
         Context out = execSignature(sig, args);
         String sigrp = null;
         String  crp = null;
@@ -445,7 +445,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
         return null;
     }
 
-    public Context execSignature(Signature sig, Arg... items) throws ServiceException {
+    public Context execSignature(Signature sig, Arg... items) throws ServiceException, RemoteException {
         execDependencies(sig, items);
         return  super.execSignature(sig, items);
     }

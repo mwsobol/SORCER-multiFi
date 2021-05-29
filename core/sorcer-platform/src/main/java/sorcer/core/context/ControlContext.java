@@ -30,6 +30,7 @@ import sorcer.util.Stopwatch;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.rmi.RemoteException;
 import java.util.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -502,7 +503,7 @@ public class ControlContext extends ServiceContext<Object> implements RoutineStr
 		return getAttributeValue(ex, NOTIFY_EXEC);
 	}
 
-	public void registerExertion(Mogram mogram) throws ContextException {
+	public void registerExertion(Mogram mogram) throws ContextException, RemoteException {
 		if (mogram instanceof Job)
 			put(((Job)mogram).getControlContext().getName(), mogram.getId());
 		else if (mogram instanceof Routine) {

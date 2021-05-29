@@ -31,6 +31,7 @@ import sorcer.core.dispatch.graph.DirectedGraphRenderer;
 import sorcer.core.dispatch.graph.GraphNodeRenderer;
 import sorcer.service.*;
 
+import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.co.operator.dep;
@@ -72,7 +73,7 @@ public class SrvModelAutoDeps {
                 sortedData.add((String) i.next());
             }
             addDependsOn(this.srvModel, Collections.unmodifiableList(sortedData));
-        } catch (CycleDetectedException ce) {
+        } catch (CycleDetectedException | RemoteException ce) {
             throw new SortingException(ce.getMessage());
         }
     }
@@ -125,7 +126,7 @@ public class SrvModelAutoDeps {
      * @throws CycleDetectedException
      * @throws ContextException
      */
-    private void addDependsOn(RequestModel srvModel, List<String> sortedEntries) throws ContextException {
+    private void addDependsOn(RequestModel srvModel, List<String> sortedEntries) throws ContextException, RemoteException {
         for (String entryName : sortedEntries) {
             // Only those that are args in the reqModel
             if (!srvModel.getData().keySet().contains(entryName)) continue;

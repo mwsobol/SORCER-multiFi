@@ -178,7 +178,11 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
             }
             return (T) exert(txn);
         } catch (Exception e) {
-            mogram.getContext().reportException(e);
+            try {
+                mogram.getContext().reportException(e);
+            } catch (RemoteException remoteException) {
+                remoteException.printStackTrace();
+            }
             if (e instanceof Exception)
                 ((Mogram)mogram).setStatus(FAILED);
             else
@@ -513,7 +517,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     public Context getContext(String componentExertionName)
-            throws ContextException {
+        throws ContextException, RemoteException {
         Routine component = (Routine)getMogram(componentExertionName);
         if (component != null)
             return getMogram(componentExertionName).getContext();
@@ -957,7 +961,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     public Context dispatch(Context context, Arg... args) throws DispatchException {
         try {
             return evaluate(context,args);
-        } catch (ServiceException e) {
+        } catch (ServiceException | RemoteException e) {
             throw new DispatchException(e);
         }
     }
@@ -1164,7 +1168,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     @Override
-    public Context evaluate(Context context, Arg... args) throws ServiceException {
+    public Context evaluate(Context context, Arg... args) throws ServiceException, RemoteException {
         substitute(context);
         return exert(args).getContext();
     }

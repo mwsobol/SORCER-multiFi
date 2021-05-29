@@ -509,7 +509,7 @@ public class Governance implements Transdiscipline, Dependency {
 	}
 
 	@Override
-	public List<Contextion> getContextions(List<Contextion> contextionList) {
+	public List<Contextion> getContextions(List<Contextion> contextionList) throws RemoteException {
 		for (Contextion e : regions.values()) {
 			e.getContextions(contextionList);
 		}

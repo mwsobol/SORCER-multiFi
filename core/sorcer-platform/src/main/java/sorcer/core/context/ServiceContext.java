@@ -409,47 +409,43 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 *
 	 * @throws
 	 */
-	public Object getValue0(String path) throws ContextException {
+	public Object getValue0(String path) throws ContextException, RemoteException {
 		Object result = get(path);
-		try {
-			if (result instanceof Value) {
-				return ((Value)result).getData();
-			} else if (result instanceof ContextLink) {
-				String offset = ((ContextLink) result).getOffset();
-				Context linkedCntxt = ((ContextLink) result).getContext();
-				result = linkedCntxt.getValue(offset);
-			}
-			if (result == null) {
-				// could be in a linked context
-				List<String> paths = localLinkPaths();
-				int len;
-				for (String linkPath : paths) {
-					ContextLink link;
-					link = (ContextLink) get(linkPath);
-					String offset = link.getOffset();
-					int index = offset.lastIndexOf(CPS);
-					String extendedLinkPath = linkPath;
-					if (index < 0) {
-						if (offset.length() > 0)
-							extendedLinkPath = linkPath + CPS + offset;
-					} else
-						extendedLinkPath = linkPath + offset.substring(index);
-					len = extendedLinkPath.length();
-					if (path.startsWith(extendedLinkPath)
-						&& (path.indexOf(CPS, len) == len || path.length() > len)) {
-						// looking for something in this linked context
-						String keyInLinkedCntxt = path.substring(len + 1);
-						if (offset.length() > 0)
-							keyInLinkedCntxt = offset + path.substring(len);
-						Context linkedCntxt;
-						linkedCntxt = getLinkedContext(link);
-						result = linkedCntxt.getValue(keyInLinkedCntxt);
-						break;
-					}
+		if (result instanceof Value) {
+			return ((Value)result).getData();
+		} else if (result instanceof ContextLink) {
+			String offset = ((ContextLink) result).getOffset();
+			Context linkedCntxt = ((ContextLink) result).getContext();
+			result = linkedCntxt.getValue(offset);
+		}
+		if (result == null) {
+			// could be in a linked context
+			List<String> paths = localLinkPaths();
+			int len;
+			for (String linkPath : paths) {
+				ContextLink link;
+				link = (ContextLink) get(linkPath);
+				String offset = link.getOffset();
+				int index = offset.lastIndexOf(CPS);
+				String extendedLinkPath = linkPath;
+				if (index < 0) {
+					if (offset.length() > 0)
+						extendedLinkPath = linkPath + CPS + offset;
+				} else
+					extendedLinkPath = linkPath + offset.substring(index);
+				len = extendedLinkPath.length();
+				if (path.startsWith(extendedLinkPath)
+					&& (path.indexOf(CPS, len) == len || path.length() > len)) {
+					// looking for something in this linked context
+					String keyInLinkedCntxt = path.substring(len + 1);
+					if (offset.length() > 0)
+						keyInLinkedCntxt = offset + path.substring(len);
+					Context linkedCntxt;
+					linkedCntxt = getLinkedContext(link);
+					result = linkedCntxt.getValue(keyInLinkedCntxt);
+					break;
 				}
 			}
-		} catch (RemoteException e) {
-			throw new ContextException(e);
 		}
 		return result;
 	}
@@ -1588,7 +1584,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return links;
 	}
 
-	public Context execSignature(Signature sig, Arg... items) throws ServiceException {
+	public Context execSignature(Signature sig, Arg... items) throws ServiceException, RemoteException {
 		if (sig.getContextReturn() == null)
 			throw new MogramException("No signature return contextReturn defined!");
 		Context.Return rp = sig.getContextReturn();
@@ -2851,7 +2847,7 @@ public class ServiceContext<T> extends ServiceMogram implements
         if (val == null) {
             try {
                 return (T) getValue0(path);
-            } catch (ContextException e) {
+            } catch (ContextException | RemoteException e) {
                 e.printStackTrace();
             }
             return null;
@@ -3428,7 +3424,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	/* (non-Javadoc)
      * @see sorcer.service.Service#exert(sorcer.service.Routine, net.jini.core.transaction.Transaction)
      */
-    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException {
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
         try {
             if (mogram instanceof NetTask) {
                 Task task = (NetTask)mogram;
@@ -3452,12 +3448,12 @@ public class ServiceContext<T> extends ServiceMogram implements
             return (T) exertion.exert(txn);
         } catch (Exception e) {
             e.printStackTrace();
-			((Mogram)mogram).getContext().reportException(e);
-            if (e instanceof Exception)
-				((Mogram)mogram).setStatus(FAILED);
-            else
-				((Mogram)mogram).setStatus(ERROR);
-
+			mogram.getContext().reportException(e);
+            if (e instanceof Exception) {
+				((Mogram) mogram).setStatus(FAILED);
+			} else {
+				((Mogram) mogram).setStatus(ERROR);
+			}
             throw new ContextException(e);
         }
     }

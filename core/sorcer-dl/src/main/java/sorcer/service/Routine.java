@@ -141,7 +141,7 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * @return a service context
 	 * @throws ContextException
 	 */
-	Context getContext(String componentExertionName) throws ContextException;
+	Context getContext(String componentExertionName) throws ContextException, RemoteException;
 
 	/**
 	 * Returns a control context (service control strategy) of this exertion to be 

@@ -188,7 +188,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return mogramId;
     }
 
-    @Override
     public void setParentId(Uuid parentId) {
         this.parentId = parentId;
     }
@@ -212,7 +211,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return exs;
     }
 
-    public List<Contextion> getAllContextions() {
+    public List<Contextion> getAllContextions() throws RemoteException {
         List<Contextion> exs = new ArrayList();
         getContextions(exs);
         return exs;
@@ -223,7 +222,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return exs;
     }
 
-    public List<Contextion> getContextions(List<Contextion> exs) {
+    public List<Contextion> getContextions(List<Contextion> exs) throws RemoteException {
         exs.add(this);
         return exs;
     }
@@ -323,12 +322,12 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ServiceException {
+    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ServiceException, RemoteException {
         return null;
     }
 
     @Override
-    public <T extends Contextion> T exert(Arg... args) throws ServiceException {
+    public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException {
         return null;
     }
 
@@ -1116,7 +1115,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public Entry act(Arg... args) throws ServiceException {
+    public Entry act(Arg... args) throws ServiceException, RemoteException {
         Object result = this.execute(args);
         if (result instanceof Entry) {
             return (Entry)result;
@@ -1126,7 +1125,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public Data act(String entryName, Arg... args) throws ServiceException {
+    public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
         Object result = this.execute(args);
         if (result instanceof Entry) {
             return (Entry)result;

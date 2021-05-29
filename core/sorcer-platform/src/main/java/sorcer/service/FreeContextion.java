@@ -57,7 +57,7 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
-	public Context getOutput(Arg... args) throws ContextException {
+	public Context getOutput(Arg... args) throws ContextException, RemoteException {
 		 if (contextion != null) {
 			 return contextion.getOutput(args);
 		} else {
@@ -111,7 +111,7 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
-	public List<Contextion> getContextions(List<Contextion> contextionList) {
+	public List<Contextion> getContextions(List<Contextion> contextionList) throws RemoteException {
 		if (contextion != null) {
 			return contextion.getContextions(contextionList);
 		} else {

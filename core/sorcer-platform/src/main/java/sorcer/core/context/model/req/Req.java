@@ -280,7 +280,7 @@ public class Req extends Function<Object> implements Serviceableness,
     }
 
     @Override
-    public Object execute(Arg... args) throws ServiceException {
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
         ContextDomain mod = Arg.selectDomain(args);
         if (mod != null) {
             if (mod instanceof EntryModel && impl instanceof ValueCallable) {

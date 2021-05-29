@@ -1044,7 +1044,7 @@ public class operator extends Operator {
 	}
 
 	public static URL update(Object object) throws ServiceException,
-			SignatureException {
+		SignatureException, RemoteException {
 		return SdbUtil.update(object);
 	}
 
@@ -1056,11 +1056,11 @@ public class operator extends Operator {
 		return SdbUtil.list(store);
 	}
 
-	public static URL delete(Object object) throws ServiceException, SignatureException {
+	public static URL delete(Object object) throws ServiceException, SignatureException, RemoteException {
 		return SdbUtil.delete(object);
 	}
 
-	public static int clear(DatabaseStorer.Store type) throws ServiceException, SignatureException {
+	public static int clear(DatabaseStorer.Store type) throws ServiceException, SignatureException, RemoteException {
 		return SdbUtil.clear(type);
 	}
 
@@ -1085,7 +1085,7 @@ public class operator extends Operator {
 	}
 
 	public static int size(DatabaseStorer.Store type) throws ServiceException,
-			SignatureException, ContextException {
+		SignatureException, RemoteException {
 		return SdbUtil.size(type);
 	}
 
@@ -1186,7 +1186,6 @@ public class operator extends Operator {
         out.setRowIdentifiers(rowIds);
         return out;
     }
-
 
 	public static OutType out(Type type) {
 		return new OutType(type);
@@ -1295,7 +1294,7 @@ public class operator extends Operator {
         return setValue((Entry)entry, value);
     }
 
-	public static Request setValue(Request request, String path, Object value) throws ContextException {
+	public static Request setValue(Request request, String path, Object value) throws ContextException, RemoteException {
 		if (request instanceof Contextion) {
 			if (request instanceof Context) {
 				((Context)request).putValue(path, value);
@@ -1385,7 +1384,7 @@ public class operator extends Operator {
 	}
 
 	public static Object get(Service service, String path)
-		throws ContextException {
+		throws ContextException, RemoteException {
 		Object obj = null;
 		if (service instanceof Context) {
 			obj = ((ServiceContext) service).get(path);
@@ -1677,7 +1676,7 @@ public class operator extends Operator {
          return ((ServiceContext)model).getDomainStrategy().getDependentPaths();
     }
 
-    public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
+    public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException, RemoteException {
 		List<ExecDependency> functional = new ArrayList<>();
 		List<ExecDependency> domain = new ArrayList<>();
         List<ExecDependency> vals = new ArrayList<>();
@@ -1713,7 +1712,7 @@ public class operator extends Operator {
 		}
 	}
 
-    public static Dependency domainDependency(Dependency dependee,  Evaluation... dependers) throws ContextException {
+    public static Dependency domainDependency(Dependency dependee,  Evaluation... dependers) throws ContextException, RemoteException {
         String path ;
         List<Dependency> dl = new ArrayList<>();
         // find dependency lists
@@ -1777,7 +1776,7 @@ public class operator extends Operator {
         return dependee;
     }
 
-	public static Dependency funcDependency(Dependency dependee,  Evaluation... dependers) throws ContextException {
+	public static Dependency funcDependency(Dependency dependee,  Evaluation... dependers) throws ContextException, RemoteException {
 		String path;
 		List<Dependency> dl = new ArrayList<>();
 		// find dependency lists
@@ -1847,7 +1846,7 @@ public class operator extends Operator {
 	}
 
 	public static Dependency dependsOn(Dependency dependee, Context scope, Evaluation... dependers)
-			throws ContextException {
+		throws ContextException, RemoteException {
 		if (dependee instanceof Scopable) {
 			Context context;
 			context = ((Mogram) dependee).getScope();
@@ -2021,7 +2020,7 @@ public class operator extends Operator {
 		if (out instanceof Contextion) {
 			try {
 				((Contextion)out).selectFidelity(fidefity);
-			} catch (ConfigurationException e) {
+			} catch (ConfigurationException | RemoteException e) {
 				throw new SignatureException(e);
 			}
 		}

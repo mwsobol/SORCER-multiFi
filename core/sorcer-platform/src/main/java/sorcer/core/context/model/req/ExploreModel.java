@@ -190,7 +190,7 @@ public class ExploreModel extends RequestModel implements Transmodel, Configurab
         }
     }
 
-    public void execDependencies(String path, Context inContext, Arg... args) throws ServiceException {
+    public void execDependencies(String path, Context inContext, Arg... args) throws ServiceException, RemoteException {
         Map<String, List<ExecDependency>> dpm = ((ModelStrategy) domainStrategy).getDependentDomains();
         if (dpm != null && dpm.get(path) != null) {
             List<Path> dpl = null;

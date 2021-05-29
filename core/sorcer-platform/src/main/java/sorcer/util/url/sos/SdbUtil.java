@@ -157,7 +157,7 @@ public class SdbUtil {
 		return cxt;
 	}
 
-	static public URL update(Object value) throws ServiceException, SignatureException {
+	static public URL update(Object value) throws ServiceException, SignatureException, RemoteException {
 		if (!(value instanceof Identifiable)
 				|| !(((Identifiable) value).getId() instanceof Uuid)) {
 			throw new ContextException("Object is not Uuid Identifiable: "
@@ -167,12 +167,12 @@ public class SdbUtil {
 	}
 
 	static public URL update(URL storedURL, Object value)
-			throws ServiceException, SignatureException {
+		throws ServiceException, SignatureException, RemoteException {
 		return SdbUtil.update(SdbUtil.getUuid(storedURL), value);
 	}
 
 	static public URL update(Uuid storeUuid, Object value)
-			throws ServiceException, SignatureException {
+		throws ServiceException, SignatureException, RemoteException {
 		Task objectUpdateTask = task(
 				"update",
 				sig("contextUpdate", DatabaseStorer.class,
@@ -184,7 +184,7 @@ public class SdbUtil {
 				StorageManagement.object_url);
 	}
 
-	public static int clear(Store type) throws ServiceException, SignatureException {
+	public static int clear(Store type) throws ServiceException, SignatureException, RemoteException {
 		String storageName = Sorcer.getActualName(Sorcer
 				.getDatabaseStorerName());
 		Task objectStoreTask = task(
@@ -195,7 +195,7 @@ public class SdbUtil {
 		return (Integer) exec(objectStoreTask);
 	}
 
-	public static int size(Store type) throws ServiceException, SignatureException {
+	public static int size(Store type) throws ServiceException, SignatureException, RemoteException {
 		String storageName = Sorcer.getActualName(Sorcer
 				.getDatabaseStorerName());
 		Task objectStoreTask = task(
@@ -206,7 +206,7 @@ public class SdbUtil {
 		return (Integer) exec(objectStoreTask);
 	}
 	
-	public static URL delete(Object object) throws ServiceException, SignatureException {
+	public static URL delete(Object object) throws ServiceException, SignatureException, RemoteException {
 		if (object instanceof URL) {
 			return deleteURL((URL) object);
 		} else {
@@ -214,7 +214,7 @@ public class SdbUtil {
 		}
 	}
 
-	public static URL deleteObject(Object object) throws ServiceException, SignatureException {
+	public static URL deleteObject(Object object) throws ServiceException, SignatureException, RemoteException {
 		String storageName = Sorcer.getActualName(Sorcer
 				.getDatabaseStorerName());
 		Task objectStoreTask = task(
@@ -244,7 +244,7 @@ public class SdbUtil {
 		return (URL) exec(objectStoreTask);
 	}
 
-	public static URL store(Object object) throws ServiceException, SignatureException {
+	public static URL store(Object object) throws ServiceException, SignatureException, RemoteException {
 		String storageName = Sorcer.getDatabaseStorerName();
 		Task objectStoreTask = task(
 				"store",
@@ -254,11 +254,10 @@ public class SdbUtil {
 
 		Task out = exert(objectStoreTask);
 		return (URL) out.getDataContext().getValue(StorageManagement.object_url);
-
 	}
 
 	public static URL write(Object object) throws ServiceException,
-			SignatureException {
+		SignatureException, RemoteException {
 		String storageName = Sorcer.getActualName(Sorcer.getSpacerName());
 		Task objectStoreTask = task(
 				"write",

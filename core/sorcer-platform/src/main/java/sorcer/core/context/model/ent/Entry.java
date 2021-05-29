@@ -101,7 +101,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
                         SdbUtil.update((URL) this.impl, value);
                     }
                 }
-            } catch (ServiceException | SignatureException e) {
+            } catch (ServiceException | SignatureException | RemoteException e) {
                 throw new SetterException(e);
             }
         } else {
@@ -254,7 +254,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
     }
 
     @Override
-    public Entry act(Arg... args) throws ServiceException {
+    public Entry act(Arg... args) throws ServiceException, RemoteException {
         Object result = this.execute(args);
         if (result instanceof Entry) {
             return (Entry)result;
@@ -264,7 +264,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
     }
 
     @Override
-    public Data act(String entryName, Arg... args) throws ServiceException {
+    public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
         Object result = this.execute(args);
         if (result instanceof Entry) {
             return (Entry)result;
@@ -273,7 +273,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
         }
     }
 
-    public Object execute(Arg... args) throws ServiceException {
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
         ContextDomain cxt = Arg.selectDomain(args);
         if (cxt != null) {
             // entry substitution

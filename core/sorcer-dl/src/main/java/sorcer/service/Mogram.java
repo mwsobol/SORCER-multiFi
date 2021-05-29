@@ -64,8 +64,6 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
 
     public Contextion getParent() throws RemoteException;
 
-    public void setParentId(Uuid parentId);
-
     public Signature getProcessSignature();
 
     public Mogram deploy(List<Signature> builders) throws ServiceException, ConfigurationException;
@@ -179,7 +177,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
      */
     public static final int THIN = 0;
 
-    public Uuid getParentId();
+//    public Uuid getParentId();
 
     /**
      * Return date when exertion was created
@@ -263,7 +261,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
      * @param description
      *            The description to set.
      */
-    public void setDescription(String description);
+//    public void setDescription(String description);
 
     /** 
      *
@@ -347,7 +345,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
 
 	List<Discipline> getMograms(List<Discipline> allMograms);
 
-	List<Contextion> getContextions(List<Contextion> allContextions);
+	List<Contextion> getContextions(List<Contextion> allContextions) throws RemoteException;
 
 	/**
 	 * Returns the list of direct component exertions.

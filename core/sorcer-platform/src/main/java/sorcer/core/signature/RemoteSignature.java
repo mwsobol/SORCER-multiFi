@@ -397,7 +397,7 @@ public class RemoteSignature extends LocalSignature implements sig {
 	}
 
 	@Override
-	public Object execute(Arg... args) throws MogramException {
+	public Object execute(Arg... args) throws ServiceException, RemoteException {
 		Routine mog = Arg.selectRoutine(args);
 		Context cxt = (Context) Arg.selectDomain(args);
 		if (cxt == null && contextReturn != null) {
@@ -432,7 +432,7 @@ public class RemoteSignature extends LocalSignature implements sig {
 				out = exert(task(this, cxt));
 				return out;
 			}
-		} catch (SignatureException | ServiceException | RemoteException ex) {
+		} catch (SignatureException | ServiceException ex) {
 			throw new MogramException(ex);
 		}
 		return context(result);

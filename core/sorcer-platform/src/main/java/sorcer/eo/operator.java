@@ -212,7 +212,7 @@ operator extends Operator {
         return ((Subroutine) exertion).getControlContext();
     }
 
-    public static Context upcxt(Routine mogram) throws ContextException {
+    public static Context upcxt(Routine mogram) throws ContextException, RemoteException {
         return snapshot(mogram);
     }
 
@@ -224,14 +224,14 @@ operator extends Operator {
         return mogram.getDataContext();
     }
 
-    public static Context upcontext(Mogram mogram) throws ContextException {
+    public static Context upcontext(Mogram mogram) throws ContextException, RemoteException {
         if (mogram instanceof Transroutine)
             return mogram.getContext();
         else
             return  mogram.getDataContext();
     }
 
-    public static Context snapshot(Routine mogram) throws ContextException {
+    public static Context snapshot(Routine mogram) throws ContextException, RemoteException {
         return upcontext(mogram);
     }
 
@@ -246,14 +246,14 @@ operator extends Operator {
         return context.getDirectionalSubcontext(paths);
     }
 
-    public static Context scope(Object... entries) throws ContextException {
+    public static Context scope(Object... entries) throws ContextException, RemoteException {
         Object[] args = new Object[entries.length + 1];
         System.arraycopy(entries, 0, args, 1, entries.length);
         args[0] = Context.Type.SCOPE;
         return context(args);
     }
 
-    public static Context data(Object... entries) throws ContextException {
+    public static Context data(Object... entries) throws ContextException, RemoteException {
         for (Object obj : entries) {
             if (!(obj instanceof String) || !(obj instanceof Function && ((Function)obj).getType().equals(Functionality.Type.VAL))) {
                 throw new ContextException("Not execute entry " + obj.toString());
@@ -262,17 +262,17 @@ operator extends Operator {
         return context(entries);
     }
 
-    public static Context<Float> weights(Entry... entries) throws ContextException {
+    public static Context<Float> weights(Entry... entries) throws ContextException, RemoteException {
         return (Context)context((Object[])entries);
     }
 
-    public static Context strategyContext(Object... items) throws ContextException {
+    public static Context strategyContext(Object... items) throws ContextException, RemoteException {
         Context scxt =  context(items);
         ((ServiceContext)scxt).setType(Functionality.Type.STRATEGY);
         return scxt;
     }
 
-    public static Context cxt(Object... items) throws ContextException {
+    public static Context cxt(Object... items) throws ContextException, RemoteException {
         return context(items);
     }
 
@@ -280,7 +280,7 @@ operator extends Operator {
         return (Contextion) ((LocalSignature) signature).initInstance();
     }
 
-    public static Context dznCxt(Object... items) throws ContextException {
+    public static Context dznCxt(Object... items) throws ContextException, RemoteException {
         List<Object> itemArray = new ArrayList(items.length);
         for (Object obj : items) {
             itemArray.add(obj);
@@ -328,10 +328,15 @@ operator extends Operator {
                 throw new ContextException(e);
             }
         }
-        return (ServiceContext)domainContext(items);
+        try {
+            return (ServiceContext)domainContext(items);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public static ContextDomain domainContext(Object... entries) throws ContextException {
+    public static ContextDomain domainContext(Object... entries) throws ContextException, RemoteException {
         // do not create a context from Context, jut return
         if (entries == null || entries.length == 0) {
             return new ServiceContext();

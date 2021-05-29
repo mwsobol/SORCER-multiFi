@@ -298,7 +298,7 @@ import java.util.Map;
 		return closureExpression;
 	}
 	
-	static public void cleanupScripts(Routine exertion) throws ContextException {
+	static public void cleanupScripts(Routine exertion) throws ContextException, RemoteException {
 		if (exertion == null)
 			return;
 		clenupContextScripts(exertion.getContext());
@@ -335,7 +335,7 @@ import java.util.Map;
 	}
 
 	public static void clenupExertionScripts(Routine exertion)
-			throws ContextException {
+		throws ContextException, RemoteException {
 		if (exertion instanceof ConditionalTask) {
 			List<Conditional> cs = ((ConditionalTask) exertion)
 					.getConditions();

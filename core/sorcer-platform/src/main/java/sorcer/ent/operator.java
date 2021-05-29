@@ -901,7 +901,7 @@ public class operator extends Operator {
 						entry.setScope(cxt);
 					}
 				} else if (args.length == 1 && args[0] instanceof Function) {
-					entry.setScope((Context) context((Function) args[0]));
+					entry.setScope(context(args[0]));
 				} else if (args.length == 1 && args[0] instanceof Service) {
 					entry = new Prc(path, value, args[0]);
 				}

@@ -154,9 +154,8 @@ public class SignatureDomain implements Domain {
         return domain.getParent();
     }
 
-    @Override
     public void setParentId(Uuid parentId) {
-        domain.setParentId(parentId);
+        ((ServiceMogram)domain).setParentId(parentId);
     }
 
     @Override
@@ -264,9 +263,8 @@ public class SignatureDomain implements Domain {
         return domain.isMonitorable();
     }
 
-    @Override
     public Uuid getParentId() {
-        return domain.getParentId();
+        return ((ServiceMogram)domain).getParentId();
     }
 
     @Override
@@ -353,9 +351,8 @@ public class SignatureDomain implements Domain {
         domain.setLastUpdateDate(date);
     }
 
-    @Override
     public void setDescription(String description) {
-        domain.setDescription(description);
+        ((ServiceMogram)domain).setDescription(description);
     }
 
     @Override
@@ -511,12 +508,12 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public Context getContext() throws ContextException {
+    public Context getContext() throws ContextException, RemoteException {
         return domain.getContext();
     }
 
     @Override
-    public Context getOutput(Arg... args) throws ContextException {
+    public Context getOutput(Arg... args) throws ContextException, RemoteException {
         return domain.getOutput(args);
     }
 
@@ -562,37 +559,37 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public Context getContext(String path) throws ContextException {
+    public Context getContext(String path) throws ContextException, RemoteException {
         return domain.getContext();
     }
 
     @Override
-    public Context.Return getContextReturn() {
+    public Context.Return getContextReturn() throws RemoteException {
         return domain.getContextReturn();
     }
 
     @Override
-    public ServiceStrategy getDomainStrategy() {
+    public ServiceStrategy getDomainStrategy() throws RemoteException {
         return domain.getDomainStrategy();
     }
 
     @Override
-    public Projection getInPathProjection() {
+    public Projection getInPathProjection() throws RemoteException {
         return domain.getInPathProjection();
     }
 
     @Override
-    public Projection getOutPathProjection() {
+    public Projection getOutPathProjection() throws RemoteException {
         return domain.getOutPathProjection();
     }
 
     @Override
-    public List<Contextion> getContextions(List<Contextion> contextionList) {
+    public List<Contextion> getContextions(List<Contextion> contextionList) throws RemoteException {
         return domain.getContextions(contextionList);
     }
 
     @Override
-    public void selectFidelity(Fidelity fi) throws ConfigurationException {
+    public void selectFidelity(Fidelity fi) throws ConfigurationException, RemoteException {
         domain.selectFidelity(fi);
     }
 

@@ -128,7 +128,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Object exec(Mogram domain, String path, Arg... args) throws ServiceException {
+    public static Object exec(Mogram domain, String path, Arg... args) throws ServiceException, RemoteException {
         if (domain instanceof Model) {
             try {
                 return ((Model)domain).getValue(path, args);

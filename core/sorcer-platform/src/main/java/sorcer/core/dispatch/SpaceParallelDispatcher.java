@@ -239,7 +239,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         if (exertion == xrt)
             ee.parentID = exertion.getId();
         else
-            ee.parentID = exertion.getParentId();
+            ee.parentID = ((ServiceMogram)exertion).getParentId();
         ee.state = Exec.POISONED;
         try {
             space.write(ee, null, Lease.FOREVER);

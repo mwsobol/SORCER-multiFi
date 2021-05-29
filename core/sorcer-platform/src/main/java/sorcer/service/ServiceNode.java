@@ -113,7 +113,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
         return out;
     }
 
-    public Context getContextionContext() throws ContextException {
+    public Context getContextionContext() throws ContextException, RemoteException {
         return ((Contextion)out).getContext();
     }
 
