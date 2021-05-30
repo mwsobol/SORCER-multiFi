@@ -4033,7 +4033,7 @@ operator extends Operator {
 
             for (int j = 0; j < mograms.size(); j++) {
                 Mogram m = mograms.get(j);
-                m.setIndex(j);
+                ((ServiceMogram)m).setIndex(j);
                 block.addMogram(m);
             }
             for (Evaluator e :evaluators) {

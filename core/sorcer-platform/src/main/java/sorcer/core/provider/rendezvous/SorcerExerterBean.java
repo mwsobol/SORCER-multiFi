@@ -72,7 +72,7 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 	
 	protected void replaceNullExertionIDs(Routine ex) {
 		if (ex != null && ((Subroutine) ex).getId() == null) {
-			ex.setId(UuidFactory.generate());
+			((ServiceMogram)ex).setId(UuidFactory.generate());
 			if (ex.isJob()) {
 				for (int i = 0; i < ((Job) ex).size(); i++)
 					replaceNullExertionIDs(((Job) ex).get(i));

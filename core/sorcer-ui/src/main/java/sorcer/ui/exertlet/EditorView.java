@@ -505,7 +505,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	private void processMogram(Mogram mogram) throws MogramException{
 		String codebase = System.getProperty("java.rmi.server.codebase");
 		logger.debug("Using exertlet codebase: " + codebase);
-		if (mogram.getStatus() == Exec.DONE) {
+		if (((ServiceMogram)mogram).getStatus() == Exec.DONE) {
 			showResults(mogram);
 			return;
 		}

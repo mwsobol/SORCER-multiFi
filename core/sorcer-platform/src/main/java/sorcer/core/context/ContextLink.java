@@ -29,6 +29,7 @@ import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Link;
+import sorcer.service.ServiceMogram;
 import sorcer.util.SorcerUtil;
 
 /**
@@ -173,7 +174,7 @@ public class ContextLink implements SorcerConstants, Link {
 			} else if (result[0] != linkedContext) {
 				this.offset = (String) result[1];
 				this.linkedContext = (Context) result[0];
-				this.contextId = linkedContext.getId();
+				this.contextId = ((ServiceMogram)linkedContext).getId();
 				this.fetched = true;
 				// status = BROKEN_LINK;
 
@@ -198,7 +199,7 @@ public class ContextLink implements SorcerConstants, Link {
 		if (cntxt != linkedContext) {
 			this.offset = (String) offset;
 			this.linkedContext = (Context) cntxt;
-			this.contextId = linkedContext.getId();
+			this.contextId = ((ServiceMogram)linkedContext).getId();
 			this.fetched = true;
 			return true;
 		}

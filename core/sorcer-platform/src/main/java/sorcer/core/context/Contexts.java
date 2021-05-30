@@ -1059,7 +1059,7 @@ public class Contexts implements SorcerConstants {
 	public static Object putDirectionalValue(Context context, String path,
 			Object node, String attribute, String value)
 			throws ContextException {
-		Uuid contextID = context.getId();
+		Uuid contextID = ((ServiceMogram)context).getId();
 		if (value == null)
 			value = SorcerConstants.NULL;
 		StringBuffer sb = new StringBuffer();

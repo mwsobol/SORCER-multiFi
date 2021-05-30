@@ -70,7 +70,7 @@ public class SignatureDeployer implements Deployee {
             if (deployee instanceof Model) {
                 try {
                     deployee.deploy(builders);
-                } catch (ServiceException e) {
+                } catch (ServiceException | RemoteException e) {
                     throw new ConfigurationException(e);
                 }
             }

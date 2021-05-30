@@ -110,7 +110,7 @@ public class SignatureDomain implements Domain {
 
     @Override
     public Uuid getId() {
-        return domain.getId();
+        return ((ServiceMogram)domain).getId();
     }
 
     @Override
@@ -125,9 +125,8 @@ public class SignatureDomain implements Domain {
         return name;
     }
 
-    @Override
     public void setId(Uuid id) {
-        domain.setId(id);
+        ((ServiceMogram)domain).setId(id);
     }
 
     @Override
@@ -139,14 +138,12 @@ public class SignatureDomain implements Domain {
         }
     }
 
-    @Override
     public int getIndex() {
-        return domain.getIndex();
+        return ((ServiceMogram)domain).getIndex();
     }
 
-    @Override
     public void setIndex(int i) {
-        domain.setIndex(i);
+        ((ServiceMogram)domain).setIndex(i);
     }
 
     @Override
@@ -159,23 +156,21 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public Signature getProcessSignature() {
+    public Signature getProcessSignature() throws RemoteException {
         return domain.getProcessSignature();
     }
 
     @Override
     public Mogram deploy(List<Signature> builders) throws ServiceException, ConfigurationException {
-        return domain.deploy(builders);
+        return ((ServiceMogram)domain).deploy(builders);
     }
 
-    @Override
     public int getStatus() {
-        return domain.getStatus();
+        return ((ServiceMogram)domain).getStatus();
     }
 
-    @Override
     public void setStatus(int value) {
-        domain.setStatus(value);
+        ((ServiceMogram)domain).setStatus(value);
     }
 
     @Override

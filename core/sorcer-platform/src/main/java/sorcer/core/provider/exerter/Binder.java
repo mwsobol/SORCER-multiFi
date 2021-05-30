@@ -74,7 +74,7 @@ public class Binder {
             for (Discipline e : exertion.getAllMograms()) {
                 if (e instanceof Routine) {
                     if (((ControlContext) ((Routine)e).getControlContext()).getExecState() == Exec.State.INITIAL) {
-                        ((Mogram)e).setStatus(Exec.INITIAL);
+                        ((ServiceMogram)e).setStatus(Exec.INITIAL);
                     }
                 }
                 if (e instanceof Block) {

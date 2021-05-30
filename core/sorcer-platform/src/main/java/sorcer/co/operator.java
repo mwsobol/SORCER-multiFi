@@ -641,11 +641,11 @@ public class operator extends Operator {
 	}
 
     public static Uuid id(Mogram mogram) {
-        return mogram.getId();
+        return ((ServiceMogram)mogram).getId();
     }
 
     public static void setId(Mogram mogram, Uuid id) {
-	    mogram.setId(id);
+		((ServiceMogram)mogram).setId(id);
     }
 
 	public static Entry in(Entry... entries) {

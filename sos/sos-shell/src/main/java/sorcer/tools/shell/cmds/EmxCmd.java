@@ -68,7 +68,6 @@ public class EmxCmd extends ShellCmd {
 				+ "\n  -cc   print the control context of selected exertion"
 				+ "\n  -ccc   print both data and control contexts of selected exertion"
 				+ "\n  -s   save the selected exertion in a given file ";
-
 	}
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -262,8 +261,6 @@ public class EmxCmd extends ShellCmd {
 		}
 		Map<Uuid, ExertionInfo> all;
 		if (selectedMonitor >= 0) {
-
-
             out.println(ansi().render("From EMX @|bold " + AttributesUtil
                     .getProviderName(emxMonitors[selectedMonitor].attributeSets) + "|@ at: @|bold "
                     + AttributesUtil.getHostName(emxMonitors[selectedMonitor].attributeSets) + "|@"));

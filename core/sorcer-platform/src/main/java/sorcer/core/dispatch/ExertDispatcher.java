@@ -161,7 +161,7 @@ abstract public class ExertDispatcher implements Dispatcher {
             logger.warn("Exception on local prc", e);
         }
         ((Subroutine) exertion).startExecTime();
-        exertion.setStatus(Exec.RUNNING);
+        ((ServiceMogram)exertion).setStatus(Exec.RUNNING);
 
     }
 
@@ -194,13 +194,13 @@ abstract public class ExertDispatcher implements Dispatcher {
      * @throws RoutineException if there are issues dispatching the {@code Routine}
      */
     protected void checkProvision() throws RoutineException {
-        if(xrt.isProvisionable() && xrt.getDeployments().size()>0) {
-            try {
+        try {
+            if (xrt.isProvisionable() && xrt.getDeployments().size() > 0) {
                 provisionManager.deployServices();
-            } catch (DispatchException e) {
-            	logger.warn("Unable to deploy services", e);
-                throw new RoutineException("Unable to deploy services", e);
             }
+        } catch (DispatchException | RemoteException e) {
+            logger.warn("Unable to deploy services", e);
+            throw new RoutineException("Unable to deploy services", e);
         }
     }
 
@@ -373,12 +373,12 @@ abstract public class ExertDispatcher implements Dispatcher {
     }
 
     protected void reconcileInputExertions(Mogram mo) throws ContextException {
-        if (mo.getStatus() == DONE) {
+        if (((ServiceMogram)mo).getStatus() == DONE) {
             collectOutputs(mo);
             if (inputXrts != null)
                 inputXrts.remove(mo);
         } else {
-            mo.setStatus(INITIAL);
+            ((ServiceMogram)mo).setStatus(INITIAL);
             if (mo instanceof Transroutine) {
                 Transroutine ce = (Transroutine) mo;
                 for (Discipline sub : ce.getMograms())

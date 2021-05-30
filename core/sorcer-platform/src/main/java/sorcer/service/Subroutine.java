@@ -184,9 +184,9 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
                 remoteException.printStackTrace();
             }
             if (e instanceof Exception)
-                ((Mogram)mogram).setStatus(FAILED);
+                ((ServiceMogram)mogram).setStatus(FAILED);
             else
-                ((Mogram)mogram).setStatus(ERROR);
+                ((ServiceMogram)mogram).setStatus(ERROR);
 
             throw new ContextException(e);
         }
@@ -749,7 +749,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         return info.toString();
     }
 
-    public List<ServiceDeployment> getDeployments() {
+    public List<ServiceDeployment> getDeployments() throws RemoteException {
         List<Signature> nsigs = getAllNetSignatures();
         List<ServiceDeployment> deploymnets = new ArrayList<ServiceDeployment>();
         for (Signature s : nsigs) {
@@ -761,7 +761,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     @Override
-    public List<Signature> getAllNetSignatures() {
+    public List<Signature> getAllNetSignatures() throws RemoteException {
         List<Signature> allSigs = getAllSignatures();
         List<Signature> netSignatures = new ArrayList<Signature>();
         for (Signature s : allSigs) {
@@ -784,7 +784,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         return netSignatures;
     }
 
-    public List<ServiceDeployment> getDeploymnets() {
+    public List<ServiceDeployment> getDeploymnets() throws RemoteException {
         List<Signature> nsigs = getAllNetSignatures();
         List<ServiceDeployment> deploymnets = new ArrayList<ServiceDeployment>();
         for (Signature s : nsigs) {
@@ -831,7 +831,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         return exs;
     }
 
-    public List<Signature> getAllSignatures() {
+    public List<Signature> getAllSignatures() throws RemoteException {
         List<Signature> allSigs = new ArrayList<>();
         List<Discipline> allExertions = getAllMograms();
         for (Discipline e : allExertions) {

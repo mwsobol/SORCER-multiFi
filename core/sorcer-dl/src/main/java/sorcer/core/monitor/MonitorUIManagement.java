@@ -23,8 +23,8 @@ import net.jini.core.lease.LeaseDeniedException;
 import net.jini.id.Uuid;
 import sorcer.core.UEID;
 import sorcer.service.Exec;
-import sorcer.service.Routine;
 import sorcer.service.ExertionInfo;
+import sorcer.service.Routine;
 import sorcer.service.MonitorException;
 
 import java.rmi.RemoteException;
@@ -52,12 +52,12 @@ public interface MonitorUIManagement {
 	/**
 	 * The spec requires that this method gets all the monitorable exertion
 	 * infos from all the monitor managers and return a Hashtable where
-	 * 
+	 *
 	 * key -> ExertionReferenceID execute -> Some info regarding this exertion
-	 * 
+	 *
 	 * @throws RemoteException
 	 *             if there is a communication error
-	 * 
+	 *
 	 */
 	Map<Uuid, ExertionInfo> getMonitorableExertionInfo(Exec.State aspect, Principal principal)
 		throws RemoteException, MonitorException;

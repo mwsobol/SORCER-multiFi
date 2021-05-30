@@ -1960,7 +1960,7 @@ public class ProviderDelegate {
 			MsgRef mr;
 			SorcerNotifier notifier = Accessor.get().getService(null, SorcerNotifier.class);
 
-			mr = new MsgRef(task.getId(), notificationType,
+			mr = new MsgRef(((ServiceMogram)task).getId(), notificationType,
 				config.getProviderName(), message,
 				((Subroutine) task).getSessionId());
 			// Util.debug(this, "::notify() RUNTIME SESSION ID:" +

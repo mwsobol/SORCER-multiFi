@@ -123,7 +123,7 @@ public class Mograms implements SorcerConstants {
 			cc.put(key, ((Hashtable) sc).get(key));
 		}
 		cc.setName(sc.getName());
-		cc.setId(sc.getId());
+		cc.setId(((ServiceMogram)sc).getId());
 		cc.setParentPath(sc.getParentPath());
 		cc.setParentId((((ServiceMogram)sc).getParentId() == null) ? null : ((ServiceMogram)sc).getParentId());
 		cc.setSubject(sc.getSubjectPath(), sc.getSubjectValue());
@@ -179,7 +179,7 @@ public class Mograms implements SorcerConstants {
 			if (job.getId() == null)
 				job.setId(getId());
 			if (job.getContext().getId() == null)
-				job.getContext().setId(getId());
+				((ServiceMogram)job.getContext()).setId(getId());
 			for (int i = 0; i < job.size(); i++)
 				replaceNullIDs(job.get(i));
 		} else
@@ -191,7 +191,7 @@ public class Mograms implements SorcerConstants {
 			task.setId(getId());
 		if (task.getContext() != null) {
 			if (task.getContext().getId() == null)
-				task.getContext().setId(getId());
+				((ServiceMogram)task.getContext()).setId(getId());
 		}
 	}
 
@@ -219,7 +219,7 @@ public class Mograms implements SorcerConstants {
 		eenv.serviceType = ex.getProcessSignature().getServiceType();
 		eenv.providerName = ex.getProcessSignature().getProviderName().getName();
 		eenv.exertion = ex;
-		eenv.exertionID = ex.getId();
+		eenv.exertionID = ((ServiceMogram)ex).getId();
 		eenv.isJob = ex.isJob();
 		eenv.state = Exec.INITIAL;
 		return eenv;

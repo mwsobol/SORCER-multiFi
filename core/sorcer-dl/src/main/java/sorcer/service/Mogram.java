@@ -39,9 +39,9 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
      *
      * @return a unique identifier
      */
-    public Uuid getId();
-
-    public void setId(Uuid id);
+//    public Uuid getId();
+//
+//    public void setId(Uuid id);
 
     /**
      * Generic federated execution called exertion by federated services.
@@ -58,24 +58,11 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
 
     public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException;
 
-    public int getIndex();
-
-    public void setIndex(int i);
-
     public Contextion getParent() throws RemoteException;
 
-    public Signature getProcessSignature();
+    public Signature getProcessSignature() throws RemoteException;
 
-    public Mogram deploy(List<Signature> builders) throws ServiceException, ConfigurationException;
-    /**
-     * Returns a status of this mogram.
-     *
-     * @return a status
-     */
-    public int getStatus();
-
-    public void setStatus(int value);
-
+    public Mogram deploy(List<Signature> builders) throws ServiceException, ConfigurationException, RemoteException;
     /**
      * Returns an execute of the component at the key
      *

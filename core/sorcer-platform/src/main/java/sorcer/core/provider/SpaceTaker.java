@@ -498,10 +498,10 @@ public class SpaceTaker implements Runnable {
 				logger.debug("doEnvelope", th);
 				if (th instanceof Exception) {
 					ee.state = Exec.FAILED;
-					ee.exertion.setStatus(Exec.FAILED);
+					((ServiceMogram)ee.exertion).setStatus(Exec.FAILED);
 				} else if (th instanceof Error) {
 					ee.state = Exec.ERROR;
-					ee.exertion.setStatus(Exec.ERROR);
+					((ServiceMogram)ee.exertion).setStatus(Exec.ERROR);
 				}
 				ee.exertion.reportException(th);
 			}

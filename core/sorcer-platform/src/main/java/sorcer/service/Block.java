@@ -75,7 +75,7 @@ public abstract class Block extends Transroutine {
 	@Override
 	public Discipline addMogram(Discipline mogram) throws RoutineException {
 		mograms.add(mogram);
-		((Mogram)mogram).setIndex(mograms.indexOf(mogram));
+		((ServiceMogram)mogram).setIndex(mograms.indexOf(mogram));
 		try {
 			controlContext.registerExertion((Mogram)mogram);
 		} catch (ContextException | RemoteException e) {

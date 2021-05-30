@@ -153,7 +153,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 
 				ServiceContext cxt = (ServiceContext) mogram.getContext();
 				if (out instanceof Routine) {
-					if (out.getStatus() == Exec.ERROR || out.getStatus() == Exec.FAILED) {
+					if (((ServiceMogram)out).getStatus() == Exec.ERROR || ((ServiceMogram)out).getStatus() == Exec.FAILED) {
 						return (T) out;
 					}
 					postProcessExertion(out);
@@ -208,7 +208,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			for (Discipline e : mogram.getAllMograms()) {
 				if (e instanceof Routine) {
 					if (((ControlContext) ((Routine) e).getControlContext()).getExecState() == State.INITIAL) {
-						((Mogram) e).setStatus(Exec.INITIAL);
+						((ServiceMogram) e).setStatus(Exec.INITIAL);
 						((Mogram) e).getExceptions().clear();
 						((Mogram) e).getTrace().clear();
 					}
@@ -298,7 +298,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		Task task = (Task) exertion.getMograms().get(0);
 		task = task.doTask();
 		exertion.getMograms().set(0, task);
-		exertion.setStatus(task.getStatus());
+		((ServiceMogram)exertion).setStatus(task.getStatus());
 		return exertion;
 	}
 
@@ -464,9 +464,9 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 				Throwable t = et.getThrowable();
 				logger.error("Got exception running: {}", exertion.getName(), t);
 				if (t instanceof Error)
-					result.setStatus(Exec.ERROR);
+					((ServiceMogram)result).setStatus(Exec.ERROR);
 			}
-			result.setStatus(Exec.FAILED);
+			((ServiceMogram)result).setStatus(Exec.FAILED);
 		} else if (result == null) {
 			exertion.reportException(new RoutineException("ExertionDispatcher failed calling: "
 				+ exertion.getProcessSignature()));
@@ -490,7 +490,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		LockResult lr = locker.getLock("" + exertion.getProcessSignature().getServiceType(),
 			new ProviderID(mutexId),
 			txn,
-			exertion.getId());
+			((ServiceMogram)exertion).getId());
 		if (lr.didSucceed()) {
 			((ControlContext) exertion.getControlContext()).setMutexId(provider.getProviderID());
 			Routine xrt = provider.exert(exertion, transaction);
@@ -529,7 +529,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		if (sig != null) {
 			Access access = exertion.getControlContext().getAccessType();
 			if (Access.PULL == access
-				&& !mogram.getProcessSignature().getServiceType().isAssignableFrom(Spacer.class)) {
+				&& !((ServiceMogram)mogram).getProcessSignature().getServiceType().isAssignableFrom(Spacer.class)) {
 				sig.setServiceType(Spacer.class);
 				((RemoteSignature) sig).setSelector("exert");
 				sig.getProviderName().setName(SorcerConstants.ANY);

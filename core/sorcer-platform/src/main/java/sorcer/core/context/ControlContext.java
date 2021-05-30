@@ -513,7 +513,7 @@ public class ControlContext extends ServiceContext<Object> implements RoutineStr
 			put(mogram.getName(), mogram.getId());
 			return;
 		}
-		setPriority((Routine) mogram, MAX_PRIORITY - mogram.getIndex());
+		setPriority((Routine) mogram, MAX_PRIORITY - ((ServiceMogram)mogram).getIndex());
 		setExecTimeRequested(((Routine)mogram), true);
 	}
 
@@ -523,9 +523,9 @@ public class ControlContext extends ServiceContext<Object> implements RoutineStr
 		Routine component = (Routine)componentMogram;
 		String path = component.getContext().getName();
 		remove(path);
-		for (int i = component.getIndex(); i < parent.size(); i++) {
+		for (int i = ((ServiceMogram)component).getIndex(); i < parent.size(); i++) {
 			String oldPath = parent.get(i).getContext().getName();
-			parent.get(i).setIndex(i);
+			((ServiceMogram)parent.get(i)).setIndex(i);
 			put(parent.get(i).getContext().getName(), remove(oldPath));
 			Map map;
 			Map<String, LinkedHashMap<String, String>> imc = getMetacontext();

@@ -117,7 +117,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 	}
 
     protected void dispatchExertion(Routine exertion) throws RoutineException, SignatureException {
-        logger.debug("exertion #{}: exertion: {}", exertion.getIndex(), exertion);
+        logger.debug("exertion #{}: exertion: {}", ((ServiceMogram)exertion).getIndex(), exertion);
         try {
             writeEnvelop(exertion);
             logger.debug("generateTasks ==> SPACE EXECUTE EXERTION: "
@@ -207,7 +207,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 
             logger.debug("HandleResult got result: " + resultEnvelop.describe());
             Subroutine input = (Subroutine) ((NetJob) xrt)
-                    .get(resultEnvelop.exertion
+                    .get(((ServiceMogram)resultEnvelop.exertion)
                             .getIndex());
             Subroutine result = (Subroutine) resultEnvelop.exertion;
             int status = result.getStatus();
@@ -237,7 +237,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         }
         ExertionEnvelop ee = new ExertionEnvelop();
         if (exertion == xrt)
-            ee.parentID = exertion.getId();
+            ee.parentID = ((ServiceMogram)exertion).getId();
         else
             ee.parentID = ((ServiceMogram)exertion).getParentId();
         ee.state = Exec.POISONED;
@@ -330,7 +330,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
             throws RoutineException, SignatureException {
         ((Subroutine) result).stopExecTime();
         try {
-            ((NetJob) xrt).setMogramAt(result, ex.getIndex());
+            ((NetJob) xrt).setMogramAt(result, ((ServiceMogram)ex).getIndex());
             Subroutine ser = (Subroutine) result;
             if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
                 ser.setStatus(DONE);
@@ -343,20 +343,20 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         } catch (Exception e) {
             throw new RoutineException(e);
         }
-        changeDoneExertionIndex(result.getIndex());
+        changeDoneExertionIndex(((ServiceMogram)result).getIndex());
     }
 
     protected void handleError(Routine exertion) throws RemoteException {
         if (exertion != xrt)
             ((NetJob) xrt).setMogramAt(exertion,
-                    exertion.getIndex());
+                ((ServiceMogram)exertion).getIndex());
 
         // notify monitor about failure
         MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
         if (exertion.isMonitorable() && monSession!=null) {
             logger.debug("Notifying monitor about failure of exertion: " + exertion.getName());
             try {
-                monSession.changed(exertion.getContext(), exertion.getControlContext(), exertion.getStatus());
+                monSession.changed(exertion.getContext(), exertion.getControlContext(), ((ServiceMogram)exertion).getStatus());
             } catch (Exception ce) {
                 logger.warn("Unable to notify monitor about failure of exertion: " + exertion.getName() + " " + ce.getMessage());
             }

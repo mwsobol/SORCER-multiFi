@@ -3450,9 +3450,9 @@ public class ServiceContext<T> extends ServiceMogram implements
             e.printStackTrace();
 			mogram.getContext().reportException(e);
             if (e instanceof Exception) {
-				((Mogram) mogram).setStatus(FAILED);
+				((ServiceMogram) mogram).setStatus(FAILED);
 			} else {
-				((Mogram) mogram).setStatus(ERROR);
+				((ServiceMogram) mogram).setStatus(ERROR);
 			}
             throw new ContextException(e);
         }

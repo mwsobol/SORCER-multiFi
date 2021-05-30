@@ -18,6 +18,7 @@
 package sorcer.service;
 
 import net.jini.id.Uuid;
+
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
@@ -58,8 +59,6 @@ public class ExertionInfo implements Comparable, Serializable {
 	
 	public ExertionInfo(Routine exertion) throws RemoteException {
 		name = exertion.getName();
-		id = exertion.getId();
-		status = exertion.getStatus();
 		trace = exertion.getTrace();
         creationDate = exertion.getCreationDate();
         lastUpdateDate = new Date();
@@ -67,8 +66,10 @@ public class ExertionInfo implements Comparable, Serializable {
         this.exertion = exertion;
 	}
 
-	public ExertionInfo(Routine exertion, Uuid storeId) throws RemoteException {
+	public ExertionInfo(Routine exertion, Uuid id, Integer status, Uuid storeId) throws RemoteException {
 		this(exertion);
+		this.id = id;
+		this.status = status;
 		this.storeId = storeId;
 	}
 

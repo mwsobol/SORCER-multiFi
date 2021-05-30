@@ -62,7 +62,7 @@ public class Pools {
 	}
 
 	public static void putFiPool(Mogram mogram, Pool<Fidelity, Service> pool) {
-		fiPool.put(mogram.getId(), pool);
+		fiPool.put(((ServiceMogram)mogram).getId(), pool);
 	}
 
 	public static Pool<String, Signature> getSigPool(Mogram mogram) {
@@ -70,23 +70,23 @@ public class Pools {
 	}
 
 	public static void putSigPool(Mogram mogram, Pool<String, Signature>  pool) {
-		sigPool.put(mogram.getId(), pool);
+		sigPool.put(((ServiceMogram)mogram).getId(), pool);
 	}
 
 	public static Pool<String, Entry<Object>> getEntPool(Mogram mogram) {
-		return entPool.get(mogram.getId());
+		return entPool.get(((ServiceMogram)mogram).getId());
 	}
 
 	public static void putEntPool(Mogram mogram, Pool<String, Entry<Object>>  pool) {
-		entPool.put(mogram.getId(), pool);
+		entPool.put(((ServiceMogram)mogram).getId(), pool);
 	}
 
 	public static Pool<String, Mogram> getMogPool(Mogram mogram) {
-		return mogPool.get(mogram.getId());
+		return mogPool.get(((ServiceMogram)mogram).getId());
 	}
 
 	public static void putMogPool(Mogram mogram, Pool<String, Mogram>  pool) {
-		mogPool.put(mogram.getId(), pool);
+		mogPool.put(((ServiceMogram)mogram).getId(), pool);
 	}
 
 	public static Pool<String, Entry<Object>> getDerivativePool(Mogram mogram) {
@@ -94,7 +94,7 @@ public class Pools {
 	}
 
 	public static void putDerivativePool(Mogram mogram, Pool<String, Entry<Object>> pool) {
-		derivativePool.put(mogram.getId(), pool);
+		derivativePool.put(((ServiceMogram)mogram).getId(), pool);
 	}
 
 	public static Pool<String, Config> getConfigPool(Mogram mogram) {
@@ -103,7 +103,7 @@ public class Pools {
 
 	public static void putConfigPool(Mogram mogram, Pool<String, Config>  pool) throws ContextException {
 		Pool<String, Config> extended = expendConfigPool(pool);
-		configPool.put(mogram.getId(), extended);
+		configPool.put(((ServiceMogram)mogram).getId(), extended);
 	}
 
 	private static Pool<String, Config> expendConfigPool(Pool<String, Config>  pool) throws ContextException {

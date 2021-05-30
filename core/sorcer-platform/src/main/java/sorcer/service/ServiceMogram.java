@@ -261,12 +261,10 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         ps.setProvider(provider);
     }
 
-    @Override
     public int getStatus() {
         return status;
     }
 
-    @Override
     public void setStatus(int value) {
         status = value;
     }

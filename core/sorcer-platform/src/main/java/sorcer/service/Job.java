@@ -169,7 +169,7 @@ public class Job extends Transroutine {
 	@Override
 	public Discipline addMogram(Discipline ex) throws RoutineException {
 		mograms.add(ex);
-		((Mogram)ex).setIndex(mograms.indexOf(ex));
+		((ServiceMogram)ex).setIndex(mograms.indexOf(ex));
 		try {
 			controlContext.registerExertion((Mogram)ex);
 			((Mogram)ex).getDataContext().setScope(dataContext);

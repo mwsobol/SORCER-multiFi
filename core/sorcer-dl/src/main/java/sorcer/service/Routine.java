@@ -192,14 +192,14 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * 
 	 * @return Signature list
 	 */
-	List<Signature> getAllSignatures();
+	List<Signature> getAllSignatures() throws RemoteException;
 
 	/**
 	 * Returns the list of all net signatures of component exertions.
 	 * 
 	 * @return Signature list
 	 */
-	List<Signature> getAllNetSignatures();
+	List<Signature> getAllNetSignatures() throws RemoteException;
 	
 	/**
 	 * Returns the list of all net task signatures of component exertions.
