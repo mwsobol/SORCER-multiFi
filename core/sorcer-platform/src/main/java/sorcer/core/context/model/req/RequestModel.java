@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
@@ -377,7 +378,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
             } else {
                 if (sigrp != null) {
                     // add response for this signature
-                    return out.get(sigrp);
+                    return ((ServiceContext)out).get(sigrp);
                 }
             }
         } catch (RemoteException e) {

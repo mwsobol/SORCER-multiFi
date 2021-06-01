@@ -25,6 +25,7 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.ent.Prc;
 import sorcer.core.context.model.req.Req;
+import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.invoker.*;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
@@ -423,7 +424,7 @@ public class operator extends Operator {
 
     public static Object activate(Model model, String path, Arg... args) throws InvocationException {
         try {
-			Snr ane = (Snr) model.get(path);
+			Snr ane = (Snr) ((ServiceMogram)model).get(path);
             if (ane.getMultiFi() != null) {
                 List<Fidelity> fiList = Arg.selectFidelities(args);
                 ((FidelityManager) model.getFidelityManager()).reconfigure(fiList);
@@ -816,7 +817,7 @@ public class operator extends Operator {
 	}
 
 	public static Entry ent(Context context, String name) {
-		return new Entry(name, context.get(name));
+		return new Entry(name, ((ServiceContext)context).get(name));
 	}
 
 	public static Entry ent(Identifiable object) {

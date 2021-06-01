@@ -1627,7 +1627,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			this.setChanged(true);
 		} else {
 			if (returnPath != null  && !returnPath.equals(Signature.SELF)) {
-				this.put(returnPath, (T) outcxt.get(returnPath));
+				this.put(returnPath, (T) ((ServiceContext)outcxt).get(returnPath));
 			}
 			this.appendInout(outcxt);
 			this.setChanged(true);

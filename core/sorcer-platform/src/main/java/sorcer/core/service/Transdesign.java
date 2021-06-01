@@ -112,7 +112,7 @@ public class Transdesign extends MultiFiSlot implements Design {
 
     public Fidelity<Development> setDeveloperFi(Context context) {
         if(developerFi == null) {
-            Object devComponent = context.get(Context.DEV_PATH);
+            Object devComponent = ((ServiceContext)context).get(Context.DEV_PATH);
             if (devComponent != null) {
                 if (devComponent instanceof Development) {
                     developerFi = new Fidelity(((Developer)devComponent).getName());

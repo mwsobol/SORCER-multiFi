@@ -1045,7 +1045,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public Fidelity<Analysis> getAnalysisFi(Context context) {
         Fidelity<Analysis> analysisFi = null;
-            Object mdaComponent = context.get(Context.MDA_PATH);
+            Object mdaComponent = ((ServiceContext)context).get(Context.MDA_PATH);
             if (mdaComponent != null) {
                 if (mdaComponent instanceof Analyzer) {
                     analysisFi = new Fidelity(((Analyzer)mdaComponent).getName());
@@ -1061,7 +1061,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public Fidelity<Analyzer> setMdaFi(Context context) {
        if(mdaFi == null) {
-           Object mdaComponent = context.get(Context.MDA_PATH);
+           Object mdaComponent = ((ServiceContext)context).get(Context.MDA_PATH);
            if (mdaComponent != null) {
                if (mdaComponent instanceof Analyzer) {
                    mdaFi = new Fidelity(((Analyzer)mdaComponent).getName());
@@ -1335,6 +1335,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public void setExec(boolean exec) {
         isExec = exec;
+    }
+
+    public Object getAt(String key) throws RemoteException {
+        return get(key);
+    }
+
+    public Object get(String key) {
+        return null;
     }
 
     public ServiceMogram copyFrom(ServiceMogram mogram) {

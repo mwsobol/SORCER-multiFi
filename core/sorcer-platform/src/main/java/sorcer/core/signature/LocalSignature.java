@@ -365,10 +365,10 @@ public class LocalSignature extends ServiceSignature implements sig {
 				throw new SignatureException("Build isolation failed", this, e);
 			}
 		}
-		if (inContext != null && obj instanceof ServiceMogram && inContext.get(Context.SRV_PROJECTION) != null) {
+		if (inContext != null && obj instanceof ServiceMogram && ((ServiceContext)inContext).get(Context.SRV_PROJECTION) != null) {
 			try {
 				// morph new service mogram with a given projection
-				((ServiceMogram)obj).morph((String[])inContext.get(Context.SRV_PROJECTION));
+				((ServiceMogram)obj).morph((String[])((ServiceContext)inContext).get(Context.SRV_PROJECTION));
 			} catch (ConfigurationException e) {
 				throw new SignatureException(e);
 			}

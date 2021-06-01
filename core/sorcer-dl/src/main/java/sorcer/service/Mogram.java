@@ -70,7 +70,7 @@ public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, 
      *            the component name
      * @return the componet at the path
      */
-    public Object get(String key);
+    public Object getAt(String key) throws RemoteException;
 
     public Mogram clearScope() throws MogramException;
 

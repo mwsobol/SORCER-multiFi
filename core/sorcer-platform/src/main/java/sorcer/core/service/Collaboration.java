@@ -270,7 +270,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 	public Fidelity<Exploration> setExplorerFi(Context context) {
 		if(explorerFi == null) {
-			Object exploreComponent = context.get(Context.EXPLORER_PATH);
+			Object exploreComponent = ((ServiceContext)context).get(Context.EXPLORER_PATH);
 			if (exploreComponent != null) {
 				if (exploreComponent instanceof Explorer) {
 					explorerFi = new Fidelity(((Explorer)exploreComponent).getName());
@@ -294,7 +294,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 	public Fidelity<Analysis> setAnalyzerFi(Context context) {
 		if(analyzerFi == null) {
-			Object mdaComponent = context.get(Context.MDA_PATH);
+			Object mdaComponent = ((ServiceContext)context).get(Context.MDA_PATH);
 			if (mdaComponent != null) {
 				if (mdaComponent instanceof Analyzer) {
 					analyzerFi = new Fidelity(((Analyzer)mdaComponent).getName());
@@ -631,7 +631,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 			int ind = path$domain.indexOf("$");
 			path = path$domain.substring(0, ind);
 			domain = path$domain.substring(ind + 1);
-			return ((Mogram)getChild(domain)).get(path);
+			return ((ServiceMogram)getChild(domain)).get(path);
 		} else if (path$domain != null) {
 			return getChild(path$domain);
 		}

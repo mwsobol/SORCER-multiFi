@@ -225,7 +225,7 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
             if (rp.outPaths != null && rp.outPaths.size() > 0) {
                 out = invokeContext.getDirectionalSubcontext(rp.outPaths);
                 if (rp.outPaths.size() == 1) {
-                    out.setReturnValue(invokeContext.get(rp.outPaths.get(0).getName()));
+                    out.setReturnValue(((ServiceContext)invokeContext).get(rp.outPaths.get(0).getName()));
                 } else {
                     out.setReturnValue(invokeContext);
                 }

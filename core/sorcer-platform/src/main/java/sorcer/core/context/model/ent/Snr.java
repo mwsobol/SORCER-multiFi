@@ -18,6 +18,7 @@ package sorcer.core.context.model.ent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.Activator;
 import sorcer.eo.operator;
 import sorcer.service.*;
@@ -322,7 +323,7 @@ public class Snr extends Function<Double> implements Invocation<Double>,
 
     @Override
 	public Double getPerturbedValue(String varName) throws ConfigurationException {
-        return (Double)(((Activator)impl).getInvokeContext().get(varName)) + bias;
+        return (Double)(((ServiceContext)((Activator)impl).getInvokeContext()).get(varName)) + bias;
     }
 
     @Override

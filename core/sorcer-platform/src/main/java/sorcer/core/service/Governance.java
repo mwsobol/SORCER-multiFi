@@ -285,7 +285,7 @@ public class Governance implements Transdiscipline, Dependency {
 
 	public Fidelity<Analysis> setAnalyzerFi(Context context) throws ConfigurationException {
 		if(analyzerFi == null) {
-			Object mdaComponent = context.get(Context.MDA_PATH);
+			Object mdaComponent = ((ServiceContext)context).get(Context.MDA_PATH);
 			if (mdaComponent != null) {
 				if (mdaComponent instanceof Analyzer) {
 					analyzerFi = new Fidelity(((Analyzer) mdaComponent).getName());
@@ -306,7 +306,7 @@ public class Governance implements Transdiscipline, Dependency {
 
 	public Fidelity<Supervision> setSupervisorFi(Context context) throws ConfigurationException {
 		if(supervisorFi == null) {
-			Object supComponent = context.get(Context.MDA_PATH);
+			Object supComponent = ((ServiceContext)context).get(Context.MDA_PATH);
 			if (supComponent != null) {
 				if (supComponent instanceof Supervisor) {
 					supervisorFi = new Fidelity(((Supervisor) supComponent).getName());

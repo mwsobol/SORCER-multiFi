@@ -89,7 +89,7 @@ public class operator {
         while (i.hasNext()) {
             path = (String) i.next();
             obj = cxt.get(path);
-            v = model.get(path);
+            v = ((ServiceMogram)model).get(path);
             if (v instanceof Entry) {
                 ((Entry) v).setValue(obj);
             } else {
@@ -138,7 +138,7 @@ public class operator {
 
     public static Object value(Request request, String path, Arg... args) {
         if (request instanceof Governance) {
-            return ((Governance) request).getOutput().get(path);
+            return ((ServiceContext)((Governance) request).getOutput()).get(path);
         }
         return null;
     }
@@ -169,7 +169,7 @@ public class operator {
                               Arg... args) throws ContextException {
         try {
             T out = null;
-            Object obj = context.get(path);
+            Object obj = ((ServiceContext)context).get(path);
             if (obj != null) {
                 out = (T) obj;
                 if (obj instanceof Number || obj instanceof Boolean
@@ -193,8 +193,8 @@ public class operator {
                 if (ind > 0 && path.length() > ind + 1) {
                     domainPath = path.substring(0, ind);
                     domain = path.substring(ind + 1);
-                    if (context.get(domain) != null) {
-                        Object val = ((ServiceContext) context.get(domain)).get(domainPath);
+                    if (((ServiceContext)context).get(domain) != null) {
+                        Object val = ((ServiceContext) ((ServiceContext)context).get(domain)).get(domainPath);
                         if (val instanceof Value) {
                             return (T) ((Value) val).getOut();
                         } else {
@@ -247,7 +247,7 @@ public class operator {
     public static ContextDomain setValue(ContextDomain model, String entName, Object value)
         throws ContextException {
         try {
-            Object entry = model.get(entName);
+            Object entry = ((ServiceMogram)model).get(entName);
             if (entry == null) {
                 if (model.getClass().equals(ServiceContext.class)) {
                     ((ServiceContext)model).put(entName, value);
@@ -446,7 +446,7 @@ public class operator {
     }
 
     public static Object get(ContextDomain model, String path) {
-        return model.get(path);
+        return ((ServiceMogram)model).get(path);
     }
 
     public static void subIn(Context target, Context context, String... varNames) throws ContextException {
@@ -1123,7 +1123,7 @@ public class operator {
     }
 
     public static String rgnn(Context context) {
-        return (String) context.get(Functionality.Type.REGION.toString());
+        return (String) ((ServiceContext)context).get(Functionality.Type.REGION.toString());
     }
 
     public static void analyze(Collaboration collab, Context context) throws ServiceException {
@@ -1168,7 +1168,7 @@ public class operator {
         } else if (request instanceof Transdomain) {
             return ((Transmodel) request).getChildrenContexts().get(domainName);
         } else if (request instanceof Context) {
-            return ((Map<String, Context>)((Context)request).get(Context.DOMAIN_OUTPUTS_PATH)).get(domainName);
+            return ((Map<String, Context>)((ServiceContext)request).get(Context.DOMAIN_OUTPUTS_PATH)).get(domainName);
         }
         return null;
     }
@@ -1192,7 +1192,7 @@ public class operator {
     }
 
     public static String dmnName(Context context) {
-        return (String) context.get(Functionality.Type.DOMAIN.toString());
+        return (String) ((ServiceContext)context).get(Functionality.Type.DOMAIN.toString());
     }
 
     public static boolean isExec(Domain domain) throws RemoteException {
@@ -1233,11 +1233,11 @@ public class operator {
     }
 
     public static String clbName(Context context) {
-        return (String) context.get(Functionality.Type.COLLABORATION.toString());
+        return (String) ((ServiceContext)context).get(Functionality.Type.COLLABORATION.toString());
     }
 
     public static String domain(Context context) {
-        return (String) context.get(Functionality.Type.DOMAIN.toString());
+        return (String) ((ServiceContext)context).get(Functionality.Type.DOMAIN.toString());
     }
 
     public static SignatureDomain domain(Signature signature) {
@@ -1700,18 +1700,18 @@ public class operator {
     }
 
     public static ContextList getDomainContexts(Context context) {
-        return (ContextList) context.get(Context.COMPONENT_CONTEXT_PATH);
+        return (ContextList) ((ServiceContext)context).get(Context.COMPONENT_CONTEXT_PATH);
     }
 
     public static DispatcherList getDomainDispatchers(Context context) {
-        return (DispatcherList) context.get(Context.COMPONENT_DISPATCHER_PATH);
+        return (DispatcherList) ((ServiceContext)context).get(Context.COMPONENT_DISPATCHER_PATH);
     }
 
     public static Context getDomainContext(ContextDomain context, String domain) {
         if (context instanceof Transdomain) {
             return ((Transdomain)context).getChildrenContexts().get(domain);
         } else if (context instanceof Context) {
-            Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
+            Object domainContexts = ((ServiceContext)context).get(Context.COMPONENT_CONTEXT_PATH);
             if (domainContexts instanceof ContextList && ((ContextList) domainContexts).size() > 0) {
                 return ((ContextList) domainContexts).select(domain);
             }
@@ -1721,7 +1721,7 @@ public class operator {
 
     public static Dispatch getDomainDispatcher(Context context, String domain) {
         if (context instanceof ServiceContext) {
-            Object domainDispatchers = context.get(Context.COMPONENT_DISPATCHER_PATH);
+            Object domainDispatchers = ((ServiceContext)context).get(Context.COMPONENT_DISPATCHER_PATH);
             if (domainDispatchers instanceof DispatcherList && ((DispatcherList) domainDispatchers).size() > 0) {
                 return ((DispatcherList) domainDispatchers).select(domain);
             }
@@ -1743,7 +1743,7 @@ public class operator {
 
     public static Context addDomainContext(Context context, Context domainContext) {
         if (context instanceof ServiceContext) {
-            Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
+            Object domainContexts = ((ServiceContext)context).get(Context.COMPONENT_CONTEXT_PATH);
             if (domainContexts == null) {
                 domainContexts = new ContextList();
                 ((ServiceContext) context).put(Context.COMPONENT_CONTEXT_PATH, domainContexts);
@@ -1758,7 +1758,7 @@ public class operator {
 
     public static Dispatch addDomainDispatcher(Context context, Dispatch domainDispatcher) {
         if (context instanceof ServiceContext) {
-            Object domainDispatchers = context.get(Context.COMPONENT_DISPATCHER_PATH);
+            Object domainDispatchers = ((ServiceContext)context).get(Context.COMPONENT_DISPATCHER_PATH);
             if (domainDispatchers == null) {
                 domainDispatchers = new DispatcherList();
                 ((ServiceContext) context).put(Context.COMPONENT_DISPATCHER_PATH, domainDispatchers);
@@ -1773,7 +1773,7 @@ public class operator {
 
     public static Context updateDomainContext(Context context, Context domainContext) {
         if (context instanceof ServiceContext) {
-            ContextList domainContexts = (ContextList) context.get(Context.COMPONENT_CONTEXT_PATH);
+            ContextList domainContexts = (ContextList) ((ServiceContext)context).get(Context.COMPONENT_CONTEXT_PATH);
             Context edc = domainContexts.select(domainContext.getName());
             Iterator<Map.Entry<String, Object>> eit =
                 ((ServiceContext)domainContext).getData().entrySet().iterator();
@@ -1787,7 +1787,7 @@ public class operator {
 
     public static Context setDomainContext(Context context, Context domainContext) {
         if (context instanceof ServiceContext) {
-            Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
+            Object domainContexts = ((ServiceContext)context).get(Context.COMPONENT_CONTEXT_PATH);
             if (domainContexts == null) {
                 domainContexts = new ContextList();
                 ((ServiceContext) context).put(Context.COMPONENT_CONTEXT_PATH, domainContexts);
@@ -1801,7 +1801,7 @@ public class operator {
 
     public static Dispatch setDomainDispatcher(Context context, Dispatch domainDispatcher) {
         if (context instanceof ServiceContext) {
-            Object domainDispatchers = context.get(Context.COMPONENT_DISPATCHER_PATH);
+            Object domainDispatchers = ((ServiceContext)context).get(Context.COMPONENT_DISPATCHER_PATH);
             if (domainDispatchers == null) {
                 domainDispatchers = new DispatcherList();
                 ((ServiceContext) context).put(Context.COMPONENT_DISPATCHER_PATH, domainDispatchers);
@@ -1815,7 +1815,7 @@ public class operator {
 
     public static void removeDomainContext(Context context, String domain) {
         if (context instanceof ServiceContext) {
-            Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
+            Object domainContexts = ((ServiceContext)context).get(Context.COMPONENT_CONTEXT_PATH);
             if (domainContexts instanceof ContextList && ((ContextList) domainContexts).size() > 0) {
                 ((ContextList) domainContexts).remove(domain);
             }
@@ -1824,7 +1824,7 @@ public class operator {
 
     public static void removeDomainDispatchers(Context context, String domain) {
         if (context instanceof ServiceContext) {
-            Object domainDispatchers = context.get(Context.COMPONENT_DISPATCHER_PATH);
+            Object domainDispatchers = ((ServiceContext)context).get(Context.COMPONENT_DISPATCHER_PATH);
             if (domainDispatchers instanceof DispatcherList && ((DispatcherList) domainDispatchers).size() > 0) {
                 ((ContextList) domainDispatchers).remove(domain);
             }

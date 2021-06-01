@@ -195,7 +195,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 			if (outPaths != null && outPaths.size() > 0) {
 				for (Path path : outPaths) {
 					Object obj = null;
-					obj = exertion.getDataContext().get(path.getName());
+					obj = ((ServiceMogram)exertion.getDataContext()).get(path.getName());
 					if (obj != null)
 						cxt.put(path.getName(), obj);
 				}

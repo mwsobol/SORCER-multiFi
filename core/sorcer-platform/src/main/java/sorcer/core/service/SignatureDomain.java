@@ -165,6 +165,11 @@ public class SignatureDomain implements Domain {
         return ((ServiceMogram)domain).deploy(builders);
     }
 
+    @Override
+    public Object getAt(String key) throws RemoteException {
+        return get(key);
+    }
+
     public int getStatus() {
         return ((ServiceMogram)domain).getStatus();
     }
@@ -173,9 +178,8 @@ public class SignatureDomain implements Domain {
         ((ServiceMogram)domain).setStatus(value);
     }
 
-    @Override
     public Object get(String key) {
-        return domain.get(key);
+        return ((ServiceMogram)domain).get(key);
     }
 
     @Override

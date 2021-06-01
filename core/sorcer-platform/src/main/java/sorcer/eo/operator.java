@@ -914,7 +914,7 @@ operator extends Operator {
     public static Context put(Context context, String path, Object value)
         throws ContextException {
         try {
-            Object val = context.get(path);
+            Object val = ((ServiceContext)context).get(path);
             if (val instanceof Prc && ((Prc)val).isPersistent())
                 val = ((Prc)val).asis();
             if (SdbUtil.isSosURL(val)) {

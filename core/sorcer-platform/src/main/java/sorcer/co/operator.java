@@ -323,7 +323,7 @@ public class operator extends Operator {
 		List<Object> rowValues = new ArrayList<>();
 		while (it.hasNext()) {
 			path = (String) it.next();
-			obj = context.get(path);
+			obj = ((ServiceContext)context).get(path);
 			columnNames.add(path);
 			if (obj == null) {
 				rowValues.add(Context.none);
@@ -1569,16 +1569,16 @@ public class operator extends Operator {
 //	}
 
 	public static Object rimpl(Context context, String path) {
-		Object obj = context.get(path);
+		Object obj = ((ServiceContext)context).get(path);
 		if (obj instanceof Entry) {
-			return ((Entry)context.get(path)).getImpl();
+			return ((Entry)((ServiceContext)context).get(path)).getImpl();
 		} else {
 			return null;
 		}
 	}
 
 	public static Object impl(Mogram context, String path) {
-		Object obj = context.get(path);
+		Object obj = ((ServiceContext)context).get(path);
 		if (obj instanceof MultiFiSlot) {
 			return ((Entry)obj).getImpl();
 		} else {
@@ -1607,7 +1607,7 @@ public class operator extends Operator {
 	}
 
 	public static Object asis(Context context, String path) {
-		return context.get(path);
+		return ((ServiceContext)context).get(path);
 	}
 
 	public static Object asis(Model model, String path) throws ContextException {

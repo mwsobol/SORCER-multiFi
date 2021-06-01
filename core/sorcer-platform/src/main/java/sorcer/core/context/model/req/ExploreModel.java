@@ -182,7 +182,7 @@ public class ExploreModel extends RequestModel implements Transmodel, Configurab
             int ind = path$domain.indexOf("$");
             path = path$domain.substring(0, ind);
             domain = path$domain.substring(ind + 1);
-            return ((Mogram)getChild(domain)).get(path);
+            return ((ServiceMogram)getChild(domain)).get(path);
         } else if (path$domain != null){
             return data.get(path$domain);
         } else {
