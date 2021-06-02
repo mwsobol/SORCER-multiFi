@@ -127,16 +127,16 @@ public class Mograms implements SorcerConstants {
 		cc.setParentPath(sc.getParentPath());
 		cc.setParentId((((ServiceMogram)sc).getParentId() == null) ? null : ((ServiceMogram)sc).getParentId());
 		cc.setSubject(sc.getSubjectPath(), sc.getSubjectValue());
-		cc.setLastUpdateDate(sc.getLastUpdateDate());
-		cc.setDescription(sc.getDescription());
-		cc.setOwnerId(sc.getOwnerId());
-		cc.setSubjectId(sc.getSubjectId());
-		cc.setProjectName(sc.getProjectName());
+		cc.setLastUpdateDate(((ServiceMogram)sc).getLastUpdateDate());
+		cc.setDescription(((ServiceMogram)sc).getDescription());
+		cc.setOwnerId(((ServiceMogram)sc).getOwnerId());
+		cc.setSubjectId(((ServiceMogram)sc).getSubjectId());
+		cc.setProjectName(((ServiceMogram)sc).getProjectName());
 		cc.setAccessClass(sc.getAccessClass());
-		cc.isExportControlled(sc.isExportControlled());
-		cc.setGoodUntilDate(sc.getGoodUntilDate());
-		cc.setDomainId(sc.getDomainId());
-		cc.setSubdomainId(sc.getSubdomainId());
+		cc.isExportControlled(((ServiceMogram)sc).isExportControlled());
+		cc.setGoodUntilDate(((ServiceMogram)sc).getGoodUntilDate());
+		cc.setDomainId(((ServiceMogram)sc).getDomainId());
+		cc.setSubdomainId(((ServiceMogram)sc).getSubdomainId());
 		try {
 			cc.setDomainName(sc.getDomainName());
 		} catch (RemoteException e) {

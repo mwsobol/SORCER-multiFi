@@ -79,7 +79,7 @@ public class Entries {
             ent("cmd/exitValue", code);
             if (code == -1) {
                 EvaluationException ex = new EvaluationException();
-                mdl.reportException("cmd failed for fxn", ex);
+                ((ServiceMogram)mdl).reportException("cmd failed for fxn", ex);
                 throw ex;
             } else
                 return ent("cmd/out", out.getOut());

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ContextSelector;
+import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Coupling;
@@ -196,7 +197,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return parentId;
     }
 
-    @Override
     public ServiceContext getDataContext() throws ContextException {
         return dataContext;
     }
@@ -710,7 +710,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     abstract public Mogram clearScope() throws MogramException;
 
-    @Override
     public void applyFidelity(String name) {
         // implement in subclasses
     }
@@ -779,7 +778,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.serviceMorphFidelity = morphFidelity;
     }
 
-    @Override
     public Signature getBuilder(Arg... args)  {
         return builder;
     }
@@ -880,7 +878,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
                             mog = this;
                         }
                         if (mog != null) {
-                            fi = mog.selectFidelity(a.getName());
+                            fi = ((ServiceMogram)mog).selectFidelity(a.getName());
                         }
                     } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.META) {
                         fi = selectMetafidelity((Fidelity) a);
@@ -931,7 +929,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
                 } else {
                     mog = this;
                 }
-                fi = mog.selectFidelity(((Fidelity) obj).getName());
+                fi = ((ServiceMogram)mog).selectFidelity(((Fidelity) obj).getName());
             }
         }
         return fi;
@@ -1080,7 +1078,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return mdaFi;
     }
 
-    @Override
     public String getProjectionFi(String projectionName) {
         return ((FidelityManager)fiManager).getProjectionFi(projectionName);
     }
@@ -1101,7 +1098,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.differentiator = mogramDifferentiator;
     }
 
-    @Override
     public Mogram deploy(List<Signature> builders) throws ConfigurationException {
         // to be implemented in subclasses
         return this;
@@ -1140,24 +1136,24 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.finalizerFi = finalizerFi;
     }
 
-    @Override
+    public void reportException(Throwable t) {
+        domainStrategy.addException(t);
+    }
+
     public void reportException(String message, Throwable t) {
         domainStrategy.addException(t);
     }
 
-    @Override
     public void reportException(String message, Throwable t, ProviderInfo info) {
         // reimplement in sublasses
         domainStrategy.addException(t);
     }
 
-    @Override
     public void reportException(String message, Throwable t, Exerter provider) {
         // reimplement in sublasses
         domainStrategy.addException(t);
     }
 
-    @Override
     public void reportException(String message, Throwable t, Exerter provider, ProviderInfo info) {
         // reimplement in sublasses
         domainStrategy.addException(t);
@@ -1168,7 +1164,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return null;
     }
 
-    @Override
     public void appendTrace(String info) throws RemoteException {
 
     }
@@ -1198,7 +1193,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return object instanceof Mogram && mogramId.equals(((Mogram) object).getId());
     }
 
-    @Override
     public Object getEvaluatedValue(String path) throws ContextException {
         // reimplement in subclasses
         if (isEvaluated) {
@@ -1236,14 +1230,12 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.metaFiNames = metaFiNames;
     }
 
-    @Override
     public List<Discipline> getMograms() {
         List<Discipline> mograms = new ArrayList<>();
         mograms.add(this);
         return mograms;
     }
 
-    @Override
     public List<Contextion> getContextions() {
         List<Contextion> contextiona = new ArrayList<>();
         contextiona.add(this);
@@ -1252,7 +1244,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public Mogram clear() throws MogramException {
         if (domainStrategy != null) {
-            domainStrategy.getOutcome().clear();
+            ((ServiceMogram)domainStrategy.getOutcome()).clear();
         }
         isValid = false;
         isChanged = true;
@@ -1403,4 +1395,5 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
         return this;
     }
+
 }

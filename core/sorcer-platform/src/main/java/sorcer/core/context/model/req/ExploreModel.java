@@ -220,10 +220,10 @@ public class ExploreModel extends RequestModel implements Transmodel, Configurab
                                 if (domain instanceof Job) {
                                     cxt = ((Job) child).getJobContext();
                                 } else if (domain instanceof Routine) {
-                                    cxt = child.getDataContext();
+                                    cxt = ((ServiceMogram)child).getDataContext();
                                 }
                                 logger.info("exertion domain context: " + cxt);
-                                Context.Return rp = child.getProcessSignature().getContextReturn();
+                                Context.Return rp = ((ServiceMogram)child).getProcessSignature().getContextReturn();
                                 if (rp != null && rp.outPaths != null && rp.outPaths.size() > 0) {
                                     cxt = cxt.getDirectionalSubcontext(rp.outPaths);
                                     if (rp.outPaths.getName().equals(rp.outPaths.get(0).getName())) {

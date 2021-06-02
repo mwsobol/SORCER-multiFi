@@ -56,7 +56,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
 
     @Override
     public Mogram clearScope() throws MogramException {
-        return scope.clearScope();
+        return ((ServiceMogram)scope).clearScope();
     }
 
     public MultiFiMogram(ServiceFidelity fidelity) {
@@ -156,7 +156,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     @Override
     public List<ThrowableTrace> getExceptions() {
         try {
-            return ((Mogram)fiManager.getMogram()).getExceptions();
+            return ((ServiceMogram)fiManager.getMogram()).getExceptions();
         } catch (RemoteException e) {
             logger.warn("Could not get mogram", e);
         }
@@ -231,7 +231,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     @Override
     public void appendTrace(String info) {
         try {
-            ((Mogram)fiManager.getMogram()).appendTrace(info);
+            ((ServiceMogram)fiManager.getMogram()).appendTrace(info);
         } catch (RemoteException remoteException) {
             logger.warn("Problem appending trace", remoteException);
         }

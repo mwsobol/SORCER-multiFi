@@ -128,7 +128,7 @@ public class SessionProvider extends ServiceExerter implements SessionManagement
         } else if (exertion instanceof Context) {
             return serviceContextOnly((Context) exertion);
         } else {
-            ((Mogram)exertion).reportException(new RoutineException("Wrong mogram for: " +  this.getClass().getSimpleName()));
+            ((ServiceMogram)exertion).reportException(new RoutineException("Wrong mogram for: " +  this.getClass().getSimpleName()));
             ((ServiceMogram)exertion).setStatus(Exec.ERROR);
             return (Mogram)exertion;
         }

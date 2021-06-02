@@ -75,8 +75,6 @@ public interface Domain extends Mogram, Dependency, mog, cxtn {
 	 */
 	Object getValue(String path, Arg... args) throws ContextException, RemoteException;
 
-	Contextion getParent() throws RemoteException;
-
 	void setParent(Contextion parent) throws RemoteException;
 
 	void execDependencies(String path, Arg... args) throws ContextException, RemoteException;

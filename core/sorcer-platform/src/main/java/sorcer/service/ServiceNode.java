@@ -389,7 +389,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
     }
 
     public void clear() throws MogramException {
-        outDispatcher.clear();
+        ((ServiceMogram)outDispatcher).clear();
     }
 
     public Contextion getParent() {

@@ -86,7 +86,7 @@ public class ContextFidelityManager extends FidelityManager<Context> {
                 if (cxtFi != null) {
                     try {
                         if (mogram instanceof RequestModel) {
-                            dataContext.selectFidelity(cxtFi.getName());
+                            ((ServiceMogram)dataContext).selectFidelity(cxtFi.getName());
                             ((ServiceContext) mogram).append((Context) dataContext.getMultiFi().getSelect());
                         } else {
                             ((ServiceMogram) mogram).getDataContext().selectFidelity(cxtFi.getName());

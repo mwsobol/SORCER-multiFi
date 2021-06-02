@@ -503,7 +503,7 @@ public class SpaceTaker implements Runnable {
 					ee.state = Exec.ERROR;
 					((ServiceMogram)ee.exertion).setStatus(Exec.ERROR);
 				}
-				ee.exertion.reportException(th);
+				((ServiceMogram)ee.exertion).reportException(th);
 			}
 			return ee;
 		}

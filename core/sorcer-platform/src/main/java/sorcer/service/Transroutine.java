@@ -159,7 +159,7 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 
 	public List<Discipline> getMograms(List<Discipline> mogramList) {
 		for (Discipline e : mograms) {
-			((Mogram)e).getMograms(mogramList);
+			((ServiceMogram)e).getMograms(mogramList);
 		}
 		mogramList.add(this);
 		return mogramList;

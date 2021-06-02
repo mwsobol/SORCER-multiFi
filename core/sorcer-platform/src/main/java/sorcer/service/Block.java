@@ -177,7 +177,7 @@ public abstract class Block extends Transroutine {
 	@Override
 	public List<Discipline> getMograms(List<Discipline> mogramList) {
 		for (Discipline e : mograms) {
-			((Mogram)e).getMograms(mogramList);
+			((ServiceMogram)e).getMograms(mogramList);
 		}
 		mogramList.add(this);
 		return mogramList;
@@ -361,7 +361,7 @@ public abstract class Block extends Transroutine {
 		Context cxt = null;
 		for (Discipline mo : mograms) {
 			if (mo instanceof Mogram)
-				((ServiceContext) ((Mogram)mo).getDataContext()).clearScope();
+				((ServiceContext) ((ServiceMogram)mo).getDataContext()).clearScope();
 
 //			if (mo instanceof Mogram)
 //				cxt = mo.getContext();

@@ -124,7 +124,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			}
 		} catch (RemoteException | SignatureException | ServiceException e) {
 			if (result != null) {
-				((Mogram) result).reportException(e);
+				((ServiceMogram) result).reportException(e);
 			} else {
 				result = mogram;
 			}
@@ -147,7 +147,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		try {
 			if (mogram instanceof Routine) {
 				Subroutine exertion = (Subroutine) mogram;
-				mogram.setValid(false);
+				((ServiceMogram)mogram).setValid(false);
 				exertion.selectFidelity(entries);
 				Mogram out = exerting(txn, providerName, entries);
 
@@ -158,7 +158,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 					}
 					postProcessExertion(out);
 				}
-				mogram.setValid(true);
+				((ServiceMogram)mogram).setValid(true);
 				if (cxt.getMorpher() != null) {
 					((ServiceMogram) mogram).getContextFidelityManager().morph();
 				}
@@ -205,7 +205,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 				mogram.getExceptions().clear();
 				mogram.getTrace().clear();
 			}
-			for (Discipline e : mogram.getAllMograms()) {
+			for (Discipline e : ((ServiceMogram)mogram).getAllMograms()) {
 				if (e instanceof Routine) {
 					if (((ControlContext) ((Routine) e).getControlContext()).getExecState() == State.INITIAL) {
 						((ServiceMogram) e).setStatus(Exec.INITIAL);
@@ -216,7 +216,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 				if (e instanceof Block) {
 					resetScope((Routine) e, argCxt, entries);
 				} else {
-					((Mogram) e).clearScope();
+					((ServiceMogram) e).clearScope();
 				}
 			}
 		}
@@ -237,7 +237,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			exertion.getDataContext().append(context);
 		}
 		for (Discipline mogram : exertion.getMograms()) {
-			((Mogram) mogram).clearScope();
+			((ServiceMogram) mogram).clearScope();
 		}
 	}
 
@@ -456,22 +456,22 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		Routine result;
 		try {
 			result = provider.exert(exertion, transaction, entries);
+			if (result != null && result.getExceptions().size() > 0) {
+				for (ThrowableTrace et : result.getExceptions()) {
+					Throwable t = et.getThrowable();
+					logger.error("Got exception running: {}", exertion.getName(), t);
+					if (t instanceof Error)
+						((ServiceMogram)result).setStatus(Exec.ERROR);
+				}
+				((ServiceMogram)result).setStatus(Exec.FAILED);
+			} else if (result == null) {
+				exertion.reportException(new RoutineException("ExertionDispatcher failed calling: "
+					+ exertion.getProcessSignature()));
+				exertion.setStatus(Exec.FAILED);
+				result = exertion;
+			}
 		} catch (RemoteException | ServiceException e) {
 			throw new MogramException(e);
-		}
-		if (result != null && result.getExceptions().size() > 0) {
-			for (ThrowableTrace et : result.getExceptions()) {
-				Throwable t = et.getThrowable();
-				logger.error("Got exception running: {}", exertion.getName(), t);
-				if (t instanceof Error)
-					((ServiceMogram)result).setStatus(Exec.ERROR);
-			}
-			((ServiceMogram)result).setStatus(Exec.FAILED);
-		} else if (result == null) {
-			exertion.reportException(new RoutineException("ExertionDispatcher failed calling: "
-				+ exertion.getProcessSignature()));
-			exertion.setStatus(Exec.FAILED);
-			result = exertion;
 		}
 		return result;
 //		}
@@ -555,11 +555,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 	public static Mogram postProcessExertion(Mogram mog) throws ServiceException {
 		if (mog instanceof Routine) {
 			List<Discipline> mograms = null;
-			try {
-				mograms = mog.getAllMograms();
-			} catch (RemoteException e) {
-				throw new ServiceException(e);
-			}
+			mograms = ((ServiceMogram)mog).getAllMograms();
 			for (Discipline mogram : mograms) {
 				if (mogram instanceof Routine) {
 					List<Setter> ps = ((Subroutine) mogram).getPersisters();

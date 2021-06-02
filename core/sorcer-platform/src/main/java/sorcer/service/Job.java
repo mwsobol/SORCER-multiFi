@@ -172,7 +172,7 @@ public class Job extends Transroutine {
 		((ServiceMogram)ex).setIndex(mograms.indexOf(ex));
 		try {
 			controlContext.registerExertion((Mogram)ex);
-			((Mogram)ex).getDataContext().setScope(dataContext);
+			((ServiceMogram)ex).getDataContext().setScope(dataContext);
 		} catch (ContextException | RemoteException e) {
 			throw new RoutineException(e);
 		}
@@ -321,7 +321,7 @@ public class Job extends Transroutine {
 	}
 
 	@Override
-	public List<ThrowableTrace> getExceptions() {
+	public List<ThrowableTrace> getExceptions() throws RemoteException {
 		List<ThrowableTrace> exceptions = new ArrayList<>();
 		for (Discipline ext : mograms) {
 			exceptions.addAll(((Mogram)ext).getExceptions());

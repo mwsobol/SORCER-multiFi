@@ -59,9 +59,9 @@ public class SignatureDomain implements Domain {
             domain = (Domain) ((LocalSignature) signature).initInstance();
             // domain = (Domain) sorcer.co.operator.instance(signature);
             if (name != null) {
-                domain.setDomainName(name);
+                ((ServiceMogram)domain).setDomainName(name);
             } else {
-                domain.setDomainName(domain.getName());
+                ((ServiceMogram)domain).setDomainName(domain.getName());
             }
         }
         return domain;
@@ -146,28 +146,20 @@ public class SignatureDomain implements Domain {
         ((ServiceMogram)domain).setIndex(i);
     }
 
-    @Override
     public Contextion getParent() throws RemoteException {
-        return domain.getParent();
+        return ((ServiceMogram)domain).getParent();
     }
 
     public void setParentId(Uuid parentId) {
         ((ServiceMogram)domain).setParentId(parentId);
     }
 
-    @Override
     public Signature getProcessSignature() throws RemoteException {
-        return domain.getProcessSignature();
+        return ((ServiceMogram)domain).getProcessSignature();
     }
 
-    @Override
     public Mogram deploy(List<Signature> builders) throws ServiceException, ConfigurationException {
         return ((ServiceMogram)domain).deploy(builders);
-    }
-
-    @Override
-    public Object getAt(String key) throws RemoteException {
-        return get(key);
     }
 
     public int getStatus() {
@@ -182,54 +174,44 @@ public class SignatureDomain implements Domain {
         return ((ServiceMogram)domain).get(key);
     }
 
-    @Override
     public Mogram clearScope() throws MogramException {
-        return domain.clearScope();
+        return ((ServiceMogram)domain).clearScope();
     }
 
-    @Override
     public Mogram clear() throws MogramException {
-        return domain.clear();
+        return ((ServiceMogram)domain).clear();
     }
 
-    @Override
     public void reportException(Throwable t) {
-        domain.reportException(t);
+        ((ServiceMogram)domain).reportException(t);
     }
 
-    @Override
-    public List<ThrowableTrace> getExceptions() {
+    public List<ThrowableTrace> getExceptions() throws RemoteException {
         return domain.getExceptions();
     }
 
-    @Override
     public void reportException(String message, Throwable t) {
-        domain.reportException(message, t);
+        ((ServiceMogram)domain).reportException(message, t);
     }
 
-    @Override
     public void reportException(String message, Throwable t, ProviderInfo info) {
-        domain.reportException(message, t, info);
+        ((ServiceMogram)domain).reportException(message, t, info);
     }
 
-    @Override
     public void reportException(String message, Throwable t, Exerter provider) {
-        domain.reportException(message, t, provider);
+        ((ServiceMogram)domain).reportException(message, t, provider);
     }
 
-    @Override
     public void reportException(String message, Throwable t, Exerter provider, ProviderInfo info) {
-        domain.reportException(message, t, provider, info);
+        ((ServiceMogram)domain).reportException(message, t, provider, info);
     }
 
-    @Override
     public List<String> getTrace() throws RemoteException {
         return domain.getTrace();
     }
 
-    @Override
     public void appendTrace(String info) throws RemoteException {
-        domain.appendTrace(info);
+        ((ServiceMogram)domain).appendTrace(info);
     }
 
     @Override
@@ -237,24 +219,20 @@ public class SignatureDomain implements Domain {
         return domain.getAllExceptions();
     }
 
-    @Override
     public Fidelity selectFidelity(String selection) throws ConfigurationException {
-        return domain.selectFidelity(selection);
+        return ((ServiceMogram)domain).selectFidelity(selection);
     }
 
-    @Override
     public Fidelity getSelectedFidelity() {
-        return domain.getSelectedFidelity();
+        return ((ServiceMogram)domain).getSelectedFidelity();
     }
 
-    @Override
     public FidelityManagement getFidelityManager() {
-        return domain.getFidelityManager();
+        return ((ServiceMogram)domain).getFidelityManager();
     }
 
-    @Override
     public FidelityManagement getRemoteFidelityManager() throws RemoteException {
-        return domain.getRemoteFidelityManager();
+        return ((ServiceMogram)domain).getRemoteFidelityManager();
     }
 
     @Override
@@ -267,38 +245,32 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public Date getCreationDate() {
+    public Date getCreationDate() throws RemoteException {
         return domain.getCreationDate();
     }
 
-    @Override
     public Date getGoodUntilDate() {
-        return domain.getGoodUntilDate();
+        return ((ServiceMogram)domain).getGoodUntilDate();
     }
 
-    @Override
     public void setGoodUntilDate(Date date) {
-        domain.setGoodUntilDate(date);
+        ((ServiceMogram)domain).setGoodUntilDate(date);
     }
 
-    @Override
     public String getDomainId() {
-        return domain.getDomainId();
+        return ((ServiceMogram)domain).getDomainId();
     }
 
-    @Override
     public void setDomainId(String id) {
-        domain.setDomainId(id);
+        ((ServiceMogram)domain).setDomainId(id);
     }
 
-    @Override
     public String getSubdomainId() {
-        return domain.getSubdomainId();
+        return ((ServiceMogram)domain).getSubdomainId();
     }
 
-    @Override
     public void setSubdomainId(String id) {
-        domain.setSubdomainName(id);
+        ((ServiceMogram)domain).setSubdomainName(id);
     }
 
     @Override
@@ -310,88 +282,72 @@ public class SignatureDomain implements Domain {
         }
     }
 
-    @Override
     public void setDomainName(String name) {
-        domain.setSubdomainName(name);
+        ((ServiceMogram)domain).setSubdomainName(name);
     }
 
-    @Override
     public String getSubdomainName() {
-        return domain.getSubdomainName();
+        return ((ServiceMogram)domain).getSubdomainName();
     }
 
-    @Override
     public Object getEvaluatedValue(String path) throws ContextException {
-        return domain.getEvaluatedValue(path);
+        return ((ServiceMogram)domain).getEvaluatedValue(path);
     }
 
-    @Override
     public boolean isEvaluated() {
-        return domain.isEvaluated();
+        return ((ServiceMogram)domain).isEvaluated();
     }
 
-    @Override
     public void setSubdomainName(String name) {
-        domain.setSubdomainName(name);
+        ((ServiceMogram)domain).setSubdomainName(name);
     }
 
-    @Override
     public Principal getPrincipal() {
-        return domain.getPrincipal();
+        return ((ServiceMogram)domain).getPrincipal();
     }
 
-    @Override
     public Date getLastUpdateDate() {
-        return domain.getLastUpdateDate();
+        return ((ServiceMogram)domain).getLastUpdateDate();
     }
 
-    @Override
     public void setLastUpdateDate(Date date) {
-        domain.setLastUpdateDate(date);
+        ((ServiceMogram)domain).setLastUpdateDate(date);
     }
 
     public void setDescription(String description) {
         ((ServiceMogram)domain).setDescription(description);
     }
 
-    @Override
     public String getDescription() {
-        return domain.getDescription();
+        return ((ServiceMogram)domain).getDescription();
     }
 
-    @Override
     public String getOwnerId() {
-        return domain.getOwnerId();
+        return ((ServiceMogram)domain).getOwnerId();
     }
 
-    @Override
     public String getSubjectId() {
-        return domain.getSubjectId();
+        return ((ServiceMogram)domain).getSubjectId();
     }
 
-    @Override
     public void setProjectName(String projectName) {
-        domain.setProjectName(projectName);
+        ((ServiceMogram)domain).setProjectName(projectName);
     }
 
-    @Override
     public String getProjectName() {
-        return domain.getProjectName();
+        return ((ServiceMogram)domain).getProjectName();
     }
 
-    @Override
     public boolean isValid() {
-        return domain.isValid();
+        return ((ServiceMogram)domain).isValid();
     }
 
-    @Override
     public void setValid(boolean state) {
-        domain.setValid(state);
+        ((ServiceMogram)domain).setValid(state);
     }
 
-    @Override
     public Context getDataContext() throws ContextException {
-        return domain.getDataContext();
+        return ((ServiceMogram)domain).getDataContext();
     }
 
     @Override
@@ -409,54 +365,44 @@ public class SignatureDomain implements Domain {
         domain.update(contextEntries);
     }
 
-    @Override
     public String getProjectionFi(String projectionName) throws ContextException, RemoteException {
-        return domain.getProjectionFi(projectionName);
+        return ((ServiceMogram)domain).getProjectionFi(projectionName);
     }
 
-    @Override
     public boolean isExportControlled() {
-        return domain.isExportControlled();
+        return ((ServiceMogram)domain).isExportControlled();
     }
 
-    @Override
     public List<Discipline> getMograms(List<Discipline> allMograms) {
-        return domain.getMograms(allMograms);
+        return ((ServiceMogram)domain).getMograms(allMograms);
     }
 
-    @Override
     public List<Discipline> getMograms() {
-        return domain.getMograms();
+        return ((ServiceMogram)domain).getMograms();
     }
 
-    @Override
     public List<Contextion> getContextions() {
-        return domain.getContextions();
+        return ((ServiceMogram)domain).getContextions();
     }
 
-    @Override
     public List<Discipline> getAllMograms() throws RemoteException {
-        return domain.getAllMograms();
+        return ((ServiceMogram)domain).getAllMograms();
     }
 
-    @Override
     public List<Contextion> getAllContextions() throws RemoteException {
-        return domain.getAllContextions();
+        return ((ServiceMogram)domain).getAllContextions();
     }
 
-    @Override
     public Signature getBuilder(Arg... args) throws ServiceException, RemoteException {
-        return domain.getBuilder(args);
+        return ((ServiceMogram)domain).getBuilder(args);
     }
 
-    @Override
     public void applyFidelity(String name) throws RemoteException {
-        domain.applyFidelity(name);
+        ((ServiceMogram)domain).applyFidelity(name);
     }
 
-    @Override
     public void setBuilder(Signature builder) throws ServiceException, RemoteException {
-        domain.setBuilder(builder);
+        ((ServiceMogram)domain).setBuilder(builder);
     }
 
     @Override

@@ -117,7 +117,7 @@ public class operator {
 
     public static Object value(Context context, String path, String domain) throws ContextException {
         if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
-            return ((Mogram)context.getChild(domain)).getEvaluatedValue(path);
+            return ((ServiceMogram)context.getChild(domain)).getEvaluatedValue(path);
         } else {
             try {
                 return ((Context) context.getChild(domain)).getValue(path);
@@ -204,7 +204,7 @@ public class operator {
                 }
 
                 if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
-                    out = (T) context.getEvaluatedValue(path);
+                    out = (T) ((ServiceContext)context).getEvaluatedValue(path);
                 } else if (context instanceof Model && context.getDomainStrategy().getOutcome() != null) {
                     context.getDomainStrategy().getOutcome().putValue(path, out);
                 } else {
@@ -523,7 +523,7 @@ public class operator {
     }
 
     public static Mogram clear(Mogram mogram) throws MogramException {
-        mogram.clear();
+        ((ServiceMogram)mogram).clear();
         return mogram;
     }
 
@@ -558,7 +558,7 @@ public class operator {
     }
 
     public static void traced(Mogram mogram, boolean isTraced)  {
-        ((FidelityManager) mogram.getFidelityManager()).setTraced(isTraced);
+        ((FidelityManager) ((ServiceMogram)mogram).getFidelityManager()).setTraced(isTraced);
     }
 
     public static Connector inConn(List<Entry> entries) throws ContextException {
@@ -612,7 +612,7 @@ public class operator {
 
     public static Mogram addFidelities(Mogram mogram, Fidelity... fidelities) {
         for (Fidelity fi : fidelities) {
-            ((FidelityManager) mogram.getFidelityManager()).put(fi.getName(), fi);
+            ((FidelityManager) ((ServiceMogram)mogram).getFidelityManager()).put(fi.getName(), fi);
         }
         return mogram;
     }
@@ -634,20 +634,20 @@ public class operator {
         }
         if (metaFis.size() > 0) {
             try {
-                ((FidelityManager) mogram.getFidelityManager()).morph(metaFis);
+                ((FidelityManager) ((ServiceMogram)mogram).getFidelityManager()).morph(metaFis);
             } catch (EvaluationException e) {
                 throw new ConfigurationException(e);
             }
         }
         if (fis.size() > 0) {
-            ((FidelityManager) mogram.getFidelityManager()).reconfigure(fis);
+            ((FidelityManager) ((ServiceMogram)mogram).getFidelityManager()).reconfigure(fis);
         }
         return mogram;
     }
 
     public static Mogram reconfigure(Mogram model, List fiList) throws ConfigurationException {
         if (fiList instanceof FidelityList) {
-            ((FidelityManager) model.getFidelityManager()).reconfigure((FidelityList) fiList);
+            ((FidelityManager) ((ServiceMogram)model).getFidelityManager()).reconfigure((FidelityList) fiList);
         } else {
             throw new ConfigurationException("A list of fidelities is required for reconfigurartion");
         }
@@ -1200,11 +1200,11 @@ public class operator {
     }
 
     public static Domain notExec(Domain domain) throws RemoteException {
-        domain.setExec(false);
+        ((SignatureDomain)domain).setExec(false);
         return domain;
     }
     public static Domain setExec(Domain domain) throws RemoteException {
-        domain.setExec(true);
+        ((SignatureDomain)domain).setExec(true);
         return domain;
     }
 

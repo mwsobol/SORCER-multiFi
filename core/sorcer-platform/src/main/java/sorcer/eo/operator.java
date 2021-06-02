@@ -217,18 +217,18 @@ operator extends Operator {
     }
 
     public static Context selfContext(Mogram mogram) throws ContextException {
-        return mogram.getDataContext();
+        return ((ServiceMogram)mogram).getDataContext();
     }
 
     public static Context dataContext(Mogram mogram) throws ContextException {
-        return mogram.getDataContext();
+        return ((ServiceMogram)mogram).getDataContext();
     }
 
     public static Context upcontext(Mogram mogram) throws ContextException, RemoteException {
         if (mogram instanceof Transroutine)
             return mogram.getContext();
         else
-            return  mogram.getDataContext();
+            return  ((ServiceMogram)mogram).getDataContext();
     }
 
     public static Context snapshot(Routine mogram) throws ContextException, RemoteException {
@@ -687,13 +687,13 @@ operator extends Operator {
             throw new ContextException(e);
         }
 
-        if (cxt.getFidelityManager() == null && fm == Strategy.FidelityManagement.YES) {
+        if (((ServiceMogram)cxt).getFidelityManager() == null && fm == Strategy.FidelityManagement.YES) {
             ((ServiceContext)cxt).setFidelityManager(new FidelityManager(cxt));
             setupFiManager((Context) cxt);
         } else if (fiManager != null) {
             ((ServiceContext)cxt).setFidelityManager(fiManager);
             setupFiManager((Context) cxt);
-        } else if (cxt.getFidelityManager() != null) {
+        } else if (((ServiceMogram)cxt).getFidelityManager() != null) {
             setupFiManager((Context) cxt);
         }
         if (projection != null)
@@ -711,12 +711,12 @@ operator extends Operator {
     }
 
     private static FidelityManager setupFiManager(Context cxt) throws ContextException {
-        if (cxt.getFidelityManager() == null) {
+        if (((ServiceMogram)cxt).getFidelityManager() == null) {
             ((ServiceContext)cxt).setFidelityManager(new FidelityManager(cxt));
         }
         try {
             Map<String, ServiceFidelity> fiMap =
-                fiMap = cxt.getFidelityManager().getFidelities();
+                fiMap = ((ServiceMogram)cxt).getFidelityManager().getFidelities();
 
             Map.Entry<String,Object> e;
             Object val = null;
@@ -736,7 +736,7 @@ operator extends Operator {
             throw new ContextException(ex);
         }
 
-        return (FidelityManager)cxt.getFidelityManager();
+        return (FidelityManager)((ServiceMogram)cxt).getFidelityManager();
     }
 
     private static Context getPersistedContext(Object... entries) throws ContextException {
@@ -1814,7 +1814,7 @@ operator extends Operator {
     }
 
     public static Fidelity fi(Discipline mogram) {
-        return ((Mogram)mogram).getSelectedFidelity();
+        return ((ServiceMogram)mogram).getSelectedFidelity();
     }
 
     public static Fidelity fi(String name, String path) {
@@ -2018,7 +2018,7 @@ operator extends Operator {
     }
 
     public static void selectFi(Mogram mogram, String selection) throws ConfigurationException {
-        mogram.selectFidelity(selection);
+        ((ServiceMogram)mogram).selectFidelity(selection);
     }
 
     public static MultiFiMogram mogFi(Metafidelity fidelity) {
@@ -2788,7 +2788,7 @@ operator extends Operator {
 
     public static List<Discipline> mograms(Discipline mogram) throws RemoteException {
         if (mogram instanceof Mogram) {
-            return ((Mogram)mogram).getAllMograms();
+            return ((ServiceMogram)mogram).getAllMograms();
         } else {
             return new ArrayList();
         }
@@ -3070,7 +3070,7 @@ operator extends Operator {
         if (root != null) {
             FidelityManager child = null;
             for (Discipline m : mograms) {
-                child = (FidelityManager) ((Mogram)m).getFidelityManager();
+                child = (FidelityManager) ((ServiceMogram)m).getFidelityManager();
                 root.getFidelities().putAll(child.getFidelities());
                 root.getMetafidelities().putAll(child.getMetafidelities());
                 root.getMorphFidelities().putAll(child.getMorphFidelities());
@@ -3206,7 +3206,7 @@ operator extends Operator {
     }
 
     public static Discipline tracable(Mogram mogram) throws RemoteException {
-        List<Discipline> mograms = mogram.getAllMograms();
+        List<Discipline> mograms = ((ServiceMogram)mogram).getAllMograms();
         for (Discipline m : mograms) {
             ((Routine) m).getControlContext().setTracable(true);
         }
@@ -3214,7 +3214,7 @@ operator extends Operator {
     }
 
     public static List<String> trace(Mogram mogram) throws RemoteException {
-        List<Discipline> mograms = mogram.getAllMograms();
+        List<Discipline> mograms = ((ServiceMogram)mogram).getAllMograms();
         List<String> trace = new ArrayList<String>();
         for (Discipline m : mograms) {
             trace.addAll(((Routine) m).getControlContext().getTrace());
@@ -3224,7 +3224,7 @@ operator extends Operator {
 
     public static List<ServiceFidelity>  fiTrace(Mogram mogram) {
         try {
-            return mogram.getFidelityManager().getFiTrace();
+            return ((ServiceMogram)mogram).getFidelityManager().getFiTrace();
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -4095,8 +4095,8 @@ operator extends Operator {
                         pm.getScope().addPrc(p);
                     }
                 } else if (e instanceof Routine) {
-                    e.getDataContext().setScope(pm.getScope());
-                    e.getDataContext().updateEntries(pm.getScope());
+                    ((ServiceMogram)e).getDataContext().setScope(pm.getScope());
+                    ((ServiceMogram)e).getDataContext().updateEntries(pm.getScope());
                 }
             }
             for (Contextion cxtn : block.getAllContextions()) {

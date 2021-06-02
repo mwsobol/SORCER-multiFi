@@ -319,7 +319,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public List<ThrowableTrace> getExceptions() {
+	public List<ThrowableTrace> getExceptions() throws RemoteException {
 		if (exertion != null)
 			// compatibility for contexts with domains
 			return exertion.getExceptions();
@@ -327,13 +327,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return ((ModelStrategy) domainStrategy).getAllExceptions();
 	}
 
-	@Override
 	public List<String> getTrace() {
 		return ((ModelStrategy) domainStrategy).getTraceList();
 	}
 
-	@Override
-	public List<ThrowableTrace> getAllExceptions() {
+	public List<ThrowableTrace> getAllExceptions() throws RemoteException {
 		List<ThrowableTrace> exertExceptions;
 		if (exertion != null) {
 			exertExceptions = exertion.getExceptions();
@@ -3448,7 +3446,7 @@ public class ServiceContext<T> extends ServiceMogram implements
             return (T) exertion.exert(txn);
         } catch (Exception e) {
             e.printStackTrace();
-			mogram.getContext().reportException(e);
+			((ServiceMogram)mogram.getContext()).reportException(e);
             if (e instanceof Exception) {
 				((ServiceMogram) mogram).setStatus(FAILED);
 			} else {

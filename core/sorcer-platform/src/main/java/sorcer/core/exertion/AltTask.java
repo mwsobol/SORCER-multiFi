@@ -22,6 +22,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.service.*;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,7 +67,7 @@ public class AltTask extends ConditionalTask {
 					Context cxt = opt.getCondition().getConditionalContext();
 					if (cxt != null) {
 						Condition.clenupContextScripts(cxt);
-						((Mogram)opt.getTarget()).getDataContext().updateEntries(cxt);
+						((ServiceMogram)opt.getTarget()).getDataContext().updateEntries(cxt);
 					}
 					// pass te scope to the option task
 //					opt.setContextScope(cxt);
@@ -140,7 +141,7 @@ public class AltTask extends ConditionalTask {
 	}
 
 	@Override
-	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) {
+	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) throws RemoteException {
 		for (Routine ext : optExertions) {
 			exceptions.addAll(((Subroutine)ext).getExceptions(exceptions));
 		}
@@ -162,7 +163,7 @@ public class AltTask extends ConditionalTask {
 	
 	public List<Discipline> getMograms(List<Discipline> exs) {
 		for (Routine e : optExertions) {
-			e.getMograms(exs);
+			((ServiceMogram)e).getMograms(exs);
 		}
 		exs.add(this);
 		return exs;

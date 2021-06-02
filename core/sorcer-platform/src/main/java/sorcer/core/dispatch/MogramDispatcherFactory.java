@@ -76,7 +76,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
         try {
             if (mogram instanceof Routine) {
                 List<ServiceDeployment> deployments = ((Subroutine) mogram).getDeployments();
-                if (deployments.size() > 0 && (((ServiceSignature) mogram.getProcessSignature()).isProvisionable()
+                if (deployments.size() > 0 && (((ServiceSignature) ((ServiceMogram)mogram).getProcessSignature()).isProvisionable()
                     || ((Routine)mogram).isProvisionable()))
                     provisionManager = new ProvisionManager((Routine)mogram);
             }

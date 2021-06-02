@@ -179,7 +179,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
             return (T) exert(txn);
         } catch (Exception e) {
             try {
-                mogram.getContext().reportException(e);
+                ((ServiceMogram)mogram.getContext()).reportException(e);
             } catch (RemoteException remoteException) {
                 remoteException.printStackTrace();
             }
@@ -807,7 +807,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      * @see sorcer.service.Routine#getExceptions()
      */
     @Override
-    public List<ThrowableTrace> getExceptions() {
+    public List<ThrowableTrace> getExceptions() throws RemoteException {
         if (controlContext != null)
             return controlContext.getExceptions();
         else
@@ -820,12 +820,12 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      * @see sorcer.service.Routine#getExceptions()
      */
     @Override
-    public List<ThrowableTrace> getAllExceptions() {
+    public List<ThrowableTrace> getAllExceptions() throws RemoteException {
         List<ThrowableTrace> exceptions = new ArrayList<>();
         return getExceptions(exceptions);
     }
 
-    public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exs) {
+    public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exs) throws RemoteException {
         if (controlContext != null)
             exs.addAll(controlContext.getExceptions());
         return exs;
@@ -835,7 +835,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         List<Signature> allSigs = new ArrayList<>();
         List<Discipline> allExertions = getAllMograms();
         for (Discipline e : allExertions) {
-            allSigs.add(((Mogram)e).getProcessSignature());
+            allSigs.add(((ServiceMogram)e).getProcessSignature());
         }
         return allSigs;
     }

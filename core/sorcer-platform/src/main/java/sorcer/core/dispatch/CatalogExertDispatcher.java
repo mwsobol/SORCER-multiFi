@@ -300,9 +300,9 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 					.createDispatcher(block, sharedContexts, true, provider);
 
             for (Discipline mog : block.getMograms()) {
-                if (((Mogram)mog).getDataContext() != null && ((Mogram)mog).getDataContext().getScope() == null) {
+                if (((ServiceMogram)mog).getDataContext() != null && ((ServiceMogram)mog).getDataContext().getScope() == null) {
                     if (block.getContext() != null) {
-                        ((Mogram)mog).getDataContext().setScope(block.getContext());
+                        ((ServiceMogram)mog).getDataContext().setScope(block.getContext());
                     }
                 }
             }

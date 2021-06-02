@@ -247,10 +247,10 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
                         } else {
                             fiEnt.selectSelect(name, path);
                         }
-                        ((Mogram)mogram).applyFidelity(path);
+                        ((ServiceMogram)mogram).applyFidelity(path);
                     }
                 }
-            } catch (ConfigurationException | RemoteException e) {
+            } catch (ConfigurationException e) {
                 throw new EvaluationException(e);
             }
         }

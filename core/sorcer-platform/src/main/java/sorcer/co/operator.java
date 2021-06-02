@@ -1363,7 +1363,7 @@ public class operator extends Operator {
 	}
 
 	public static Object evalValue(Mogram mogram, String path) throws MogramException {
-		return mogram.getEvaluatedValue(path);
+		return ((ServiceMogram)mogram).getEvaluatedValue(path);
 	}
 
 	public static <T> T v(Valuation<T> valuation) throws ContextException {
@@ -2048,20 +2048,16 @@ public class operator extends Operator {
 
 	public static Mogram instance(Mogram mogram, Arg... args) throws SignatureException, ServiceException {
 		Signature builder = null;
-		try {
-			builder = mogram.getBuilder(args);
-			if (builder == null) {
-				throw new SignatureException("No signature builder for: " + mogram.getName());
-			}
-			Mogram mog = (Mogram) sorcer.co.operator.instance(builder);
-			mog.setBuilder(builder);
-			Tag name = (Arg.getName(args));
-			if (name != null)
-				mog.setName(name.getName());
-			return mog;
-		} catch (RemoteException e) {
-			throw new ServiceException(e);
+		builder = ((ServiceMogram)mogram).getBuilder(args);
+		if (builder == null) {
+			throw new SignatureException("No signature builder for: " + mogram.getName());
 		}
+		ServiceMogram mog = (ServiceMogram) sorcer.co.operator.instance(builder);
+		mog.setBuilder(builder);
+		Tag name = (Arg.getName(args));
+		if (name != null)
+			mog.setName(name.getName());
+		return mog;
 	}
 
 	public static Tag tag(Object object) {

@@ -1511,8 +1511,8 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 		if (mogram instanceof Task) {
 			ServiceContext cxt;
 			try {
-				cxt = (ServiceContext) ((Mogram)mogram).getDataContext();
-				cxt.updateContextWith(((Mogram)mogram).getProcessSignature().getInConnector());
+				cxt = (ServiceContext) ((ServiceMogram)mogram).getDataContext();
+				cxt.updateContextWith(((ServiceMogram)mogram).getProcessSignature().getInConnector());
 				Uuid id = cxt.getId();
 				// a created session to be used in the implementation class of the bean itself
 				ProviderSession ps = (ProviderSession) sessions.get(id);
@@ -1563,7 +1563,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 			out = doExertion(exertion, txn);
 		} catch (Exception e) {
 			logger.error("{} failed", getProviderName(), e);
-			out.reportException(new RoutineException(getProviderName() + " failed", e));
+			((ServiceMogram)out).reportException(new RoutineException(getProviderName() + " failed", e));
 		}
 		return out;
 	}

@@ -74,7 +74,7 @@ public class OptTask extends ConditionalTask {
 //				} else {
 //					target.setScope(dataContext);
 //				}
-				dataContext = (ServiceContext) ((Mogram)target).getDataContext();
+				dataContext = (ServiceContext) ((ServiceMogram)target).getDataContext();
 				if (target instanceof Routine) {
 					target.getContext().setRoutine(null);
 					controlContext.append(((Routine)target).getControlContext());
@@ -125,8 +125,8 @@ public class OptTask extends ConditionalTask {
 	}
 	
 	@Override
-	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) {
-		exceptions.addAll(((Mogram)target).getExceptions());
+	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) throws RemoteException {
+		exceptions.addAll(((ServiceMogram)target).getExceptions());
 		exceptions.addAll(this.getExceptions());
 		return exceptions;
 	}

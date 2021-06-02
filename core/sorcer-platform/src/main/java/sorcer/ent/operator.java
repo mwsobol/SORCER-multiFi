@@ -427,7 +427,7 @@ public class operator extends Operator {
 			Snr ane = (Snr) ((ServiceMogram)model).get(path);
             if (ane.getMultiFi() != null) {
                 List<Fidelity> fiList = Arg.selectFidelities(args);
-                ((FidelityManager) model.getFidelityManager()).reconfigure(fiList);
+                ((FidelityManager) ((ServiceMogram)model).getFidelityManager()).reconfigure(fiList);
                 return invoke((EntryModel) model, path, args);
 
             } else {

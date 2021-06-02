@@ -509,7 +509,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 					domain = ((SignatureDomain) domain).getDomain();
 
 					children.put(domain.getDomainName(), domain);
-					((Mogram) domain).setExec(isExec);
+					((ServiceMogram) domain).setExec(isExec);
 				}
 			}
 		} catch (RemoteException e) {

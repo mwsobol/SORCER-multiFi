@@ -305,8 +305,8 @@ public class operator extends Operator {
     }
 
     public static Object response(ContextDomain model, String path, String domain) throws ServiceException {
-        if (model.isEvaluated() && ((ServiceMogram)model).getMdaFi() == null) {
-            return ((Mogram)((ServiceContext)model).getChild(domain)).getEvaluatedValue(path);
+        if (((ServiceMogram)model).isEvaluated() && ((ServiceMogram)model).getMdaFi() == null) {
+            return ((ServiceMogram)((ServiceContext)model).getChild(domain)).getEvaluatedValue(path);
         } else {
             try {
                 return ((Context)((ServiceContext)model).getChild(domain)).getValue(path);
@@ -337,7 +337,7 @@ public class operator extends Operator {
             ((Routine)domain).getDataContext().append(context);
             return exertionResponse((Routine) domain, (Object[])args);
         }
-        return ((Mogram)domain).getDataContext().append(context);
+        return ((ServiceMogram)domain).getDataContext().append(context);
     }
 
 
@@ -345,8 +345,8 @@ public class operator extends Operator {
         if (mogram instanceof Routine) {
             return exertionResponse((Routine) mogram, items);
         } else if (mogram instanceof ContextDomain &&  ((ServiceMogram)mogram).getType().equals(Functionality.Type.MADO)) {
-            if (mogram.isEvaluated()) {
-                return (ServiceContext) ((Mogram)((ServiceContext) mogram).getChild((String) items[0])).getEvaluatedValue((String) items[1]);
+            if (((ServiceMogram)mogram).isEvaluated()) {
+                return (ServiceContext) ((ServiceMogram)((ServiceContext) mogram).getChild((String) items[0])).getEvaluatedValue((String) items[1]);
             } else {
                 return (ServiceContext) ((ServiceContext) ((ServiceContext) mogram).getChild((String) items[0])).getValue((String) items[1]);
             }
@@ -519,20 +519,20 @@ public class operator extends Operator {
             }
             Arg[] args = new Arg[argl.size()];
             argl.toArray(args);
-            if (model.getFidelityManager() != null) {
+            if (((ServiceMogram)model).getFidelityManager() != null) {
                 try {
-                    ((FidelityManager) model.getFidelityManager()).reconfigure(Arg.selectFidelities(args));
+                    ((FidelityManager) ((ServiceMogram)model).getFidelityManager()).reconfigure(Arg.selectFidelities(args));
                 } catch (ConfigurationException e) {
                    throw new ContextException(e);
                 }
             }
             model.substitute(args);
-            model.setValid(false);
+            ((ServiceMogram)model).setValid(false);
             if (cfmgr != null && cfmgr.getDataContext().getMorpher() != null) {
                 ((ServiceContext)model).getContextFidelityManager().morph();
             }
             ServiceContext out = (ServiceContext) model.getResponse(args);
-            model.setValid(true);
+            ((ServiceMogram)model).setValid(true);
             if (cfmgr != null && cfmgr.getDataContext().getMorpher() != null) {
                 ((ServiceContext)model).getContextFidelityManager().morph();
             }
@@ -566,8 +566,8 @@ public class operator extends Operator {
             }
             Arg[] args = new Arg[argl.size()];
             argl.toArray(args);
-            if (exertion.getFidelityManager() != null) {
-                ((FidelityManager) exertion.getFidelityManager()).reconfigure(Arg.selectFidelities(args));
+            if (((ServiceMogram)exertion).getFidelityManager() != null) {
+                ((FidelityManager) ((ServiceMogram)exertion).getFidelityManager()).reconfigure(Arg.selectFidelities(args));
             }
             return (ServiceContext) exertion.exert(args).getContext();
         } catch (RemoteException | ServiceException | ConfigurationException e) {
@@ -650,7 +650,7 @@ public class operator extends Operator {
         }
     }
 
-    public static List<ThrowableTrace> exceptions(Routine exertion) {
+    public static List<ThrowableTrace> exceptions(Routine exertion) throws RemoteException {
         return exertion.getExceptions();
     }
 

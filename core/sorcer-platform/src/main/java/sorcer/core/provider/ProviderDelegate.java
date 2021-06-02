@@ -1892,7 +1892,7 @@ public class ProviderDelegate {
 	public boolean isValidTask(Routine servicetask) throws RoutineException, ContextException {
 
 		if (servicetask.getContext() == null) {
-			servicetask.getContext().reportException(
+			((ServiceMogram)servicetask.getContext()).reportException(
 				new RoutineException(getProviderName()
 					+ " no service context in task: "
 					+ servicetask.getClass().getName()));
@@ -1911,7 +1911,7 @@ public class ProviderDelegate {
 		String pn = task.getProcessSignature().getProviderName().getName();
 		if (pn != null && !matchInterfaceOnly) {
 			if (!pn.equals(getProviderName())) {
-				servicetask.getContext().reportException(
+				((ServiceMogram)servicetask.getContext()).reportException(
 					new RoutineException(
 						"Not valid task for service provider: "
 							+ config.getProviderName() + " for:" + pn));
@@ -1920,7 +1920,7 @@ public class ProviderDelegate {
 		}
 		Class<?> st = task.getProcessSignature().getServiceType();
 		if (publishedServiceTypes == null) {
-			servicetask.getContext().reportException(
+			((ServiceMogram)servicetask.getContext()).reportException(
 				new RoutineException("No published interfaces defined by: "+ getProviderName()));
 			return false;
 		} else {
@@ -1930,7 +1930,7 @@ public class ProviderDelegate {
 				}
 			}
 		}
-		servicetask.getContext().reportException(
+		((ServiceMogram)servicetask.getContext()).reportException(
 			new RoutineException("Not valid task for published service types: \n"
 				+ Arrays.toString(publishedServiceTypes)
 				+ "\nwith Signature: \n"

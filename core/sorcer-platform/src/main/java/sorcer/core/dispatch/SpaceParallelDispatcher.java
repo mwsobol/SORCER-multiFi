@@ -81,11 +81,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         if (xrt instanceof Job)
             return Mograms.getInputExertions((Job) xrt);
         else if (xrt instanceof Block) {
-            try {
-                return ((Mogram)xrt).getAllMograms();
-            } catch (RemoteException e) {
-                throw new ContextException(e);
-            }
+            return ((ServiceMogram)xrt).getAllMograms();
         }
         return null;
     }
