@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
  *
  * Created by Mike Sobolewski on 11/26/2019.
  */
-public interface Domain extends Mogram, Dependency, mog, cxtn {
+public interface Domain extends Mogram, Substitutable, Dependency, mog, cxtn {
 
 	String getDomainName() throws RemoteException;
 

@@ -834,8 +834,15 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     public List<Signature> getAllSignatures() throws RemoteException {
         List<Signature> allSigs = new ArrayList<>();
         List<Contextion> allExertions = getAllMograms();
-        for (Contextion e : allExertions) {
-            allSigs.add(((ServiceMogram)e).getProcessSignature());
+        for (Contextion ct : allExertions) {
+            if (ct instanceof  ServiceMogram) {
+                allSigs.add(((ServiceMogram) ct).getProcessSignature());
+            } else if (ct instanceof FreeContextion) {
+                Contextion ct2 = ((FreeContextion) ct).getContextion();
+                if (ct2 instanceof  ServiceMogram) {
+                    allSigs.add(((ServiceMogram) ct2).getProcessSignature());
+                }
+            }
         }
         return allSigs;
     }

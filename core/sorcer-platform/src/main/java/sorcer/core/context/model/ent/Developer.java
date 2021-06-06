@@ -75,7 +75,7 @@ public class Developer extends Entry<Development> implements Controller, Develop
     }
 
     @Override
-    public Context develop(Contextion discipline, Context context) throws ServiceException, ExecutiveException, RemoteException {
+    public Context develop(Discipline discipline, Context context) throws ServiceException, ExecutiveException, RemoteException {
         this.discipline = discipline;
         Context out = null;
         try {

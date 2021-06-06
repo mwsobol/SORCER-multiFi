@@ -166,9 +166,9 @@ public class DesignDevelopment {
 
         Context designIntent = dznCxt(
             disciplineSig(sig(DesignDevelopment.class, "getMorphingModel")),
-            devFi("morphDevFi",
+            devFi("morphDevFis",
                 dev("morphDev1",
-                    (Contextion discipline, Context intent) -> {
+                    (Discipline discipline, Context intent) -> {
                         Block mdlBlock = block(
                             loop(condition(cxt -> (double)
                                 value(cxt, "morpher3") < 900.0), discipline));
@@ -176,11 +176,11 @@ public class DesignDevelopment {
                         return context(mdlBlock);
                     }),
                 dev("morphDev2",
-                    (Contextion discipline, Context cxt) -> {
+                    (Discipline discipline, Context cxt) -> {
                         Block mdlBlock = block(
                             loop(condition(bcxt -> (double)
                                 value(bcxt, "morpher3") < 900.0), discipline));
-                        mdlBlock = exert(mdlBlock, fi("multiply", "mFi1"));
+                        mdlBlock = exert(mdlBlock, fi("add", "mFi1"));
                         return context(mdlBlock);
                     }))
         );

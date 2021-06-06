@@ -411,7 +411,7 @@ public class operator extends Operator {
                 out = response((Mogram)request, items);
             } else if (request instanceof Design) {
                 Development developer = ((Transdesign)request).getDeveloperFi().getSelect();
-                out = developer.develop(((Transdesign)request).getDiscipline(), ((Transdesign)request).getDisciplineIntent());
+                out = developer.develop((Discipline) ((Transdesign)request).getDiscipline(), ((Transdesign)request).getDisciplineIntent());
             } else if(items.length == 1) {
                 if (items[0] instanceof Context) {
                     out = eval(request, (Context) items[0]);

@@ -32,7 +32,7 @@ import java.util.List;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Contextion, Exertion, Arg {
+public interface Mogram extends Contextion, Exertion, Discipline, Arg {
 
     /**
      * Returns the list of traces of thrown exceptions from this mogram.

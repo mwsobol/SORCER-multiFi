@@ -587,4 +587,9 @@ public class SignatureDomain implements Domain {
     public <T extends Contextion> T exert(T exertion, Transaction txn, Arg... args) throws ServiceException, RemoteException {
         return null;
     }
+
+    @Override
+    public void substitute(Arg... entries) throws SetterException, RemoteException {
+        domain.substitute(entries);
+    }
 }
