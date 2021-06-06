@@ -3646,10 +3646,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Discipline getChild(String name) throws ContextException {
+	public Contextion getChild(String name) throws ContextException {
         Object domain = data.get(name);
-        if (domain instanceof Mogram) {
-            return (Mogram) domain;
+        if (domain instanceof Contextion) {
+            return (Contextion) domain;
         }
         throw new ContextException("no such domain: " + name);
 	}

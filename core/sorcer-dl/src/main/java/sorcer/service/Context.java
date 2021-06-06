@@ -954,7 +954,7 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 
 	public int size();
 
-	Discipline getChild(String name) throws ContextException;
+	Contextion getChild(String name) throws ContextException;
 
 	public Return getContextReturn();
 

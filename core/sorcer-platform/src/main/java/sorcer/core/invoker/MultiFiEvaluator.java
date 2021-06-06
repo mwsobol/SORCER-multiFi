@@ -110,7 +110,7 @@ public class MultiFiEvaluator<T> extends MultiFiSlot<String, T> implements Evalu
 
 	@Override
 	public void substitute(Arg... args) throws SetterException, RemoteException {
-		scope.substitute(args);
+		((ServiceMogram)scope).substitute(args);
 	}
 
 	@Override

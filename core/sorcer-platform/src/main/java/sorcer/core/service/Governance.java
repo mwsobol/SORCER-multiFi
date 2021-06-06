@@ -406,6 +406,11 @@ public class Governance implements Transdiscipline, Dependency {
 	}
 
 	@Override
+	public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException {
+		return (T) execute(args);
+	}
+
+	@Override
 	public String getDomainName() {
 		return name;
 	}

@@ -340,7 +340,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
     public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
         try {
             if (input != null) {
-                input.substitute(context);
+                ((ServiceContext)input).substitute(context);
             }
             Object out = execute(args);
             if (out instanceof Context) {
@@ -351,6 +351,11 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
         } catch (ServiceException e) {
             throw new EvaluationException(e);
         }
+    }
+
+    @Override
+    public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException {
+        return (T) execute(args);
     }
 
     @Override

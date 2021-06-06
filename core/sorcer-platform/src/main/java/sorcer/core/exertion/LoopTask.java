@@ -219,9 +219,9 @@ public class LoopTask extends ConditionalTask {
 		return exceptions;
 	}
 	
-	public List<Discipline> getMograms(List<Discipline> exs) {
-		if (target instanceof Mogram) {
-			exs.add((Mogram) target);
+	public List<Contextion> getMograms(List<Contextion> exs) {
+		if (target instanceof Contextion) {
+			exs.add(target);
 			exs.add(this);
 		}
 		return exs;

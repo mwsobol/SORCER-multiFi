@@ -41,8 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static sorcer.so.operator.exec;
-import static sorcer.so.operator.response;
+import static sorcer.so.operator.*;
 
 public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
@@ -83,7 +82,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 	protected Fidelity<Development> developerFi;
 
-	protected Map<String, Discipline> children = new HashMap<>();
+	protected Map<String, Contextion> children = new HashMap<>();
 
 	protected List<Coupling> couplings;
 
@@ -128,9 +127,9 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		serviceStrategy = new ModelStrategy(this);
     }
 
-    public Collaboration(String name, Domain[] domains) throws RemoteException {
+    public Collaboration(String name, Contextion[] domains) throws RemoteException {
         this(name);
-        for (Domain domain : domains) {
+        for (Contextion domain : domains) {
                 this.children.put(domain.getDomainName(), domain);
         }
     }
@@ -158,7 +157,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
         this.domainPaths = domainPaths;
     }
 
-	public Discipline getDomain(String name) {
+	public Contextion getDomain(String name) {
 		return children.get(name);
 	}
 
@@ -258,9 +257,9 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		this.analyzerFi = analyzerFi;
 	}
 
-	public List<Discipline> getDisciplineList() {
-		List<Discipline> domainList = new ArrayList<>();
-		for (Discipline disc : children.values()) {
+	public List<Contextion> getDisciplineList() {
+		List<Contextion> domainList = new ArrayList<>();
+		for (Contextion disc : children.values()) {
 			if (disc instanceof Node) {
 				domainList.add(disc);
 			}
@@ -418,6 +417,11 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		return out;
 	}
 
+	@Override
+	public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException {
+		return (T) execute(args);
+	}
+
 	public void analyze(Context context) throws ServiceException {
 		Context collabOut;
 		if (((ServiceContext)context).getColabType() == Strategy.Colab.BBinCxt) {
@@ -426,7 +430,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 			 collabOut = new ServiceContext(name);
 
 		}
-		Discipline domain = null;
+		Contextion domain = null;
 		try {
 			for (Path path : domainPaths) {
 				domain = children.get(path.path);
@@ -503,7 +507,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	public void initializeDomains() throws SignatureException {
 		// initialize domains specified by builder signatures
 		try {
-			for (Discipline domain : children.values()) {
+			for (Contextion domain : children.values()) {
 				if (domain instanceof SignatureDomain) {
 					boolean isExec = domain.isExec();
 					domain = ((SignatureDomain) domain).getDomain();
@@ -518,7 +522,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	}
 
 	public OptimizationModeling getOptimizationDomain() {
-		for (Discipline domain : children.values()) {
+		for (Contextion domain : children.values()) {
 			if (domain instanceof OptimizationModeling) {
 				return (OptimizationModeling) domain;
 			}
@@ -605,12 +609,12 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		this.domainName = domainName;
 	}
 
-	public Map<String, Discipline> getChildren() {
+	public Map<String, Contextion> getChildren() {
 		return children;
 	}
 
 	@Override
-	public Discipline getChild(String name) {
+	public Contextion getChild(String name) {
 		return children.get(name);
 	}
 

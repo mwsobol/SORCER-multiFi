@@ -27,7 +27,7 @@ public interface Transdiscipline extends Discipline, disc, cxtn {
 
     public Map<String, Context>  getChildrenContexts();
 
-    public Discipline getChild(String name);
+    public Contextion getChild(String name);
 
     public Fidelity<Finalization> getFinalizerFi();
 

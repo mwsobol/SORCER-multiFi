@@ -58,7 +58,7 @@ abstract public class ConditionalTask extends Task {
 		return list;
 	}
 
-	public List<Discipline> getMograms(List<Discipline> list) {
+	public List<Contextion> getMograms(List<Contextion> list) {
 		for (Contextion cxtn : getContextions()) {
 			if (cxtn instanceof Mogram) {
 				list.add((Mogram)cxtn);

@@ -748,7 +748,7 @@ public class operator {
 
     public static Transmodel tModel(Object... data) throws ContextException {
         String name = getUnknown();
-        List<Domain> domains = new ArrayList<>();
+        List<Contextion> domains = new ArrayList<>();
         List<ServiceFidelity> modelFis = new ArrayList<>();
         Dependency dependency = null;
         ExecDeps execDeps = null;
@@ -796,7 +796,7 @@ public class operator {
                 Map<String, ServiceFidelity> fis = new HashMap<>();
                 for (ServiceFidelity mdlFi : modelFis) {
                     fis.put(mdlFi.getName(), mdlFi);
-                    transModel.getChildren().put(mdlFi.getName(), (RequestModel) mdlFi.getSelect());
+                    transModel.getChildren().put(mdlFi.getName(), (Discipline) mdlFi.getSelect());
                 }
                 fiManager.setFidelities(fis);
                 ((RequestModel)transModel).setFidelityManager(fiManager);
@@ -1323,7 +1323,7 @@ public class operator {
             Map<String, ServiceFidelity> fis = new HashMap<>();
             for (ServiceFidelity discFi : discFis) {
                 fis.put(discFi.getName(), discFi);
-                collab.getChildren().put(discFi.getName(), (Domain) discFi.getSelect());
+                collab.getChildren().put(discFi.getName(), (Discipline) discFi.getSelect());
             }
             fiManager.setFidelities(fis);
             collab.setFiManager(fiManager);

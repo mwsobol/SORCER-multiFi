@@ -32,18 +32,7 @@ import java.util.List;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Identifiable, Contextion, Exertion, Discipline, Scopable, Substitutable, Arg {
-
-    /**
-     * Generic execution of mogram by cooperated services.
-     *
-     * @return a resulting Contextion
-     * @throws ServiceException
-     *             if a mogram error occurs
-     * @throws RemoteException
-     *             if remote call causes an error
-     */
-    public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException;
+public interface Mogram extends Contextion, Exertion, Arg {
 
     /**
      * Returns the list of traces of thrown exceptions from this mogram.

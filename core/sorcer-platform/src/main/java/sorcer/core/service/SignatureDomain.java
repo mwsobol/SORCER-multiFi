@@ -373,11 +373,11 @@ public class SignatureDomain implements Domain {
         return ((ServiceMogram)domain).isExportControlled();
     }
 
-    public List<Discipline> getMograms(List<Discipline> allMograms) {
+    public List<Contextion> getMograms(List<Contextion> allMograms) {
         return ((ServiceMogram)domain).getMograms(allMograms);
     }
 
-    public List<Discipline> getMograms() {
+    public List<Contextion> getMograms() {
         return ((ServiceMogram)domain).getMograms();
     }
 
@@ -385,7 +385,7 @@ public class SignatureDomain implements Domain {
         return ((ServiceMogram)domain).getContextions();
     }
 
-    public List<Discipline> getAllMograms() throws RemoteException {
+    public List<Contextion> getAllMograms() throws RemoteException {
         return ((ServiceMogram)domain).getAllMograms();
     }
 
@@ -554,15 +554,6 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public <T extends Contextion> T exert(T exertion, Transaction txn, Arg... args) throws ServiceException {
-        try {
-            return domain.exert(exertion, txn, args);
-        } catch (RemoteException e) {
-            throw new MogramException(e);
-        }
-    }
-
-    @Override
     public void setName(String name) {
         domain.setName(name);
     }
@@ -593,7 +584,7 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public void substitute(Arg... entries) throws SetterException, RemoteException {
-        domain.substitute(entries);
+    public <T extends Contextion> T exert(T exertion, Transaction txn, Arg... args) throws ServiceException, RemoteException {
+        return null;
     }
 }

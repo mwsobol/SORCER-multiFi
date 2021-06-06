@@ -302,7 +302,7 @@ import java.util.Map;
 		if (exertion == null)
 			return;
 		clenupContextScripts(exertion.getContext());
-		for (Discipline e : exertion.getMograms()) {
+		for (Contextion e : exertion.getMograms()) {
 			if (e instanceof Routine) {
 				clenupContextScripts(e.getContext());
 				clenupExertionScripts((Routine) e);

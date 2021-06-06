@@ -167,7 +167,7 @@ public class Job extends Transroutine {
 	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
 	 */
 	@Override
-	public Discipline addMogram(Discipline ex) throws RoutineException {
+	public Contextion addMogram(Contextion ex) throws RoutineException {
 		mograms.add(ex);
 		((ServiceMogram)ex).setIndex(mograms.indexOf(ex));
 		try {
@@ -211,7 +211,7 @@ public class Job extends Transroutine {
                 }
             }
             if (mograms.size() > 0) {
-                for (Discipline ex : mograms) {
+                for (Contextion ex : mograms) {
                     delegate.addMogram(ex);
                 }
             }
@@ -323,7 +323,7 @@ public class Job extends Transroutine {
 	@Override
 	public List<ThrowableTrace> getExceptions() throws RemoteException {
 		List<ThrowableTrace> exceptions = new ArrayList<>();
-		for (Discipline ext : mograms) {
+		for (Contextion ext : mograms) {
 			exceptions.addAll(((Mogram)ext).getExceptions());
 		}
 		return exceptions;
@@ -349,7 +349,7 @@ public class Job extends Transroutine {
 		return true;
 	}
 
-	public Discipline getExertion(int index) {
+	public Contextion getExertion(int index) {
 		return mograms.get(index);
 	}
 

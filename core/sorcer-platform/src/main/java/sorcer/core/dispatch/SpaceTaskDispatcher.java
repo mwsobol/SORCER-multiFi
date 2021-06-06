@@ -41,7 +41,7 @@ public class SpaceTaskDispatcher extends SpaceParallelDispatcher {
 	}
 
     @Override
-    protected List<Discipline> getInputExertions() throws ContextException {
+    protected List<Contextion> getInputExertions() throws ContextException {
         return Arrays.asList((Mogram)xrt);
     }
 

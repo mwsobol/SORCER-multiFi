@@ -73,7 +73,7 @@ public abstract class Block extends Transroutine {
 	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
 	 */
 	@Override
-	public Discipline addMogram(Discipline mogram) throws RoutineException {
+	public Contextion addMogram(Contextion mogram) throws RoutineException {
 		mograms.add(mogram);
 		((ServiceMogram)mogram).setIndex(mograms.indexOf(mogram));
 		try {
@@ -85,7 +85,7 @@ public abstract class Block extends Transroutine {
 		return this;
 	}
 
-	public void setMograms(List<Discipline> mograms) {
+	public void setMograms(List<Contextion> mograms) {
 		this.mograms = mograms;
 	}
 
@@ -120,7 +120,7 @@ public abstract class Block extends Transroutine {
 	 * @see sorcer.service.Routine#getMograms()
 	 */
 	@Override
-	public List<Discipline> getMograms() {
+	public List<Contextion> getMograms() {
 		return mograms;
 	}
 
@@ -175,8 +175,8 @@ public abstract class Block extends Transroutine {
 	 * @see sorcer.service.Subroutine#getMograms(java.util.List)
 	 */
 	@Override
-	public List<Discipline> getMograms(List<Discipline> mogramList) {
-		for (Discipline e : mograms) {
+	public List<Contextion> getMograms(List<Contextion> mogramList) {
+		for (Contextion e : mograms) {
 			((ServiceMogram)e).getMograms(mogramList);
 		}
 		mogramList.add(this);
@@ -240,22 +240,22 @@ public abstract class Block extends Transroutine {
 	}
 	
 	public boolean hasChild(String childName) {
-		for (Discipline ext : mograms) {
+		for (Contextion ext : mograms) {
 			if (ext.getName().equals(childName))
 				return true;
 		}
 		return false;
 	}
 
-	public Discipline getChild(String childName) {
-		for (Discipline ext : mograms) {
+	public Contextion getChild(String childName) {
+		for (Contextion ext : mograms) {
 			if (ext.getName().equals(childName))
 				return ext;
 		}
 		return null;
 	}
 
-	public Discipline getComponentMogram(String path) {
+	public Contextion getComponentMogram(String path) {
 		// TODO
 		return getChild(path);
 	}
@@ -294,7 +294,7 @@ public abstract class Block extends Transroutine {
 	}
 	
 	public void reset(int state) {
-		for(Discipline e : mograms)
+		for(Contextion e : mograms)
 			((ServiceMogram)e).reset(state);
 		
 		this.setStatus(state);
@@ -332,7 +332,7 @@ public abstract class Block extends Transroutine {
 	}
 	
 	private void updateConditions() throws ContextException, RemoteException {
-		for (Discipline mogram : mograms) {
+		for (Contextion mogram : mograms) {
 			if (mogram instanceof Mogram && ((Mogram)mogram).isConditional()) {
 				if (mogram instanceof OptTask) {
 					((OptTask)mogram).getCondition().getConditionalContext().append(dataContext);
@@ -357,11 +357,12 @@ public abstract class Block extends Transroutine {
 		if (rp != null && rp.returnPath != null)
 			dataContext.removePath(rp.returnPath);
 
-		List<Discipline> mograms = getAllMograms();
+		List<Contextion> mograms = getAllMograms();
 		Context cxt = null;
-		for (Discipline mo : mograms) {
-			if (mo instanceof Mogram)
-				((ServiceContext) ((ServiceMogram)mo).getDataContext()).clearScope();
+		for (Contextion mo : mograms) {
+			if (mo instanceof Mogram) {
+				((ServiceMogram) mo).getDataContext().clearScope();
+			}
 
 //			if (mo instanceof Mogram)
 //				cxt = mo.getContext();

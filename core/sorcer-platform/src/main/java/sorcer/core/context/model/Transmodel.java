@@ -33,7 +33,7 @@ public interface Transmodel extends Model, Transdomain, Configurable {
 
     public void setChildrenPaths(Paths childrenPaths);
 
-    public void addChildren(List<Domain> domains) throws SignatureException, RemoteException;
+    public void addChildren(List<Contextion> domains) throws SignatureException, RemoteException;
 
     public Map<String, Context> getChildrenContexts();
 

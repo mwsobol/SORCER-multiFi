@@ -168,7 +168,7 @@ public class DesignDevelopment {
             disciplineSig(sig(DesignDevelopment.class, "getMorphingModel")),
             devFi("morphDevFi",
                 dev("morphDev1",
-                    (Discipline discipline, Context intent) -> {
+                    (Contextion discipline, Context intent) -> {
                         Block mdlBlock = block(
                             loop(condition(cxt -> (double)
                                 value(cxt, "morpher3") < 900.0), discipline));
@@ -176,7 +176,7 @@ public class DesignDevelopment {
                         return context(mdlBlock);
                     }),
                 dev("morphDev2",
-                    (Discipline discipline, Context cxt) -> {
+                    (Contextion discipline, Context cxt) -> {
                         Block mdlBlock = block(
                             loop(condition(bcxt -> (double)
                                 value(bcxt, "morpher3") < 900.0), discipline));

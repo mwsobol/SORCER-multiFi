@@ -106,7 +106,7 @@ public class Gavernor implements Service, Hypervision {
             if (governance.getInput() == null)  {
                 governance.setInput(input);
             } else {
-                governance.getInput().substitute(input);
+                ((ServiceContext)governance.getInput()).substitute(input);
             }
             Context outCxt = (Context) execute(args);
             Hypervision executive = null;

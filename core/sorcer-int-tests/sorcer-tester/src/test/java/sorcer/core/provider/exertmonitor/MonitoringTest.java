@@ -164,7 +164,7 @@ public class MonitoringTest {
 	private static void verifyExertionMonitorStatus(Routine exertion, String state) throws Exception {
 		ExecUtils.CmdResult result = CommonsExecUtil.execCommand(nshCmd, cmds);
 
-		for (Discipline xrt : exertion.getAllMograms())
+		for (Contextion xrt : exertion.getAllMograms())
 			verifyMonitorStatus(result.getOut(), ((ServiceMogram)xrt).getId(), "DONE");
 	}
 

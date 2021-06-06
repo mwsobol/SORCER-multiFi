@@ -1805,7 +1805,7 @@ operator extends Operator {
         return fi;
     }
 
-    public static List<Service>  fis(Discipline mogram) {
+    public static List<Service>  fis(Contextion mogram) {
         if (mogram.getMultiFi() != null) {
             return mogram.getMultiFi().getSelects();
         } else {
@@ -1813,7 +1813,7 @@ operator extends Operator {
         }
     }
 
-    public static Fidelity fi(Discipline mogram) {
+    public static Fidelity fi(Contextion mogram) {
         return ((ServiceMogram)mogram).getSelectedFidelity();
     }
 
@@ -2786,7 +2786,7 @@ operator extends Operator {
         return task;
     }
 
-    public static List<Discipline> mograms(Discipline mogram) throws RemoteException {
+    public static List<Contextion> mograms(Contextion mogram) throws RemoteException {
         if (mogram instanceof Mogram) {
             return ((ServiceMogram)mogram).getAllMograms();
         } else {
@@ -3065,11 +3065,11 @@ operator extends Operator {
     }
 
     static private void unifyFiManager(Job job) {
-        List<Discipline> mograms = job.getMograms();
+        List<Contextion> mograms = job.getMograms();
         FidelityManager root = (FidelityManager)job.getFidelityManager();
         if (root != null) {
             FidelityManager child = null;
-            for (Discipline m : mograms) {
+            for (Contextion m : mograms) {
                 child = (FidelityManager) ((ServiceMogram)m).getFidelityManager();
                 root.getFidelities().putAll(child.getFidelities());
                 root.getMetafidelities().putAll(child.getMetafidelities());
@@ -3114,7 +3114,7 @@ operator extends Operator {
         }
     }
 
-    public static Discipline sub(Routine mogram, String path) {
+    public static Contextion sub(Routine mogram, String path) {
         return mogram.getComponentMogram(path);
     }
 
@@ -3198,25 +3198,25 @@ operator extends Operator {
         return values;
     }
 
-    public static Discipline exertion(Routine exertion, String componentExertionName) {
+    public static Contextion exertion(Routine exertion, String componentExertionName) {
         return exertion.getComponentMogram(componentExertionName);
     }
-    public static Discipline xrt(Routine exertion, String componentExertionName) {
+    public static Contextion xrt(Routine exertion, String componentExertionName) {
         return exertion.getComponentMogram(componentExertionName);
     }
 
-    public static Discipline tracable(Mogram mogram) throws RemoteException {
-        List<Discipline> mograms = ((ServiceMogram)mogram).getAllMograms();
-        for (Discipline m : mograms) {
+    public static Contextion tracable(Mogram mogram) throws RemoteException {
+        List<Contextion> mograms = ((ServiceMogram)mogram).getAllMograms();
+        for (Contextion m : mograms) {
             ((Routine) m).getControlContext().setTracable(true);
         }
         return mogram;
     }
 
     public static List<String> trace(Mogram mogram) throws RemoteException {
-        List<Discipline> mograms = ((ServiceMogram)mogram).getAllMograms();
+        List<Contextion> mograms = ((ServiceMogram)mogram).getAllMograms();
         List<String> trace = new ArrayList<String>();
-        for (Discipline m : mograms) {
+        for (Contextion m : mograms) {
             trace.addAll(((Routine) m).getControlContext().getTrace());
         }
         return trace;

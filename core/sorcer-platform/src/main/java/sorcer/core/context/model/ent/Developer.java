@@ -31,7 +31,7 @@ public class Developer extends Entry<Development> implements Controller, Develop
 
     private static final long serialVersionUID = 1L;
 
-    private Discipline discipline;
+    private Contextion discipline;
 
     private Signature signature;
 
@@ -54,11 +54,11 @@ public class Developer extends Entry<Development> implements Controller, Develop
         this.type = Functionality.Type.DEVELOPER;
     }
 
-    public Discipline getDiscipline() {
+    public Contextion getDiscipline() {
         return discipline;
     }
 
-    public void setDiscipline(Discipline discipline) {
+    public void setDiscipline(Contextion discipline) {
         this.discipline = discipline;
     }
 
@@ -75,7 +75,7 @@ public class Developer extends Entry<Development> implements Controller, Develop
     }
 
     @Override
-    public Context develop(Discipline discipline, Context context) throws ServiceException, ExecutiveException, RemoteException {
+    public Context develop(Contextion discipline, Context context) throws ServiceException, ExecutiveException, RemoteException {
         this.discipline = discipline;
         Context out = null;
         try {

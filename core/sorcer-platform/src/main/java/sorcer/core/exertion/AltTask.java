@@ -155,13 +155,13 @@ public class AltTask extends ConditionalTask {
 	 * @see sorcer.service.Routine#getMograms()
 	 */
 	@Override
-	public List<Discipline> getMograms() {
-		ArrayList<Discipline> list = new ArrayList<Discipline>(1);
+	public List<Contextion> getMograms() {
+		ArrayList<Contextion> list = new ArrayList<Contextion>(1);
 		list.addAll(optExertions);
 		return list;
 	}
 	
-	public List<Discipline> getMograms(List<Discipline> exs) {
+	public List<Contextion> getMograms(List<Contextion> exs) {
 		for (Routine e : optExertions) {
 			((ServiceMogram)e).getMograms(exs);
 		}

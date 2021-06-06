@@ -118,8 +118,8 @@ public class OptTask extends ConditionalTask {
 		return cs;
 	}
 	
-	public List<Discipline> getMograms(List<Discipline> exs) {
-		exs.add((Mogram)target);
+	public List<Contextion> getMograms(List<Contextion> exs) {
+		exs.add(target);
 		exs.add(this);
 		return exs;
 	}

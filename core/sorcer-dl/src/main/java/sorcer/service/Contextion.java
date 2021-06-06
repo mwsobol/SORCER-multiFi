@@ -44,6 +44,17 @@ public interface Contextion extends Request, Scopable {
     Context evaluate(Context context, Arg... args) throws MogramException, RemoteException, ServiceException;
 
 	/**
+	 * Generic execution of mogram by cooperated services.
+	 *
+	 * @return a resulting Contextion
+	 * @throws ServiceException
+	 *             if a mogram error occurs
+	 * @throws RemoteException
+	 *             if remote call causes an error
+	 */
+	public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException;
+
+	/**
 	 * Generic federated execution called exertion by federated services.
 	 *
 	 * @param txn

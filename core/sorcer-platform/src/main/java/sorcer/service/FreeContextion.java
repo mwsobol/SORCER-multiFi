@@ -42,6 +42,11 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
+	public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException {
+		return null;
+	}
+
+	@Override
 	public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
 		return null;
 	}

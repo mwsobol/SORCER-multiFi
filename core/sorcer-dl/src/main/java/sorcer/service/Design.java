@@ -37,7 +37,7 @@ public interface Design extends Contextion, Remote {
 
     public Context getContext() throws ContextException;
 
-    public Discipline getDiscipline() throws RemoteException;;
+    public Contextion getDiscipline() throws RemoteException;;
 
     public Fidelity<Development> getDeveloperFi() throws RemoteException;
 

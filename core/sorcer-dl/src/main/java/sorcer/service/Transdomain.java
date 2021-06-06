@@ -27,11 +27,11 @@ public interface Transdomain extends Transdiscipline, cxtn {
 
     public String getDomainName();
 
-    public Map<String, Discipline> getChildren();
+    public Map<String, Contextion> getChildren();
 
     public Map<String, Context>  getChildrenContexts();
 
-    public Discipline getChild(String name);
+    public Contextion getChild(String name);
 
     public Object get(String path$domain);
 

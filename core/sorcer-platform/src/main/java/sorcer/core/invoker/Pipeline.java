@@ -167,6 +167,11 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
     }
 
     @Override
+    public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException {
+        return (T) evaluate(args);
+    }
+
+    @Override
     public String getDomainName() {
         return name;
     }

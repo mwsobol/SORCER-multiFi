@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
 @FunctionalInterface
 public interface Development {
 
-    public Context develop(Discipline discipline, Context context) throws ServiceException, ExecutiveException,
+    public Context develop(Contextion discipline, Context context) throws ServiceException, ExecutiveException,
             RemoteException;
 
 }

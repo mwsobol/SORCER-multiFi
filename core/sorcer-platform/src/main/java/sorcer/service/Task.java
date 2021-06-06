@@ -343,7 +343,7 @@ public class Task extends Subroutine implements ElementaryRequest {
 	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
 	 */
 	@Override
-	public Discipline addMogram(Discipline component) {
+	public Contextion addMogram(Contextion component) {
 		throw new RuntimeException("Tasks do not contain component domains!");
 	}
 
@@ -403,7 +403,7 @@ public class Task extends Subroutine implements ElementaryRequest {
 		return val;
 	}
 
-	public List<Discipline> getMograms(List<Discipline> exs) {
+	public List<Contextion> getMograms(List<Contextion> exs) {
 		exs.add(this);
 		return exs;
 	}
@@ -414,8 +414,8 @@ public class Task extends Subroutine implements ElementaryRequest {
 	}
 
 	@Override
-	public List<Discipline> getMograms() {
-		List<Discipline> ml = new ArrayList<>();
+	public List<Contextion> getMograms() {
+		List<Contextion> ml = new ArrayList<>();
 		ml.add(this);
 		return ml;
 	}

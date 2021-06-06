@@ -39,7 +39,8 @@ import java.util.*;
 /**
  * Created by sobolemw on 5/4/15.
  */
-public abstract class ServiceMogram extends MultiFiSlot<String, Object> implements Mogram, Activity, ServiceBean, Exec, Serializable, SorcerConstants {
+//public abstract class ServiceMogram extends MultiFiSlot<String, Object> implements Mogram, Activity, ServiceBean, Exec, Serializable, SorcerConstants {
+public abstract class ServiceMogram extends MultiFiSlot<String, Object> implements Identifiable, Mogram, Arg, Activity, ServiceBean, Exec, Serializable, SorcerConstants {
 
     protected final static Logger logger = LoggerFactory.getLogger(ServiceMogram.class.getName());
 
@@ -205,8 +206,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.dataContext = (ServiceContext) dataContext;
     }
 
-    public List<Discipline> getAllMograms() {
-        List<Discipline> exs = new ArrayList();
+    public List<Contextion> getAllMograms() {
+        List<Contextion> exs = new ArrayList();
         getMograms(exs);
         return exs;
     }
@@ -217,7 +218,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return exs;
     }
 
-    public List<Discipline> getMograms(List<Discipline> exs) {
+    public List<Contextion> getMograms(List<Contextion> exs) {
         exs.add(this);
         return exs;
     }
@@ -229,7 +230,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public List<String> getAllMogramIds() {
         List<String> mogIdsList = new ArrayList<>();
-        for (Discipline mo : getAllMograms()) {
+        for (Contextion mo : getAllMograms()) {
             mogIdsList.add(mo.getId().toString());
         }
         return mogIdsList;
@@ -237,17 +238,17 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public void trimAllNotSerializableSignatures() throws SignatureException {
         trimNotSerializableSignatures();
-        for (Discipline m : getAllMograms()) {
+        for (Contextion m : getAllMograms()) {
             ((ServiceMogram) m).trimNotSerializableSignatures();
         }
     }
 
-    public Discipline getMogram(String componentMogramName) {
+    public Contextion getMogram(String componentMogramName) {
         if (key.equals(componentMogramName)) {
             return this;
         } else {
-            List<Discipline> mograms = getAllMograms();
-            for (Discipline m : mograms) {
+            List<Contextion> mograms = getAllMograms();
+            for (Contextion m : mograms) {
                 if (m.getName().equals(componentMogramName)) {
                     return m;
                 }
@@ -480,8 +481,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public void trimNotSerializableSignatures() throws SignatureException {
-        List<Discipline> mogs = getAllMograms();
-        for (Discipline mog : mogs) {
+        List<Contextion> mogs = getAllMograms();
+        for (Contextion mog : mogs) {
             Fi mFi = mog.getMultiFi();
             if (mFi != null) {
                 for (Object fi : mFi.getSelects()) {
@@ -704,7 +705,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.contextSelector = contextSelector;
     }
 
-    public Discipline getComponentMogram(String path) {
+    public Contextion getComponentMogram(String path) {
         return this;
     }
 
@@ -1230,8 +1231,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.metaFiNames = metaFiNames;
     }
 
-    public List<Discipline> getMograms() {
-        List<Discipline> mograms = new ArrayList<>();
+    public List<Contextion> getMograms() {
+        List<Contextion> mograms = new ArrayList<>();
         mograms.add(this);
         return mograms;
     }
@@ -1256,7 +1257,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return Function.Type.MOGRAM;
     }
 
-    @Override
     public void substitute(Arg... args) throws SetterException {
         dataContext.substitute(args);
     }

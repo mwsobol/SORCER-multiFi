@@ -279,8 +279,8 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
             substitute(entries);
             if (context != null) {
                 if (((ServiceContext) context).isLinked()) {
-                    List<Discipline> exts = getAllMograms();
-                    for (Discipline e : exts) {
+                    List<Contextion> exts = getAllMograms();
+                    for (Contextion e : exts) {
                         Object link = context.getLink(e.getName());
                         if (link instanceof ContextLink) {
                             e.getContext().append(
@@ -432,7 +432,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     public void setSessionId(Uuid id) {
         sessionId = id;
         if (this instanceof Transroutine) {
-            List<Discipline> v =  this.getMograms();
+            List<Contextion> v =  this.getMograms();
             for (int i = 0; i < v.size(); i++) {
                 ((Subroutine) v.get(i)).setSessionId(id);
             }
@@ -476,8 +476,8 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
             return false;
     }
 
-    public List<Discipline> getAllMograms() {
-        List<Discipline> exs = new ArrayList();
+    public List<Contextion> getAllMograms() {
+        List<Contextion> exs = new ArrayList();
         getMograms(exs);
         return exs;
     }
@@ -833,8 +833,8 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
 
     public List<Signature> getAllSignatures() throws RemoteException {
         List<Signature> allSigs = new ArrayList<>();
-        List<Discipline> allExertions = getAllMograms();
-        for (Discipline e : allExertions) {
+        List<Contextion> allExertions = getAllMograms();
+        for (Contextion e : allExertions) {
             allSigs.add(((ServiceMogram)e).getProcessSignature());
         }
         return allSigs;
@@ -842,8 +842,8 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
 
     public List<Signature> getAllTaskSignatures() {
         List<Signature> allSigs = new ArrayList<>();
-        List<Discipline> allExertions = getAllMograms();
-        for (Discipline e : allExertions) {
+        List<Contextion> allExertions = getAllMograms();
+        for (Contextion e : allExertions) {
             if (e instanceof Task)
                 allSigs.add(((Routine)e).getProcessSignature());
         }
@@ -860,11 +860,11 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     public void updateValue(Object value) throws ContextException {
-        List<Discipline> exertions = getAllMograms();
+        List<Contextion> exertions = getAllMograms();
         // logger.info(" eval = " + eval);
         // logger.info(" this exertion = " + this);
         // logger.info(" domains = " + domains);
-        for (Discipline e : exertions) {
+        for (Contextion e : exertions) {
             if (e instanceof Routine && !((Routine)e).isJob()) {
                 // logger.info(" exertion i = "+ e.getName());
                 Context cxt = ((Routine)e).getContext();

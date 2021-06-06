@@ -299,7 +299,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 			dispatcher = MogramDispatcherFactory.getFactory()
 					.createDispatcher(block, sharedContexts, true, provider);
 
-            for (Discipline mog : block.getMograms()) {
+            for (Contextion mog : block.getMograms()) {
                 if (((ServiceMogram)mog).getDataContext() != null && ((ServiceMogram)mog).getDataContext().getScope() == null) {
                     if (block.getContext() != null) {
                         ((ServiceMogram)mog).getDataContext().setScope(block.getContext());

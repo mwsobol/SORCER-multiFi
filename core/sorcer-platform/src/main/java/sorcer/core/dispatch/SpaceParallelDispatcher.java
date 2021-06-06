@@ -77,7 +77,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     @Override
-    protected List<Discipline> getInputExertions() throws ContextException {
+    protected List<Contextion> getInputExertions() throws ContextException {
         if (xrt instanceof Job)
             return Mograms.getInputExertions((Job) xrt);
         else if (xrt instanceof Block) {
@@ -90,7 +90,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     public void doExec(Arg... args) throws SignatureException, RoutineException {
         new Thread(disatchGroup, new CollectResultThread(), tName("collect-" + xrt.getName())).start();
 
-        for (Discipline mogram : inputXrts) {
+        for (Contextion mogram : inputXrts) {
             logger.info("Calling monSession.init from SpaceParallelDispatcher for: {}", mogram.getName());
             MonitoringSession monSession = MonitorUtil.getMonitoringSession((Routine)mogram);
             if (xrt.isMonitorable() && monSession!=null) {

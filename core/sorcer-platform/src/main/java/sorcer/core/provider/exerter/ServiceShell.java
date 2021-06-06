@@ -67,7 +67,7 @@ import static sorcer.eo.operator.*;
 public class ServiceShell implements Service, Activity, Exertion, Client, Callable<Object>, RemoteServiceShell {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
 	private Service service;
-	private Mogram mogram;
+	private Contextion mogram;
 	private File mogramSource;
 	private Transaction transaction;
 	private static MutualExclusion locker;
@@ -93,14 +93,14 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		this.provider = provider;
 	}
 
-	public Mogram exert(Mogram xrt, Arg... entries)
+	public Mogram exert(Contextion xrt, Arg... entries)
 		throws TransactionException, ServiceException, RemoteException {
 		try {
-			xrt.substitute(entries);
+			((ServiceContext)xrt).substitute(entries);
 		} catch (Exception e) {
 			throw new RoutineException(e);
 		}
-		return exert(xrt, null, (String) null);
+		return exert(xrt, entries);
 	}
 
 
@@ -117,7 +117,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 					Exertion prv = (Exertion) Accessor.get().getService(sig(RemoteServiceShell.class));
 					result = prv.exert(exertion, transaction, entries);
 				} else {
-					exertion.substitute(entries);
+					((ServiceMogram)exertion).substitute(entries);
 					this.mogram = exertion;
 					result = exert(transaction, null, entries);
 				}
@@ -202,10 +202,10 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		Exec.State state = ((Subroutine) mogram).getControlContext().getExecState();
 		if (state == State.INITIAL) {
 			if (mogram instanceof Routine) {
-				mogram.getExceptions().clear();
-				mogram.getTrace().clear();
+				((ServiceMogram)mogram).getExceptions().clear();
+				((ServiceMogram)mogram).getTrace().clear();
 			}
-			for (Discipline e : ((ServiceMogram)mogram).getAllMograms()) {
+			for (Contextion e : ((ServiceMogram)mogram).getAllMograms()) {
 				if (e instanceof Routine) {
 					if (((ControlContext) ((Routine) e).getControlContext()).getExecState() == State.INITIAL) {
 						((ServiceMogram) e).setStatus(Exec.INITIAL);
@@ -215,7 +215,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 				}
 				if (e instanceof Block) {
 					resetScope((Routine) e, argCxt, entries);
-				} else {
+				} else if (e instanceof Mogram) {
 					((ServiceMogram) e).clearScope();
 				}
 			}
@@ -236,7 +236,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		if (context != null) {
 			exertion.getDataContext().append(context);
 		}
-		for (Discipline mogram : exertion.getMograms()) {
+		for (Contextion mogram : exertion.getMograms()) {
 			((ServiceMogram) mogram).clearScope();
 		}
 	}
@@ -554,9 +554,9 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 
 	public static Mogram postProcessExertion(Mogram mog) throws ServiceException {
 		if (mog instanceof Routine) {
-			List<Discipline> mograms = null;
+			List<Contextion> mograms = null;
 			mograms = ((ServiceMogram)mog).getAllMograms();
-			for (Discipline mogram : mograms) {
+			for (Contextion mogram : mograms) {
 				if (mogram instanceof Routine) {
 					List<Setter> ps = ((Subroutine) mogram).getPersisters();
 					if (ps != null) {
@@ -627,7 +627,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		return evaluate(mogram, args);
 	}
 
-	public Object evaluate(Mogram mogram, Arg... args) throws MogramException {
+	public Object evaluate(Contextion mogram, Arg... args) throws MogramException {
 		if (mogram instanceof Routine) {
 			Routine exertion = (Routine)mogram;
 			Object out;
@@ -802,7 +802,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		return closedTask;
 	}
 
-	public <T extends Mogram> T exert(Service srv, Mogram mog, Transaction txn)
+	public <T extends Mogram> T exert(Service srv, Contextion mog, Transaction txn)
 		throws TransactionException, ServiceException, RemoteException {
 		this.service = srv;
 		this.mogram = mog;
@@ -831,7 +831,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 				cxt = (Context) mogram;
 			}
 			((Mogram) service).setScope(cxt);
-			return (T) exert((Mogram) service);
+			return (T) exert((Contextion) service);
 		} else try {
 			if (((Signature) service).getServiceType() == RemoteServiceShell.class) {
                 Exerter prv = (Exerter) Accessor.get().getService((Signature) service);
@@ -858,7 +858,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			if (service instanceof NetletSignature) {
 				ServiceScripter se = new ServiceScripter(System.out, null, Sorcer.getWebsterUrl(), true);
 				se.readFile(new File(((NetletSignature)service).getServiceSource()));
-				return evaluate((Mogram)se.interpret());
+				return evaluate((Contextion) se.interpret());
 			} else if (service instanceof Entry) {
 				return exec(service, args);
 			} else if (service instanceof EntryModel) {

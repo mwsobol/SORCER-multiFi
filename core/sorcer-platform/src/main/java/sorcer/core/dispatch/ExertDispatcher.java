@@ -48,7 +48,7 @@ abstract public class ExertDispatcher implements Dispatcher {
 
     protected Subroutine masterXrt;
 
-    protected List<Discipline> inputXrts;
+    protected List<Contextion> inputXrts;
 
 	protected volatile int state = Exec.INITIAL;
 
@@ -129,7 +129,7 @@ abstract public class ExertDispatcher implements Dispatcher {
     }
 
     abstract protected void doExec(Arg... args) throws SignatureException, RoutineException, RemoteException, MogramException;
-    abstract protected List<Discipline> getInputExertions() throws ContextException;
+    abstract protected List<Contextion> getInputExertions() throws ContextException;
 
     protected void beforeParent(Routine exertion) throws ContextException, RoutineException {
         logger.debug("before parent {}", exertion);
@@ -381,7 +381,7 @@ abstract public class ExertDispatcher implements Dispatcher {
             ((ServiceMogram)mo).setStatus(INITIAL);
             if (mo instanceof Transroutine) {
                 Transroutine ce = (Transroutine) mo;
-                for (Discipline sub : ce.getMograms())
+                for (Contextion sub : ce.getMograms())
                     reconcileInputExertions((Mogram) sub);
             }
         }

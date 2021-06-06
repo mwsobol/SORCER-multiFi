@@ -25,7 +25,7 @@ public class ExploreModel extends RequestModel implements Transmodel, Configurab
 
     private static final Logger logger = LoggerFactory.getLogger(Transmodel.class);
 
-    protected Map<String, Discipline> children = new HashMap<>();
+    protected Map<String, Contextion> children = new HashMap<>();
 
     protected Map<String, Context> childrenContexts = new HashMap<>();
 
@@ -81,10 +81,10 @@ public class ExploreModel extends RequestModel implements Transmodel, Configurab
         this.childrenPaths = childrenPaths;
     }
 
-    public void addChildren(List<Domain> domains) throws RemoteException {
-        for (Domain vm : domains) {
+    public void addChildren(List<Contextion> domains) throws RemoteException {
+        for (Contextion vm : domains) {
             this.children.put(vm.getName(), vm);
-            vm.setParent(this);
+            ((ServiceMogram)vm).setParent(this);
         }
     }
 
@@ -103,12 +103,12 @@ public class ExploreModel extends RequestModel implements Transmodel, Configurab
     }
 
     @Override
-    public Map<String, Discipline> getChildren() {
+    public Map<String, Contextion> getChildren() {
         return children;
     }
 
     @Override
-    public Discipline getChild(String name) {
+    public Contextion getChild(String name) {
         return children.get(name);
     }
 
@@ -201,7 +201,7 @@ public class ExploreModel extends RequestModel implements Transmodel, Configurab
                     if (de.getName().equals(key)) {
                         dpl = de.getData();
                         for (Path p : dpl) {
-                            Discipline domain = children.get(p.getName());
+                            Contextion domain = children.get(p.getName());
                             execDependencies(p.getName(), inContext, args);
                             Context cxt = null;
                             if (children.get(p.path) instanceof EntryModel) {

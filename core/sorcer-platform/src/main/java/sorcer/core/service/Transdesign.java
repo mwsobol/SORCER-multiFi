@@ -20,7 +20,6 @@ import net.jini.core.transaction.Transaction;
 import sorcer.core.context.DesignContext;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Analyzer;
 import sorcer.core.context.model.ent.Developer;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
@@ -31,8 +30,6 @@ import sorcer.service.modeling.Initialization;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import static sorcer.mo.operator.devFi;
-
 /**
  * A top-level interface for disciplinary transdesigns.
  *
@@ -40,9 +37,8 @@ import static sorcer.mo.operator.devFi;
  */
 public class Transdesign extends MultiFiSlot implements Design {
 
-
     // transdiscipline
-    private Discipline discipline;
+    private Contextion discipline;
 
     private Context disciplineIntent;
 
@@ -83,7 +79,7 @@ public class Transdesign extends MultiFiSlot implements Design {
         Signature discSig = dznCxt.getDisciplineSignature();
         Signature discIntentSig = dznCxt.getDisciplineIntentSignature();
         if (discSig != null) {
-            discipline = (Discipline) ((LocalSignature)discSig).initInstance();
+            discipline = (Contextion) ((LocalSignature)discSig).initInstance();
         } else {
             discipline = dznCxt.getDiscipline();
         }
@@ -144,6 +140,11 @@ public class Transdesign extends MultiFiSlot implements Design {
     @Override
     public Context evaluate(Context context, Arg... args) throws MogramException, RemoteException, ServiceException {
         return discipline.evaluate(context, args);
+    }
+
+    @Override
+    public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException {
+        return null;
     }
 
     @Override
@@ -231,7 +232,7 @@ public class Transdesign extends MultiFiSlot implements Design {
     }
 
     @Override
-    public Discipline getDiscipline() throws RemoteException {
+    public Contextion getDiscipline() throws RemoteException {
         return discipline;
     }
 

@@ -526,7 +526,7 @@ public class operator extends Operator {
                    throw new ContextException(e);
                 }
             }
-            model.substitute(args);
+            ((ServiceContext)model).substitute(args);
             ((ServiceMogram)model).setValid(false);
             if (cfmgr != null && cfmgr.getDataContext().getMorpher() != null) {
                 ((ServiceContext)model).getContextFidelityManager().morph();
@@ -638,7 +638,7 @@ public class operator extends Operator {
                 if (cxt != null) {
                     return ((Modeling) service).evaluate((ServiceContext)cxt);
                 } else {
-                    ((Context)service).substitute(args);
+                    ((ServiceContext)service).substitute(args);
                     ((Modeling) service).evaluate();
                 }
                 return ((Model)service).getResult();
@@ -662,7 +662,7 @@ public class operator extends Operator {
         }
     }
 
-    public static <T extends Contextion> T exert(T input, Transaction transaction, Arg... entries)
+    public static <T extends Mogram> T exert(T input, Transaction transaction, Arg... entries)
             throws ServiceException {
         return new sorcer.core.provider.exerter.ServiceShell().exert(input, transaction, entries);
     }
@@ -675,15 +675,15 @@ public class operator extends Operator {
         }
     }
 
-    public static <T extends Mogram> T exert(Mogram service, T mogram, Arg... entries) throws ServiceException {
-        try {
-            return service.exert(mogram, null, entries);
-        } catch (RemoteException e) {
-            throw new ServiceException(e);
-        }
-    }
+//    public static <T extends Mogram> T exert(Exertion service, T mogram, Arg... entries) throws ServiceException {
+//        try {
+//            return service.exert(mogram, null, entries);
+//        } catch (RemoteException e) {
+//            throw new ServiceException(e);
+//        }
+//    }
 
-    public static <T extends Mogram> T exert(Mogram service, T mogram, Transaction txn, Arg... entries)
+    public static <T extends Mogram> T exert(Exertion service, T mogram, Transaction txn, Arg... entries)
             throws ServiceException {
         try {
             return service.exert(mogram, txn, entries);
