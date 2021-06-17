@@ -3910,6 +3910,20 @@ operator extends Operator {
         return disciplineSig(signature);
     }
 
+    public static Signature disciplineSig(Class<?> serviceType, String initSelector) {
+        Signature signature = null;
+        try {
+            signature = sig(serviceType, initSelector);
+        } catch (SignatureException e) {
+            throw new RuntimeException("invalid signature: " + serviceType + "#" + initSelector);
+        }
+        ((ServiceSignature)signature).addRank(Kind.DISCIPLINE,
+            Kind.DESIGN,
+            Kind.MODEL,
+            Kind.TASKER);
+        return signature;
+    }
+
     public static Signature disciplineSig(Signature signature) {
         ((ServiceSignature)signature).addRank(Kind.DISCIPLINE,
                                               Kind.DESIGN,
@@ -3920,6 +3934,20 @@ operator extends Operator {
 
     public static Signature dscInSig(Signature signature) {
         return  disciplineInputSig( signature);
+    }
+
+    public static Signature disciplineInputSig(Class<?> serviceType, String initSelector) {
+        Signature signature = null;
+        try {
+            signature = sig(serviceType, initSelector);
+        } catch (SignatureException e) {
+            throw new RuntimeException("invalid signature: " + serviceType + "#" + initSelector);
+        }
+        ((ServiceSignature)signature).addRank(Kind.CONTEXT,
+            Kind.DISCIPLINE,
+            Kind.DESIGN,
+            Kind.TASKER);
+        return signature;
     }
 
     public static Signature disciplineInputSig(Signature signature) {
@@ -3973,6 +4001,17 @@ operator extends Operator {
 
     public static Signature optiSig(Signature signature) {
         return optimizerSig(signature);
+    }
+
+    public static Signature optimizerSig(Class<?> serviceType) {
+        Signature signature = null;
+        try {
+            signature = sig(serviceType);
+        } catch (SignatureException e) {
+            throw new RuntimeException("invalid signature: " + serviceType);
+        }
+        ((ServiceSignature)signature).addRank(Kind.OPTIMIZER, Kind.TASKER);
+        return signature;
     }
 
     public static Signature optimizerSig(Signature signature) {
