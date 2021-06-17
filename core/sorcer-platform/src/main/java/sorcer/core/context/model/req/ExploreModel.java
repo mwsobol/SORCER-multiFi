@@ -187,12 +187,8 @@ public class ExploreModel extends RequestModel implements Transmodel, Configurab
     }
 
     @Override
-    public Context explore(Context context, Arg... args) throws EvaluationException, RemoteException {
-        try {
-            return explorerFi.getSelect().explore(context);
-        } catch (ServiceException | ExploreException e) {
-            throw new EvaluationException(e);
-        }
+    public Context explore(Context context, Arg... args) throws ContextException, RemoteException {
+        return explorerFi.getSelect().explore(context);
     }
 
     @Override

@@ -261,6 +261,21 @@ public class Governance implements Transdiscipline, Dependency {
 		return explorerFi;
 	}
 
+	@Override
+	public Context analyze(Context modelContext, Arg... args) throws EvaluationException, RemoteException {
+		try {
+			analyzerFi.getSelect().analyze(this, modelContext);
+		} catch (ServiceException | AnalysisException e) {
+			throw new EvaluationException(e);
+		}
+		return output;
+	}
+
+	@Override
+	public Context explore(Context context, Arg... args) throws ContextException, RemoteException {
+		return explorerFi.getSelect().explore(context);
+	}
+
 	public void setExplorerFi(Fidelity<Exploration> explorerFi) {
 		this.explorerFi = explorerFi;
 	}

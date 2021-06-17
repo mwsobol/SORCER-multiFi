@@ -42,12 +42,6 @@ public interface Transmodel extends Model, Transdomain, Configurable {
 
     public void addChildrenContexts(ContextList componentContexts);
 
-    public Context analyze(Context modelContext, Arg... args)
-        throws EvaluationException, RemoteException;
-
-    public Context explore(Context context, Arg... args)
-        throws EvaluationException, RemoteException;
-
     public void execDependencies(String path, Context inContext, Arg... args)
         throws ServiceException, RemoteException;
 }

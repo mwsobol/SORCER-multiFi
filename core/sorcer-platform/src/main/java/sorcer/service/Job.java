@@ -37,6 +37,7 @@ import sorcer.core.signature.RemoteSignature;
 import sorcer.security.util.Auth;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Strategy.Access;
+import sorcer.service.modeling.ExploreException;
 import sorcer.util.SorcerUtil;
 
 import javax.security.auth.Subject;
@@ -610,6 +611,24 @@ public class Job extends Transroutine {
 		} catch (ContextException ex) {
 			ex.printStackTrace();
 			throw new SetterException(ex);
+		}
+	}
+
+	@Override
+	public Context analyze(Context context, Arg... args) throws EvaluationException {
+		try {
+			return exert(context);
+		} catch (ServiceException e) {
+			throw new EvaluationException(e);
+		}
+	}
+
+	@Override
+	public Context explore(Context context, Arg... args) throws ContextException {
+		try {
+			return exert(context);
+		} catch (ServiceException e) {
+			throw new ContextException(e);
 		}
 	}
 }

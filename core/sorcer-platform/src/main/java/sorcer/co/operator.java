@@ -1294,12 +1294,16 @@ public class operator extends Operator {
         return setValue((Entry)entry, value);
     }
 
-	public static Request setValue(Request request, String path, Object value) throws ContextException, RemoteException {
+	public static Request setValue(Request request, String path, Object value) throws ContextException {
 		if (request instanceof Contextion) {
 			if (request instanceof Context) {
 				((Context)request).putValue(path, value);
 			} else {
-				((Contextion) request).getOutput().putValue(path, value);
+				try {
+					((Contextion) request).getOutput().putValue(path, value);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return request;

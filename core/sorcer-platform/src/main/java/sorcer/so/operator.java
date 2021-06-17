@@ -169,7 +169,7 @@ public class operator extends Operator {
         return collab.evaluateDomain(domainName, context);
     }
 
-    public static ServiceContext eval(Request request, Context context) throws ServiceException {
+    public static ServiceContext eval(Request request, Context context) throws ContextException {
         Context rc;
         try {
             if (request instanceof Contextion) {
@@ -185,7 +185,7 @@ public class operator extends Operator {
                     throw new ContextException(e);
                 }
             }
-        } catch (RemoteException e) {
+        } catch (RemoteException | ServiceException e) {
             throw new ContextException(e);
         }
         return (ServiceContext)rc;

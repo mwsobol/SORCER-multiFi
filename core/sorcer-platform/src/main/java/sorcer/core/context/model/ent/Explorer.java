@@ -99,7 +99,7 @@ public class Explorer extends Entry<Exploration> implements Controller, Explorat
     }
 
     @Override
-    public Context explore(Context context) throws ServiceException, ExploreException, RemoteException {
+    public Context explore(Context context) throws ContextException, RemoteException {
         // use output for explorer after collaboration
         Context output = null;
         try {

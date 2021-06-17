@@ -166,6 +166,11 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		return explorerFi;
 	}
 
+	@Override
+	public Context explore(Context context, Arg... args) throws ContextException, RemoteException {
+		return explorerFi.getSelect().explore(context);
+	}
+
 	public void setExplorerFi(Fidelity<Exploration> explorerFi) {
 		this.explorerFi = explorerFi;
 	}
@@ -421,7 +426,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 				((ModelStrategy) serviceStrategy).setOutcome(out);
 				strategy.setExecState(Exec.State.DONE);
 			}
-		} catch (ConfigurationException | ContextException | ExploreException | RemoteException | AnalysisException e) {
+		} catch (ConfigurationException | RemoteException | AnalysisException e) {
 			throw new EvaluationException(e);
 		}
 		return out;
@@ -432,13 +437,13 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		return (T) execute(args);
 	}
 
-	public void analyze(Context context) throws ServiceException {
+	@Override
+	public Context analyze(Context context, Arg... args) throws EvaluationException, RemoteException {
 		Context collabOut;
 		if (((ServiceContext)context).getColabType() == Strategy.Colab.BBinCxt) {
 			collabOut = input;
 		} else {
 			 collabOut = new ServiceContext(name);
-
 		}
 		Contextion domain = null;
 		try {
@@ -509,9 +514,10 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 				((ServiceContext) collabOut).put(Context.DOMAIN_OUTPUTS_PATH, outputs);
 			}
 			output = collabOut;
-		} catch (SignatureException | RemoteException | DispatchException | AnalysisException e) {
-			throw new ContextException(e);
+		} catch (SignatureException | RemoteException | DispatchException | ServiceException | AnalysisException e) {
+			throw new EvaluationException(e);
 		}
+		return collabOut;
 	}
 
 	public void initializeDomains() throws SignatureException {

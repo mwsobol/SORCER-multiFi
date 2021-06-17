@@ -25,6 +25,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.exertion.AltTask;
 import sorcer.core.exertion.LoopTask;
 import sorcer.core.exertion.OptTask;
+import sorcer.service.modeling.ExploreException;
 import sorcer.util.SorcerUtil;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -395,4 +396,21 @@ public abstract class Block extends Transroutine {
 		return this;
 	}
 
+	@Override
+	public Context analyze(Context context, Arg... args) throws EvaluationException {
+		try {
+			return exert(context);
+		} catch (ServiceException e) {
+			throw new EvaluationException(e);
+		}
+	}
+
+	@Override
+	public Context explore(Context context, Arg... args) throws ContextException {
+		try {
+			return exert(context);
+		} catch (ServiceException e) {
+			throw new ContextException(e);
+		}
+	}
 }
