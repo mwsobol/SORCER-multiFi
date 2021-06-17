@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static sorcer.mo.operator.getDomainContext;
 import static sorcer.so.operator.*;
 
 public class Collaboration implements Transdiscipline, Dependency, cxtn {
@@ -371,6 +372,15 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 				input = context;
 			} else if (context != null){
 				input.append(context);
+			} else {
+				// transfer inputs from collaborating contextions
+				Context ccxt;
+				for (Contextion cxtn: children.values()) {
+					ccxt = getDomainContext(input, cxtn.getName());
+					if (ccxt != null) {
+						((ServiceContext)ccxt).substituteInfos(input);
+					}
+				}
 			}
 			ModelStrategy strategy = ((ModelStrategy) input.getDomainStrategy());
 			List<Fidelity> fis = Arg.selectFidelities(args);
@@ -438,7 +448,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 					domain = ((SignatureDomain) domain).getDomain();
 					children.put(domain.getDomainName(), domain);
 				}
-				Context domainCxt = sorcer.mo.operator.getDomainContext(context, domain.getDomainName());
+				Context domainCxt = getDomainContext(context, domain.getDomainName());
 				Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getDomainName());
 				Context cxt = null;
 				if (domainCxt != null) {

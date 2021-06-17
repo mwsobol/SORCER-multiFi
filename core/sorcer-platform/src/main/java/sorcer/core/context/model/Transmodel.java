@@ -33,13 +33,20 @@ public interface Transmodel extends Model, Transdomain, Configurable {
 
     public void setChildrenPaths(Paths childrenPaths);
 
-    public void addChildren(List<Contextion> domains) throws SignatureException, RemoteException;
+    public void addChildren(List<Contextion> domains)
+        throws SignatureException, RemoteException;
 
     public Map<String, Context> getChildrenContexts();
 
     public void setChildrenContexts(Map<String, Context> childrenContexts);
 
     public void addChildrenContexts(ContextList componentContexts);
+
+    public Context analyze(Context modelContext, Arg... args)
+        throws EvaluationException, RemoteException;
+
+    public Context explore(Context context, Arg... args)
+        throws EvaluationException, RemoteException;
 
     public void execDependencies(String path, Context inContext, Arg... args)
         throws ServiceException, RemoteException;

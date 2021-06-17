@@ -11,6 +11,7 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 import sorcer.service.modeling.Exploration;
+import sorcer.service.modeling.ExploreException;
 import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
@@ -172,6 +173,26 @@ public class ExploreModel extends RequestModel implements Transmodel, Configurab
             childrenContexts.put(cxt.getName(), cxt);
         }
         this.childrenContexts = childrenContexts;
+    }
+
+    @Override
+    public Context analyze(Context modelContext, Arg... args) throws EvaluationException, RemoteException {
+        try {
+            out = modelContext;
+            analyzerFi.getSelect().analyze(this, modelContext);
+            return (Context) out;
+        } catch (ServiceException | AnalysisException e) {
+            throw new EvaluationException(e);
+        }
+    }
+
+    @Override
+    public Context explore(Context context, Arg... args) throws EvaluationException, RemoteException {
+        try {
+            return explorerFi.getSelect().explore(context);
+        } catch (ServiceException | ExploreException e) {
+            throw new EvaluationException(e);
+        }
     }
 
     @Override

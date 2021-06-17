@@ -2750,6 +2750,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
+	public List<Entry> substituteInfos(Context context) throws ContextException {
+		return new ArrayList();
+	}
+
 	public void substitute(Arg... entries) throws SetterException {
 		if (entries == null)
 			return;
@@ -3097,7 +3101,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Context evaluate(Context inputContext, Arg... args) throws EvaluationException {
+	public Context evaluate(Context inputContext, Arg... args) throws EvaluationException, RemoteException {
 		try {
 			if (args != null) {
 				substitute(args);
@@ -3660,7 +3664,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Object execute(Arg... args) throws ServiceException {
+	public Object execute(Arg... args) throws ServiceException, RemoteException {
 		Context cxt = (Context) Arg.selectDomain(args);
 		if (cxt != null) {
 			scope = cxt;
@@ -3672,7 +3676,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public Entry act(Arg... args) throws ServiceException {
-		Object result = this.execute(args);
+		Object result = null;
+		try {
+			result = this.execute(args);
+		} catch (RemoteException e) {
+			throw new ServiceException(e);
+		}
 		if (result instanceof Entry) {
 			return (Entry)result;
 		} else {
@@ -3682,7 +3691,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public Data act(String entryName, Arg... args) throws ServiceException {
-		Object result = this.execute(args);
+		Object result = null;
+		try {
+			result = this.execute(args);
+		} catch (RemoteException e) {
+			throw new ServiceException(e);
+		}
 		if (result instanceof Entry) {
 			return (Entry)result;
 		} else {

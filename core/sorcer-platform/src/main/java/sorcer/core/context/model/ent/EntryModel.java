@@ -636,7 +636,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	}
 
 	@Override
-	public Context getResponse(Context context, Arg... args) throws ContextException {
+	public Context getResponse(Context context, Arg... args) throws ContextException, RemoteException {
 		evaluate(context, args);
 		return getOutput(args);
 	}
