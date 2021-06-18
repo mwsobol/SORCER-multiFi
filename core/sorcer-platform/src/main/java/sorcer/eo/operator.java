@@ -3416,6 +3416,9 @@ operator extends Operator {
         return el;
     }
 
+    public static EntryList initDesign(Value...  entries) {
+        return initialDesign(entries);
+    }
     public static EntryList initialDesign(Value...  entries) {
         return designInputs(entries);
     }
@@ -3906,8 +3909,8 @@ operator extends Operator {
         return signature;
     }
 
-    public static Signature dscSig(Signature signature) {
-        return disciplineSig(signature);
+    public static Signature dscSig(Class<?> serviceType, String initSelector) {
+        return disciplineSig(serviceType, initSelector);
     }
 
     public static Signature disciplineSig(Class<?> serviceType, String initSelector) {
@@ -3959,8 +3962,7 @@ operator extends Operator {
     }
 
     public static Signature modelSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(Kind.MODEL,
-                                              Kind.TASKER);
+        ((ServiceSignature)signature).addRank(Kind.MODEL, Kind.TASKER);
         return signature;
     }
 
@@ -3968,9 +3970,28 @@ operator extends Operator {
         return contextSig(signature);
     }
 
+    public static Signature cxtSig(Class<?> serviceType, String initSelector) {
+        return contextSig(serviceType, initSelector);
+    }
+
+    public static Signature intentSig(Class<?> serviceType, String initSelector) {
+        return contextSig(serviceType, initSelector);
+    }
+
+    public static Signature contextSig(Class<?> serviceType, String initSelector) {
+        Signature signature = null;
+        try {
+            signature = sig(serviceType, initSelector);
+        } catch (SignatureException e) {
+            throw new RuntimeException("invalid signature: " + serviceType + "#" + initSelector);
+        }
+        ((ServiceSignature)signature).addRank(Kind.CONTEXT, Kind.TASKER);
+        return contextSig(signature);
+    }
+
     public static Signature contextSig(Signature signature) {
         ((ServiceSignature)signature).addRank(Kind.CONTEXT,
-                                              Kind.TASKER);
+            Kind.TASKER);
         return signature;
     }
 
@@ -4003,6 +4024,9 @@ operator extends Operator {
         return optimizerSig(signature);
     }
 
+    public static Signature optiSig(Class<?> serviceType) {
+        return optimizerSig(serviceType);
+    }
     public static Signature optimizerSig(Class<?> serviceType) {
         Signature signature = null;
         try {

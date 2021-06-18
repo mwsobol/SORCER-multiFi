@@ -1126,18 +1126,18 @@ public class operator {
         return (String) ((ServiceContext)context).get(Functionality.Type.REGION.toString());
     }
 
-    public static Context analyze(Transdiscipline discipline, Context context) throws ContextException {
-        try {
-            if (discipline instanceof Collaboration) {
-                ((Collaboration)discipline).analyze(context);
-            } else {
-                discipline.getAnalyzerFi().getSelect().analyze(discipline, context);
-            }
-            return discipline.getOutput();
-        } catch (ServiceException | AnalysisException | RemoteException e) {
-            throw new ContextException(e);
-        }
-    }
+//    public static Context analyze(Transdiscipline discipline, Context context) throws ContextException {
+//        try {
+//            if (discipline instanceof Collaboration) {
+//                ((Collaboration)discipline).analyze(context);
+//            } else {
+//                discipline.getAnalyzerFi().getSelect().analyze(discipline, context);
+//            }
+//            return discipline.getOutput();
+//        } catch (ServiceException | AnalysisException | RemoteException e) {
+//            throw new ContextException(e);
+//        }
+//    }
 
     public static Context explore(Transdiscipline discipline, Context context) throws ContextException {
         try {
