@@ -112,10 +112,15 @@ public class SmlOperators {
 		// Evaluate domains
 		cxt c4 = eval(model());
 		Context c5 = eval(ex2, context());
-		cxt c6 = eval(operator.rnd(), cxt());
+		cxt c6 = eval(rnd(), cxt());
 		// Domain results
 		cxt out1 = result(model());
 		cxt out2 = result(job());
+
+		// Control disciplines
+//		analyze(context());
+//		explore(context());
+//		search(context());
 
 		// Evaluate specific models
 		// Context, Table, row is rsp (Response)
