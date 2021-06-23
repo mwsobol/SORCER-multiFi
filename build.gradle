@@ -24,7 +24,7 @@ int ndx = ref.lastIndexOf("/")
 String branch = ref.substring(ndx+1).trim()
 String branchRef = branch.equals("master")?"":"-$branch"
 
-version = "8.8.3.30$branchRef"
+version = "8.8.3.31$branchRef"
 
 apply plugin: 'idea'
 idea {
