@@ -3428,24 +3428,24 @@ public class ServiceContext<T> extends ServiceMogram implements
      */
     public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
         try {
-            if (mogram instanceof NetTask) {
-                Task task = (NetTask)mogram;
-                Class serviceType = task.getServiceType();
-                if (provider != null) {
+			if (mogram instanceof NetTask) {
+				Task task = (NetTask)mogram;
+				Class serviceType = task.getServiceType();
+				if (provider != null) {
 					Task out = ((ServiceExerter)provider).getDelegate().doTask(task, txn, args);
 					// clearSessions provider execution scope
 					out.getContext().setScope(null);
 					return (T) out;
-                } else if (Invocation.class.isAssignableFrom(serviceType)) {
-                    Object out = ((Invocation)this).invoke(task.getContext(), args);
-                    handleExertOutput(task, out);
-                    return (T) task;
-                } else if (Evaluation.class.isAssignableFrom(serviceType)) {
-                    Object out = ((Evaluation)this).evaluate(args);
-                    handleExertOutput(task, out);
-                    return (T) task;
-                }
-            }
+				} else if (Invocation.class.isAssignableFrom(serviceType)) {
+					Object out = ((Invocation)this).invoke(task.getContext(), args);
+					handleExertOutput(task, out);
+					return (T) task;
+				} else if (Evaluation.class.isAssignableFrom(serviceType)) {
+					Object out = ((Evaluation)this).evaluate(args);
+					handleExertOutput(task, out);
+					return (T) task;
+				}
+			}
             exertion.getContext().appendContext(this);
             return (T) exertion.exert(txn);
         } catch (Exception e) {
@@ -3621,7 +3621,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (provider == null)
 			return key;
 		else
-			return provider.getProviderName();
+			return ((ServiceExerter)provider).getProviderName();
 	}
 
 	public boolean compareTo(Object object) {
