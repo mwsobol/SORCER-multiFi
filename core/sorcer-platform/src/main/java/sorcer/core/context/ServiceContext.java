@@ -3460,35 +3460,6 @@ public class ServiceContext<T> extends ServiceMogram implements
         }
     }
 
-	private void handleExertOutput(Task task, Object result ) throws ContextException {
-		ServiceContext dataContext = (ServiceContext) task.getDataContext();
-		if (result instanceof Context) {
-			Context.Return rp = dataContext.getContextReturn();
-			if (rp != null) {
-				try {
-					if (((Context) result).getValue(rp.returnPath) != null) {
-						dataContext.setReturnValue(((Context) result).getValue(rp.returnPath));
-					} else if (rp.outPaths != null && rp.outPaths.size() > 0) {
-						Context out = dataContext.getDirectionalSubcontext(rp.outPaths);
-						dataContext.setReturnValue(out);
-					}
-				} catch (RemoteException e) {
-					throw new ContextException(e);
-				}
-			} else if (dataContext.getScope() != null) {
-				dataContext.getScope().append((Context)result);
-			} else {
-				dataContext = (ServiceContext) result;
-			}
-		} else {
-			dataContext.setReturnValue(result);
-		}
-		dataContext.updateContextWith(((ServiceSignature)task.getProcessSignature()).getOutConnector());
-		task.setContext(dataContext);
-		task.setStatus(DONE);
-	}
-
-
 	public Context updateInOutPaths(In inpaths, Out outpaths) throws ContextException {
 		if (containsPath(Condition._closure_)) {
 			remove(Condition._closure_);

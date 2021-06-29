@@ -654,7 +654,7 @@ public class operator extends Operator {
         return exertion.getExceptions();
     }
 
-    public static <T extends Mogram> T exert(T mogram, Arg... args) throws ServiceException {
+    public static <T extends Contextion> T exert(T mogram, Arg... args) throws ServiceException {
         try {
             return mogram.exert(null, args);
         } catch (RemoteException e) {
@@ -662,12 +662,12 @@ public class operator extends Operator {
         }
     }
 
-    public static <T extends Mogram> T exert(T input, Transaction transaction, Arg... entries)
-            throws ServiceException {
-        return new sorcer.core.provider.exerter.ServiceShell().exert(input, transaction, entries);
-    }
+//    public static <T extends Contextion> T exert(T input, Transaction transaction, Arg... entries)
+//            throws ServiceException {
+//        return new sorcer.core.provider.exerter.ServiceShell().exert(input, transaction, entries);
+//    }
 
-    public static <T extends Mogram> T exert(Exertion service, T mogram, Arg... entries) throws ServiceException {
+    public static <T extends Contextion> T exert(Exertion service, T mogram, Arg... entries) throws ServiceException {
         try {
             return service.exert(mogram, null, entries);
         } catch (RemoteException e) {
@@ -675,21 +675,13 @@ public class operator extends Operator {
         }
     }
 
-//    public static <T extends Mogram> T exert(Exertion service, T mogram, Arg... entries) throws ServiceException {
+//    public static <T extends Contextion> T exert(Exertion service, T mogram, Transaction txn, Arg... entries)
+//            throws ServiceException {
 //        try {
-//            return service.exert(mogram, null, entries);
+//            return service.exert(mogram, txn, entries);
 //        } catch (RemoteException e) {
 //            throw new ServiceException(e);
 //        }
 //    }
-
-    public static <T extends Mogram> T exert(Exertion service, T mogram, Transaction txn, Arg... entries)
-            throws ServiceException {
-        try {
-            return service.exert(mogram, txn, entries);
-        } catch (RemoteException e) {
-            throw new ServiceException(e);
-        }
-    }
 
 }

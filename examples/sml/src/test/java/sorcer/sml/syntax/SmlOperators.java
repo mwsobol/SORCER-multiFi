@@ -116,8 +116,10 @@ public class SmlOperators {
 		// Domain results
 		cxt out1 = result(model());
 		cxt out2 = result(job());
+		Object out1b = result(model(), "path");
+		Object out2b = result(job(), "path");
 
-		// Control disciplines
+		// Discipline controllers
 //		analyze(context());
 //		explore(context());
 //		search(context());

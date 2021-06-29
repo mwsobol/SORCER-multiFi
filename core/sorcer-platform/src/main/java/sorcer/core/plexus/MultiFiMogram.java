@@ -56,24 +56,24 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
 
     @Override
     public Mogram clearScope() throws MogramException {
-        return ((ServiceMogram)scope).clearScope();
+        return ((ServiceMogram) scope).clearScope();
     }
 
     public MultiFiMogram(ServiceFidelity fidelity) {
         this(fidelity.getName(), fidelity);
     }
 
-    public MultiFiMogram(String name, MorphFidelity fidelity)  {
+    public MultiFiMogram(String name, MorphFidelity fidelity) {
         super(name);
         morphFidelity = fidelity;
         if (fiManager == null)
             fiManager = new FidelityManager(name);
 
-        ((FidelityManager)fiManager).add(morphFidelity.getFidelity());
-        ((FidelityManager)fiManager).setMogram(this);
-        ((FidelityManager)fiManager).addMorphedFidelity(morphFidelity.getName(), morphFidelity);
-        ((FidelityManager)fiManager).addFidelity(morphFidelity.getName(), morphFidelity.getFidelity());
-        morphFidelity.addObserver((FidelityManager)fiManager);
+        ((FidelityManager) fiManager).add(morphFidelity.getFidelity());
+        ((FidelityManager) fiManager).setMogram(this);
+        ((FidelityManager) fiManager).addMorphedFidelity(morphFidelity.getName(), morphFidelity);
+        ((FidelityManager) fiManager).addFidelity(morphFidelity.getName(), morphFidelity.getFidelity());
+        morphFidelity.addObserver((FidelityManager) fiManager);
     }
 
     public MultiFiMogram(String name, Metafidelity fidelity) {
@@ -86,7 +86,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
         requestFidelity = fidelity;
     }
 
-    public MultiFiMogram(Context context, MorphFidelity fidelity)  {
+    public MultiFiMogram(Context context, MorphFidelity fidelity) {
         this(context.getName(), fidelity);
         scope = context;
     }
@@ -102,7 +102,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
         mogram.getContext().setScope(scope);
         try {
             T out = mogram.exert(txn,
-                                 entries);
+                entries);
             morphFidelity.setChanged();
             morphFidelity.notifyObservers(out);
             return out;
@@ -129,7 +129,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
 //        if (morphFidelity != null) {
 //            return ((Mogram)morphFidelity.getSelect()).getContext();
 //        } else {
-            return scope;
+        return scope;
 //        }
     }
 
@@ -156,7 +156,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     @Override
     public List<ThrowableTrace> getExceptions() {
         try {
-            return ((ServiceMogram)fiManager.getMogram()).getExceptions();
+            return ((ServiceMogram) fiManager.getMogram()).getExceptions();
         } catch (RemoteException e) {
             logger.warn("Could not get mogram", e);
         }
@@ -166,17 +166,17 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
 
     @Override
     public List<String> getTrace() throws RemoteException {
-        return ((Mogram)fiManager.getMogram()).getTrace();
+        return ((Mogram) fiManager.getMogram()).getTrace();
     }
 
     @Override
     public List<ThrowableTrace> getAllExceptions() throws RemoteException {
-        return ((Mogram)fiManager.getMogram()).getAllExceptions();
+        return ((Mogram) fiManager.getMogram()).getAllExceptions();
     }
 
     @Override
     public boolean isMonitorable() throws RemoteException {
-        return ((Mogram)fiManager.getMogram()).isMonitorable();
+        return ((Mogram) fiManager.getMogram()).isMonitorable();
     }
 
     @Override
@@ -209,7 +209,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
 
     public void setUnifiedName(String name) throws RemoteException {
         this.key = name;
-        ((FidelityManager)fiManager).setName(name);
+        ((FidelityManager) fiManager).setName(name);
         Map<String, ServiceFidelity> fiMap = fiManager.getFidelities();
         Set<String> fiSet = fiMap.keySet();
         if (fiSet.size() == 1) {
@@ -226,7 +226,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     @Override
     public void appendTrace(String info) {
         try {
-            ((ServiceMogram)fiManager.getMogram()).appendTrace(info);
+            ((ServiceMogram) fiManager.getMogram()).appendTrace(info);
         } catch (RemoteException remoteException) {
             logger.warn("Problem appending trace", remoteException);
         }
@@ -256,6 +256,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
         }
 
     }
+
     @Override
     public String getPath() {
         return getMultifidelity().getPath();
@@ -298,8 +299,8 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
         Mogram req = null;
         Object select = getMultifidelity().getSelect();
         if (select instanceof Ref) {
-            req =  (Mogram) ((Ref) getMultifidelity().getSelect()).getValue();
-        } else{
+            req = (Mogram) ((Ref) getMultifidelity().getSelect()).getValue();
+        } else {
             req = (Mogram) getMultifidelity().getSelect();
         }
         return req;
@@ -317,11 +318,11 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
 
     @Override
     public int size() {
-       return morphFidelity.size();
+        return morphFidelity.size();
     }
 
     @Override
-    public  Mogram selectSelect(String name) throws ConfigurationException {
+    public Mogram selectSelect(String name) throws ConfigurationException {
         return (Mogram) getMultifidelity().selectSelect(name);
     }
 
@@ -332,11 +333,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
 
     @Override
     public List getSelects() {
-        return  getMultifidelity().getSelects();
+        return getMultifidelity().getSelects();
     }
 
-    @Override
-    public <T extends Contextion> T exert(T exertion, Transaction txn, Arg... args) throws ServiceException, RemoteException {
-        return null;
-    }
 }

@@ -145,13 +145,8 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see sorcer.service.Service#service(sorcer.service.Routine,
-     * net.jini.core.transaction.Transaction)
-     */
-    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws MogramException {
+    @Override
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException, MogramException {
         try {
             if (mogram instanceof Routine) {
                 Subroutine exertion = (Subroutine) mogram;

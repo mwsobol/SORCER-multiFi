@@ -116,8 +116,4 @@ public class FreeMogram extends ServiceMogram implements FreeService {
         return type == Functionality.Type.ROUTINE;
     }
 
-    @Override
-    public <T extends Contextion> T exert(T exertion, Transaction txn, Arg... args) throws ServiceException, RemoteException {
-        return null;
-    }
 }

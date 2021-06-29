@@ -16,6 +16,7 @@ import sorcer.core.context.model.ent.Coupling;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Analyzer;
 import sorcer.core.context.model.ent.Function;
+import sorcer.core.exertion.NetTask;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.plexus.FidelityManager;
@@ -329,6 +330,68 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     @Override
     public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException {
         return null;
+    }
+
+    @Override
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException, MogramException {
+        try {
+            if (mogram instanceof NetTask) {
+                Task task = (NetTask)mogram;
+                Class serviceType = task.getServiceType();
+                if (provider != null) {
+                    Task out = ((ServiceExerter)provider).getDelegate().doTask(task, txn, args);
+                    // clearSessions provider execution scope
+                    out.getContext().setScope(null);
+                    return (T) out;
+                } else if (Invocation.class.isAssignableFrom(serviceType)) {
+                    Object out = ((Invocation)this).invoke(task.getContext(), args);
+                    handleExertOutput(task, out);
+                    return (T) task;
+                } else if (Evaluation.class.isAssignableFrom(serviceType)) {
+                    Object out = ((Evaluation)this).evaluate(args);
+                    handleExertOutput(task, out);
+                    return (T) task;
+                }
+            }
+            return (T) evaluate((Context) mogram, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ((ServiceMogram)mogram.getContext()).reportException(e);
+            if (e instanceof Exception) {
+                ((ServiceMogram) mogram).setStatus(FAILED);
+            } else {
+                ((ServiceMogram) mogram).setStatus(ERROR);
+            }
+            throw new ContextException(e);
+        }
+    }
+
+    protected void handleExertOutput(Task task, Object result ) throws ContextException {
+        ServiceContext dataContext = (ServiceContext) task.getDataContext();
+        if (result instanceof Context) {
+            Context.Return rp = dataContext.getContextReturn();
+            if (rp != null) {
+                try {
+                    if (((Context) result).getValue(rp.returnPath) != null) {
+                        dataContext.setReturnValue(((Context) result).getValue(rp.returnPath));
+                    } else if (rp.outPaths != null && rp.outPaths.size() > 0) {
+                        Context out = dataContext.getDirectionalSubcontext(rp.outPaths);
+                        dataContext.setReturnValue(out);
+                    }
+                } catch (RemoteException e) {
+                    throw new ContextException(e);
+                }
+            } else if (dataContext.getScope() != null) {
+                dataContext.getScope().append((Context)result);
+            } else {
+                dataContext = (ServiceContext) result;
+            }
+        } else {
+            dataContext.setReturnValue(result);
+        }
+        dataContext.updateContextWith(((ServiceSignature)task.getProcessSignature()).getOutConnector());
+        task.setContext(dataContext);
+        task.setStatus(DONE);
     }
 
     public String getDescription() {
