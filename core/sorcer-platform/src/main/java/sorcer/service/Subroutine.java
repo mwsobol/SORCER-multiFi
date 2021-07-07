@@ -779,17 +779,6 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         return netSignatures;
     }
 
-    public List<ServiceDeployment> getDeploymnets() throws RemoteException {
-        List<Signature> nsigs = getAllNetSignatures();
-        List<ServiceDeployment> deploymnets = new ArrayList<ServiceDeployment>();
-        for (Signature s : nsigs) {
-            ServiceDeployment d = ((ServiceSignature)s).getDeployment();
-            if (d != null)
-                deploymnets.add(d);
-        }
-        return deploymnets;
-    }
-
 	public void trimNotSerializableSignatures() throws SignatureException {
 		super.trimNotSerializableSignatures();
         getControlContext().setScope(null);

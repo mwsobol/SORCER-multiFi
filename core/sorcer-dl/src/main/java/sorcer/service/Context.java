@@ -964,8 +964,18 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 
 	public void setContextReturn(Return requestPath);
 
-	public enum Type {
-		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY, DESIGN
+	public enum Type implements Arg {
+		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY, DESIGN, CONTEXT, RESPONSE;
+
+		@Override
+		public String getName() {
+			return toString();
+		}
+
+		@Override
+		public Object execute(Arg... args) throws ServiceException, RemoteException {
+			return this;
+		}
 	}
 
 	final static String PARAMETER_TYPES = "context/parameter/types";

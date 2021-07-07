@@ -26,4 +26,20 @@ public interface Response<T> extends Identifiable, Serializable {
 
 	public Context toContext() throws ContextException;
 
+	enum Type implements Arg {
+		DISPATCH, CONTEXT, ROW, TABLE;
+
+		/* (non-Javadoc)
+		 * @see sorcer.service.Arg#getName()
+		 */
+		@Override
+		public String getName() {
+			return toString();
+		}
+
+		public Object execute(Arg... args) {
+			return this;
+		}
 	}
+
+}

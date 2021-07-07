@@ -16,7 +16,6 @@
  */
 package sorcer.so;
 
-import net.jini.core.transaction.Transaction;
 import sorcer.Operator;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ContextSelector;
@@ -27,7 +26,7 @@ import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.Transmodel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.core.context.model.req.Req;
+import sorcer.core.context.model.req.Srv;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
@@ -99,7 +98,7 @@ public class operator extends Operator {
                 } else if (entry instanceof Routine) {
                     return (T) ((Routine) entry).exert(args).getContext();
                 } else if (entry instanceof Functionality) {
-                    if (entry instanceof Req && entry.getImpl() instanceof SignatureEntry) {
+                    if (entry instanceof Srv && entry.getImpl() instanceof SignatureEntry) {
                         return  (T) entry.execute(args);
                     } else {
                         return (T) ((Functionality) entry).getValue(args);

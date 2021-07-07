@@ -96,7 +96,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected Subroutine exertion;
 	protected String currentPrefix;
 	protected boolean isFinalized = false;
-	protected Function.Type type = Function.Type.CONTEXT;
+	protected Context.Type contextType = Context.Type.CONTEXT;
 	protected Model.Pattern pattern =  Model.Pattern.ANAL;
 	Signature.Direction direction = Signature.Direction.INOUT;
 
@@ -3523,12 +3523,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return data.put(key, value);
 	}
 
-	public Functionality.Type getType() {
-		return type;
+	public Context.Type getContextType() {
+		return contextType;
 	}
 
-	public void setType(Functionality.Type type) {
-		this.type = type;
+	public void setContextType(Context.Type type) {
+		this.contextType = type;
 	}
 
 	public Iterator<String> keyIterator() {
@@ -3791,7 +3791,7 @@ public class ServiceContext<T> extends ServiceMogram implements
         this.exertion = context.exertion;
         this.currentPrefix = context.currentPrefix;
         this.isFinalized = context.isFinalized;
-        this.type = context.type;
+        this.contextType = context.contextType;
         this.direction = context.direction;
 
         this.isSoft = context.isSoft;

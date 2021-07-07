@@ -268,7 +268,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			if (exertion.getProcessSignature() != null) {
 				if (exertion.isTask() && (exertion.isProvisionable()
 					|| ((ServiceSignature) exertion.getProcessSignature()).isProvisionable())) {
-					List<ServiceDeployment> deploymnets = exertion.getDeploymnets();
+					List<ServiceDeployment> deploymnets = exertion.getDeployments();
 					if (deploymnets.size() > 0) {
 						ProvisionManager provisionManager = new ProvisionManager(exertion);
 						provisionManager.deployServices();

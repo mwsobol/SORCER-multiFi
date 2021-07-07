@@ -236,7 +236,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 * context.
 	 */
 	enum Type implements Arg {
-		PRO, PRE, POST, SRV, APD_DATA, APD_CONTROL, BUILDER, CONTROLLER;
+		PRO, PRE, POST, SRV, APD_DATA, APD_CONTROL, BUILDER, CONTROLLER, DISPATCH;
 
 		/* (non-Javadoc)
          * @see sorcer.service.Arg#getName()

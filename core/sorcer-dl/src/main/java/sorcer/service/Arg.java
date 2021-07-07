@@ -101,6 +101,38 @@ public interface Arg extends Serializable, Service {
 		return null;
 	}
 
+	public static Signature.Type selectSignatureType(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Signature.Type)
+				return (Signature.Type) arg;
+		}
+		return null;
+	}
+
+	public static Response.Type selectResponseType(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Response.Type)
+				return (Response.Type) arg;
+		}
+		return null;
+	}
+
+	public static Context.Type selectContextType(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Context.Type)
+				return (Context.Type) arg;
+		}
+		return null;
+	}
+
+	public static Functionality.Type selectFunctionalityType(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Functionality.Type)
+				return (Functionality.Type) arg;
+		}
+		return null;
+	}
+
 	public static Path selectPath(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Path)

@@ -739,4 +739,8 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		return Functionality.Type.COLLABORATION;
 	}
 
+	@Override
+	public List<Signature> getAllSignatures() throws RemoteException {
+		return null;
+	}
 }

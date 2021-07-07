@@ -35,11 +35,11 @@ public class Models {
 
 		Model mdl = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 				ent("add/x1", 20.0), ent("add/x2", 80.0),
-				fxn("add", (Context<Double> model) ->
+				srv("add", (Context<Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
-				fxn("multiply", (Context<Double> model) ->
+				srv("multiply", (Context<Double> model) ->
 						v(model, "multiply/x1") * v(model, "multiply/x2")),
-				fxn("subtract", (Context<Double> model) ->
+				srv("subtract", (Context<Double> model) ->
 						v(model, "multiply") - v(model, "add")),
 				response("subtract", "multiply", "add"));
 
@@ -56,11 +56,11 @@ public class Models {
 
 		Model mdl = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			    ent("add/x1", 20.0), ent("add/x2", 80.0),
-				fxn("add", (Context<Double> model) ->
+				srv("add", (Context<Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
-				fxn("multiply", (Context<Double> model) ->
+				srv("multiply", (Context<Double> model) ->
 						v(model, "multiply/x1") * v(model, "multiply/x2")),
-				fxn("subtract", (Context<Double> model) ->
+				srv("subtract", (Context<Double> model) ->
 						v(model, "multiply") - v(model, "add")),
 				response("subtract", "multiply", "add"));
 
@@ -79,13 +79,13 @@ public class Models {
 		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			    ent("add/x1", 20.0), ent("add/x2", 80.0),
 			    ent("multiply/done", false),
-				fxn("add", (Context<Double> model) ->
+				srv("add", (Context<Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
-				fxn("multiply", (Context<Double> model) ->
+				srv("multiply", (Context<Double> model) ->
 						v(model, "multiply/x1") * v(model, "multiply/x2")),
-				fxn("subtract", (Context<Double> model) ->
+				srv("subtract", (Context<Double> model) ->
 						v(model, "multiply") - v(model, "add")),
-				fxn("multiply2", (Context<Object> cxt) -> {
+				srv("multiply2", (Context<Object> cxt) -> {
 					ent multiply = (ent) get(cxt, "multiply");
 					double out = 0;
 					if (value(cxt, "multiply/done").equals(false)) {
@@ -96,7 +96,7 @@ public class Models {
 					}
 					return out;
 				}),
-				fxn("multiply3", (Context<Object> cxt) -> {
+				srv("multiply3", (Context<Object> cxt) -> {
 					ent multiply = (ent) get(cxt, "multiply");
 					double out = 0;
 					if (value(cxt, "multiply/done").equals(false)) {
@@ -124,13 +124,13 @@ public class Models {
 
 		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			    ent("add/x1", 20.0), ent("add/x2", 80.0),
-				fxn("add", (Context <Double> model) ->
+				srv("add", (Context <Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
-				fxn("multiply", (Context <Double> model) ->
+				srv("multiply", (Context <Double> model) ->
 						v(model, "multiply/x1") * v(model, "multiply/x2")),
-				fxn("subtract", (Context <Double> model) ->
+				srv("subtract", (Context <Double> model) ->
 						v(model, "multiply") - v(model, "add")),
-				fxn("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
+				srv("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
 					double out = (double) exec(entry, scope);
 					// out is result of multiply
 					if (out > 400) {
@@ -157,15 +157,15 @@ public class Models {
 		ContextDomain mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			    ent("add/x1", 20.0), ent("add/x2", 80.0),
 			    ent("arg/x1", 30.0), ent("arg/x2", 90.0),
-				fxn("add", (Context <Double> model) ->
+				srv("add", (Context <Double> model) ->
 								v(model, "add/x1") + v(model, "add/x2"),
 						result("add/out",
 								inPaths("add/x1", "add/x2"))),
-				fxn("multiply", (Context <Double> model) ->
+				srv("multiply", (Context <Double> model) ->
 								v(model, "multiply/x1") * v(model, "multiply/x2"),
 						result("multiply/out",
 								inPaths("multiply/x1", "multiply/x2"))),
-				fxn("subtract", (Context <Double> model) ->
+				srv("subtract", (Context <Double> model) ->
 								v(model, "multiply/out") - v(model, "add/out"),
 						result("model/response")),
 				response("subtract", "multiply/out", "add/out", "model/response"));
@@ -204,7 +204,7 @@ public class Models {
 
 	//	dependsOn(mo, dep("subtract", paths("multiply", "add")));
 
-		add(mo, fxn("fxn", entFunction));
+		add(mo, srv("fxn", entFunction));
 
 		Context out = response(mo);
 		logger.info("response: " + out);
@@ -250,7 +250,7 @@ public class Models {
 		dependsOn(mdl, dep("subtract", paths("fxn", "add")));
 
 		add(mdl, modelTask);
-		add(mdl, fxn("fxn", lambdaTask));
+		add(mdl, srv("fxn", lambdaTask));
 //		responseDown(mdl, "multiply");
 		responseUp(mdl, "fxn");
 
@@ -271,7 +271,7 @@ public class Models {
 
 		Block lb = block(sig(ServiceConcatenator.class),
 				context(ent("sum", 0.0)),
-				loop(0, 100, task(fxn("sum", (Context<Double> cxt) -> {
+				loop(0, 100, task(srv("sum", (Context<Double> cxt) -> {
 					Double out = value(cxt, "sum") + (Double) exec(ti);
 					putValue(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
 					return out; }))));
@@ -291,7 +291,7 @@ public class Models {
 		Block lb = block(sig(ServiceConcatenator.class),
 				context(ent("sum", 0.0),
 					ent("from", 320.0), ent("to", 420.0)),
-				loop(0, 100, task(fxn("sum", (Context<Double> cxt) -> {
+				loop(0, 100, task(srv("sum", (Context<Double> cxt) -> {
 					Double from = value(cxt, "from");
 					Double to = value(cxt, "to");
 					Double out = value(cxt, "sum") + (Double) exec(ti);

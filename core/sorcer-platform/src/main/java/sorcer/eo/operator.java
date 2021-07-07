@@ -31,7 +31,7 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.QueueStrategy;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.req.RequestModel;
-import sorcer.core.context.model.req.Req;
+import sorcer.core.context.model.req.Srv;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
@@ -724,8 +724,8 @@ operator extends Operator {
             while(i.hasNext()) {
                 e = i.next();
                 val = e.getValue();
-                if (val instanceof Req && ((Req)val).asis() instanceof ServiceFidelity) {
-                    fiMap.put(e.getKey(), (ServiceFidelity)((Req)val).asis());
+                if (val instanceof Srv && ((Srv)val).asis() instanceof ServiceFidelity) {
+                    fiMap.put(e.getKey(), (ServiceFidelity)((Srv)val).asis());
                 }
             }
             Projection prj = ((ServiceContext)cxt).getProjection();
@@ -775,7 +775,7 @@ operator extends Operator {
                                                    List<Entry> entryList) throws ContextException {
         for (int i = 0; i < entryList.size(); i++) {
             Entry ent = entryList.get(i);
-            if (ent instanceof Req) {
+            if (ent instanceof Srv) {
                 if (ent.asis() instanceof Scopable) {
                     if (((Scopable) ent.getImpl()).getScope() != null)
                         ((Scopable) ent.getImpl()).getScope().setScope(pcxt);
@@ -4001,7 +4001,18 @@ operator extends Operator {
     }
 
     public static Signature driverSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(Kind.DRIVER);
+        ((ServiceSignature)signature).addRank(Kind.DRIVER, Kind.DISPATCHER);
+        return signature;
+    }
+
+    public static Signature driverSig(Class<?> serviceType, String initSelector) {
+        Signature signature = null;
+        try {
+            signature = sig(serviceType, initSelector);
+        } catch (SignatureException e) {
+            throw new RuntimeException("invalid signature: " + serviceType + "#" + initSelector);
+        }
+        ((ServiceSignature)signature).addRank(Kind.DRIVER, Kind.DISPATCHER);
         return signature;
     }
 
@@ -4010,7 +4021,29 @@ operator extends Operator {
         return signature;
     }
 
+    public static Signature cxtnSig(Class<?> serviceType, String initSelector) {
+        Signature signature = null;
+        try {
+            signature = sig(serviceType, initSelector);
+        } catch (SignatureException e) {
+            throw new RuntimeException("invalid signature: " + serviceType + "#" + initSelector);
+        }
+        ((ServiceSignature)signature).addRank(Kind.CONTEXTION);
+        return signature;
+    }
+
     public static Signature dspSig(Signature signature) {
+        ((ServiceSignature)signature).addRank(Kind.DISPATCHER, Kind.DRIVER);
+        return signature;
+    }
+
+    public static Signature dspSig(Class<?> serviceType, String initSelector) {
+        Signature signature = null;
+        try {
+            signature = sig(serviceType, initSelector);
+        } catch (SignatureException e) {
+            throw new RuntimeException("invalid signature: " + serviceType + "#" + initSelector);
+        }
         ((ServiceSignature)signature).addRank(Kind.DISPATCHER);
         return signature;
     }

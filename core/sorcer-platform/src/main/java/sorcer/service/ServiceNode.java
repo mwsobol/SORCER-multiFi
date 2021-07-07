@@ -461,4 +461,8 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
         isExec = exec;
     }
 
+    @Override
+    public List<Signature> getAllSignatures() throws RemoteException {
+        return null;
+    }
 }

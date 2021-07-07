@@ -572,4 +572,8 @@ public class Governance implements Transdiscipline, Dependency {
 		isExec = exec;
 	}
 
+	@Override
+	public List<Signature> getAllSignatures() throws RemoteException {
+		return null;
+	}
 }

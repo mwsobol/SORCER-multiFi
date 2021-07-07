@@ -11,7 +11,6 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 import sorcer.service.modeling.Exploration;
-import sorcer.service.modeling.ExploreException;
 import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;

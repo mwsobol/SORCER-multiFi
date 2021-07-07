@@ -20,6 +20,7 @@ package sorcer.service.modeling;
 import sorcer.service.*;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 /**
  * A variable has id, name and execute. Its execute can be evaluated by a related
@@ -37,7 +38,7 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 	 * a list of types called kinds - addKind(Type). FUNDAMENTAL - if scalar has
 	 * meaning to the client
 	 */
-	public enum Type { SIGNATURE,
+	public enum Type implements Arg { SIGNATURE,
 		INPUT, CONSTANT, DOMAIN_CONSTANT, INVARIANT, OUTPUT, SHARED, INOUT, RESPONSE, DESIGN, INITIAL_DESIGN, PARAMETER,
 		LINKED, CONSTRAINT, OBJECTIVE, DERIVATIVE, GRADIENT, RANDOM, BOUNDED, FUNDAMENTAL, RAW, DELEGATION, COMPOSITION,
 		MULTIVAL, PRED, DOMAIN_PRED, DEP, DOMAIN_DEP, FILTER, PERSISTER, EVALUATOR, EVALUATION, PRODUCT, WATCHABLE, ENT, PROC, DUAL,
@@ -59,6 +60,17 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 		FDG,   	// finite difference gradient
 		MPFD,  // model parallel finite difference gradient
 		VPFD  	// var parallel finite difference
+		;
+
+		@Override
+		public String getName() {
+			return toString();
+		}
+
+		@Override
+		public Object execute(Arg... args) throws ServiceException, RemoteException {
+			return this;
+		}
 	}
 
 	public enum MathType {

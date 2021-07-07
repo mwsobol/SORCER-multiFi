@@ -592,4 +592,9 @@ public class SignatureDomain implements Domain {
     public void substitute(Arg... entries) throws SetterException, RemoteException {
         domain.substitute(entries);
     }
+
+    @Override
+    public List<Signature> getAllSignatures() throws RemoteException {
+        return null;
+    }
 }

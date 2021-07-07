@@ -177,6 +177,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         principal = new SorcerPrincipal(System.getProperty("user.name"));
         principal.setId(principal.getName());
         setSubject(principal);
+        type = Functionality.Type.MOGRAM;
     }
 
     public void reset(int state) {
@@ -456,11 +457,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public void setSubject(Subject subject) {
         this.subject = subject;
-    }
-
-    @Override
-    public Functionality.Type getType() {
-        return Functionality.Type.MOGRAM;
     }
 
     private void setSubject(Principal principal) {
@@ -1397,6 +1393,11 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return get(key);
     }
 
+    @Override
+    public List<Signature> getAllSignatures() throws RemoteException {
+        return null;
+    }
+    
     public Object get(String key) {
         return null;
     }

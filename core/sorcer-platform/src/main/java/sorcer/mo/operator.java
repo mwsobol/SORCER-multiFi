@@ -24,13 +24,13 @@ import sorcer.co.tuple.OutputValue;
 import sorcer.core.context.*;
 import sorcer.core.context.model.Transmodel;
 import sorcer.core.context.model.req.ExploreModel;
+import sorcer.core.context.model.req.Srv;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.service.*;
 import sorcer.service.Analysis;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
-import sorcer.core.context.model.req.Req;
 import sorcer.core.context.model.req.RequestModel;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.dispatch.SortingException;
@@ -699,7 +699,7 @@ public class operator {
                     hasEntry = true;
                     if (i instanceof Prc)
                         procType = true;
-                    else if (i instanceof Req || i instanceof Snr) {
+                    else if (i instanceof Srv || i instanceof Snr) {
                         srvType = true;
                     }
                 } catch (Exception e) {
@@ -978,7 +978,7 @@ public class operator {
         RequestModel model = null;
         FidelityManager fiManager = null;
         List<Metafidelity> metaFis = new ArrayList<>();
-        List<Req> morphFiEnts = new ArrayList<>();
+        List<Srv> morphFiEnts = new ArrayList<>();
         List<Fidelity> fis = new ArrayList<>();
         Projection inPathPrj = null;
         Projection outPathPrj = null;
@@ -1001,8 +1001,8 @@ public class operator {
                 } else if (((Projection) item).getFiType().equals(Fi.Type.CXT_PRJ)) {
                     cxtPrjs.add((Projection) item);
                 }
-            } else if (item instanceof Req && ((Req) item).getImpl() instanceof MorphFidelity) {
-                morphFiEnts.add((Req) item);
+            } else if (item instanceof Srv && ((Srv) item).getImpl() instanceof MorphFidelity) {
+                morphFiEnts.add((Srv) item);
             } else if (item instanceof Fidelity) {
                 if (item instanceof Metafidelity) {
                     metaFis.add((Metafidelity) item);
@@ -1058,7 +1058,7 @@ public class operator {
             fiManager.add(fis);
             MorphFidelity mFi;
             if ((morphFiEnts.size() > 0)) {
-                for (Req morphFiEnt : morphFiEnts) {
+                for (Srv morphFiEnt : morphFiEnts) {
                     mFi = (MorphFidelity) morphFiEnt.getImpl();
                     fiManager.addMorphedFidelity(morphFiEnt.getName(), mFi);
                     fiManager.addFidelity(morphFiEnt.getName(), mFi.getFidelity());
