@@ -751,15 +751,15 @@ public class operator extends Operator {
 		}
 	}
 
-	public static Paths mado(String... disciplines) {
+	public static Paths disciplines(String... disciplines) {
 		Paths paths = new Paths(disciplines);
-		paths.type = Type.MADO;
+		paths.type = Type.DISCIPLINE;
 		return paths;
 	}
 
 	public static Paths domains(String... domains) {
 		Paths paths = new Paths(domains);
-		paths.type = Type.COLLABORATION;
+		paths.type = Type.DISCIPLINE;
 		return paths;
 	}
 

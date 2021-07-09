@@ -1309,7 +1309,7 @@ public class operator {
                 execDeps = (ExecDeps) o;
             } else if (o instanceof ServiceFidelity) {
                 discFis.add((ServiceFidelity) o);
-            } else if (o instanceof Paths && ((Paths) o).type.equals(Functionality.Type.COLLABORATION)) {
+            } else if (o instanceof Paths && ((Paths) o).type.equals(Functionality.Type.DISCIPLINE)) {
                 domainPaths = (Paths) o;
             }
         }
@@ -1536,7 +1536,7 @@ public class operator {
                 execDeps = (ExecDeps) o;
             } else if (o instanceof ServiceFidelity) {
                 discFis.add((ServiceFidelity) o);
-            } else if (o instanceof Paths && ((Paths) o).type.equals(Functionality.Type.NODE)) {
+            } else if (o instanceof Paths && ((Paths) o).type.equals(Functionality.Type.DISCIPLINE)) {
                 nodePaths = (Paths) o;
             }
         }
