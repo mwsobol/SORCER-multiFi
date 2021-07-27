@@ -28,6 +28,9 @@ import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author Mike Sobolewski
+ */
 public class SignatureDomain implements Domain {
 
     String name;
