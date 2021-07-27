@@ -14,9 +14,9 @@ public class CollabRegion extends Collaboration implements Region {
 
     public CollabRegion(String name) {
         if (name == null) {
-            this.name = getClass().getSimpleName() + "-" + count++;
+            this.key = getClass().getSimpleName() + "-" + count++;
         } else {
-            this.name = name;
+            this.key = name;
         }
         serviceStrategy = new ModelStrategy(this);
     }

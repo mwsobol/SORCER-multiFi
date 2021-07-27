@@ -44,17 +44,13 @@ import java.util.Map;
 import static sorcer.mo.operator.getDomainContext;
 import static sorcer.so.operator.*;
 
-public class Collaboration implements Transdiscipline, Dependency, cxtn {
+public class Collaboration extends TransdisciplineService implements Dependency, cxtn {
 
 	static final long serialVersionUID = 1L;
 
 	protected static Logger logger = LoggerFactory.getLogger(Collaboration.class.getName());
 
 	private static int count = 0;
-
-	protected Uuid id = UuidFactory.generate();
-
-	protected  String name;
 
 	protected  String domainName;
 
@@ -70,10 +66,6 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 	// domain outputs
 	protected ContextList outputs = new ContextList();
-
-    protected Fi multiFi;
-
-	protected Morpher morpher;
 
 	protected Fidelity<Finalization> finalizerFi;
 
@@ -103,8 +95,6 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	// context output connector
 	protected Context outConnector;
 
-	protected Context scope;
-
 	protected Projection inPathProjection;
 
 	protected Projection outPathProjection;
@@ -121,9 +111,9 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
     public Collaboration(String name) {
         if (name == null) {
-            this.name = getClass().getSimpleName() + "-" + count++;
+            this.key = getClass().getSimpleName() + "-" + count++;
         } else {
-            this.name = name;
+            this.key = name;
         }
 		serviceStrategy = new ModelStrategy(this);
     }
@@ -232,7 +222,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 	@Override
 	public void setName(String name) {
-		this.name = name;
+		this.key = name;
 	}
 
 	@Override
@@ -246,13 +236,8 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	}
 
 	@Override
-	public Object getId() {
-		return id;
-	}
-
-	@Override
 	public String getName() {
-		return name;
+		return (String) key;
 	}
 
 	public Fidelity<Analysis> getAnalyzerFi() {
@@ -292,7 +277,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		}
 		((ServiceContext)context).getDomainStrategy().setExecState(Exec.State.INITIAL);
 		if (output == null) {
-			output = new ServiceContext(name);
+			output = new ServiceContext((String) key);
 		}
 		return explorerFi;
 	}
@@ -315,7 +300,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		}
 		((ServiceContext)context).getDomainStrategy().setExecState(Exec.State.INITIAL);
 		if (output == null) {
-			output = new ServiceContext(name);
+			output = new ServiceContext((String) key);
 		}
 		return analyzerFi;
 	}
@@ -443,7 +428,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		if (((ServiceContext)context).getColabType() == Strategy.Colab.BBinCxt) {
 			collabOut = input;
 		} else {
-			 collabOut = new ServiceContext(name);
+			 collabOut = new ServiceContext((String) key);
 		}
 		Contextion domain = null;
 		try {
@@ -510,7 +495,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 					analyzer.analyze(domain, collabOut);
 				}
 
-				collabOut.setSubject(name, this);
+				collabOut.setSubject((String) key, this);
 				((ServiceContext) collabOut).put(Context.DOMAIN_OUTPUTS_PATH, outputs);
 			}
 			output = collabOut;

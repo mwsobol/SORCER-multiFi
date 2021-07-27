@@ -101,8 +101,8 @@ bootme {
     systemProperties = ["relative.repo.path" : repoPath(),
                         "java.util.logging.config.file" : "${projectDir.path}/configs/sorcer-prv.logging",
                         "webster.url" : websterUrl]
-    spawn = false
-    debug = true
+//    spawn = false
+//    debug = true
 }
 
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
@@ -133,8 +133,8 @@ test {
         events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
     }
 //    dependsOn([install])
-//    dependsOn([install, bootme])
-//    finalizedBy(haltme)
+    dependsOn([install, bootme])
+    finalizedBy(haltme)
 }
 
 
