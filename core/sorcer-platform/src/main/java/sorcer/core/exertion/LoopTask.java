@@ -23,6 +23,7 @@ import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.req.RequestModel;
 import sorcer.core.invoker.Pipeline;
 import sorcer.service.*;
+import sorcer.service.modeling.Conditional;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
@@ -193,7 +194,7 @@ public class LoopTask extends ConditionalTask {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Conditional#getConditions()
+	 * @see sorcer.service.modeling.Conditional#getConditions()
 	 */
 	@Override
 	public List<Conditional> getConditions() {

@@ -43,12 +43,15 @@ public class ArithmeticMograms {
 			val("x3", 20.0d), val("x4", 80.0d),
 			ent("y1", expr("x1 * x2", args("x1", "x2"))),
 			ent("y2", expr("x3 + x4", args("x3", "x4"))),
-			ent("y3", expr("y1 - y2", args("y1", "y2"))),
+//			ent("y2", expr("x3 + x4", args("x3", "x4")), ckpt(true)),
+//			ent("y3", expr("y1 - y2", args("y1", "y2"))),
+			ent("y3", expr("y1 - y2", args("y1", "y2")), ckpt(true)),
 			response("y1", "y2", "y3"));
 
 		Context out = response(mdl);
 		logger.info("out: " + out);
 		logger.info("model response: " + out);
+		assertTrue(isCkpt(out));
 		assertTrue(get(out, "y3").equals(400.0));
 		assertTrue(get(out, "y1").equals(500.0));
 		assertTrue(get(out, "y2").equals(100.0));
@@ -431,6 +434,12 @@ public class ArithmeticMograms {
 		assertTrue(get(out, "mFi1").equals(100.0));
 		assertTrue(get(out, "mFi2").equals(9.0));
 		assertTrue(get(out, "mFi3").equals(50.0));
+
+	}
+
+
+	@Test
+	public void providerProxy() throws Exception {
 
 	}
 }

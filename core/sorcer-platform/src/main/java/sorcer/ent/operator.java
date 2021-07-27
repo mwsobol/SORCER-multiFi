@@ -35,6 +35,7 @@ import sorcer.service.modeling.Model;
 import sorcer.eo.operator.Args;
 import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.Functionality;
+import sorcer.util.Checkpoint;
 
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -888,8 +889,12 @@ public class operator extends Operator {
 		}
 
 		Context cxt = null;
+		Checkpoint ckpt = null;
 		for (Arg arg : args) {
-			cxt = (Context) Arg.selectDomain(args);
+			if (arg instanceof Context) {
+				cxt = (Context) Arg.selectDomain(args);
+			} else if (arg instanceof Checkpoint)
+			ckpt = (Checkpoint) Arg.selectCheckpoint(args);
 		}
 		try {
 			// special cases of procedural attachment
@@ -908,6 +913,10 @@ public class operator extends Operator {
 			}
 		} catch (ContextException e) {
 			e.printStackTrace();
+		}
+		if (ckpt != null) {
+			ckpt.setName(path);
+			entry.setCheckpoint(ckpt);
 		}
 		entry.setValid(true);
 		return entry;

@@ -204,6 +204,8 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 
 	final static String DOMAIN_OUTPUTS_PATH = "transdomain" + SorcerConstants.CPS + "domain" + SorcerConstants.CPS + "outputs";
 
+	final static String CHECKPOINT_ITERATION = "checkpoint" + SorcerConstants.CPS + "iteration";
+
 	/**
 	 * An object to specify no context execute.
 	 */

@@ -19,6 +19,7 @@ package sorcer.service;
 
 import sorcer.core.Index;
 import sorcer.core.Tag;
+import sorcer.service.modeling.Conditional;
 import sorcer.service.modeling.Functionality;
 
 import java.io.Serializable;
@@ -46,6 +47,14 @@ public interface Arg extends Serializable, Service {
 		for (Arg arg : args) {
 			if (arg instanceof ContextDomain)
 				return (ContextDomain) arg;
+		}
+		return null;
+	}
+
+	public static Conditional selectCheckpoint(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Conditional)
+				return (Conditional) arg;
 		}
 		return null;
 	}

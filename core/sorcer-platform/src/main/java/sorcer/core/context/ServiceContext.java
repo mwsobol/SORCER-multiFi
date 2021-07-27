@@ -42,6 +42,7 @@ import sorcer.service.*;
 import sorcer.service.Signature.Direction;
 import sorcer.service.modeling.*;
 import sorcer.service.ContextDomain;
+import sorcer.util.Checkpoint;
 import sorcer.util.ObjectCloner;
 import sorcer.util.Row;
 import sorcer.util.SorcerUtil;
@@ -53,9 +54,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import static sorcer.eo.operator.cxtFi;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
+import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.setValues;
 import static sorcer.mo.operator.value;
 
@@ -1711,6 +1710,16 @@ public class ServiceContext<T> extends ServiceMogram implements
 					subcntxt.putOutValue(path, val);
 				else
 					subcntxt.putValue(path, val);
+			}
+			// check if entry checkpoint is valid
+			Object obj = asis(path);
+			if (obj instanceof Entry && ((Entry) obj).getCheckpoint() != null) {
+				Checkpoint ckpt = (Checkpoint) ((Entry) obj).getCheckpoint();
+				if (ckpt.isTrue()) {
+					ckpt.setState(Exec.RETURNED);
+					subcntxt.setCheckpoint(ckpt);
+					return subcntxt;
+				}
 			}
 		}
 		return subcntxt;

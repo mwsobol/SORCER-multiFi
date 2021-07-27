@@ -30,6 +30,7 @@ import sorcer.core.provider.rendezvous.ServiceSpacer;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.jobber.JobberAccessor;
+import sorcer.service.modeling.Conditional;
 import sorcer.service.spacer.SpacerAccessor;
 import sorcer.util.AccessorException;
 

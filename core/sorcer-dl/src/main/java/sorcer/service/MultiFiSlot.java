@@ -17,6 +17,7 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.Conditional;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Getter;
 
@@ -52,6 +53,8 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
 
     // if a value is computed then isCached is true - computed only one for all
     protected boolean isCached = false;
+
+    protected Conditional checkpoint;
 
     public Integer index;
 
@@ -225,6 +228,14 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
 
     public void selectFidelity(Fidelity fi) throws ConfigurationException {
         ((Fidelity) multiFi).selectSelect(fi);
+    }
+
+    public Conditional getCheckpoint() {
+        return checkpoint;
+    }
+
+    public void setCheckpoint(Conditional checkpoint) {
+        this.checkpoint = checkpoint;
     }
 
     public boolean isAnnotated() {

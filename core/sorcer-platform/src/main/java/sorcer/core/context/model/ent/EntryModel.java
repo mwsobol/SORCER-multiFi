@@ -26,6 +26,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.service.Collaboration;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
+import sorcer.service.modeling.Conditional;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
 import sorcer.util.Row;

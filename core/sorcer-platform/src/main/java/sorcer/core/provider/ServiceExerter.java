@@ -59,6 +59,7 @@ import sorcer.service.*;
 import sorcer.service.Exerter;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
+import sorcer.service.modeling.Conditional;
 import sorcer.serviceui.UIComponentFactory;
 import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.serviceui.UIFrameFactory;
@@ -1438,7 +1439,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 	 * @return Routine
 	 * @throws sorcer.service.RoutineException
 	 * @see Routine
-	 * @see sorcer.service.Conditional
+	 * @see Conditional
 	 * @see sorcer.core.provider.ControlFlowManager
 	 * @throws java.rmi.RemoteException
 	 * @throws sorcer.service.RoutineException

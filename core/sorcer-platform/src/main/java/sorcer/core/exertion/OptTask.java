@@ -22,6 +22,7 @@ import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.service.*;
+import sorcer.service.modeling.Conditional;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -108,7 +109,7 @@ public class OptTask extends ConditionalTask {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Conditional#getConditions()
+	 * @see sorcer.service.modeling.Conditional#getConditions()
 	 */
 	@Override
 	public List<Conditional> getConditions() {

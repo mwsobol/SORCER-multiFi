@@ -17,9 +17,8 @@
 
 package sorcer.service;
 
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.Conditional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 

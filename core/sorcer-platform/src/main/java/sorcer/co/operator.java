@@ -37,11 +37,8 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
-import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.*;
 import sorcer.service.modeling.Functionality.Type;
-import sorcer.service.modeling.Valuation;
-import sorcer.service.modeling.ent;
 import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
@@ -356,6 +353,22 @@ public class operator extends Operator {
 			}
 		}
 		return cxt;
+	}
+
+	public static boolean isCkpt(MultiFiSlot slot) {
+		return slot.getCheckpoint() != null;
+	}
+
+	public static boolean isCkpt(ContextDomain slot) {
+		return ((MultiFiSlot)slot).getCheckpoint() != null;
+	}
+
+	public static Checkpoint ckpt() {
+		return new Checkpoint();
+	}
+
+	public static Checkpoint ckpt(boolean status) {
+		return new Checkpoint(status);
 	}
 
 	public static List<Object> values(Row response) {

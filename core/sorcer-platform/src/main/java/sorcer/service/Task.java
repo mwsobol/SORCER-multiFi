@@ -27,6 +27,7 @@ import sorcer.core.provider.ControlFlowManager;
 import sorcer.core.signature.LocalSignature;
 import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.ServiceSignature;
+import sorcer.service.modeling.Conditional;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;

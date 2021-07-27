@@ -27,6 +27,7 @@ import sorcer.core.exertion.LoopTask;
 import sorcer.core.exertion.OptTask;
 import sorcer.core.invoker.GroovyInvoker;
 import sorcer.core.invoker.ServiceInvoker;
+import sorcer.service.modeling.Conditional;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
