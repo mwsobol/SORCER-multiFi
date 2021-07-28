@@ -13,6 +13,7 @@ import sorcer.mo.operator;
 import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
+import sorcer.util.Checkpoint;
 
 import java.util.Collection;
 import java.util.List;
@@ -228,5 +229,16 @@ public class SmlOperators {
 		logger.info("two:" + Context.class.isAssignableFrom(ServiceContext.class));
 		logger.info("one:" + ContextDomain.class.isAssignableFrom(Model.class));
 		logger.info("two:" + ContextDomain.class.isAssignableFrom(Context.class));
+	}
+
+	@Test
+	public void checkPoint() throws Exception {
+		Checkpoint cpt = ckpt("discipline$");
+		String disciplineName = cpt.getDisciplineName();
+		String pathName = cpt.getEvaluationPath();
+		logger.info("isDisciplinaryOnly: " + cpt.isDisciplinaryOnly());
+		logger.info("disciplineName:" + disciplineName);
+		logger.info("pathName:" + pathName);
+		assertTrue(cpt.isDisciplinaryOnly());
 	}
 }

@@ -363,6 +363,10 @@ public class operator extends Operator {
 		return ((MultiFiSlot)slot).getCheckpoint() != null;
 	}
 
+	public static Checkpoint ckpt(String namw) {
+		return new Checkpoint(namw);
+	}
+
 	public static Checkpoint ckpt() {
 		return new Checkpoint();
 	}

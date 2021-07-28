@@ -294,7 +294,15 @@ import java.util.Map;
 	public void setConditionalContext(Context conditionaContext) {
 		this.conditionalContext = conditionaContext;
 	}
-	
+
+	public String getEvaluationPath() {
+		return evaluationPath;
+	}
+
+	public void setEvaluationPath(String evaluationPath) {
+		this.evaluationPath = evaluationPath;
+	}
+
 	public String getClosureExpression() {
 		return closureExpression;
 	}

@@ -29,12 +29,45 @@ public class Checkpoint extends Condition implements Arg {
 
     private Integer iteration;
 
+    private String disciplineName;
+
     public Checkpoint() {
         this.state = Exec.INITIAL;
     }
 
     public Checkpoint(int iteration) {
         this.iteration = iteration;
+    }
+
+    public Checkpoint(String name$path, int iteration) {
+        this(name$path);
+        this.iteration = iteration;
+    }
+
+    public Checkpoint(String name$path) {
+        String path = null;
+        if (name$path.indexOf('$') > 1) {
+            String name = null;
+            int ind = name$path.indexOf('$');
+            name = name$path.substring(0, ind);
+            path = name$path.substring(ind + 1);
+            evaluationPath = path;
+            disciplineName = name;
+        } else {
+            evaluationPath = name$path;
+        }
+    }
+
+    public Checkpoint(String name$path, ConditionCallable closure, String... parameters) {
+        this(name$path);
+        this.lambda = closure;
+        this.pars = parameters;
+        //set conditionalContext to scope of discipline domain
+    }
+
+    public Checkpoint(String domain, String path) {
+        this.disciplineName = domain;
+        this.evaluationPath = path;
     }
 
     public Checkpoint(boolean state) {
@@ -80,6 +113,40 @@ public class Checkpoint extends Condition implements Arg {
             throw new ContextException(e);
         }
         return false;
+    }
+
+    public boolean isDisciplinary() {
+        if (disciplineName != null && disciplineName.length() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isDisciplinaryOnly() {
+        if (disciplineName != null && disciplineName.length() > 0
+            && (evaluationPath == null || evaluationPath.length() == 0)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isPathOnly() {
+        if (evaluationPath != null && evaluationPath.length() > 0
+            && (disciplineName == null || disciplineName.length() == 0)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public String getDisciplineName() {
+        return disciplineName;
+    }
+
+    public void setDisciplineName(String disciplineName) {
+        this.disciplineName = disciplineName;
     }
 
     public Integer getState() {
