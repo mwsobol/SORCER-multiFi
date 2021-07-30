@@ -45,7 +45,7 @@ import static sorcer.so.operator.*;
 /**
  * @author Mike Sobolewski
  */
-public class Collaboration extends TransdisciplineService implements Dependency, cxtn {
+public class Collaboration extends ServiceTransdiscipline implements Dependency, cxtn {
 
 	static final long serialVersionUID = 1L;
 

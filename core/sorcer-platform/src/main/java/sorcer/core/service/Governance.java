@@ -21,8 +21,6 @@
 package sorcer.core.service;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.id.Uuid;
-import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ModelStrategy;
@@ -40,7 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Governance extends TransdisciplineService implements Dependency {
+public class Governance extends ServiceTransdiscipline implements Dependency {
 
 	private static final long serialVersionUID = 1L;
 
