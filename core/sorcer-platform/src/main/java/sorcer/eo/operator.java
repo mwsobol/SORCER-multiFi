@@ -3961,8 +3961,33 @@ operator extends Operator {
         return signature;
     }
 
+    public static Signature prvSig(Class<?> serviceType, Object... items)  {
+        try {
+            return prvSig(sig(serviceType, items));
+        } catch (SignatureException e) {
+            throw new RuntimeException("invalid signature: " + serviceType);
+        }
+    }
+
+    public static Signature prvSig(Signature signature) {
+        ((ServiceSignature)signature).addRank(Kind.PROVIDER);
+        return signature;
+    }
+
+    public static Signature mdlSig(Class<?> serviceType, String initSelector)  {
+        try {
+            return modelSig(sig(serviceType, initSelector));
+        } catch (SignatureException e) {
+            throw new RuntimeException("invalid signature: " + serviceType + "#" + initSelector);
+        }
+    }
+
+    public static Signature mdlSig(Signature signature) {
+        return modelSig(signature);
+    }
+
     public static Signature modelSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(Kind.MODEL, Kind.TASKER);
+        ((ServiceSignature)signature).addRank(Kind.MODEL);
         return signature;
     }
 
