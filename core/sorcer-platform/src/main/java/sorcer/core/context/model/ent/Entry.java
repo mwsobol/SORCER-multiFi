@@ -416,6 +416,13 @@ public class Entry<V> extends MultiFiSlot<String, V>
         }
     }
 
+    public String getAtDomainName() {
+        if (domain == null) {
+            return key;
+        }
+        return key+"@"+domain;
+    }
+
     public Fidelity<Path> getMultiFiPath() {
         return multiFiPath;
     }

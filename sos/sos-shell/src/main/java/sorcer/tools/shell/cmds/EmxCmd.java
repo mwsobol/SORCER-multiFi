@@ -330,7 +330,7 @@ public class EmxCmd extends ShellCmd {
             info.append("\ncreated at: ").append("@|yellow ").append((exertionInfos[i].getCreationDate() != null) ? sdf.format(exertionInfos[i].getCreationDate()) : "").append("|@");
             info.append(",  last updated at: ").append(exertionInfos[i].getLastUpdateDate());
             info.append("\nsignature: ").append("@|bold ").append(exertionInfos[i].getSignature()).append("|@");
-            if (exertionInfos[i].getTrace().size()>0) info.append("\ntrace: ").append("@|bold,red ").append(exertionInfos[i].getTrace()).append("|@");
+            if (exertionInfos[i].getTrace() != null && exertionInfos[i].getTrace().size()>0) info.append("\ntrace: ").append("@|bold,red ").append(exertionInfos[i].getTrace()).append("|@");
             out.println(ansi().render(info.toString()));
 		}
 	}

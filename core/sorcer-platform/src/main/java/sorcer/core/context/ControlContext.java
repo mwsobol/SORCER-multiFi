@@ -151,17 +151,11 @@ public class ControlContext extends ServiceContext<Object> implements RoutineStr
 
 	public final static String FALSE = "false";
 
-	public final static String TRACE_LIST = "exertion/execEnt/trace";
-
-	public final static String EXERTION_TRACABLE = "exertion/tracable";
-
 	private List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
 
 	private List<Signature> signatures = new ArrayList<Signature>();
 
 	private  Map<String, Service> freeServices = new HashMap();
-
-	private List<String> traceList = new ArrayList<String>();
 
 	// reponse paths of this context startegu
 	protected List<Path> responsePaths = new ArrayList<Path>();
@@ -201,8 +195,6 @@ public class ControlContext extends ServiceContext<Object> implements RoutineStr
 		setExecTimeRequested(true);
 		setWaitable(true);
 		put(EXCEPTIONS, exceptions);
-		put(TRACE_LIST, traceList);
-		put(EXERTION_TRACABLE, false);
 	}
 
 	public ControlContext(Routine exertion) {
@@ -253,22 +245,6 @@ public class ControlContext extends ServiceContext<Object> implements RoutineStr
 			put(EXERTION_WAITABLE, true);
 		else if (Wait.NO.equals(value) || Wait.FALSE.equals(value))
 			put(EXERTION_WAITABLE, false);
-	}
-
-	public void setTracable(boolean isTracable) {
-		if (isTracable)
-			put(EXERTION_TRACABLE, true);
-		else
-			put(EXERTION_TRACABLE, false);
-	}
-
-	public boolean isTracable() {
-		try {
-			return (Boolean) getValue(EXERTION_TRACABLE);
-		} catch (ContextException e) {
-			// ignrore it
-		}
-		return false;
 	}
 
 	public void setNotifierEnabled(boolean state) {

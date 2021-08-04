@@ -97,7 +97,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected boolean isFinalized = false;
 	protected Context.Type contextType = Context.Type.CONTEXT;
 	protected Model.Pattern pattern =  Model.Pattern.ANAL;
-	Signature.Direction direction = Signature.Direction.INOUT;
+	protected Signature.Direction direction = Signature.Direction.INOUT;
+	protected List<String> traceList = null;
+	protected int evalCount = 0;
 
 	protected boolean isSoft = false;
 	protected boolean isSelf = false;
@@ -3859,5 +3861,47 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public void setPattern(Model.Pattern pattern) {
 		this.pattern = pattern;
+	}
+
+
+	public List<String> getTraceList() {
+		return traceList;
+	}
+
+	public void setTraceList(List<String> traceList) {
+		this.traceList = traceList;
+	}
+
+	public void setTracable() {
+		traceList = new ArrayList<>();
+	}
+
+	public boolean isTracable() {
+    	return (traceList != null);
+	}
+
+	public void  clearTrace() {
+    	if (traceList != null) {
+			traceList.clear();
+		} else {
+			traceList = new ArrayList<>();
+		}
+	}
+
+	public void setTracable(boolean state) {
+		if (state) {
+			traceList = new ArrayList<>();
+		} else {
+			traceList.clear();
+			traceList = null;
+		}
+	}
+
+	public int getEvalCount() {
+		return evalCount;
+	}
+
+	public void setEvalCount(int evalCount) {
+		this.evalCount = evalCount;
 	}
 }

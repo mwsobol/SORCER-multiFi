@@ -3215,9 +3215,11 @@ operator extends Operator {
 
     public static List<String> trace(Mogram mogram) throws RemoteException {
         List<Contextion> mograms = ((ServiceMogram)mogram).getAllMograms();
-        List<String> trace = new ArrayList<String>();
+        List<String> trace = new ArrayList();
         for (Contextion m : mograms) {
-            trace.addAll(((Routine) m).getControlContext().getTrace());
+            if (((Routine) m).getControlContext().getTrace() != null) {
+                trace.addAll(((Routine) m).getControlContext().getTrace());
+            }
         }
         return trace;
     }

@@ -14,14 +14,15 @@ import sorcer.provider.adder.impl.AdderImpl;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.co.operator.get;
 import static sorcer.mo.operator.*;
 import static sorcer.ent.operator.ent;
 import static sorcer.so.operator.*;
+import static sorcer.util.StringUtils.join;
+import static sorcer.util.exec.ExecUtils.sysErr;
 
 /**
  * @author Mike Sobolewski

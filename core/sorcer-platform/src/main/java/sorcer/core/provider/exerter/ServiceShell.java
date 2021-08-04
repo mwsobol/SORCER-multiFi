@@ -202,15 +202,23 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		Exec.State state = ((Subroutine) mogram).getControlContext().getExecState();
 		if (state == State.INITIAL) {
 			if (mogram instanceof Routine) {
-				((ServiceMogram)mogram).getExceptions().clear();
-				((ServiceMogram)mogram).getTrace().clear();
+				if (((ServiceMogram) mogram).getExceptions() != null){
+					((ServiceMogram) mogram).getExceptions().clear();
+				}
+				if (((ServiceMogram) mogram).getTrace() != null){
+					((ServiceMogram) mogram).getTrace().clear();
+				}
 			}
 			for (Contextion e : ((ServiceMogram)mogram).getAllMograms()) {
 				if (e instanceof Routine) {
 					if (((ControlContext) ((Routine) e).getControlContext()).getExecState() == State.INITIAL) {
 						((ServiceMogram) e).setStatus(Exec.INITIAL);
-						((Mogram) e).getExceptions().clear();
-						((Mogram) e).getTrace().clear();
+						if (((ServiceMogram) mogram).getExceptions() != null){
+							((ServiceMogram) mogram).getExceptions().clear();
+						}
+						if (((ServiceMogram) mogram).getTrace() != null) {
+							((Mogram) e).getTrace().clear();
+						}
 					}
 				}
 				if (e instanceof Block) {
