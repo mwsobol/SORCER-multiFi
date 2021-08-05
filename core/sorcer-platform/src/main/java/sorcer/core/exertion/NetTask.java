@@ -19,6 +19,7 @@ package sorcer.core.exertion;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.id.Uuid;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.ProviderName;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.RemoteSignature;
@@ -26,6 +27,7 @@ import sorcer.service.*;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * The SORCER service task extending the abstract task {@link Task}.
@@ -111,11 +113,20 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 	}
 
 	public Task doTask(Transaction txn, Arg... args) throws ServiceException {
-		if (delegate != null)
+		List<String> traceList = dataContext.getTraceList();
+		if (delegate != null) {
+			if (traceList != null) {
+				traceList.add(getClass().getSimpleName()
+					+"#doTask>"+">"+getProcessSignature());
+			}
 			return delegate.doTask(txn, args);
-		else {
+		} else {
 			ServiceShell se = new ServiceShell(this);
 			try {
+				if (traceList != null) {
+					traceList.add(getClass().getSimpleName()
+						+"#doTask>"+">"+getProcessSignature());
+				}
 				return se.exert(args);
 			} catch (ServiceException e) {
 				throw new EvaluationException(e);
