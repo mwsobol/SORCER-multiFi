@@ -20,7 +20,7 @@ public class ModelStrategy implements ServiceStrategy, Serializable {
 
     protected List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
 
-    protected List<String> traceList = new ArrayList<String>();
+    protected List<String> traceList;
 
     private boolean isTraceable = false;
 
@@ -330,7 +330,9 @@ public class ModelStrategy implements ServiceStrategy, Serializable {
     }
 
     public void appendTrace(String info) {
-        traceList.add(info);
+        if (traceList != null) {
+            traceList.add(info);
+        }
     }
 
     public List<String> getTrace() {
