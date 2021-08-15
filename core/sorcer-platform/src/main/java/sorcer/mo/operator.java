@@ -1650,7 +1650,6 @@ public class operator {
     public static ServiceFidelity dznFi(Fi... intentFis) {
         ServiceFidelity iFi = new ServiceFidelity(intentFis);
         iFi.setType(Fi.Type.DESIGN);
-        );
         return iFi;
     }
 
