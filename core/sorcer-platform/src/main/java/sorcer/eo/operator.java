@@ -280,6 +280,9 @@ operator extends Operator {
         return (Contextion) ((LocalSignature) signature).initInstance();
     }
 
+    public static Context dznIntent(Object... items) throws ContextException, RemoteException {
+        return dznCxt(items);
+    }
     public static Context dznCxt(Object... items) throws ContextException, RemoteException {
         List<Object> itemArray = new ArrayList(items.length);
         for (Object obj : items) {

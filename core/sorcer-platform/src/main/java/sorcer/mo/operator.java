@@ -1632,10 +1632,38 @@ public class operator {
         return sFi;
     }
 
+    public static Fi iFi(Signature signature) {
+        Fidelity ifi = new Fidelity(signature.getName(), signature);
+        ifi.setType(Fi.Type.INTENT);
+        return ifi;
+    }
+
+    public static Fi iFi(Context context) {
+        Fidelity ifi =  new Fidelity(context.getName(), context);
+        ifi.setType(Fi.Type.INTENT);
+        return ifi;
+    }
+    public static Fi iFi(String name, Context context) {
+        return new Fidelity(name, context);
+    }
+
+    public static ServiceFidelity dznFi(Fi... intentFis) {
+        ServiceFidelity iFi = new ServiceFidelity(intentFis);
+        iFi.setType(Fi.Type.DESIGN);
+        );
+        return iFi;
+    }
+
+    public static ServiceFidelity dznFi(String name, Fi... intentFis) {
+        ServiceFidelity iFi = new ServiceFidelity(intentFis);
+        iFi.setName(name);
+        iFi.setType(Fi.Type.DESIGN);
+        return iFi;
+    }
+
     public static Analysis mda(String name, Analysis mda) {
         return new Analyzer(name, mda);
     }
-
 
     public static ServiceFidelity mdaFi(String name, Analysis... mdaEntries) {
         Analyzer[] entries = new Analyzer[mdaEntries.length];

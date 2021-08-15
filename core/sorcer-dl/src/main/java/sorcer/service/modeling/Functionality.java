@@ -44,7 +44,7 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 		MULTIVAL, PRED, DOMAIN_PRED, DEP, DOMAIN_DEP, FILTER, PERSISTER, EVALUATOR, EVALUATION, PRODUCT, WATCHABLE, ENT, PROC, DUAL,
 		NEURON, VAR, SRV, LAMBDA, VAL, THRESHOLD, BIAS, FUNCTION, DATA, CONTEXT, MFI_CONTEXT, ARRAY, LIST, PIPELINE, ROUTINE, MODEL,
 		DOMAIN, NODE, REGION, DISCIPLINE, EXERTION, MOGRAM, SELF, CONDITION, FIDELITY, LOCATOR, ARG, PATH, CONFIG, PROXY, DISPATCH,
-		OBJECTIVE_GRADIENT, CONSTRAINT_GRADIENT, COUPLED, MADO, TRANS, CONTEXTION, COLLABORATION, SEARCH, GOVERNANCE,
+		OBJECTIVE_GRADIENT, CONSTRAINT_GRADIENT, COUPLED, MADO, INTENT, TRANS, CONTEXTION, COLLABORATION, SEARCH, GOVERNANCE,
 		SUPERVISOR, DEVELOPER, EXECUTION, STRATEGY, EXEC, SCOPE,
         // in Model Pattern
         // All-at-Once (AAO),
@@ -58,7 +58,7 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 		VGD,	// var GradientDifferentiator
 		GGD, 	// global gradient differentiator for coupled domains
 		FDG,   	// finite difference gradient
-		MPFD,  // model parallel finite difference gradient
+		MPFD,   // model parallel finite difference gradient
 		VPFD  	// var parallel finite difference
 		;
 

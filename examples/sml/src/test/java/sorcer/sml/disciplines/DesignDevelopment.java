@@ -164,8 +164,10 @@ public class DesignDevelopment {
     @Test
     public void developingDesign() throws Exception {
 
-        Context designIntent = dznCxt(
-            disciplineSig(sig(DesignDevelopment.class, "getMorphingModel")),
+        Context designIntent = dznIntent(
+            dznFi(iFi(cxt("myIntent")),
+                iFi(dscSig(DesignDevelopment.class, "getMorphingModel"))),
+            dscSig(DesignDevelopment.class, "getMorphingModel"),
             devFi("morphDevFis",
                 dev("morphDev1",
                     (Discipline discipline, Context intent) -> {

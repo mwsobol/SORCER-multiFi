@@ -980,6 +980,20 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 		}
 	}
 
+	public enum ContextionType implements Arg {
+		EXERT, EXEC, EVALUATE, DEVELOP, EXPLORE, SEARCH, ANALYZE;
+
+		@Override
+		public String getName() {
+			return toString();
+		}
+
+		@Override
+		public Object execute(Arg... args) throws ServiceException, RemoteException {
+			return this;
+		}
+	}
+
 	final static String PARAMETER_TYPES = "context/parameter/types";
 	final static String PARAMETER_VALUES = "context/parameter/values/";
 	final static String TARGET = "context/target";

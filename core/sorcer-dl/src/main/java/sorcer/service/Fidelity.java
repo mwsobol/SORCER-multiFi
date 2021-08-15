@@ -46,6 +46,12 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, fi<T>, Arg {
 		this.fiName = name;
 	}
 
+	public Fidelity(String name, T select) {
+		this();
+		this.fiName = name;
+		this.select = select;
+	}
+
 	public Fidelity(String name, String path) {
 		this();
 		this.fiName = name;
