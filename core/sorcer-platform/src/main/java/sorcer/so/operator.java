@@ -399,7 +399,7 @@ public class operator extends Operator {
         return new Transdesign(null, discipline, discContext, developer);
     }
 
-    public static ServiceContext dev(Request request, Object... items) throws ServiceException {
+    public static ServiceContext dvlp(Request request, Object... items) throws ServiceException {
         return eval(request, items);
     }
 

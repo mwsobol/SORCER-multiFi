@@ -9,6 +9,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.*;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.ent.EntryModel;
+import sorcer.mo.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.modeling.cxtn;
@@ -169,7 +170,7 @@ public class DesignDevelopment {
                 iFi(dscSig(DesignDevelopment.class, "getMorphingModel"))),
             dscSig(DesignDevelopment.class, "getMorphingModel"),
             devFi("morphDevFis",
-                dev("morphDev1",
+                operator.dev("morphDev1",
                     (Discipline discipline, Context intent) -> {
                         Block mdlBlock = block(
                             loop(condition(cxt -> (double)
@@ -177,7 +178,7 @@ public class DesignDevelopment {
                         mdlBlock = exert(mdlBlock, fi("multiply", "mFi1"));
                         return context(mdlBlock);
                     }),
-                dev("morphDev2",
+                operator.dev("morphDev2",
                     (Discipline discipline, Context cxt) -> {
                         Block mdlBlock = block(
                             loop(condition(bcxt -> (double)
@@ -188,7 +189,7 @@ public class DesignDevelopment {
         );
 
         Design desg = dzn(designIntent);
-        Context out = dev(desg, fi("morphDev1"));
+        Context out = dvlp(desg, fi("morphDev1"));
         assertTrue(value(out, "morpher3").equals(920.0));
     }
 }
