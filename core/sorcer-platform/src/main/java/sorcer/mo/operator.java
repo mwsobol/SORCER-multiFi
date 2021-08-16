@@ -1632,19 +1632,47 @@ public class operator {
         return sFi;
     }
 
-    public static Fi iFi(Signature signature) {
-        Fidelity ifi = new Fidelity(signature.getName(), signature);
-        ifi.setType(Fi.Type.INTENT);
-        return ifi;
+    public static ServiceFidelity intFi(String fiName, Signature... signatures) {
+        Fidelity ifi = null;
+        List<Service> intentFis = new ArrayList<>();
+        for (Signature sig : signatures) {
+            ifi =  new Fidelity(sig.getName(), sig);
+            ifi.setType(Fi.Type.INTENT);
+            intentFis.add(ifi);
+        }
+        ServiceFidelity sFi = new ServiceFidelity(fiName, intentFis);
+        sFi.setType(Fi.Type.INTENT);
+        return sFi;
     }
 
-    public static Fi iFi(Context context) {
-        Fidelity ifi =  new Fidelity(context.getName(), context);
-        ifi.setType(Fi.Type.INTENT);
-        return ifi;
+    public static Fi intFi(Signature... signatures) {
+        return intFi(null, signatures);
     }
-    public static Fi iFi(String name, Context context) {
-        return new Fidelity(name, context);
+
+    public static Context.IntentType intType(String type) {
+        for (Context.IntentType itype : Context.IntentType.values()) {
+            if (itype.toString().equals(type.toUpperCase())) {
+                return itype;
+            }
+        }
+        return Context.IntentType.DATA;
+    }
+
+    public static ServiceFidelity intFi(Context... contexts) {
+        return intFi(null, contexts);
+    }
+
+    public static ServiceFidelity intFi(String fiName, Context... contexts) {
+        Fidelity ifi = null;
+        List<Service> intentFis = new ArrayList<>();
+        for (Context cxt : contexts) {
+            ifi = new Fidelity(cxt.getName(), cxt);
+            ifi.setType(Fi.Type.INTENT);
+            intentFis.add(ifi);
+        }
+        ServiceFidelity sFi = new ServiceFidelity(fiName, intentFis);
+        sFi.setType(Fi.Type.INTENT);
+        return sFi;
     }
 
     public static ServiceFidelity dznFi(Fi... intentFis) {

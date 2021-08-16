@@ -25,7 +25,7 @@ import sorcer.service.modeling.Functionality;
  */
 public class DesignContext extends ServiceContext {
 
-    private Fidelity<Development> developerFi;
+    private ServiceFidelity developerFi;
 
     private Discipline discipline;
 
@@ -43,11 +43,11 @@ public class DesignContext extends ServiceContext {
     }
 
     @Override
-    public Fidelity<Development> getDeveloperFi() {
+    public ServiceFidelity getDeveloperFi() {
         return developerFi;
     }
 
-    public void setDeveloperFi(Fidelity<Development> developerFi) {
+    public void setDeveloperFi(ServiceFidelity developerFi) {
         this.developerFi = developerFi;
     }
 

@@ -272,6 +272,28 @@ operator extends Operator {
         return scxt;
     }
 
+    public static Context dscInt(String name, Signature... signatures) throws ContextException {
+        ServiceContext cxt = new ServiceContext(name);
+        Functionality.Type cxtTpe = Functionality.Type.INTENT;
+        cxt.setType(cxtTpe);
+        cxt.setMultiFi(sorcer.mo.operator.intFi(name, signatures));
+        return cxt;
+    }
+
+    public static Context dscInt(String name, Context... contexts) throws ContextException {
+        ServiceContext cxt = new ServiceContext(name);
+        Functionality.Type cxtTpe = Functionality.Type.INTENT;
+        cxt.setType(cxtTpe);
+        cxt.setMultiFi(sorcer.mo.operator.intFi(name, contexts));
+        return cxt;
+    }
+
+    public static Context cxt(String name, Signature signature) throws ContextException, RemoteException {
+        ServiceContext context =  context(signature);
+        context.setName(name);
+        return context;
+    }
+
     public static Context cxt(Object... items) throws ContextException, RemoteException {
         return context(items);
     }
@@ -284,32 +306,42 @@ operator extends Operator {
         return dznCxt(items);
     }
     public static Context dznCxt(Object... items) throws ContextException, RemoteException {
-        List<Object> itemArray = new ArrayList(items.length);
+        List<Object> itemList = new ArrayList(items.length);
         for (Object obj : items) {
-            itemArray.add(obj);
+            itemList.add(obj);
         }
         Signature disciplineSig = null;
         Discipline discipline = null;
-        Fidelity<Development> devFi = null;
-
-        Iterator<Object> it = itemArray.iterator();
+        ServiceFidelity devFi = null;
+        ServiceFidelity dznFi = null;
+        Iterator<Object> it = itemList.iterator();
         while (it.hasNext()) {
             Object obj = it.next();
             if ((obj instanceof Signature) && ((ServiceSignature)obj).isKindOf(Kind.DESIGN)) {
                 disciplineSig = (Signature)obj;
+                it.remove();
             } else if (obj instanceof Discipline) {
                 discipline = (Discipline) obj;
-            } else if ((obj instanceof ServiceFidelity) &&  ((ServiceFidelity)obj).getFiType().equals(Fi.Type.DEV)) {
-                devFi = (Fidelity)obj;
+                it.remove();
+            } else if (obj instanceof ServiceFidelity) {
+                if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DEV)) {
+                    devFi = (ServiceFidelity) obj;
+                } else if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DESIGN)) {
+                    dznFi = (ServiceFidelity) obj;
+                }
+                it.remove();
             }
-            it.remove();
         }
-
-        itemArray.add(0, Context.Type.DESIGN);
-        Object[] cxtItems = new Object[itemArray.size()];
-        itemArray.toArray(cxtItems);
+        itemList.add(0, Context.Type.DESIGN);
+        Object[] cxtItems = new Object[itemList.size()];
+        itemList.toArray(cxtItems);
         DesignContext dCxt = (DesignContext) domainContext(cxtItems);
+        dCxt.setContextType(Context.Type.DESIGN);
+        dCxt.setIntentType(Context.IntentType.DEVELOP);
 
+        if (dznFi != null) {
+            dCxt.setMultiFi(dznFi);
+        }
         if (disciplineSig != null) {
             dCxt.setDisciplineSignature(disciplineSig);
         }
@@ -319,7 +351,6 @@ operator extends Operator {
         if (devFi != null) {
             dCxt.setDeveloperFi(devFi);
         }
-        dCxt.setType(Functionality.Type.DESIGN);
         return dCxt;
     }
 
@@ -415,6 +446,7 @@ operator extends Operator {
         Explorer explEntry = null;
         ServiceFidelity explFi = null;
         List<Path> responsePaths = null;
+        Context.IntentType intentType = null;
         boolean autoDeps = true;
         for (Object o : entries) {
             if (o instanceof Complement) {
@@ -473,6 +505,8 @@ operator extends Operator {
                 paths = (Paths) o;
             } else if (o instanceof Context) {
                 cxts.add((ServiceContext) o);
+            } else if (o instanceof Context.IntentType) {
+                intentType = (Context.IntentType) o;
             } else if (o instanceof Fidelity) {
                 if (((Fidelity) o).getFiType() == Fi.Type.RESPONSE) {
                     responsePaths = (List<Path>) ((Fidelity) o).getSelects();
@@ -540,6 +574,9 @@ operator extends Operator {
             }
         }
 
+        if (intentType != null) {
+            ((ServiceContext)cxt).setIntentType(intentType);
+        }
         if (cxt instanceof PositionalContext) {
             PositionalContext pcxt = (PositionalContext) cxt;
             if (entryList.size() > 0) {
@@ -1823,6 +1860,18 @@ operator extends Operator {
     public static Fidelity fi(String name, String path) {
         Fidelity fi = new Fidelity(name, path);
         fi.fiType = Fi.Type.SELECT;
+        return fi;
+    }
+
+    public static Fidelity devFi(String name, String path) {
+        Fidelity fi = new Fidelity(name, path);
+        fi.fiType = Fi.Type.DEV;
+        return fi;
+    }
+
+    public static Fidelity intFi(String name, String path, String select) {
+        Fidelity fi = new Fidelity(name, path, select);
+        fi.fiType = Fi.Type.INTENT;
         return fi;
     }
 

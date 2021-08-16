@@ -409,8 +409,36 @@ public class operator extends Operator {
             if (request instanceof Mogram) {
                 out = response((Mogram)request, items);
             } else if (request instanceof Design) {
-                Development developer = ((Transdesign)request).getDeveloperFi().getSelect();
-                out = developer.develop((Discipline) ((Transdesign)request).getDiscipline(), ((Transdesign)request).getDisciplineIntent());
+                Development developer = (Development) ((Transdesign)request).getDeveloperFi().getSelect();
+                if (((Transdesign)request).getDiscipline() != null) {
+                    out = developer.develop((Discipline) ((Transdesign) request).getDiscipline(), ((Transdesign) request).getDisciplineIntent());
+                } else if (((Transdesign)request).getDesignIntent() != null) {
+                    DesignContext dcxt = (DesignContext) ((Transdesign)request).getDesignIntent();
+                    Object obj = null;
+                    for (Object item : items) {
+                        if (item instanceof Fidelity && ((Fidelity)item).getFiType().equals(Fi.Type.INTENT)) {
+                                obj = ((ServiceFidelity)dcxt.getMultiFi()).selectSelect(((Fidelity)item).getName());
+                            if (obj instanceof Fidelity && ((Fidelity)item).getFiType().equals(Fi.Type.INTENT)) {
+                                obj = ((ServiceFidelity)obj).selectSelect(((Fidelity)item).getPath());
+                            }
+                            if (obj instanceof Fidelity && ((Fidelity)item).getFiType().equals(Fi.Type.INTENT)) {
+                                obj = ((Fidelity)obj).getSelect();
+                            }
+                            if (obj instanceof ServiceContext && ((ServiceContext)obj).getMultiFi().size()>0) {
+                                obj = ((ServiceContext)obj).getMultiFi().selectSelect((String)((Fidelity)item).getSelect());
+                            }
+                            if (obj instanceof Fidelity && ((Fidelity)item).getFiType().equals(Fi.Type.INTENT)) {
+                                obj = ((Fidelity)obj).getSelect();
+                            }
+                        }
+                        if (obj != null) {
+                            break;
+                        }
+                    }
+                    if (obj != null && obj instanceof Context) {
+                        return (ServiceContext) developer.develop(null, (ServiceContext)obj);
+                    }
+                }
             } else if(items.length == 1) {
                 if (items[0] instanceof Context) {
                     out = eval(request, (Context) items[0]);
@@ -422,14 +450,14 @@ public class operator extends Operator {
             } else if(items.length == 0) {
                 out = eval(request, (Context)null);
             }
-        } catch (SignatureException | RemoteException | ExecutiveException e) {
+        } catch (SignatureException | RemoteException | ExecutiveException | ConfigurationException e) {
             throw new ContextException(e);
         }
         return (ServiceContext)out;
     }
 
     public static ServiceContext developDsign(DesignContext designContext, Object... items) throws ContextException {
-        Development developer = designContext.getDeveloperFi().getSelect();
+        Development developer = (Development) designContext.getDeveloperFi().getSelect();
         Discipline discipline = null;
         try {
             if (designContext.getDisciplineSignature() != null) {

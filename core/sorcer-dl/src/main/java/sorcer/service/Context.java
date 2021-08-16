@@ -980,8 +980,8 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 		}
 	}
 
-	public enum ContextionType implements Arg {
-		EXERT, EXEC, EVALUATE, DEVELOP, EXPLORE, SEARCH, ANALYZE;
+	public enum IntentType implements Arg {
+		DATA, EXEC, EXERT, EVALUATE, DEVELOP, ANALYZE, MDA, SEARCH, OPTIMIZE, OPTI, EXPLORE, MADO, SVISE, HVISE;
 
 		@Override
 		public String getName() {

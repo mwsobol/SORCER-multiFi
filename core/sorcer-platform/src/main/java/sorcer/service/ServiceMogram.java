@@ -143,7 +143,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     protected Fidelity<Finalization> finalizerFi;
 
-    protected Fidelity<Development> developerFi;
+    protected ServiceFidelity developerFi;
 
     protected transient Exerter provider;
 
@@ -1350,11 +1350,11 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return null;
     }
 
-    public Fidelity<Development> getDeveloperFi() {
+    public ServiceFidelity getDeveloperFi() {
         return developerFi;
     }
 
-    public void setDeveloperFi(Fidelity<Development> developerFi) {
+    public void setDeveloperFi(ServiceFidelity developerFi) {
         this.developerFi = developerFi;
     }
 

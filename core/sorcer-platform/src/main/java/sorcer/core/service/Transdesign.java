@@ -46,7 +46,7 @@ public class Transdesign extends MultiFiSlot implements Design {
 
     private Context designIntent;
 
-    private Fidelity<Development> developerFi;
+    private ServiceFidelity developerFi;
 
     // the output of this collaboration
     protected Context output;
@@ -55,7 +55,7 @@ public class Transdesign extends MultiFiSlot implements Design {
 
     protected Fidelity<Initialization> initializerFi;
 
-    public void setDeveloperFi(Fidelity<Development> developerFi) {
+    public void setDeveloperFi(ServiceFidelity developerFi) {
         this.developerFi = developerFi;
     }
 
@@ -100,24 +100,24 @@ public class Transdesign extends MultiFiSlot implements Design {
         this(name);
         this.discipline = discipline;
         this.disciplineIntent = disciplineIntent;
-        developerFi = new Fidelity(name);
-        developerFi.addSelect(developer);
-        developerFi.setSelect(developer);
+        developerFi = new ServiceFidelity(name);
+        developerFi.addSelect((Developer)developer);
+        developerFi.setSelect((Developer)developer);
         ((Developer)developer).setDiscipline(discipline);
     }
 
-    public Fidelity<Development> setDeveloperFi(Context context) {
+    public ServiceFidelity setDeveloperFi(Context context) {
         if(developerFi == null) {
             Object devComponent = ((ServiceContext)context).get(Context.DEV_PATH);
             if (devComponent != null) {
                 if (devComponent instanceof Development) {
-                    developerFi = new Fidelity(((Developer)devComponent).getName());
-                    developerFi.addSelect((Development) devComponent);
-                    developerFi.setSelect((Development)devComponent);
+                    developerFi = new ServiceFidelity(((Developer)devComponent).getName());
+                    developerFi.addSelect((Developer) devComponent);
+                    developerFi.setSelect((Developer)devComponent);
                     ((Developer)devComponent).setDiscipline(discipline);
                 } else if (devComponent instanceof ServiceFidelity
                     && ((ServiceFidelity) devComponent).getFiType().equals(Fi.Type.DEV)) {
-                    developerFi = (Fidelity) devComponent;
+                    developerFi = (ServiceFidelity) devComponent;
                     ((Developer)developerFi.getSelect()).setDiscipline(discipline);
                 }
             }
@@ -241,7 +241,7 @@ public class Transdesign extends MultiFiSlot implements Design {
     }
 
     @Override
-    public Fidelity<Development> getDeveloperFi() throws RemoteException {
+    public ServiceFidelity getDeveloperFi() throws RemoteException {
         return developerFi;
     }
 
@@ -249,7 +249,7 @@ public class Transdesign extends MultiFiSlot implements Design {
     public Context design(Discipline discipline, Context context) throws DesignException, RemoteException {
        this.discipline = discipline;
         try {
-            return developerFi.getSelect().develop(discipline, developmentIntent);
+            return ((Development)developerFi.getSelect()).develop(discipline, developmentIntent);
         } catch (ServiceException | ExecutiveException e) {
             throw new DesignException(e);
         }

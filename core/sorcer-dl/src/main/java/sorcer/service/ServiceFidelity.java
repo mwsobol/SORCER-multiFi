@@ -108,7 +108,9 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 	public ServiceFidelity(String name, List<Service> selectors) {
 		for (Service s : selectors)
 			selects.add(s);
-		this.fiName = name;
+		if (name != null) {
+			this.fiName = name;
+		}
 	}
 
 	public ServiceFidelity(String name, Service selector) {

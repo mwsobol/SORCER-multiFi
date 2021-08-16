@@ -96,7 +96,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected String currentPrefix;
 	protected boolean isFinalized = false;
 	protected Context.Type contextType = Context.Type.CONTEXT;
-	protected Context.ContextionType contextionType = ContextionType.EVALUATE;
+	protected IntentType intentType = IntentType.EVALUATE;
 	protected Model.Pattern pattern =  Model.Pattern.ANAL;
 	protected Signature.Direction direction = Signature.Direction.INOUT;
 	protected List<String> traceList = null;
@@ -3543,12 +3543,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this.contextType = type;
 	}
 
-	public ContextionType getContextionType() {
-		return contextionType;
+	public IntentType getIntentType() {
+		return intentType;
 	}
 
-	public void setContextionType(ContextionType contextionType) {
-		this.contextionType = contextionType;
+	public void setIntentType(IntentType intentType) {
+		this.intentType = intentType;
 	}
 
 	public Iterator<String> keyIterator() {

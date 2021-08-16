@@ -165,12 +165,21 @@ public class DesignDevelopment {
     @Test
     public void developingDesign() throws Exception {
 
+        // testing sybtax for intent contexts
         Context designIntent = dznIntent(
-            dznFi(iFi(cxt("myIntent")),
-                iFi(dscSig(DesignDevelopment.class, "getMorphingModel"))),
+            dznFi(
+                intFi("intFiX",
+                    dscInt("discIntY",
+                        cxt("myIntent1", intType("mado")),
+                        cxt("myIntent2", intType("mda"))),
+                    dscInt("discIntV",
+                        cxt("myIntent3", intType("mado")),
+                        cxt("myIntent4", intType("mda"))),
+                    cxt("myIntent5", intType("mado"))),
+                intFi("discIntZ", dscSig(DesignDevelopment.class, "getMorphingModel"))),
             dscSig(DesignDevelopment.class, "getMorphingModel"),
             devFi("morphDevFis",
-                operator.dev("morphDev1",
+                dev("morphDev1",
                     (Discipline discipline, Context intent) -> {
                         Block mdlBlock = block(
                             loop(condition(cxt -> (double)
