@@ -1707,13 +1707,18 @@ public class operator {
         return new Developer(name, development);
     }
 
+    public static ServiceFidelity devFi(Development... devEntries) {
+       return devFi(null, devEntries);
+    }
     public static ServiceFidelity devFi(String name, Development... devEntries) {
         Developer[] entries = new Developer[devEntries.length];
         for (int i = 0; i < devEntries.length; i++) {
             entries[i] = (Developer) devEntries[i];
         }
         ServiceFidelity devFi = new ServiceFidelity(entries);
-        devFi.setName(name);
+        if (name != null) {
+            devFi.setName(name);
+        }
         devFi.setType(Fi.Type.DEV);
         return devFi;
     }

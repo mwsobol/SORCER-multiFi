@@ -1863,6 +1863,12 @@ operator extends Operator {
         return fi;
     }
 
+    public static Fidelity devFi(String name) {
+        Fidelity fi = new Fidelity(name);
+        fi.fiType = Fi.Type.DEV;
+        return fi;
+    }
+
     public static Fidelity devFi(String name, String path) {
         Fidelity fi = new Fidelity(name, path);
         fi.fiType = Fi.Type.DEV;

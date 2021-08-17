@@ -409,32 +409,22 @@ public class operator extends Operator {
             if (request instanceof Mogram) {
                 out = response((Mogram)request, items);
             } else if (request instanceof Design) {
+                if (((Transdesign)request).getDeveloperFi() == null) {
+                    ((Transdesign)request).setDeveloperFi(((Transdesign)request).getDesignIntent());
+                }
+                ServiceFidelity developerFi = ((Transdesign)request).getDeveloperFi();
+                // setup the design developer
+                for (Object item : items) {
+                    if (item instanceof Fidelity && ((Fidelity) item).getFiType().equals(Fi.Type.DEV)) {
+                        developerFi.selectSelect(((Fidelity) item).getName());
+                    }
+                }
                 Development developer = (Development) ((Transdesign)request).getDeveloperFi().getSelect();
                 if (((Transdesign)request).getDiscipline() != null) {
                     out = developer.develop((Discipline) ((Transdesign) request).getDiscipline(), ((Transdesign) request).getDisciplineIntent());
                 } else if (((Transdesign)request).getDesignIntent() != null) {
-                    DesignContext dcxt = (DesignContext) ((Transdesign)request).getDesignIntent();
-                    Object obj = null;
-                    for (Object item : items) {
-                        if (item instanceof Fidelity && ((Fidelity)item).getFiType().equals(Fi.Type.INTENT)) {
-                                obj = ((ServiceFidelity)dcxt.getMultiFi()).selectSelect(((Fidelity)item).getName());
-                            if (obj instanceof Fidelity && ((Fidelity)item).getFiType().equals(Fi.Type.INTENT)) {
-                                obj = ((ServiceFidelity)obj).selectSelect(((Fidelity)item).getPath());
-                            }
-                            if (obj instanceof Fidelity && ((Fidelity)item).getFiType().equals(Fi.Type.INTENT)) {
-                                obj = ((Fidelity)obj).getSelect();
-                            }
-                            if (obj instanceof ServiceContext && ((ServiceContext)obj).getMultiFi().size()>0) {
-                                obj = ((ServiceContext)obj).getMultiFi().selectSelect((String)((Fidelity)item).getSelect());
-                            }
-                            if (obj instanceof Fidelity && ((Fidelity)item).getFiType().equals(Fi.Type.INTENT)) {
-                                obj = ((Fidelity)obj).getSelect();
-                            }
-                        }
-                        if (obj != null) {
-                            break;
-                        }
-                    }
+                    // setup a design intent for the design developer
+                    Object obj = ((Transdesign)request).getIntentContext(items);
                     if (obj != null && obj instanceof Context) {
                         return (ServiceContext) developer.develop(null, (ServiceContext)obj);
                     }
