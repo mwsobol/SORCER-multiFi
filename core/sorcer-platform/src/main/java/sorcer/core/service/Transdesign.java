@@ -132,7 +132,7 @@ public class Transdesign extends MultiFiSlot implements Design {
     public Object getIntentContext(Object... items) throws ConfigurationException {
         Object obj = null;
         for (Object item : items) {
-            // select intFi fidelity intFi("designIntent", "multiFiIntent", fidelity)
+            // select intFi fidelity intFi(fidelity, multiFiIntent, "designIntent")
             if (item instanceof Fidelity && ((Fidelity)item).getFiType().equals(Fi.Type.INTENT)) {
                 obj = ((ServiceFidelity)designIntent.getMultiFi()).selectSelect((String) ((Fidelity)item).getSelect());
                 if (obj instanceof Fidelity && ((Fidelity)item).getFiType().equals(Fi.Type.INTENT)) {
