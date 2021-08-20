@@ -561,7 +561,7 @@ public class ProviderDelegate {
 		boolean matchOnOpSys;
 		try {
 			matchOnOpSys = (Boolean)jconfig.getEntry(ServiceExerter.COMPONENT,
-													  MATCH_ON_OPSYS, Boolean.class, false);
+													  MATCH_ON_OPSYS, boolean.class, false);
 
 		} catch (Exception e) {
 			logger.warn("Problem getting {}.{}", ServiceExerter.COMPONENT, MATCH_ON_OPSYS, e);
