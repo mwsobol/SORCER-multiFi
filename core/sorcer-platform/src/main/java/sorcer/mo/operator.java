@@ -557,8 +557,8 @@ public class operator {
         return collab.setInput(in);
     }
 
-    public static void traced(Mogram mogram, boolean isTraced)  {
-        ((FidelityManager) ((ServiceMogram)mogram).getFidelityManager()).setTraced(isTraced);
+    public static void traced(Contextion contextion, boolean isTraced) throws RemoteException {
+        ((FidelityManager) contextion.getFidelityManager()).setTraced(isTraced);
     }
 
     public static Connector inConn(List<Entry> entries) throws ContextException {
@@ -617,9 +617,8 @@ public class operator {
         return mogram;
     }
 
-    public static Mogram setMorpher(Mogram mogram, Morpher mdlMorpher) {
-        ((MultiFiSlot) mogram).setMorpher(mdlMorpher);
-        return mogram;
+    public static void setMorpher(Contextion contextion, Morpher mdlMorpher) {
+        ((MultiFiSlot) contextion).setMorpher(mdlMorpher);
     }
 
     public static Mogram reconfigure(Mogram mogram, Fidelity... fidelities) throws ConfigurationException {
@@ -1703,7 +1702,7 @@ public class operator {
         return mdaFi;
     }
 
-    public static Development dev(String name, Development development) {
+    public static Developer dev(String name, Development development) {
         return new Developer(name, development);
     }
 

@@ -62,7 +62,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
 
     protected Contextion mogram;
 
-    protected Mogram child;
+    protected Contextion child;
 
     protected boolean isTraced = false;
 
@@ -78,7 +78,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         this.name = name;
     }
 
-    public FidelityManager(Mogram mogram) {
+    public FidelityManager(Contextion mogram) {
         this(mogram.getName());
         this.mogram = mogram;
     }
@@ -424,11 +424,11 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         this.name = name;
     }
 
-    public Mogram getChild() {
+    public Contextion getChild() {
         return child;
     }
 
-    public void setChild(Mogram child) {
+    public void setChild(Contextion child) {
         this.child = child;
     }
 

@@ -305,6 +305,11 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
     }
 
     @Override
+    public FidelityManagement getFidelityManager() throws RemoteException {
+        return null;
+    }
+
+    @Override
     public void selectFidelity(Fidelity fi) throws ConfigurationException {
 
     }

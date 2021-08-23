@@ -147,6 +147,8 @@ public interface Contextion extends Request, Scopable {
 
 	List<Contextion> getContextions(List<Contextion> contextionList) throws RemoteException;
 
+	FidelityManagement getFidelityManager() throws RemoteException;
+
 	void selectFidelity(Fidelity fi) throws ConfigurationException, RemoteException;
 
 }

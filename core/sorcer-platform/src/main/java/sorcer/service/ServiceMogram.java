@@ -64,7 +64,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected String subdomainId;
     protected String domainName;
     protected String subdomainName;
-    protected FidelityManagement fiManager;
     protected ContextFidelityManager contextFidelityManager;
     protected Projection inPathProjection;
     protected Projection outPathProjection;
@@ -875,10 +874,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public void setMultiMetaFi(MetaFi multiMetaFi) {
         this.multiMetaFi = multiMetaFi;
-    }
-
-    public FidelityManagement getFidelityManager() {
-        return fiManager;
     }
 
     public void setFidelityManager(FidelityManagement fiManager) {

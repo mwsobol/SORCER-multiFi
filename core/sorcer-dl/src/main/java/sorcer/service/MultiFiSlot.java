@@ -38,6 +38,8 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
 
     protected Morpher morpher;
 
+    protected FidelityManagement fiManager;
+
     protected Object annotation;
 
     // used for returning the requested value of this type
@@ -168,6 +170,14 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
 
     public void setMorpher(Morpher morpher) {
         this.morpher = morpher;
+    }
+
+    public FidelityManagement getFidelityManager() {
+        return fiManager;
+    }
+
+    public void setFidelityManager(FidelityManagement fiManager) {
+        this.fiManager = fiManager;
     }
 
     public boolean isCached() {

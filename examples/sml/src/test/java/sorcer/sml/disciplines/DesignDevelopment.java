@@ -9,13 +9,15 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.*;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.ent.EntryModel;
+import sorcer.core.invoker.Observable;
+import sorcer.core.plexus.FidelityManager;
+import sorcer.core.plexus.MorphFidelity;
 import sorcer.mo.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
-import sorcer.service.modeling.cxtn;
-import sorcer.service.modeling.fi;
-import sorcer.service.modeling.mog;
-import sorcer.service.modeling.sig;
+import sorcer.service.modeling.*;
+
+import java.rmi.RemoteException;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.get;
@@ -165,6 +167,14 @@ public class DesignDevelopment {
     @Test
     public void developingDesign() throws Exception {
 
+        Morpher dznMorpher = (mgr, mFi, value) -> {
+            Fidelity fi = mFi.getFidelity();
+            Context cxt = dvlp((Design) value, fi("morphDev2"));
+            if ((double)value(cxt, "morpher3") > 100.0) {
+                mgr.reconfigure(devFi("morphDev2"));
+            }
+        };
+
         // testing sybtax for intent contexts
         Context designIntent = dznIntent(
             dznFi(
@@ -178,7 +188,9 @@ public class DesignDevelopment {
                     cxt("myIntent5", intType("mado"))),
                 intFi("discIntZ", dscSig(DesignDevelopment.class, "getMorphingModel"))),
             dscSig(DesignDevelopment.class, "getMorphingModel"),
-            devFi("morphDevFis",
+//            devFi("morphDevFis",
+//            mphFi("morphDevFis", dznMorpher,
+            mphFi("morphDevFis",
                 dev("morphDev1",
                     (Discipline discipline, Context intent) -> {
                         Block mdlBlock = block(
@@ -187,18 +199,54 @@ public class DesignDevelopment {
                         mdlBlock = exert(mdlBlock, fi("multiply", "mFi1"));
                         return context(mdlBlock);
                     }),
-                operator.dev("morphDev2",
+                dev("morphDev2",
                     (Discipline discipline, Context cxt) -> {
                         Block mdlBlock = block(
                             loop(condition(bcxt -> (double)
                                 value(bcxt, "morpher3") < 900.0), discipline));
                         mdlBlock = exert(mdlBlock, fi("add", "mFi1"));
                         return context(mdlBlock);
-                    }))
+                    })),
+
+            getFiManager()
         );
 
         Design desg = dzn(designIntent);
+        setMorpher(desg, dznMorpher);
+        traced(desg, true);
+
         Context out = dvlp(desg, fi("morphDev1"));
         assertTrue(value(out, "morpher3").equals(920.0));
+    }
+
+    @Test
+    public static FidelityManager getFiManager() throws Exception {
+
+        FidelityManager manager = new FidelityManager() {
+            @Override
+            public void initialize() {
+                // define model metafidelities Fidelity<Fidelity>
+                add(metaFi("sysFi2", fi("divide", "mFi2"), fi("multiply", "mFi3")));
+                add(metaFi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3")));
+            }
+
+            @Override
+            public void update(Observable mFi, Object value) throws EvaluationException, RemoteException {
+                if (mFi instanceof MorphFidelity) {
+                    Fidelity<Signature> fi = ((MorphFidelity) mFi).getFidelity();
+                    if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("add")) {
+                        if (((Double) value) <= 200.0) {
+                            morph("sysFi2");
+                        } else {
+                            morph("sysFi3");
+                        }
+                    } else if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("multiply")) {
+                        morph("sysFi3");
+                    }
+                }
+            }
+        };
+
+        return manager;
     }
 }

@@ -37,18 +37,18 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
-	public ServiceContext evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
-		return null;
+	public Context evaluate(Context context, Arg... args) throws ServiceException, RemoteException {
+		return contextion.evaluate(context, args);
 	}
 
 	@Override
 	public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException {
-		return null;
+		return contextion.exert(args);
 	}
 
 	@Override
-	public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
-		return null;
+	public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ServiceException, RemoteException {
+		return contextion.exert(txn, args);
 	}
 
 	@Override
@@ -122,6 +122,11 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 		} else {
 			return contextionList;
 		}
+	}
+
+	@Override
+	public FidelityManagement getFidelityManager() throws RemoteException {
+		return null;
 	}
 
 	@Override
