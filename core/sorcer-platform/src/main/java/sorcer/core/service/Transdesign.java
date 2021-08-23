@@ -29,6 +29,7 @@ import sorcer.service.modeling.Initialization;
 
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A top-level interface for disciplinary transdesigns.
@@ -46,7 +47,9 @@ public class Transdesign extends MultiFiSlot implements Design {
 
     private Context designIntent;
 
-    private ServiceFidelity developerFi;
+    private Fi developerFi;
+
+    private Map<String, Projection> projections;
 
     // the output of this collaboration
     protected Context output;
@@ -106,7 +109,7 @@ public class Transdesign extends MultiFiSlot implements Design {
         ((Developer)developer).setDiscipline(discipline);
     }
 
-    public ServiceFidelity setDeveloperFi(Context context) {
+    public Fi setDeveloperFi(Context context) {
         if(developerFi == null) {
             Object devComponent = ((ServiceContext)context).get(Context.DEV_PATH);
             if (devComponent != null) {
@@ -153,6 +156,14 @@ public class Transdesign extends MultiFiSlot implements Design {
             }
         }
         return obj;
+    }
+
+    public Map<String, Projection> getProjections() {
+        return projections;
+    }
+
+    public void setProjections(Map<String, Projection> projections) {
+        this.projections = projections;
     }
 
     public Context getDesignIntent() {
@@ -267,7 +278,7 @@ public class Transdesign extends MultiFiSlot implements Design {
     }
 
     @Override
-    public ServiceFidelity getDeveloperFi() throws RemoteException {
+    public Fi getDeveloperFi() throws RemoteException {
         return developerFi;
     }
 

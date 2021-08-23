@@ -617,8 +617,21 @@ public class operator {
         return mogram;
     }
 
+    public static void setInOutMorpher(Contextion contextion, Morpher inMorpher, Morpher outMorpher) {
+        ((MultiFiSlot) contextion).setInMorpher(inMorpher);
+        ((MultiFiSlot) contextion).setMorpher(outMorpher);
+    }
+
+    public static void setOutMorpher(Contextion contextion, Morpher mdlMorpher) {
+        ((MultiFiSlot) contextion).setMorpher(mdlMorpher);
+    }
+
     public static void setMorpher(Contextion contextion, Morpher mdlMorpher) {
         ((MultiFiSlot) contextion).setMorpher(mdlMorpher);
+    }
+
+    public static void setInMorpher(Contextion contextion, Morpher mdlMorpher) {
+        ((MultiFiSlot) contextion).setInMorpher(mdlMorpher);
     }
 
     public static Mogram reconfigure(Mogram mogram, Fidelity... fidelities) throws ConfigurationException {

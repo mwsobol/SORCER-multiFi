@@ -177,19 +177,17 @@ public class DesignDevelopment {
 
         // testing sybtax for intent contexts
         Context designIntent = dznIntent(
-            dznFi(
-                intFi("intFiX",
-                    dscInt("discIntY",
+            dscSig(DesignDevelopment.class, "getMorphingModel"),
+            dznFi("intFis",
+                intFi("discIntX",
+                    dscInt("multiA",
                         cxt("myIntent1", intType("mado")),
                         cxt("myIntent2", intType("mda"))),
-                    dscInt("discIntV",
+                    dscInt("multiB",
                         cxt("myIntent3", intType("mado")),
                         cxt("myIntent4", intType("mda"))),
                     cxt("myIntent5", intType("mado"))),
-                intFi("discIntZ", dscSig(DesignDevelopment.class, "getMorphingModel"))),
-            dscSig(DesignDevelopment.class, "getMorphingModel"),
-//            devFi("morphDevFis",
-//            mphFi("morphDevFis", dznMorpher,
+                intFi("discIntY", dscSig(DesignDevelopment.class, "getMorphingModel"))),
             mphFi("morphDevFis",
                 dev("morphDev1",
                     (Discipline discipline, Context intent) -> {
@@ -206,47 +204,16 @@ public class DesignDevelopment {
                                 value(bcxt, "morpher3") < 900.0), discipline));
                         mdlBlock = exert(mdlBlock, fi("add", "mFi1"));
                         return context(mdlBlock);
-                    })),
-
-            getFiManager()
+                    }))
         );
 
         Design desg = dzn(designIntent);
         setMorpher(desg, dznMorpher);
+        setInMorpher(desg, dznMorpher);
         traced(desg, true);
 
         Context out = dvlp(desg, fi("morphDev1"));
         assertTrue(value(out, "morpher3").equals(920.0));
     }
 
-    @Test
-    public static FidelityManager getFiManager() throws Exception {
-
-        FidelityManager manager = new FidelityManager() {
-            @Override
-            public void initialize() {
-                // define model metafidelities Fidelity<Fidelity>
-                add(metaFi("sysFi2", fi("divide", "mFi2"), fi("multiply", "mFi3")));
-                add(metaFi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3")));
-            }
-
-            @Override
-            public void update(Observable mFi, Object value) throws EvaluationException, RemoteException {
-                if (mFi instanceof MorphFidelity) {
-                    Fidelity<Signature> fi = ((MorphFidelity) mFi).getFidelity();
-                    if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("add")) {
-                        if (((Double) value) <= 200.0) {
-                            morph("sysFi2");
-                        } else {
-                            morph("sysFi3");
-                        }
-                    } else if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("multiply")) {
-                        morph("sysFi3");
-                    }
-                }
-            }
-        };
-
-        return manager;
-    }
 }

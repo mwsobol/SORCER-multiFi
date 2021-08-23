@@ -38,6 +38,8 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
 
     protected Morpher morpher;
 
+    protected Morpher inMorpher;
+
     protected FidelityManagement fiManager;
 
     protected Object annotation;
@@ -59,6 +61,8 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
     protected Conditional checkpoint;
 
     public Integer index;
+
+    protected Integer status = Exec.INITIAL;
 
     protected Functionality.Type type = Functionality.Type.VAL;
 
@@ -172,6 +176,14 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
         this.morpher = morpher;
     }
 
+    public Morpher getInMorpher() {
+        return inMorpher;
+    }
+
+    public void setInMorpher(Morpher inMorpher) {
+        this.inMorpher = inMorpher;
+    }
+
     public FidelityManagement getFidelityManager() {
         return fiManager;
     }
@@ -267,6 +279,17 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
             }
         }
         return false;
+    }
+
+    /**
+     * execution status: INITIAL|DONE|RUNNING|SUSPENDED|HALTED/MORPHED
+     */
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(int value) {
+        status = value;
     }
 
     protected Object realizeFidelity(Fi fidelity) {

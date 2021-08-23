@@ -24,10 +24,14 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.Tuple2;
+import sorcer.core.context.DesignContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.invoker.Observer;
+import sorcer.core.service.Transdesign;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -40,6 +44,8 @@ import static sorcer.eo.operator.rFi;
  * Created by Mike Sobolewski on 6/14/15.
  */
 public class FidelityManager<T extends Service> implements Service, FidelityManagement<T>, Observer, Identifiable {
+
+    protected final static Logger logger = LoggerFactory.getLogger(FidelityManager.class.getName());
 
     // sequence number for unnamed instances
     protected static int count = 0;
@@ -56,6 +62,9 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
 
     // fidelities for signatures and other selection of T
     protected Map<String, MorphFidelity> morphFidelities = new ConcurrentHashMap<>();
+
+    // fidelity projections
+    protected Map<String, Projection> projections = new ConcurrentHashMap<>();
 
     // changed fidelities by morphers
     protected List<Fidelity> fiTrace = new ArrayList();
@@ -78,9 +87,15 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         this.name = name;
     }
 
-    public FidelityManager(Contextion mogram) {
-        this(mogram.getName());
-        this.mogram = mogram;
+    public FidelityManager(Contextion contextion) {
+        this(contextion.getName());
+        this.mogram = contextion;
+    }
+
+    public FidelityManager(Design design) throws RemoteException {
+        this(design.getName());
+        this.mogram = ((Transdesign)design).getDesignIntent();
+        setDesignFidelities((Transdesign) design);
     }
 
     public Map<String, MetaFi> getMetafidelities() {
@@ -107,6 +122,14 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
 
     public void setMorphFidelities(Map<String, MorphFidelity> morphFidelities) {
         this.morphFidelities = morphFidelities;
+    }
+
+    public Map<String, Projection> getProjections() {
+        return projections;
+    }
+
+    public void setProjections(Map<String, Projection> projections) {
+        this.projections = projections;
     }
 
     public void setFidelities(Map<String, Fidelity> fidelities) {
@@ -318,7 +341,6 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         }
     }
 
-
     public Fidelity getFidelity(String name) {
         Fidelity fi = fidelities.get(name);
         if (fi == null) {
@@ -397,9 +419,9 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         }
     }
 
-    public String getProjectionFi(String projectionName) {
-        return metafidelities.get(projectionName).getSelects().get(0).getName();
-    }
+//    public String getProjectionFi(String projectionName) {
+//        return metafidelities.get(projectionName).getSelects().get(0).getName();
+//    }
 
     public boolean isTraced() {
         return isTraced;
@@ -430,6 +452,22 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
 
     public void setChild(Contextion child) {
         this.child = child;
+    }
+
+    private void setDesignFidelities(Transdesign design) throws RemoteException {
+        Fi devFi = design.getDeveloperFi();
+        Fi dznFi = design.getDesignIntent().getMultiFi();
+        if (devFi instanceof MorphFidelity) {
+            morphFidelities.put(devFi.getName(), (MorphFidelity)devFi);
+        } else {
+            fidelities.put(devFi.getName(), (ServiceFidelity)devFi);
+        }
+        if (dznFi instanceof MorphFidelity) {
+            morphFidelities.put(devFi.getName(), (MorphFidelity)dznFi);
+        } else {
+            fidelities.put(dznFi.getName(), (ServiceFidelity)dznFi);
+        }
+        projections = design.getProjections();
     }
 
     @Override

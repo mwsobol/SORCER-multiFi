@@ -81,71 +81,40 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected List<Coupling> couplings;
     protected ContextSelector contextSelector;
     protected boolean isExec = true;
-    /**
-     * execution status: INITIAL|DONE|RUNNING|SUSPENDED|HALTED
-     */
-    protected Integer status = Exec.INITIAL;
-
     protected Integer priority;
-
     protected String description;
-
     protected String projectName;
-
     protected boolean isRevaluable = false;
-
     // indicates that is the parent of another mogram
     protected boolean isSuper = false;
-
     // true if the exertion has to be initialized (to original state)
     // or used as is after resuming from suspension or failure
     protected boolean isInitializable = true;
-
     protected String dbUrl;
-
     protected MetaFi multiMetaFi = new Metafidelity();
-
     protected MorphFidelity serviceMorphFidelity;
-
     protected SorcerPrincipal principal;
-
     // the current fidelity alias, as it is named in 'fidelities'
     // its original name might be different if aliasing is used
     // for already existing names
     protected String serviceFidelitySelector;
-
     // Date of creation of this Routine
     protected Date creationDate = new Date();
-
     protected Date lastUpdateDate;
-
     protected Date goodUntilDate;
-
     protected String accessClass;
-
     protected Boolean isExportControlled;
-
     protected static String defaultName = "mogram-";
-
     public static boolean debug = false;
-
     // sequence number for unnamed mogram instances
     protected static int count = 0;
-
     protected MonitoringSession monitorSession;
-
     protected Signature builder;
-
     protected String configFilename;
-
     protected ServiceContext dataContext;
-
     protected Fidelity<Finalization> finalizerFi;
-
     protected ServiceFidelity developerFi;
-
     protected transient Exerter provider;
-
     protected boolean isEvaluated = false;
 
     protected ServiceMogram() {
@@ -262,14 +231,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     public void setService(Service provider) {
         RemoteSignature ps = (RemoteSignature) getProcessSignature();
         ps.setProvider(provider);
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int value) {
-        status = value;
     }
 
     @Override
@@ -1141,9 +1102,9 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return mdaFi;
     }
 
-    public String getProjectionFi(String projectionName) {
-        return ((FidelityManager)fiManager).getProjectionFi(projectionName);
-    }
+//    public String getProjectionFi(String projectionName) {
+//        return ((FidelityManager)fiManager).getProjectionFi(projectionName);
+//    }
 
     public Differentiator getFdDifferentiator() {
         return fdDifferentiator;
@@ -1345,7 +1306,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return null;
     }
 
-    public ServiceFidelity getDeveloperFi() {
+    public Fi getDeveloperFi() {
         return developerFi;
     }
 

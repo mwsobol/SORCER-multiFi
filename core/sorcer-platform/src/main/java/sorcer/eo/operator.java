@@ -312,7 +312,7 @@ operator extends Operator {
         }
         Signature disciplineSig = null;
         Discipline discipline = null;
-        ServiceFidelity devFi = null;
+        Fi devFi = null;
         ServiceFidelity dznFi = null;
         Iterator<Object> it = itemList.iterator();
         while (it.hasNext()) {
@@ -322,6 +322,9 @@ operator extends Operator {
                 it.remove();
             } else if (obj instanceof Discipline) {
                 discipline = (Discipline) obj;
+                it.remove();
+            } else if (obj instanceof MorphFidelity && ((MorphFidelity)obj).getFidelity().getSelect() instanceof Development) {
+                devFi = ( MorphFidelity ) obj;
                 it.remove();
             } else if (obj instanceof ServiceFidelity) {
                 if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DEV)) {

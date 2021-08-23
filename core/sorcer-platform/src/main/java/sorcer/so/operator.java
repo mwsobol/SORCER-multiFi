@@ -24,11 +24,14 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.Transmodel;
+import sorcer.core.context.model.ent.Developer;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.req.Srv;
+import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.plexus.FidelityManager;
+import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.service.Collaboration;
 import sorcer.core.service.Governance;
@@ -376,17 +379,16 @@ public class operator extends Operator {
     }
 
     public static Transdesign dzn(Context designIntent) throws ServiceException {
-        try {
-            return new Transdesign(null, designIntent);
-        } catch (SignatureException e) {
-            throw new ServiceException(e);
-        }
+        return dzn(null, designIntent);
     }
 
-    public static Transdesign dzn(String name, Context dznContext) throws ServiceException {
+    public static Transdesign dzn(String name, Context designIntent) throws ServiceException {
         try {
-            return new Transdesign(name, dznContext);
-        } catch (SignatureException e) {
+            Transdesign design = new Transdesign(name, designIntent);
+            FidelityManager fiManger = new FidelityManager(design);
+            design.setFidelityManager(fiManger);
+            return design;
+        } catch (SignatureException | RemoteException e) {
             throw new ServiceException(e);
         }
     }
@@ -412,14 +414,14 @@ public class operator extends Operator {
                 if (((Transdesign)request).getDeveloperFi() == null) {
                     ((Transdesign)request).setDeveloperFi(((Transdesign)request).getDesignIntent());
                 }
-                ServiceFidelity developerFi = ((Transdesign)request).getDeveloperFi();
+                Fi developerFi = ((Transdesign)request).getDeveloperFi();
                 // setup the design developer
                 for (Object item : items) {
                     if (item instanceof Fidelity && ((Fidelity) item).getFiType().equals(Fi.Type.DEV)) {
                         developerFi.selectSelect(((Fidelity) item).getName());
                     }
                 }
-                Development developer = (Development) ((Transdesign)request).getDeveloperFi().getSelect();
+                Development developer = (Development) developerFi.getSelect();
                 if (((Transdesign)request).getDiscipline() != null) {
                     out = developer.develop((Discipline) ((Transdesign) request).getDiscipline(), ((Transdesign) request).getDisciplineIntent());
                 } else if (((Transdesign)request).getDesignIntent() != null) {
@@ -428,6 +430,11 @@ public class operator extends Operator {
                     if (obj != null && obj instanceof Context) {
                         return (ServiceContext) developer.develop(null, (ServiceContext)obj);
                     }
+                }
+                // handle the design development morph fidelity
+                if (developerFi instanceof MorphFidelity) {
+                    ((MorphFidelity)developerFi).setChanged();
+                    ((MorphFidelity)developerFi).notifyObservers(out);
                 }
             } else if(items.length == 1) {
                 if (items[0] instanceof Context) {

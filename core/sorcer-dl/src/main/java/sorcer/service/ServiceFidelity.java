@@ -82,13 +82,21 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 
 	public ServiceFidelity(String name, Service... selects) {
 		this.fiName = name;
-		for (Service s : selects)
+		for (Service s : selects) {
 			this.selects.add(s);
+		}
+		if (selects.length > 0) {
+			select = selects[0];
+		}
 	}
 
 	public ServiceFidelity(ServiceFidelity fidelity) {
-		for (Service s : fidelity.selects)
+		for (Service s : fidelity.selects) {
 			selects.add(s);
+		}
+		if (fidelity.selects.size() > 0) {
+			select = selects.get(0);
+		}
 		this.path = fidelity.path;
 		this.fiType = fidelity.fiType;
 		if (fidelity.fiName != null)

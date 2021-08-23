@@ -368,9 +368,9 @@ public class SignatureDomain implements Domain {
         domain.update(contextEntries);
     }
 
-    public String getProjectionFi(String projectionName) throws ContextException, RemoteException {
-        return ((ServiceMogram)domain).getProjectionFi(projectionName);
-    }
+//    public String getProjectionFi(String projectionName) throws ContextException, RemoteException {
+//        return ((ServiceMogram)domain).getProjectionFi(projectionName);
+//    }
 
     public boolean isExportControlled() {
         return ((ServiceMogram)domain).isExportControlled();
