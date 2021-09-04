@@ -8,18 +8,15 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.*;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.Dispatcher;
-import sorcer.core.context.model.ent.Developer;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.MultiFiMogram;
+import sorcer.core.plexus.MorphMogram;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.modeling.*;
-import sorcer.service.Node;
 
 import java.rmi.RemoteException;
 
@@ -409,7 +406,7 @@ public class ModelMultiFidelities {
         Entry e2 = ent("x2", 6.0);
         Entry e3 = ent("x3", 7.0);
 
-        Mogram mfs = mogFi("args", rFi(e1, e2, e3));
+        Mogram mfs = fiMog("args", rFi(e1, e2, e3));
 
         Object out = exec(mfs);
         logger.info("out: " + out);
@@ -441,7 +438,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        MultiFiMogram mfs = mogFi(mphFi(morpher, e1, e2, e3));
+        MorphMogram mfs = fiMog(mphFi(morpher, e1, e2, e3));
 
         Object out = exec(mfs);
         logger.info("out: " + out);
@@ -460,7 +457,7 @@ public class ModelMultiFidelities {
         Signature ms = sig("multiply", MultiplierImpl.class);
         Signature as = sig("add", AdderImpl.class);
 
-        MultiFiMogram mfs = mogFi(rFi(ms, as), cxt);
+        MorphMogram mfs = fiMog(rFi(ms, as), cxt);
 
         Context out = (Context) exec(mfs);
         logger.info("out: " + out);
@@ -488,7 +485,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        MultiFiMogram mfs = mogFi(mphFi("sigFi", morpher, ms, as), cxt);
+        MorphMogram mfs = fiMog(mphFi("sigFi", morpher, ms, as), cxt);
 
         Context out = (Context) exec(mfs);
         logger.info("out: " + out);
@@ -496,6 +493,78 @@ public class ModelMultiFidelities {
 
         out = (Context) exec(mfs);
         assertTrue(value(context(out), "result/y").equals(60.0));
+    }
+
+    @Test
+    public void morphWithInOutMorphers() throws Exception {
+
+        Context cxt = context(inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+            outVal("result/y"));
+        Signature ms = sig("multiply", MultiplierImpl.class);
+        Signature as = sig("add", AdderImpl.class);
+
+        Morpher inMorpher = (mgr, mFi, value) -> {
+            Fidelity<Signature> fi =  mFi.getFidelity();
+            Fi.Type type = mFi.getFidelity().getFiType();
+            if (fi.getSelectName().equals("multiply")) {
+                // change value fom 10.0 to 20.0
+                setValue((Context)value, "arg/x1", 20.0);
+            }
+        };
+
+        Morpher outMorpher = (mgr, mFi, value) -> {
+            Fidelity<Signature> fi =  mFi.getFidelity();
+            Fi.Type type = mFi.getFidelity().getFiType();
+            if (fi.getSelectName().equals("multiply")) {
+                if (((Double) value(context(value), "result/y")) >= 500.0) {
+                    mgr.reconfigure(fi("add", "sigFi"));
+                }
+            }
+        };
+
+        // the first morpher is for the input context the next one for the output context
+        MorphMogram mfs = fiMog(mphFi("sigFi", inMorpher, outMorpher, ms, as), cxt);
+
+        Context out = (Context) exec(mfs);
+        logger.info("out: " + out);
+        assertTrue(value(context(out), "result/y").equals(1000.0));
+
+        out = (Context) exec(mfs);
+        assertTrue(value(context(out), "result/y").equals(70.0));
+    }
+
+    @Test
+    public void morphWithSameInOutMorpher() throws Exception {
+
+        Context cxt = context(inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+            outVal("result/y"));
+        Signature ms = sig("multiply", MultiplierImpl.class);
+        Signature as = sig("add", AdderImpl.class);
+
+        Morpher morpher = (mgr, mFi, value) -> {
+            Fidelity<Signature> fi =  mFi.getFidelity();
+            Fi.Type type = mFi.getFidelity().getFiType();
+            if (type == Fi.Type.IN) {
+                if (fi.getSelectName().equals("multiply")) {
+                    // change value fom 10.0 to 20.0
+                    setValue(( Context ) value, "arg/x1", 20.0);
+                }
+            } else if (type == Fi.Type.OUT) {
+                if (((Double) value(context(value), "result/y")) >= 500.0) {
+                    mgr.reconfigure(fi("add", "sigFi"));
+                }
+            }
+        };
+
+        // the first morpher is for the input context the next one for the output context
+        MorphMogram mfs = fiMog(mphFi("sigFi", morpher, morpher, ms, as), cxt);
+
+        Context out = (Context) exec(mfs);
+        logger.info("out: " + out);
+        assertTrue(value(context(out), "result/y").equals(1000.0));
+
+        out = (Context) exec(mfs);
+        assertTrue(value(context(out), "result/y").equals(70.0));
     }
 
     @Test
@@ -512,7 +581,7 @@ public class ModelMultiFidelities {
                         outVal("result/y")));
 
 
-        MultiFiMogram mfs = mogFi(mphFi("taskFi", t5, t4));
+        MorphMogram mfs = fiMog(mphFi("taskFi", t5, t4));
         Mogram mog = exert(mfs);
         logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(100.0));
@@ -548,7 +617,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        MultiFiMogram mfs = mogFi(mphFi(morpher, t5, t4));
+        MorphMogram mfs = fiMog(mphFi(morpher, t5, t4));
         Mogram mog = exert(mfs);
         logger.info("out: " + context(mog));
         assertTrue(value(context(mog), "result/y").equals(100.0));

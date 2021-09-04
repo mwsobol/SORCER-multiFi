@@ -220,6 +220,10 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, fi<T>, Arg {
 		return fiType;
 	}
 
+	public void setFiType(Type type) {
+		 fiType = type;
+	}
+
     @Override
     public boolean isChanged() {
         return changed;

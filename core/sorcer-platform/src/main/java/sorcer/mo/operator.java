@@ -528,7 +528,10 @@ public class operator {
     }
 
     public static ServiceContext out(Contextion contextion) throws ServiceException, RemoteException {
-        if (contextion instanceof Node) {
+        if (contextion instanceof Context) {
+            ((ServiceContext)contextion).setType(Functionality.Type.OUTPUT);
+            return (ServiceContext) contextion;
+        } if (contextion instanceof Node) {
             return (ServiceContext) contextion.getOutput();
         } else if (contextion instanceof Governance) {
             return (ServiceContext) ((Governance) contextion).getOutput();
@@ -538,7 +541,10 @@ public class operator {
     }
 
     public static ServiceContext in(Contextion contextion) throws ContextException {
-        if (contextion instanceof Node) {
+        if (contextion instanceof Context) {
+            ((ServiceContext)contextion).setType(Functionality.Type.INPUT);
+            return (ServiceContext) contextion;
+        } else if (contextion instanceof Node) {
             return (ServiceContext) ((ServiceNode) contextion).getInput();
         } else if (contextion instanceof Collaboration) {
             return (ServiceContext) ((Collaboration) contextion).getInput();

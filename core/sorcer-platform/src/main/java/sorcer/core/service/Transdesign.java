@@ -40,15 +40,12 @@ public class Transdesign extends MultiFiSlot implements Design {
 
     // transdiscipline
     private Contextion discipline;
-
     private Context disciplineIntent;
 
     private Context developmentIntent;
+    private Fi developmentFi;
 
     private Context designIntent;
-
-    private Fi developerFi;
-
     private Map<String, Projection> projections;
 
     // the output of this collaboration
@@ -58,8 +55,8 @@ public class Transdesign extends MultiFiSlot implements Design {
 
     protected Fidelity<Initialization> initializerFi;
 
-    public void setDeveloperFi(ServiceFidelity developerFi) {
-        this.developerFi = developerFi;
+    public void setDevelopmentFi(ServiceFidelity developmentFi) {
+        this.developmentFi = developmentFi;
     }
 
     protected ServiceStrategy serviceStrategy;
@@ -92,8 +89,8 @@ public class Transdesign extends MultiFiSlot implements Design {
         } else {
             disciplineIntent = dznCxt.getDisciplineIntent();
         }
-        developerFi = dznCxt.getDeveloperFi();
-        if (developerFi == null) {
+        developmentFi = dznCxt.getDeveloperFi();
+        if (developmentFi == null) {
             setDeveloperFi(designIntent);
         }
         developmentIntent = dznCxt.getDevelopmentIntent();
@@ -103,25 +100,25 @@ public class Transdesign extends MultiFiSlot implements Design {
         this(name);
         this.discipline = discipline;
         this.disciplineIntent = disciplineIntent;
-        developerFi = new ServiceFidelity(name);
-        developerFi.addSelect((Developer)developer);
-        developerFi.setSelect((Developer)developer);
+        developmentFi = new ServiceFidelity(name);
+        developmentFi.addSelect((Developer)developer);
+        developmentFi.setSelect((Developer)developer);
         ((Developer)developer).setDiscipline(discipline);
     }
 
     public Fi setDeveloperFi(Context context) {
-        if(developerFi == null) {
+        if(developmentFi == null) {
             Object devComponent = ((ServiceContext)context).get(Context.DEV_PATH);
             if (devComponent != null) {
                 if (devComponent instanceof Development) {
-                    developerFi = new ServiceFidelity(((Developer)devComponent).getName());
-                    developerFi.addSelect((Developer) devComponent);
-                    developerFi.setSelect((Developer)devComponent);
+                    developmentFi = new ServiceFidelity(((Developer)devComponent).getName());
+                    developmentFi.addSelect((Developer) devComponent);
+                    developmentFi.setSelect((Developer)devComponent);
                     ((Developer)devComponent).setDiscipline(discipline);
                 } else if (devComponent instanceof ServiceFidelity
                     && ((ServiceFidelity) devComponent).getFiType().equals(Fi.Type.DEV)) {
-                    developerFi = (ServiceFidelity) devComponent;
-                    ((Developer)developerFi.getSelect()).setDiscipline(discipline);
+                    developmentFi = (ServiceFidelity) devComponent;
+                    ((Developer) developmentFi.getSelect()).setDiscipline(discipline);
                 }
             }
         }
@@ -129,7 +126,7 @@ public class Transdesign extends MultiFiSlot implements Design {
         if (output == null) {
             output = new ServiceContext(getName());
         }
-        return developerFi;
+        return developmentFi;
     }
 
     public Object getIntentContext(Object... items) throws ConfigurationException {
@@ -278,15 +275,15 @@ public class Transdesign extends MultiFiSlot implements Design {
     }
 
     @Override
-    public Fi getDeveloperFi() throws RemoteException {
-        return developerFi;
+    public Fi getDevelopmentFi() throws RemoteException {
+        return developmentFi;
     }
 
     @Override
     public Context design(Discipline discipline, Context context) throws DesignException, RemoteException {
        this.discipline = discipline;
         try {
-            return ((Development)developerFi.getSelect()).develop(discipline, developmentIntent);
+            return ((Development) developmentFi.getSelect()).develop(discipline, developmentIntent);
         } catch (ServiceException | ExecutiveException e) {
             throw new DesignException(e);
         }

@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 /**
- * A metasystem is represented by a mogram with multiple projections of its
+ * A morph service system is represented by a mogram with multiple projections of its
  * subsystems so it's a system of systems.
  *
  * Each projection of the system can be treated as a fidelity selectable
@@ -39,18 +39,18 @@ import java.util.*;
  *
  * Created by Mike Sobolewski
  */
-public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
+public class MorphMogram extends ServiceMogram implements Fi<Mogram> {
 
-    protected Fidelity requestFidelity;
+    protected Fidelity requestMultiFi;
 
     protected MorphFidelity morphFidelity;
 
     protected String path = "";
 
-    public MultiFiMogram() {
+    public MorphMogram() {
     }
 
-    public MultiFiMogram(String name) throws SignatureException {
+    public MorphMogram(String name) throws SignatureException {
         super(name);
     }
 
@@ -59,11 +59,11 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
         return ((ServiceMogram) scope).clearScope();
     }
 
-    public MultiFiMogram(ServiceFidelity fidelity) {
+    public MorphMogram(ServiceFidelity fidelity) {
         this(fidelity.getName(), fidelity);
     }
 
-    public MultiFiMogram(String name, MorphFidelity fidelity) {
+    public MorphMogram(String name, MorphFidelity fidelity) {
         super(name);
         morphFidelity = fidelity;
         if (fiManager == null)
@@ -76,22 +76,22 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
         morphFidelity.addObserver((FidelityManager) fiManager);
     }
 
-    public MultiFiMogram(String name, Metafidelity fidelity) {
+    public MorphMogram(String name, Metafidelity fidelity) {
         super(name);
-        requestFidelity = fidelity;
+        requestMultiFi = fidelity;
     }
 
-    public MultiFiMogram(String name, ServiceFidelity fidelity) {
+    public MorphMogram(String name, ServiceFidelity fidelity) {
         super(name);
-        requestFidelity = fidelity;
+        requestMultiFi = fidelity;
     }
 
-    public MultiFiMogram(Context context, MorphFidelity fidelity) {
+    public MorphMogram(Context context, MorphFidelity fidelity) {
         this(context.getName(), fidelity);
         scope = context;
     }
 
-    public MultiFiMogram(Context context, Metafidelity fidelity) {
+    public MorphMogram(Context context, Metafidelity fidelity) {
         this(context.getName(), fidelity);
         scope = context;
     }
@@ -144,9 +144,9 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
 
     @Override
     public Fidelity selectFidelity(String selector) throws ConfigurationException {
-        if (requestFidelity != null) {
-            requestFidelity.selectSelect(selector);
-            return requestFidelity;
+        if (requestMultiFi != null) {
+            requestMultiFi.selectSelect(selector);
+            return requestMultiFi;
         } else {
             morphFidelity.getFidelity().selectSelect(selector);
             return morphFidelity.getFidelity();
@@ -184,15 +184,15 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     public Fidelity getServiceFidelity() {
-        if (requestFidelity == null && morphFidelity != null)
+        if (requestMultiFi == null && morphFidelity != null)
             return morphFidelity.getFidelity();
         else {
-            return requestFidelity;
+            return requestMultiFi;
         }
     }
 
     public void setServiceFidelity(Metafidelity requestFidelity) {
-        this.requestFidelity = requestFidelity;
+        this.requestMultiFi = requestFidelity;
     }
 
     public MorphFidelity getMorphFidelity() {
@@ -240,7 +240,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     @Override
     public Object get(String component) {
         try {
-            return requestFidelity.getSelect(component);
+            return requestMultiFi.getSelect(component);
         } catch (ConfigurationException e) {
             throw new RuntimeException(e);
         }
@@ -249,8 +249,8 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     private Fi getMultifidelity() {
         if (morphFidelity != null) {
             return morphFidelity;
-        } else if (requestFidelity != null) {
-            return requestFidelity;
+        } else if (requestMultiFi != null) {
+            return requestMultiFi;
         } else {
             return null;
         }
@@ -308,8 +308,8 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
 
     @Override
     public Mogram get(int index) {
-        if (requestFidelity != null) {
-            return (Mogram) requestFidelity.get(index);
+        if (requestMultiFi != null) {
+            return (Mogram) requestMultiFi.get(index);
         } else if (morphFidelity != null) {
             return (Mogram) morphFidelity.get(index);
         }

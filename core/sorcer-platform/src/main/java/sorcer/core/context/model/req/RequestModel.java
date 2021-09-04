@@ -29,7 +29,7 @@ import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.MultiFiMogram;
+import sorcer.core.plexus.MorphMogram;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.service.Projection;
 import sorcer.core.signature.ServiceSignature;
@@ -215,9 +215,9 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
                     if (rp != null && rp.returnPath != null)
                         putValue(((Srv) val).getReturnPath().returnPath, obj);
                     val = obj;
-                }  else if (carrier instanceof MultiFiMogram) {
-                    ((MultiFiMogram) carrier).setScope(this);
-                    Object out = ((MultiFiMogram)carrier).exert(args);
+                }  else if (carrier instanceof MorphMogram) {
+                    (( MorphMogram ) carrier).setScope(this);
+                    Object out = (( MorphMogram )carrier).exert(args);
                     Context cxt = null;
                     if (out instanceof Routine) {
                         cxt = ((Routine) out).getContext();

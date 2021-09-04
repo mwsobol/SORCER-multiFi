@@ -27,7 +27,6 @@ import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.Tuple2;
-import sorcer.core.context.DesignContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.invoker.Observer;
@@ -455,19 +454,35 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     }
 
     private void setDesignFidelities(Transdesign design) throws RemoteException {
-        Fi devFi = design.getDeveloperFi();
+        Fi devFi = design.getDevelopmentFi();
         Fi dznFi = design.getDesignIntent().getMultiFi();
-        if (devFi instanceof MorphFidelity) {
-            morphFidelities.put(devFi.getName(), (MorphFidelity)devFi);
-        } else {
-            fidelities.put(devFi.getName(), (ServiceFidelity)devFi);
+        if (devFi != null) {
+            if (devFi instanceof MorphFidelity) {
+                morphFidelities.put(devFi.getName(), (MorphFidelity)devFi);
+                registerMorphFidelity(( MorphFidelity ) devFi);
+            } else {
+                fidelities.put(devFi.getName(), (ServiceFidelity)devFi);
+            }
         }
         if (dznFi instanceof MorphFidelity) {
             morphFidelities.put(devFi.getName(), (MorphFidelity)dznFi);
+            registerMorphFidelity(( MorphFidelity ) devFi);
         } else {
             fidelities.put(dznFi.getName(), (ServiceFidelity)dznFi);
         }
         projections = design.getProjections();
+    }
+
+    private void registerMorphFidelity(MorphFidelity morphFi) {
+        try {
+           morphFi.addObserver(this);
+            if (morphFi.getMorpherFidelity() != null) {
+                // set the default morpher
+                morphFi.setMorpher(( Morpher ) (( Entry ) morphFi.getMorpherFidelity().get(0)).getValue());
+            }
+        } catch (ContextException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -475,7 +490,12 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         // implement in subclasses and use the morphers provided by MorphedFidelities (observables)
 
         MorphFidelity mFi = (MorphFidelity)observable;
-        Morpher morpher = mFi.getMorpher();
+        Morpher morpher = null;
+        if (mFi.getFiType().equals(Fi.Type.IN)) {
+            morpher = mFi.getInMorpher();
+        } else {
+            morpher = mFi.getMorpher();
+        }
         if (morpher != null)
             try {
                 morpher.morph(this, mFi, obj);

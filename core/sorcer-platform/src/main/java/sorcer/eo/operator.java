@@ -330,7 +330,7 @@ operator extends Operator {
                 if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DEV)) {
                     devFi = (ServiceFidelity) obj;
                 } else if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DESIGN)) {
-                    dznFi = (ServiceFidelity) obj;
+//                    dznFi = (ServiceFidelity) obj;
                 }
                 it.remove();
             }
@@ -2043,14 +2043,22 @@ operator extends Operator {
     }
 
     public static MorphFidelity mphFi(Morpher morpher, Service... services) {
-        MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(services));
-        morphFi.setMorpher(morpher);
-        return morphFi;
+        return mphFi(null, morpher, services);
     }
 
     public static MorphFidelity mphFi(String name, Morpher morpher, Service... services) {
         MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
         morphFi.setMorpher(morpher);
+        if (name != null) {
+            morphFi.setPath(name);
+        }
+        return morphFi;
+    }
+
+    public static MorphFidelity mphFi(String name, Morpher inMorpher, Morpher outMorpher, Service... services) {
+        MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
+        morphFi.setInMorpher(inMorpher);
+        morphFi.setMorpher(outMorpher);
         morphFi.setPath(name);
         return morphFi;
     }
@@ -2082,58 +2090,58 @@ operator extends Operator {
         ((ServiceMogram)mogram).selectFidelity(selection);
     }
 
-    public static MultiFiMogram mogFi(Metafidelity fidelity) {
-        return new MultiFiMogram(fidelity.getName(), fidelity);
+    public static MorphMogram fiMog(Metafidelity fidelity) {
+        return new MorphMogram(fidelity.getName(), fidelity);
     }
 
-    public static MultiFiMogram mogFi(MorphFidelity fidelity) {
-        return new MultiFiMogram(fidelity.getName(), fidelity);
+    public static MorphMogram fiMog(MorphFidelity fidelity) {
+        return new MorphMogram(fidelity.getName(), fidelity);
     }
 
-    public static MultiFiMogram mogFi(Morpher  morpher, Service... mograms) {
+    public static MorphMogram fiMog(Morpher  morpher, Service... mograms) {
         MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(mograms));
         morphFi.setMorpher(morpher);
-        return new MultiFiMogram(morphFi.getName(), morphFi);
+        return new MorphMogram(morphFi.getName(), morphFi);
     }
 
-    public static MultiFiMogram mogFi(String name, Metafidelity fidelity) {
-        return new MultiFiMogram(name, fidelity);
+    public static MorphMogram fiMog(String name, Metafidelity fidelity) {
+        return new MorphMogram(name, fidelity);
     }
 
-    public static MultiFiMogram mogFi(String name, ServiceFidelity fidelity) {
-        return new MultiFiMogram(name, fidelity);
+    public static MorphMogram fiMog(String name, ServiceFidelity fidelity) {
+        return new MorphMogram(name, fidelity);
     }
 
-    public static MultiFiMogram mogFi(String name, MorphFidelity fidelity) {
-        return new MultiFiMogram(name, fidelity);
+    public static MorphMogram fiMog(String name, MorphFidelity fidelity) {
+        return new MorphMogram(name, fidelity);
     }
 
-    public static MultiFiMogram mogFi(Metafidelity fidelity, Context context) {
-        return new MultiFiMogram(context, fidelity);
+    public static MorphMogram fiMog(Metafidelity fidelity, Context context) {
+        return new MorphMogram(context, fidelity);
     }
 
-    public static MultiFiMogram mogFi(ServiceFidelity fidelity, Context context) {
-        MultiFiMogram mfr = new MultiFiMogram(fidelity);
+    public static MorphMogram fiMog(ServiceFidelity fidelity, Context context) {
+        MorphMogram mfr = new MorphMogram(fidelity);
         mfr.setScope(context);
         mfr.setName(fidelity.getName());
         return mfr;
     }
 
-    public static MultiFiMogram mogFi(String name, ServiceFidelity fidelity, Context context) {
-        MultiFiMogram mfr = new MultiFiMogram(name, fidelity);
+    public static MorphMogram fiMog(String name, ServiceFidelity fidelity, Context context) {
+        MorphMogram mfr = new MorphMogram(name, fidelity);
         mfr.setScope(context);
         mfr.setName(fidelity.getName());
         return mfr;
     }
 
-    public static MultiFiMogram mogFi(String name, MorphFidelity fidelity, Context context) {
-        MultiFiMogram mfr = new MultiFiMogram(context, fidelity);
+    public static MorphMogram fiMog(String name, MorphFidelity fidelity, Context context) {
+        MorphMogram mfr = new MorphMogram(context, fidelity);
         mfr.setName(fidelity.getName());
         return mfr;
     }
 
-    public static MultiFiMogram mogFi(MorphFidelity fidelity, Context context) {
-        MultiFiMogram mfr = new MultiFiMogram(context, fidelity);
+    public static MorphMogram fiMog(MorphFidelity fidelity, Context context) {
+        MorphMogram mfr = new MorphMogram(context, fidelity);
         mfr.setName(fidelity.getName());
         return mfr;
     }

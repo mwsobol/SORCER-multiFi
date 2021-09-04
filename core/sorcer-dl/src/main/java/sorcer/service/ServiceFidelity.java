@@ -41,11 +41,15 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 		this.fiType = type;
 	}
 	public ServiceFidelity(String name) {
-		this.fiName = name;
+		if (name == null) {
+			fiName = "fidelity" + count++;
+		} else {
+			this.fiName = name;
+		}
 	}
 
 	public ServiceFidelity(String name, String path) {
-		this.fiName = name;
+		this(name);
 		this.path = path;
 	}
 
@@ -81,7 +85,7 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 	}
 
 	public ServiceFidelity(String name, Service... selects) {
-		this.fiName = name;
+		this(name);
 		for (Service s : selects) {
 			this.selects.add(s);
 		}

@@ -38,7 +38,7 @@ import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.MultiFiMogram;
+import sorcer.core.plexus.MorphMogram;
 import sorcer.core.provider.*;
 import sorcer.core.signature.*;
 import sorcer.jini.lookup.ProviderID;
@@ -882,18 +882,18 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 				} else {
 					throw new RoutineException("No return contextReturn in the context: " + cxt.getName());
 				}
-			} else if (service instanceof MultiFiMogram) {
+			} else if (service instanceof MorphMogram) {
 				Object out;
-				MorphFidelity morphFidelity = ((MultiFiMogram)service).getMorphFidelity();
-				ServiceFidelity sfi = (ServiceFidelity) ((MultiFiMogram)service).getServiceFidelity();
+				MorphFidelity morphFidelity = (( MorphMogram )service).getMorphFidelity();
+				ServiceFidelity sfi = (ServiceFidelity) (( MorphMogram )service).getServiceFidelity();
 				if (sfi == null) {
-					ServiceFidelity fi = (ServiceFidelity) ((MultiFiMogram)service).getMorphFidelity().getFidelity();
+					ServiceFidelity fi = (ServiceFidelity) (( MorphMogram )service).getMorphFidelity().getFidelity();
 					Object select = fi.getSelect();
 					if (select != null) {
 						if (select instanceof Mogram)
 							out = ((Mogram) select).exert(args);
 						else {
-							Context cxt = ((MultiFiMogram)service).getScope();
+							Context cxt = (( MorphMogram )service).getScope();
 							if (select instanceof Signature && cxt != null)
 								out = ((Service) select).execute(cxt);
 							else
@@ -901,7 +901,12 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 						}
 					}
 				}
-				Context cxt = ((MultiFiMogram)service).getScope();
+				Context cxt = (( MorphMogram )service).getScope();
+				if (morphFidelity != null && morphFidelity.getInMorpher() != null) {
+					morphFidelity.getFidelity().setFiType(Fi.Type.IN);
+					morphFidelity.setChanged();
+					morphFidelity.notifyObservers(cxt);
+				}
 				if (sfi.getSelect() instanceof Signature && cxt != null) {
 					out = sfi.getSelect().execute(cxt);
 				} else {
@@ -909,6 +914,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 				}
 
 				if (morphFidelity != null) {
+					morphFidelity.getFidelity().setFiType(Fi.Type.OUT);
 					morphFidelity.setChanged();
 					morphFidelity.notifyObservers(out);
 				}

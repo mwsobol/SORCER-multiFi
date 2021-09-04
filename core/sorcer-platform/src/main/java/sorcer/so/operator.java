@@ -24,15 +24,13 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.Transmodel;
-import sorcer.core.context.model.ent.Developer;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.req.Srv;
-import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.MultiFiMogram;
+import sorcer.core.plexus.MorphMogram;
 import sorcer.core.service.Collaboration;
 import sorcer.core.service.Governance;
 import sorcer.core.service.Transdesign;
@@ -48,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static sorcer.mo.operator.devFi;
 import static sorcer.mo.operator.value;
 
 /**
@@ -411,31 +410,7 @@ public class operator extends Operator {
             if (request instanceof Mogram) {
                 out = response((Mogram)request, items);
             } else if (request instanceof Design) {
-                if (((Transdesign)request).getDeveloperFi() == null) {
-                    ((Transdesign)request).setDeveloperFi(((Transdesign)request).getDesignIntent());
-                }
-                Fi developerFi = ((Transdesign)request).getDeveloperFi();
-                // setup the design developer
-                for (Object item : items) {
-                    if (item instanceof Fidelity && ((Fidelity) item).getFiType().equals(Fi.Type.DEV)) {
-                        developerFi.selectSelect(((Fidelity) item).getName());
-                    }
-                }
-                Development developer = (Development) developerFi.getSelect();
-                if (((Transdesign)request).getDiscipline() != null) {
-                    out = developer.develop((Discipline) ((Transdesign) request).getDiscipline(), ((Transdesign) request).getDisciplineIntent());
-                } else if (((Transdesign)request).getDesignIntent() != null) {
-                    // setup a design intent for the design developer
-                    Object obj = ((Transdesign)request).getIntentContext(items);
-                    if (obj != null && obj instanceof Context) {
-                        return (ServiceContext) developer.develop(null, (ServiceContext)obj);
-                    }
-                }
-                // handle the design development morph fidelity
-                if (developerFi instanceof MorphFidelity) {
-                    ((MorphFidelity)developerFi).setChanged();
-                    ((MorphFidelity)developerFi).notifyObservers(out);
-                }
+                return morphDesign(( Transdesign ) request);
             } else if(items.length == 1) {
                 if (items[0] instanceof Context) {
                     out = eval(request, (Context) items[0]);
@@ -449,6 +424,50 @@ public class operator extends Operator {
             }
         } catch (SignatureException | RemoteException | ExecutiveException | ConfigurationException e) {
             throw new ContextException(e);
+        }
+        return (ServiceContext)out;
+    }
+
+    public static ServiceContext morphDesign(Transdesign design, Object... items)
+        throws ServiceException, RemoteException, ExecutiveException, ConfigurationException {
+        if (design.getDevelopmentFi() == null) {
+            design.setDeveloperFi(design.getDesignIntent());
+        }
+        Fi developerFi = design.getDevelopmentFi();
+        // setup the design developer
+        for (Object item : items) {
+            if (item instanceof Fidelity && ((Fidelity) item).getFiType().equals(Fi.Type.DEV)) {
+                developerFi.selectSelect(((Fidelity) item).getName());
+            }
+        }
+        Context out = null;
+        FidelityManager fiManager = (FidelityManager)design.getFidelityManager();
+        Morpher inMorpher = design.getInMorpher();
+        Morpher outMorpher = design.getMorpher();
+        if (developerFi != null) {
+            Development developer = ( Development ) developerFi.getSelect();
+            if ((inMorpher != null || outMorpher != null) && design.getDesignIntent() != null) {
+                // setup a design intent for the design developer
+                Object obj = design.getDesignIntent();
+                if (obj != null && obj instanceof Context) {
+                    if (fiManager != null && inMorpher != null) {
+                        inMorpher.morph(fiManager, developerFi, design);
+                    }
+                    // handle the development morph fidelity
+                    if (developerFi instanceof MorphFidelity && (( MorphFidelity ) developerFi).getMorpher() != null) {
+                        (( MorphFidelity ) developerFi).setChanged();
+                        (( MorphFidelity ) developerFi).notifyObservers(obj);
+                        out = design.getOutput();
+                    } else {
+                        out = developer.develop(null, ( ServiceContext ) obj);
+                        if (fiManager != null && outMorpher != null) {
+                            outMorpher.morph(fiManager, developerFi, design);
+                        }
+                    }
+                } else if (design.getDiscipline() != null) {
+                    out = developer.develop(( Discipline ) design.getDiscipline(), design.getDisciplineIntent());
+                }
+            }
         }
         return (ServiceContext)out;
     }
@@ -648,7 +667,7 @@ public class operator extends Operator {
             if (service instanceof Entry || service instanceof Signature ) {
                 return service.execute(args);
             } else if (service instanceof Mogram) {
-                if (service instanceof DataContext || service instanceof MultiFiMogram) {
+                if (service instanceof DataContext || service instanceof MorphMogram) {
                     return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
                 } else if (service instanceof Node) {
                     return service.execute(args);

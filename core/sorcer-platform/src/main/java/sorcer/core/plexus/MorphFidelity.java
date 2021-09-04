@@ -37,6 +37,8 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
 
     private Morpher morpher;
 
+    private Morpher inMorpher;
+
     private String path;
 
     private Fidelity morpherFidelity;
@@ -185,6 +187,14 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
             }
         }
         return morpher;
+    }
+
+    public Morpher getInMorpher() {
+        return inMorpher;
+    }
+
+    public void setInMorpher(Morpher inMorpher) {
+        this.inMorpher = inMorpher;
     }
 
     public void setMorpher(Morpher morpher) {
