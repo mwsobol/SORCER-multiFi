@@ -410,7 +410,7 @@ public class operator extends Operator {
             if (request instanceof Mogram) {
                 out = response((Mogram)request, items);
             } else if (request instanceof Design) {
-                return morphDesign(( Transdesign ) request);
+                return morphDesign(( Transdesign ) request, items);
             } else if(items.length == 1) {
                 if (items[0] instanceof Context) {
                     out = eval(request, (Context) items[0]);
@@ -435,9 +435,12 @@ public class operator extends Operator {
         }
         Fi developerFi = design.getDevelopmentFi();
         // setup the design developer
+        Context disciplineIntent = null;
         for (Object item : items) {
             if (item instanceof Fidelity && ((Fidelity) item).getFiType().equals(Fi.Type.DEV)) {
                 developerFi.selectSelect(((Fidelity) item).getName());
+            } else if (item instanceof Fidelity && ((Fidelity) item).getFiType().equals(Fi.Type.INTENT)) {
+                disciplineIntent = (Context)design.getIntentContext(((Fidelity) item));
             }
         }
         Context out = null;
@@ -446,26 +449,30 @@ public class operator extends Operator {
         Morpher outMorpher = design.getMorpher();
         if (developerFi != null) {
             Development developer = ( Development ) developerFi.getSelect();
-            if ((inMorpher != null || outMorpher != null) && design.getDesignIntent() != null) {
+            if (design.getDesignIntent() != null) {
                 // setup a design intent for the design developer
                 Object obj = design.getDesignIntent();
-                if (obj != null && obj instanceof Context) {
-                    if (fiManager != null && inMorpher != null) {
-                        inMorpher.morph(fiManager, developerFi, design);
-                    }
-                    // handle the development morph fidelity
-                    if (developerFi instanceof MorphFidelity && (( MorphFidelity ) developerFi).getMorpher() != null) {
-                        (( MorphFidelity ) developerFi).setChanged();
-                        (( MorphFidelity ) developerFi).notifyObservers(obj);
-                        out = design.getOutput();
-                    } else {
-                        out = developer.develop(null, ( ServiceContext ) obj);
-                        if (fiManager != null && outMorpher != null) {
-                            outMorpher.morph(fiManager, developerFi, design);
+                if (inMorpher != null || outMorpher != null) {
+                    if (obj != null && obj instanceof Context) {
+                        if (fiManager != null && inMorpher != null) {
+                            inMorpher.morph(fiManager, developerFi, design);
+                        }
+                        // handle the development morph fidelity
+                        if (developerFi instanceof MorphFidelity && (( MorphFidelity ) developerFi).getMorpher() != null) {
+                            (( MorphFidelity ) developerFi).setChanged();
+                            (( MorphFidelity ) developerFi).notifyObservers(obj);
+                            out = design.getOutput();
+                        } else {
+                            out = developer.develop(null, ( ServiceContext ) obj);
+                            if (fiManager != null && outMorpher != null) {
+                                outMorpher.morph(fiManager, developerFi, design);
+                            }
                         }
                     }
                 } else if (design.getDiscipline() != null) {
                     out = developer.develop(( Discipline ) design.getDiscipline(), design.getDisciplineIntent());
+                } else if (design.getDiscipline() == null) {
+                    out = developer.develop(null, disciplineIntent);
                 }
             }
         }

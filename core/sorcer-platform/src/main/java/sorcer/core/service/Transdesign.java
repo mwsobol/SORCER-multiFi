@@ -129,6 +129,7 @@ public class Transdesign extends MultiFiSlot implements Design {
         return developmentFi;
     }
 
+    // get a discipline intent from the designIntent for a given select fidelity in itens
     public Object getIntentContext(Object... items) throws ConfigurationException {
         Object obj = null;
         for (Object item : items) {

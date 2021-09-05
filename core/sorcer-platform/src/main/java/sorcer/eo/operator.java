@@ -330,7 +330,7 @@ operator extends Operator {
                 if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DEV)) {
                     devFi = (ServiceFidelity) obj;
                 } else if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DESIGN)) {
-//                    dznFi = (ServiceFidelity) obj;
+                    dznFi = (ServiceFidelity) obj;
                 }
                 it.remove();
             }
