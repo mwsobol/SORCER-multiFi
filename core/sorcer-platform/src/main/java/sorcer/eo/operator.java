@@ -758,7 +758,7 @@ operator extends Operator {
             ((ServiceContext)cxt).setFidelityManager(new FidelityManager(cxt));
         }
         try {
-            Map<String, ServiceFidelity> fiMap =
+            Map<String, Fidelity> fiMap =
                 fiMap = ((ServiceMogram)cxt).getFidelityManager().getFidelities();
 
             Map.Entry<String,Object> e;
@@ -3293,7 +3293,7 @@ operator extends Operator {
         return trace;
     }
 
-    public static List<ServiceFidelity>  fiTrace(Mogram mogram) {
+    public static List<Fidelity>  fiTrace(Mogram mogram) {
         try {
             return ((ServiceMogram)mogram).getFidelityManager().getFiTrace();
         } catch (RemoteException e) {

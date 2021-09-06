@@ -27,10 +27,7 @@ import sorcer.core.context.model.Transmodel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.req.Srv;
-import sorcer.core.plexus.ContextFidelityManager;
-import sorcer.core.plexus.FidelityManager;
-import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.MorphMogram;
+import sorcer.core.plexus.*;
 import sorcer.core.service.Collaboration;
 import sorcer.core.service.Governance;
 import sorcer.core.service.Transdesign;
@@ -384,8 +381,9 @@ public class operator extends Operator {
     public static Transdesign dzn(String name, Context designIntent) throws ServiceException {
         try {
             Transdesign design = new Transdesign(name, designIntent);
-            FidelityManager fiManger = new FidelityManager(design);
+            FidelityManager fiManger = new DesignFidelityManager(design);
             design.setFidelityManager(fiManger);
+            designIntent.setSubject(design.getName(),design);
             return design;
         } catch (SignatureException | RemoteException e) {
             throw new ServiceException(e);
@@ -433,18 +431,21 @@ public class operator extends Operator {
         if (design.getDevelopmentFi() == null) {
             design.setDeveloperFi(design.getDesignIntent());
         }
-        Fi developerFi = design.getDevelopmentFi();
-        // setup the design developer
+        Fi developerFi =  design.getDevelopmentFi();
+        // setup the design developer and discipline intent
         Context disciplineIntent = null;
+        DesignFidelityManager fiManager = (DesignFidelityManager)design.getFidelityManager();
         for (Object item : items) {
-            if (item instanceof Fidelity && ((Fidelity) item).getFiType().equals(Fi.Type.DEV)) {
-                developerFi.selectSelect(((Fidelity) item).getName());
-            } else if (item instanceof Fidelity && ((Fidelity) item).getFiType().equals(Fi.Type.INTENT)) {
-                disciplineIntent = (Context)design.getIntentContext(((Fidelity) item));
+            if (item instanceof Fidelity && (((Fidelity) item).getFiType().equals(Fi.Type.DEV)
+            || ((Fidelity) item).getFiType().equals(Fi.Type.INTENT))) {
+                if (fiManager != null) {
+                    ((DesignFidelityManager)fiManager).reconfigure((Fidelity ) item);
+                } else {
+                    developerFi.selectSelect(((Fidelity) item).getName());
+                }
             }
         }
         Context out = null;
-        FidelityManager fiManager = (FidelityManager)design.getFidelityManager();
         Morpher inMorpher = design.getInMorpher();
         Morpher outMorpher = design.getMorpher();
         if (developerFi != null) {
@@ -472,7 +473,7 @@ public class operator extends Operator {
                 } else if (design.getDiscipline() != null) {
                     out = developer.develop(( Discipline ) design.getDiscipline(), design.getDisciplineIntent());
                 } else if (design.getDiscipline() == null) {
-                    out = developer.develop(null, disciplineIntent);
+                    out = developer.develop(null, design.getDisciplineIntent());
                 }
             }
         }

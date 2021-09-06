@@ -210,13 +210,13 @@ public class MorphMogram extends ServiceMogram implements Fi<Mogram> {
     public void setUnifiedName(String name) throws RemoteException {
         this.key = name;
         ((FidelityManager) fiManager).setName(name);
-        Map<String, ServiceFidelity> fiMap = fiManager.getFidelities();
+        Map<String, Fidelity> fiMap = fiManager.getFidelities();
         Set<String> fiSet = fiMap.keySet();
         if (fiSet.size() == 1) {
             Iterator<String> i = fiSet.iterator();
             String sFiName = i.next();
             fiManager.getFidelities();
-            ServiceFidelity sf = fiMap.get(sFiName);
+            Fidelity sf = fiMap.get(sFiName);
             sf.setName(name);
             fiMap.put(name, sf);
             fiMap.remove(sFiName);

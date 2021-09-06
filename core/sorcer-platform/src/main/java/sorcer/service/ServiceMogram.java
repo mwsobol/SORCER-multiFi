@@ -1031,12 +1031,11 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
             Pools.putFiPool(this, pool);
 
             List[] projections = (List[]) config.getEntry(Pools.COMPONENT, Pools.FI_PROJECTIONS, List[].class);
-            Map<String, ServiceFidelity> metafidelities =
+            Map<String, MetaFi> metafidelities =
                     ((FidelityManager) getFidelityManager()).getMetafidelities();
             for (List list : projections) {
-                for (Projection po : (List<Projection>) list) {
-                    metafidelities.put(po.getName(),
-                                       po);
+                for (MetaFi po : (List<MetaFi>) list) {
+                    metafidelities.put(po.getName(), po);
                 }
             }
         } catch (net.jini.config.ConfigurationException e) {

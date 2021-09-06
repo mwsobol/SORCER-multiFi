@@ -21,6 +21,8 @@ import sorcer.core.context.DesignContext;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Developer;
+import sorcer.core.plexus.DesignFidelityManager;
+import sorcer.core.plexus.FidelityManager;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.ExecutiveException;
@@ -28,6 +30,7 @@ import sorcer.service.modeling.Finalization;
 import sorcer.service.modeling.Initialization;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -130,29 +133,25 @@ public class Transdesign extends MultiFiSlot implements Design {
     }
 
     // get a discipline intent from the designIntent for a given select fidelity in itens
-    public Object getIntentContext(Object... items) throws ConfigurationException {
+    public Object getIntentContext(Fidelity fi) throws ConfigurationException {
         Object obj = null;
-        for (Object item : items) {
-            // select intFi fidelity intFi(fidelity, multiFiIntent, "designIntent")
-            if (item instanceof Fidelity && ((Fidelity)item).getFiType().equals(Fi.Type.INTENT)) {
-                obj = ((ServiceFidelity)designIntent.getMultiFi()).selectSelect((String) ((Fidelity)item).getSelect());
-                if (obj instanceof Fidelity && ((Fidelity)item).getFiType().equals(Fi.Type.INTENT)) {
-                    obj = ((ServiceFidelity)obj).selectSelect(((Fidelity)item).getPath());
-                }
-                if (obj instanceof Fidelity && ((Fidelity)item).getFiType().equals(Fi.Type.INTENT)) {
-                    obj = ((Fidelity)obj).getSelect();
-                }
-                if (obj instanceof ServiceContext && ((ServiceContext)obj).getMultiFi().size()>0) {
-                    obj = ((ServiceContext)obj).getMultiFi().selectSelect(((Fidelity)item).getName());
-                }
-                if (obj instanceof Fidelity && ((Fidelity)item).getFiType().equals(Fi.Type.INTENT)) {
-                    obj = ((Fidelity)obj).getSelect();
-                }
+        // select intFi fidelity intFi(fidelity, multiFiIntent, "designIntent")
+        if (((Fidelity)fi).getFiType().equals(Fi.Type.INTENT)) {
+            obj = ((ServiceFidelity)designIntent.getMultiFi()).selectSelect((String) fi.getSelect());
+            if (obj instanceof Fidelity && fi.getFiType().equals(Fi.Type.INTENT)) {
+                obj = ((ServiceFidelity)obj).selectSelect(fi.getPath());
             }
-            if (obj != null) {
-                break;
+            if (obj instanceof Fidelity && fi.getFiType().equals(Fi.Type.INTENT)) {
+                obj = ((Fidelity)obj).getSelect();
+            }
+            if (obj instanceof ServiceContext && ((ServiceContext)obj).getMultiFi().size()>0) {
+                obj = ((ServiceContext)obj).getMultiFi().selectSelect(fi.getName());
+            }
+            if (obj instanceof Fidelity && fi.getFiType().equals(Fi.Type.INTENT)) {
+                obj = ((Fidelity)obj).getSelect();
             }
         }
+
         return obj;
     }
 

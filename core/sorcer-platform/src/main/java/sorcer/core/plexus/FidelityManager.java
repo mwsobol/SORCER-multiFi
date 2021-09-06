@@ -37,12 +37,13 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static sorcer.eo.operator.fi;
 import static sorcer.eo.operator.rFi;
 
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-public class FidelityManager<T extends Service> implements Service, FidelityManagement<T>, Observer, Identifiable {
+public class FidelityManager implements Service, FidelityManagement, Observer, Identifiable {
 
     protected final static Logger logger = LoggerFactory.getLogger(FidelityManager.class.getName());
 
@@ -79,7 +80,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     protected Map<Long, Session> sessions;
 
     public FidelityManager() {
-        name = "fiManager" +  count++;
+        name = "fiManager" + count++;
     }
 
     public FidelityManager(String name) {
@@ -91,12 +92,6 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         this.mogram = contextion;
     }
 
-    public FidelityManager(Design design) throws RemoteException {
-        this(design.getName());
-        this.mogram = ((Transdesign)design).getDesignIntent();
-        setDesignFidelities((Transdesign) design);
-    }
-
     public Map<String, MetaFi> getMetafidelities() {
         return metafidelities;
     }
@@ -104,7 +99,8 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     public void setMetafidelities(Map<String, MetaFi> metafidelities) {
         this.metafidelities = metafidelities;
     }
-    public void addMetaFidelity(String path, Metafidelity  fi) {
+
+    public void addMetaFidelity(String path, Metafidelity fi) {
         if (fi != null)
             this.metafidelities.put(path, fi);
     }
@@ -135,7 +131,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         this.fidelities = fidelities;
     }
 
-    public void addFidelity(String path, Fidelity  fi) {
+    public void addFidelity(String path, Fidelity fi) {
         if (fi != null)
             this.fidelities.put(path, fi);
     }
@@ -162,7 +158,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     public void publish(net.jini.core.entry.Entry entry) throws RemoteException, ContextException {
         PublishEvent event = null;
         if (entry instanceof Tuple2) {
-            String path = ((Tuple2) entry).getName();
+            String path = (( Tuple2 ) entry).getName();
             Object value = mogram.getContext().getValue(path);
             try {
                 for (RemoteEventListener subscriber : subscribers.get(path)) {
@@ -193,7 +189,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
 
     public <M extends Mogram> M exert(M mogram, Transaction txn, Arg... args) throws ServiceException, TransactionException, RemoteException {
         this.mogram = mogram;
-        return (M) mogram.exert(txn);
+        return ( M ) mogram.exert(txn);
     }
 
     public <T extends Mogram> T exert(T mogram) throws TransactionException, ServiceException, RemoteException {
@@ -201,7 +197,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     }
 
     public void initialize() {
-       // implement is subclasses
+        // implement is subclasses
     }
 
     public void init(List<Metafidelity> fidelities) {
@@ -216,42 +212,42 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
 
     @Override
     public EventRegistration register(long eventID, String path, RemoteEventListener toInform, long leaseLenght)
-            throws UnknownEventException, RemoteException {
+        throws UnknownEventException, RemoteException {
         if (sessions == null) {
             sessions = new HashMap();
         }
         String source = getClass().getName() + "-" + UUID.randomUUID();
         Session session = new Session(eventID, source, path, toInform,
-                leaseLenght);
+            leaseLenght);
         sessions.put(eventID, session);
         EventRegistration er = new EventRegistration(eventID, source, null,
-                session.seqNum);
+            session.seqNum);
         return er;
     }
 
     @Override
     public void deregister(long eventID) throws UnknownEventException,
-            RemoteException {
+        RemoteException {
         if (sessions.containsKey(eventID)) {
             sessions.remove(eventID);
         } else
             throw new UnknownEventException("No registration for eventID: "
-                    + eventID);
+                + eventID);
     }
 
     public Map<Long, Session> getSessions() {
         return sessions;
     }
 
-    public void morph(List<String> fiNames)  throws EvaluationException {
+    public void morph(List<String> fiNames) throws EvaluationException {
         String[] array = new String[fiNames.size()];
         morph(fiNames.toArray(array));
     }
 
     @Override
-    public void morph(String... fiNames)  throws EvaluationException {
+    public void morph(String... fiNames) throws EvaluationException {
         for (String fiName : fiNames) {
-            Metafidelity mFi = (Metafidelity)metafidelities.get(fiName);
+            Metafidelity mFi = ( Metafidelity ) metafidelities.get(fiName);
             List<Fi> fis = mFi.getSelects();
             String name = null;
             String path = null;
@@ -269,7 +265,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
                         } else {
                             fiEnt.selectSelect(name, path);
                         }
-                        ((ServiceMogram)mogram).applyFidelity(path);
+                        (( ServiceMogram ) mogram).applyFidelity(path);
                     }
                 }
             } catch (ConfigurationException e) {
@@ -284,7 +280,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         for (Fidelity sf : fc) {
             sf.setSelect(sf.get(0));
             try {
-                fl.add(rFi(sf.getPath(), ((Identifiable)sf.getSelect()).getName()));
+                fl.add(rFi(sf.getPath(), (( Identifiable ) sf.getSelect()).getName()));
             } catch (ConfigurationException e) {
                 throw new ContextException(e);
             }
@@ -294,11 +290,11 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
 
     public ServiceFidelityList getCurrentFidelities() throws ContextException {
         ServiceFidelityList fl = new ServiceFidelityList();
-		Iterator<Map.Entry<String, Fidelity>> it = fidelities.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<String, Fidelity> me = it.next();
+        Iterator<Map.Entry<String, Fidelity>> it = fidelities.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Fidelity> me = it.next();
             try {
-                fl.add(rFi(me.getKey(), ((Identifiable)me.getValue().getSelect()).getName()));
+                fl.add(rFi(me.getKey(), (( Identifiable ) me.getValue().getSelect()).getName()));
             } catch (ConfigurationException e) {
                 throw new ContextException(e);
             }
@@ -309,16 +305,16 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     @Override
     public FidelityList getDefaultFidelities() throws RemoteException {
         FidelityList fl = new FidelityList();
-		Iterator<Map.Entry<String, Fidelity>> it = fidelities.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<String, Fidelity> me = it.next();
-            Object defaultFi =  me.getValue().getSelects().get(0);
+        Iterator<Map.Entry<String, Fidelity>> it = fidelities.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Fidelity> me = it.next();
+            Object defaultFi = me.getValue().getSelects().get(0);
             if (defaultFi instanceof ServiceFidelity) {
-                fl.add(new Fidelity(((ServiceFidelity)defaultFi).getName(), ((ServiceFidelity)defaultFi).getPath()));
+                fl.add(new Fidelity((( ServiceFidelity ) defaultFi).getName(), (( ServiceFidelity ) defaultFi).getPath()));
             } else {
-                fl.add(new Fidelity(me.getKey(), ((Identifiable)me.getValue().get(0)).getName()));
+                fl.add(new Fidelity(me.getKey(), (( Identifiable ) me.getValue().get(0)).getName()));
             }
-		}
+        }
         return fl;
     }
 
@@ -350,7 +346,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
             Fidelity sf = fidelities.get(key);
             List<Service> sfl = sf.getSelects();
             for (Service f : sfl) {
-                if (((Identifiable)f).getName().equals(name))
+                if ((( Identifiable ) f).getName().equals(name))
                     return sf;
             }
         }
@@ -358,12 +354,12 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     }
 
     public void reconfigure(List<Fidelity> fiList) throws ConfigurationException {
-        Fidelity[] list =  new Fidelity[fiList.size()];
+        Fidelity[] list = new Fidelity[fiList.size()];
         reconfigure(fiList.toArray(list));
     }
 
     @Override
-    public void reconfigure(Fidelity... fidelities) throws  ConfigurationException {
+    public void reconfigure(Fidelity... fidelities) throws ConfigurationException {
         if (fidelities == null || fidelities.length == 0) {
             return;
         }
@@ -373,15 +369,28 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
                 sFi.selectSelect(fi.getName());
                 sFi.setChanged(true);
                 if (mogram instanceof Routine) {
-                    ((ServiceMogram)mogram).setSelectedFidelity((ServiceFidelity) sFi.getSelect());
-                    if (mogram.getClass()==Task.class) {
-                        ((Task)mogram).setDelegate(null);
+                    (( ServiceMogram ) mogram).setSelectedFidelity(( ServiceFidelity ) sFi.getSelect());
+                    if (mogram.getClass() == Task.class) {
+                        (( Task ) mogram).setDelegate(null);
                     }
                 }
             }
             if (isTraced)
                 fiTrace.add(fi);
         }
+    }
+
+    protected Object getSelectFi(Collection<Fidelity> fidelities, String name) throws ConfigurationException {
+        Object selected = null;
+        for (Fidelity fi : fidelities) {
+            if (fi instanceof Fidelity && (( Fidelity ) fi).getName().equals(name)) {
+                selected = fi;
+            }
+            if (selected != null) {
+                return selected;
+            }
+        }
+        return selected;
     }
 
     public void add(List<Fidelity> fis) {
@@ -418,9 +427,9 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         }
     }
 
-//    public String getProjectionFi(String projectionName) {
-//        return metafidelities.get(projectionName).getSelects().get(0).getName();
-//    }
+    public Projection getProjection(String projectionName) {
+        return projections.get(projectionName);
+    }
 
     public boolean isTraced() {
         return isTraced;
@@ -453,27 +462,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         this.child = child;
     }
 
-    private void setDesignFidelities(Transdesign design) throws RemoteException {
-        Fi devFi = design.getDevelopmentFi();
-        Fi dznFi = design.getDesignIntent().getMultiFi();
-        if (devFi != null) {
-            if (devFi instanceof MorphFidelity) {
-                morphFidelities.put(devFi.getName(), (MorphFidelity)devFi);
-                registerMorphFidelity(( MorphFidelity ) devFi);
-            } else {
-                fidelities.put(devFi.getName(), (ServiceFidelity)devFi);
-            }
-        }
-        if (dznFi instanceof MorphFidelity) {
-            morphFidelities.put(devFi.getName(), (MorphFidelity)dznFi);
-            registerMorphFidelity(( MorphFidelity ) devFi);
-        } else {
-            fidelities.put(dznFi.getName(), (ServiceFidelity)dznFi);
-        }
-        projections = design.getProjections();
-    }
-
-    private void registerMorphFidelity(MorphFidelity morphFi) {
+    protected void registerMorphFidelity(MorphFidelity morphFi) {
         try {
            morphFi.addObserver(this);
             if (morphFi.getMorpherFidelity() != null) {

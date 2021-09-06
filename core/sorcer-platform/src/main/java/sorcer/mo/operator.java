@@ -811,7 +811,7 @@ public class operator {
 
             if (modelFis.size() > 0) {
                 FidelityManager fiManager = new FidelityManager(transModel);
-                Map<String, ServiceFidelity> fis = new HashMap<>();
+                Map<String, Fidelity> fis = new HashMap<>();
                 for (ServiceFidelity mdlFi : modelFis) {
                     fis.put(mdlFi.getName(), mdlFi);
                     transModel.getChildren().put(mdlFi.getName(), (Discipline) mdlFi.getSelect());
@@ -1355,7 +1355,7 @@ public class operator {
 
         if (discFis.size() > 0) {
             FidelityManager fiManager = new FidelityManager();
-            Map<String, ServiceFidelity> fis = new HashMap<>();
+            Map<String, Fidelity> fis = new HashMap<>();
             for (ServiceFidelity discFi : discFis) {
                 fis.put(discFi.getName(), discFi);
                 collab.getChildren().put(discFi.getName(), (Discipline) discFi.getSelect());
@@ -1468,7 +1468,7 @@ public class operator {
 
         if (discFis.size() > 0) {
             FidelityManager fiManager = new FidelityManager();
-            Map<String, ServiceFidelity> fis = new HashMap<>();
+            Map<String, Fidelity> fis = new HashMap<>();
             for (ServiceFidelity discFi : discFis) {
                 fis.put(discFi.getName(), discFi);
                 gov.getRegions().put(discFi.getName(), (Region) discFi.getSelect());
@@ -1574,7 +1574,7 @@ public class operator {
         }
         if (discFis.size() > 0) {
             FidelityManager fiManager = new FidelityManager();
-            Map<String, ServiceFidelity> fis = new HashMap<>();
+            Map<String, Fidelity> fis = new HashMap<>();
             for (ServiceFidelity discFi : discFis) {
                 fis.put(discFi.getName(), discFi);
                 ((Collaboration)rgn).getChildren().put(discFi.getName(), (Region) discFi.getSelect());

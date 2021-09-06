@@ -8,7 +8,7 @@ import sorcer.service.modeling.Model;
 import java.rmi.RemoteException;
 import java.util.List;
 
-public class ContextFidelityManager extends FidelityManager<Context> {
+public class ContextFidelityManager extends FidelityManager {
 
     private Context dataContext;
 
