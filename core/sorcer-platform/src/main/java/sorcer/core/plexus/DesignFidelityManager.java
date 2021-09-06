@@ -18,6 +18,7 @@ package sorcer.core.plexus;
 
 import sorcer.core.context.DesignContext;
 import sorcer.core.service.Transdesign;
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -57,7 +58,22 @@ public class DesignFidelityManager extends FidelityManager {
 
     // manager top select fidelty
     public Object getSelectFi(Fidelity fi) throws ConfigurationException {
-        Object selectFi = getSelectFi(intentFidelities.getSelects(), (String)fi.getSelect());
+        Object selectFi = null;
+        if (fi.getPath() != null && fi.getPath().length() == 0) {
+            selectFi = getSelectFi(intentFidelities.getSelects(), (String)fi.getName());
+            if (selectFi instanceof Fidelity
+                && (((Fidelity)((Fidelity)selectFi).getSelect()).getSelect() instanceof LocalSignature)) {
+                try {
+                    Signature signatue = ((LocalSignature)((Fidelity)((Fidelity)selectFi).getSelect()).getSelect());
+                    ((Fidelity)selectFi).setSelect(((LocalSignature)signatue).initInstance());
+                } catch (SignatureException e) {
+                    throw new ConfigurationException(e);
+                }
+            }
+            return selectFi;
+        } else if (fi.getSelect() != null) {
+            selectFi = getSelectFi(intentFidelities.getSelects(), ( String ) fi.getSelect());
+        }
         if (selectFi != null && selectFi instanceof Fidelity) {
             selectFi = (( Fidelity ) selectFi).selectSelect(( String ) fi.getPath());
             if (selectFi != null && (((Fidelity)selectFi).getSelect() instanceof MultiFiSlot)
