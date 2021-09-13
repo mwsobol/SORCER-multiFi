@@ -127,6 +127,12 @@ public class FidelityManager implements Service, FidelityManagement, Observer, I
         this.projections = projections;
     }
 
+    public void setProjections(List<Projection> projections) {
+        for (Projection p : projections) {
+            this.projections.put(p.getName(), p);
+        }
+    }
+
     public void setFidelities(Map<String, Fidelity> fidelities) {
         this.fidelities = fidelities;
     }
