@@ -36,7 +36,11 @@ public interface FidelityManagement extends RemoteEventListener, Serializable {
 
      Map<String, MetaFi> getMetafidelities() throws RemoteException;
 
+    // for metafidelities
     void morph(String... fiNames) throws EvaluationException, RemoteException;
+
+    // for projections
+    void project(String... fiNames) throws EvaluationException, RemoteException;
 
     void reconfigure(String... fiNames) throws EvaluationException, RemoteException, ConfigurationException;
 
