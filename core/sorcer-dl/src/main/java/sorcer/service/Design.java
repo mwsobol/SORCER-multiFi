@@ -33,7 +33,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski, 05/23/2021
  */
-public interface Design extends Contextion, Remote {
+public interface Design extends Consumer, Contextion, Remote {
 
     public Context getContext() throws ContextException;
 
