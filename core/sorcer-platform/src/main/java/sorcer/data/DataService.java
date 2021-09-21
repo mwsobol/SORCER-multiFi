@@ -17,8 +17,8 @@ package sorcer.data;
 
 import org.rioproject.config.Constants;
 import org.rioproject.net.HostUtil;
-import org.rioproject.tools.jetty.Jetty;
 import org.rioproject.web.WebsterService;
+import org.rioproject.web.WebsterServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.tools.webster.Webster;
@@ -142,7 +142,8 @@ public class DataService implements FileURLHandler {
             try {
                 WebsterService websterService;
                 if (SorcerEnv.useHttps()) {
-                    websterService = new Jetty().setPort(port).setRoots(roots).setPutDir(getDataDir());
+                    websterService = WebsterServiceFactory.createJetty(port, getDataDir(), roots);
+                    //websterService = new Jetty().setPort(port).setRoots(roots).setPutDir(getDataDir());
                     websterService.startSecure();
                 } else {
                     websterService = new Webster(port, websterRoots.toString(), getDataDir());
