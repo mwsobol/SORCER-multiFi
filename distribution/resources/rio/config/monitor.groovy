@@ -32,7 +32,7 @@ import net.jini.core.constraint.ConnectionRelativeTime
 import net.jini.security.ProxyPreparer
 import net.jini.core.constraint.MethodConstraints
 import net.jini.core.entry.Entry
-import org.rioproject.util.PortUtil
+import org.rioproject.start.util.PortUtil
 import org.rioproject.entry.UIDescriptorFactory
 import org.rioproject.RioVersion
 import net.jini.lookup.ui.MainUI
