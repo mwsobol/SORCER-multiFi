@@ -675,7 +675,7 @@ public class operator {
     public static Mogram morph(Mogram model, String... fiNames) throws ConfigurationException {
 //        ((FidelityManager)model.getFidelityManager()).morph(fiNames);
         try {
-            model.morph(fiNames);
+            model.project(fiNames);
         } catch (ContextException | RemoteException e) {
             throw new ConfigurationException(e);
         }

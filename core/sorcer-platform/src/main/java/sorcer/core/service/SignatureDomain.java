@@ -359,8 +359,8 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public void morph(String... metaFiNames) throws ContextException, RemoteException, ConfigurationException {
-        domain.morph(metaFiNames);
+    public void project(String... metaFiNames) throws ContextException, RemoteException, ConfigurationException {
+        domain.project(metaFiNames);
     }
 
     @Override

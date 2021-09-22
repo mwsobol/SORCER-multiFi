@@ -977,11 +977,11 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public void morph(String... metaFiNames) throws ConfigurationException {
+    public void project(String... projections) throws ConfigurationException {
         if (fiManager != null) {
-            this.metaFiNames = metaFiNames;
+            this.metaFiNames = projections;
             try {
-                fiManager.morph(metaFiNames);
+                fiManager.project(metaFiNames);
             } catch (EvaluationException | RemoteException e) {
                 throw new ConfigurationException(e);
             }
@@ -994,6 +994,10 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     @Override
     public ServiceStrategy getDomainStrategy() {
         return domainStrategy;
+    }
+
+    public void applyFidelities() {
+        //implement in subclasses
     }
 
     public void setModelStrategy(ServiceStrategy strategy) {

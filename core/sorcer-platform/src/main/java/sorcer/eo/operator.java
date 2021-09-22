@@ -4163,6 +4163,10 @@ operator extends Operator {
         return optimizerSig(signature);
     }
 
+    public static Signature optiSig(Class<?> classType, Object... items) throws SignatureException {
+        return optimizerSig(sig(classType, items));
+    }
+
     public static Signature optiSig(Class<?> serviceType) {
         return optimizerSig(serviceType);
     }

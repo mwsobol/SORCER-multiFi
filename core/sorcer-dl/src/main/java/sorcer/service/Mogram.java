@@ -81,7 +81,7 @@ public interface Mogram extends Contextion, Exertion, Discipline, Arg {
      *
      * @param metaFiNames
      */
-    public void morph(String... metaFiNames) throws ContextException, RemoteException, ConfigurationException;
+    public void project(String... metaFiNames) throws ContextException, RemoteException, ConfigurationException;
 
     /**
      * Update this mogram with given setup context entries.

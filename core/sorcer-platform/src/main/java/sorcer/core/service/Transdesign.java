@@ -17,6 +17,7 @@
 package sorcer.core.service;
 
 import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.DesignContext;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
@@ -30,6 +31,7 @@ import sorcer.service.modeling.Finalization;
 import sorcer.service.modeling.Initialization;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -302,5 +304,55 @@ public class Transdesign extends MultiFiSlot implements Design {
     @Override
     public void setName(String name) {
         key = name;
+    }
+
+    @Override
+    public Context exec(Service service, Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException {
+        try {
+            return design(( Discipline ) service, context);
+        } catch (DesignException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public Context consume(Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException {
+        try {
+            return design(( Discipline ) discipline, context);
+        } catch (DesignException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public List<Service> getService(String... args) throws ServiceException {
+        List<Service> sevices = new ArrayList<>();
+        if (discipline != null) {
+            sevices.add(discipline);
+        }
+        if (disciplineIntent != null) {
+            sevices.add(disciplineIntent);
+        }
+        return sevices;
+    }
+
+    @Override
+    public Transaction getTransaction() {
+        return null;
+    }
+
+    @Override
+    public void preprocess(String... args) throws MogramException, ContextException {
+
+    }
+
+    @Override
+    public void process(String... args) throws MogramException, ContextException {
+
+    }
+
+    @Override
+    public void postprocess(String... args) throws MogramException, ContextException {
+
     }
 }

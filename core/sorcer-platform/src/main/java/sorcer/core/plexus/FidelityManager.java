@@ -127,6 +127,12 @@ public class FidelityManager implements Service, FidelityManagement, Observer, I
         this.projections = projections;
     }
 
+    public void setProjections(List<Projection> projections) {
+        for (Projection p : projections) {
+            this.projections.put(p.getName(), p);
+        }
+    }
+
     public void setFidelities(Map<String, Fidelity> fidelities) {
         this.fidelities = fidelities;
     }
@@ -239,9 +245,44 @@ public class FidelityManager implements Service, FidelityManagement, Observer, I
         return sessions;
     }
 
+    public void selectFidelity(Fidelity fi) throws ContextException, ConfigurationException {
+        // implement in subclasses
+    }
+
     public void morph(List<String> fiNames) throws EvaluationException {
         String[] array = new String[fiNames.size()];
         morph(fiNames.toArray(array));
+    }
+
+    @Override
+    public void project(String... fiNames) throws EvaluationException {
+        logger.info("morphing model: {} with: {}",  mogram.getName(), Arrays.toString(fiNames));
+        for (String fiName : fiNames) {
+            try {
+                // first check fi dependencies on projection
+                ((ServiceMogram)mogram).execDependencies(fiName);
+                Fidelity mFi = projections.get(fiName);
+                if (mFi == null) {
+                    throw new EvaluationException("No such projection: " + fiName);
+                }
+                List<Service> fis = mFi.getSelects();
+                if (isTraced) {
+                    fiTrace.add(new ServiceFidelity(fiName, fis));
+                }
+                for (Service fi : fis) {
+                    if (fi instanceof Projection) {
+                        Fidelity[] fa = new Fidelity[((ServiceFidelity) fi).getSelects().size()];
+                        ((ServiceFidelity) fi).getSelects().toArray(fa);
+                        reconfigure(fa);
+                        continue;
+                    }
+                    selectFidelity((Fidelity) fi);
+                }
+            } catch (ContextException | ConfigurationException e) {
+                throw new EvaluationException(e);
+            }
+        }
+        ((ServiceMogram)mogram).applyFidelities();
     }
 
     @Override
