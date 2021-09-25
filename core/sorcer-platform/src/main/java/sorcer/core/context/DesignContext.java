@@ -19,11 +19,12 @@ package sorcer.core.context;
 
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.Intent;
 
 /**
  * @author Mike Sobolewski, 05/20/2021
  */
-public class DesignContext extends ServiceContext {
+public class DesignContext extends ServiceContext<Object> implements Intent {
 
     private Fi developerFi;
 
