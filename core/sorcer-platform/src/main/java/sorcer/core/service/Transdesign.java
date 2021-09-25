@@ -18,12 +18,10 @@ package sorcer.core.service;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.core.context.DesignContext;
+import sorcer.core.context.DesignIntent;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Developer;
-import sorcer.core.plexus.DesignFidelityManager;
-import sorcer.core.plexus.FidelityManager;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.ExecutiveException;
@@ -32,7 +30,6 @@ import sorcer.service.modeling.Initialization;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -80,7 +77,7 @@ public class Transdesign extends MultiFiSlot implements Design {
     public Transdesign(String name, Context designIntent) throws SignatureException {
         this(name);
         this.designIntent = designIntent;
-        DesignContext dznCxt = (DesignContext)designIntent;
+        DesignIntent dznCxt = ( DesignIntent )designIntent;
         Signature discSig = dznCxt.getDisciplineSignature();
         Signature discIntentSig = dznCxt.getDisciplineIntentSignature();
         if (discSig != null) {

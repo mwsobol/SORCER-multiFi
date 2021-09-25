@@ -16,14 +16,12 @@
 
 package sorcer.core.plexus;
 
-import sorcer.core.context.DesignContext;
+import sorcer.core.context.DesignIntent;
 import sorcer.core.service.Transdesign;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class DesignFidelityManager extends FidelityManager {
 
@@ -47,7 +45,7 @@ public class DesignFidelityManager extends FidelityManager {
         for (Fidelity fi : fidelities) {
             if (fi.getFiType().equals(Fi.Type.INTENT)) {
                 Fidelity intentFi = (Fidelity)getSelectFi(fi);
-                ((Transdesign)(( DesignContext )mogram).getSubjectValue()).setDisciplineIntent(( Context ) intentFi.getSelect());
+                ((Transdesign)(( DesignIntent )mogram).getSubjectValue()).setDisciplineIntent(( Context ) intentFi.getSelect());
                 continue;
             } else if (fi.getFiType().equals(Fi.Type.DEV)) {
                 developerFidelities.selectSelect((String)fi.getName());

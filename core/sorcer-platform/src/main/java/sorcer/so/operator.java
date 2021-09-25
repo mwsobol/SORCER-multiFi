@@ -19,7 +19,7 @@ package sorcer.so;
 import sorcer.Operator;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ContextSelector;
-import sorcer.core.context.DesignContext;
+import sorcer.core.context.DesignIntent;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.DataContext;
@@ -364,7 +364,7 @@ public class operator extends Operator {
                 throw new ContextException(e);
             }
         } else if (mogram instanceof ContextDomain &&  ((ServiceMogram)mogram).getType().equals(Functionality.Type.DESIGN)) {
-            return developDsign((DesignContext) mogram, items);
+            return developDsign(( DesignIntent ) mogram, items);
         } else {
             return modelResponse((ContextDomain) mogram, items);
         }
@@ -480,16 +480,16 @@ public class operator extends Operator {
         return (ServiceContext)out;
     }
 
-    public static ServiceContext developDsign(DesignContext designContext, Object... items) throws ContextException {
-        Development developer = (Development) designContext.getDeveloperFi().getSelect();
+    public static ServiceContext developDsign(DesignIntent designIntent, Object... items) throws ContextException {
+        Development developer = (Development) designIntent.getDeveloperFi().getSelect();
         Discipline discipline = null;
         try {
-            if (designContext.getDisciplineSignature() != null) {
-                discipline =  (Discipline) ((LocalSignature)designContext.getDisciplineSignature()).initInstance();
+            if (designIntent.getDisciplineSignature() != null) {
+                discipline =  (Discipline) ((LocalSignature) designIntent.getDisciplineSignature()).initInstance();
             } else {
-                discipline = designContext.getDiscipline();
+                discipline = designIntent.getDiscipline();
             }
-            return (ServiceContext) developer.develop(discipline, designContext.getDisciplineIntent());
+            return (ServiceContext) developer.develop(discipline, designIntent.getDisciplineIntent());
         } catch (SignatureException | ExecutiveException | ServiceException | RemoteException e) {
             throw new ContextException(e);
         }

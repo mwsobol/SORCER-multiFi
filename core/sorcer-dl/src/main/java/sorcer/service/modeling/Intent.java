@@ -22,8 +22,11 @@ package sorcer.service.modeling;
 
 import sorcer.service.Context;
 import sorcer.service.Discipline;
+import sorcer.service.Signature;
 
 public interface Intent extends Context<Object> {
 
     Discipline getDiscipline();
+
+    Signature getDisciplineSignature();
 }

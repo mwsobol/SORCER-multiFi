@@ -24,7 +24,7 @@ import sorcer.service.modeling.Intent;
 /**
  * @author Mike Sobolewski, 05/20/2021
  */
-public class DesignContext extends ServiceContext<Object> implements Intent {
+public class DesignIntent extends ServiceContext<Object> implements Intent {
 
     private Fi developerFi;
 
@@ -38,7 +38,7 @@ public class DesignContext extends ServiceContext<Object> implements Intent {
 
     private Context developmentIntent;
 
-    public DesignContext(String name) {
+    public DesignIntent(String name) {
         super(name);
         type = Functionality.Type.DESIGN;
     }
