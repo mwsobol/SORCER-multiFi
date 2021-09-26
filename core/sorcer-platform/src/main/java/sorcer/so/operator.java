@@ -374,11 +374,11 @@ public class operator extends Operator {
         return new Transdesign(name);
     }
 
-    public static Transdesign dzn(Context designIntent) throws ServiceException {
+    public static Transdesign dzn(Intent designIntent) throws ServiceException {
         return dzn(null, designIntent);
     }
 
-    public static Transdesign dzn(String name, Context designIntent) throws ServiceException {
+    public static Transdesign dzn(String name, Intent designIntent) throws ServiceException {
         try {
             Transdesign design = new Transdesign(name, designIntent);
             FidelityManager fiManger = new DesignFidelityManager(design);
@@ -400,6 +400,10 @@ public class operator extends Operator {
 
     public static ServiceContext dvlp(Request request, Object... items) throws ServiceException {
         return eval(request, items);
+    }
+
+    public static ServiceContext dvlp(Intent intent, Object... items) throws ServiceException {
+        return eval(dzn(intent), items);
     }
 
     public static ServiceContext eval(Request request, Object... items) throws ServiceException {

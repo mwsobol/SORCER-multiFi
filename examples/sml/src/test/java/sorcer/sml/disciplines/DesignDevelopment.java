@@ -175,8 +175,8 @@ public class DesignDevelopment {
             }
         };
 
-        // testing sybtax for intent contexts
-        Context designIntent = dznIntent(
+        // testing syntax for intent contexts
+        Intent designIntent = dznIntent(
             dscSig(DesignDevelopment.class, "getMorphingModel"),
             dznFi("intFis",
                 intFi("discIntX",
@@ -191,21 +191,21 @@ public class DesignDevelopment {
             mphFi("morphDevFis", dznMorpher,
                 mphFi("morphDevFis",
                     dev("morphDev1",
-                    (Discipline discipline, Context intent) -> {
-                        Block mdlBlock = block(
-                            loop(condition(cxt -> (double)
-                                value(cxt, "morpher3") < 900.0), discipline));
-                        mdlBlock = exert(mdlBlock, fi("multiply", "mFi1"));
-                        return context(mdlBlock);
-                    }),
-                dev("morphDev2",
-                    (Discipline discipline, Context cxt) -> {
-                        Block mdlBlock = block(
-                            loop(condition(bcxt -> (double)
-                                value(bcxt, "morpher3") < 900.0), discipline));
-                        mdlBlock = exert(mdlBlock, fi("add", "mFi1"));
-                        return context(mdlBlock);
-                    })))
+                        (Discipline discipline, Context intent) -> {
+                            Block mdlBlock = block(
+                                loop(condition(cxt -> (double)
+                                    value(cxt, "morpher3") < 900.0), discipline));
+                            mdlBlock = exert(mdlBlock, fi("multiply", "mFi1"));
+                            return context(mdlBlock);
+                        }),
+                    dev("morphDev2",
+                        (Discipline discipline, Context cxt) -> {
+                            Block mdlBlock = block(
+                                loop(condition(bcxt -> (double)
+                                    value(bcxt, "morpher3") < 900.0), discipline));
+                            mdlBlock = exert(mdlBlock, fi("add", "mFi1"));
+                            return context(mdlBlock);
+                        })))
         );
 
         Design desg = dzn(designIntent);
@@ -213,6 +213,7 @@ public class DesignDevelopment {
         setInMorpher(desg, dznMorpher);
         traced(desg, true);
 
+//        Context out = dvlp(designIntent, fi("morphDev1"));
         Context out = dvlp(desg, fi("morphDev1"));
 //        assertTrue(value(out, "morpher3").equals(920.0));
     }
