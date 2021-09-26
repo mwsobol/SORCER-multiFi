@@ -3985,11 +3985,6 @@ operator extends Operator {
                 + mappable.getName());
     }
 
-    public static Signature dispatcherSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(Kind.DISPATCHER);
-        return signature;
-    }
-
     public static Signature dscSig(Class<?> serviceType, String initSelector) {
         return disciplineSig(serviceType, initSelector);
     }
@@ -4056,6 +4051,10 @@ operator extends Operator {
     }
 
     public static Signature mdlSig(Class<?> serviceType, String initSelector)  {
+        return modelSig(serviceType, initSelector);
+    }
+
+    public static Signature modelSig(Class<?> serviceType, String initSelector)  {
         try {
             return modelSig(sig(serviceType, initSelector));
         } catch (SignatureException e) {
@@ -4144,12 +4143,36 @@ operator extends Operator {
     }
 
     public static Signature dspSig(Class<?> serviceType, String initSelector) {
+        return dispatcherSig(serviceType, initSelector);
+    }
+
+    public static Signature dispatcherSig(Class<?> serviceType, String initSelector) {
         Signature signature = null;
         try {
             signature = sig(serviceType, initSelector);
         } catch (SignatureException e) {
             throw new RuntimeException("invalid signature: " + serviceType + "#" + initSelector);
         }
+        ((ServiceSignature)signature).addRank(Kind.DISPATCHER);
+        return signature;
+    }
+
+    public static Signature dspSig(Class<?> serviceType) {
+        return dispatcherSig(serviceType);
+    }
+
+    public static Signature dispatcherSig(Class<?> serviceType) {
+        Signature signature = null;
+        try {
+            signature = sig(serviceType);
+        } catch (SignatureException e) {
+            throw new RuntimeException("invalid signature: " + serviceType);
+        }
+        ((ServiceSignature)signature).addRank(Kind.DISPATCHER);
+        return signature;
+    }
+
+    public static Signature dispatcherSig(Signature signature) {
         ((ServiceSignature)signature).addRank(Kind.DISPATCHER);
         return signature;
     }
