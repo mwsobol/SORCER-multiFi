@@ -19,11 +19,12 @@ package sorcer.core.context;
 
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.Intent;
 
 /**
  * @author Mike Sobolewski, 05/20/2021
  */
-public class DesignContext extends ServiceContext {
+public class DesignIntent extends ServiceContext<Object> implements Intent {
 
     private Fi developerFi;
 
@@ -37,7 +38,7 @@ public class DesignContext extends ServiceContext {
 
     private Context developmentIntent;
 
-    public DesignContext(String name) {
+    public DesignIntent(String name) {
         super(name);
         type = Functionality.Type.DESIGN;
     }

@@ -302,10 +302,10 @@ operator extends Operator {
         return (Contextion) ((LocalSignature) signature).initInstance();
     }
 
-    public static Context dznIntent(Object... items) throws ContextException, RemoteException {
-        return dznCxt(items);
+    public static Intent dznIntent(Object... items) throws ContextException, RemoteException {
+        return dznInt(items);
     }
-    public static Context dznCxt(Object... items) throws ContextException, RemoteException {
+    public static Intent dznInt(Object... items) throws ContextException, RemoteException {
         List<Object> itemList = new ArrayList(items.length);
         for (Object obj : items) {
             itemList.add(obj);
@@ -338,7 +338,7 @@ operator extends Operator {
         itemList.add(0, Context.Type.DESIGN);
         Object[] cxtItems = new Object[itemList.size()];
         itemList.toArray(cxtItems);
-        DesignContext dCxt = (DesignContext) domainContext(cxtItems);
+        DesignIntent dCxt = ( DesignIntent ) domainContext(cxtItems);
         dCxt.setContextType(Context.Type.DESIGN);
         dCxt.setIntentType(Context.IntentType.DEVELOP);
 
@@ -529,7 +529,7 @@ operator extends Operator {
 
         if (cxt == null) {
              if (types.contains(Context.Type.DESIGN)) {
-                cxt = new DesignContext(name);
+                cxt = new DesignIntent(name);
             } else if (types.contains(Context.Type.ARRAY)) {
                 if (subject != null)
                     cxt = new ArrayContext(name, subject.getName(), subject.getImpl());
@@ -3985,11 +3985,6 @@ operator extends Operator {
                 + mappable.getName());
     }
 
-    public static Signature dispatcherSig(Signature signature) {
-        ((ServiceSignature)signature).addRank(Kind.DISPATCHER);
-        return signature;
-    }
-
     public static Signature dscSig(Class<?> serviceType, String initSelector) {
         return disciplineSig(serviceType, initSelector);
     }
@@ -4056,6 +4051,10 @@ operator extends Operator {
     }
 
     public static Signature mdlSig(Class<?> serviceType, String initSelector)  {
+        return modelSig(serviceType, initSelector);
+    }
+
+    public static Signature modelSig(Class<?> serviceType, String initSelector)  {
         try {
             return modelSig(sig(serviceType, initSelector));
         } catch (SignatureException e) {
@@ -4144,12 +4143,36 @@ operator extends Operator {
     }
 
     public static Signature dspSig(Class<?> serviceType, String initSelector) {
+        return dispatcherSig(serviceType, initSelector);
+    }
+
+    public static Signature dispatcherSig(Class<?> serviceType, String initSelector) {
         Signature signature = null;
         try {
             signature = sig(serviceType, initSelector);
         } catch (SignatureException e) {
             throw new RuntimeException("invalid signature: " + serviceType + "#" + initSelector);
         }
+        ((ServiceSignature)signature).addRank(Kind.DISPATCHER);
+        return signature;
+    }
+
+    public static Signature dspSig(Class<?> serviceType) {
+        return dispatcherSig(serviceType);
+    }
+
+    public static Signature dispatcherSig(Class<?> serviceType) {
+        Signature signature = null;
+        try {
+            signature = sig(serviceType);
+        } catch (SignatureException e) {
+            throw new RuntimeException("invalid signature: " + serviceType);
+        }
+        ((ServiceSignature)signature).addRank(Kind.DISPATCHER);
+        return signature;
+    }
+
+    public static Signature dispatcherSig(Signature signature) {
         ((ServiceSignature)signature).addRank(Kind.DISPATCHER);
         return signature;
     }
