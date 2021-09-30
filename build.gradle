@@ -248,8 +248,7 @@ if (JavaVersion.current().isJava8Compatible()) {
  */
 task allJavadoc(type: Javadoc) {
     options.links = ['http://docs.oracle.com/javase/8/docs/api/',
-                     'https://river.apache.org/doc/api/',
-                     'http://www.rio-project.org/apidocs']
+                     'https://river.apache.org/doc/api/']
     exclude '**/*Test.java'
     exclude '**/edu/*'
     description = 'Creates SORCER API Specification, view them in build/javadoc/index.html'

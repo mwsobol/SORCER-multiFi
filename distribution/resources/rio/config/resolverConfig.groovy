@@ -36,8 +36,7 @@ resolver {
         if (onEnclave) {
             remote = ["repo": "http://10.131.7.138:7001"]
         } else {
-            remote = ["bintray": "https://dl.bintray.com/dreedyman/Rio",
-                      "rio"    : "http://www.rio-project.org/maven2",
+            remote = ["rio"    : "https://repo.repsy.io/mvn/dreedy/maven",
                       "central": "https://repo1.maven.org/maven2"]
         }
         flatDirs = [new File(sorcerHome() as String, "lib/sorcer/lib"),
