@@ -26,7 +26,8 @@ import java.rmi.RemoteException;
  * Created by Mike Sobolewski on 11/9/15.
  */
 @FunctionalInterface
-public interface Morpher<T extends Service> extends Directive{
+public interface Morpher extends Controller, Directive {
 
-    public void morph(FidelityManagement manager, Fi<T> mFi, Object value) throws RemoteException, ServiceException, ConfigurationException;
+    public void morph(FidelityManagement manager, Fi<Service> mFi, Object value) throws RemoteException, ServiceException, ConfigurationException;
+
 }

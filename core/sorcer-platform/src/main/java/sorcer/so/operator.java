@@ -443,7 +443,7 @@ public class operator extends Operator {
             if (item instanceof Fidelity && (((Fidelity) item).getFiType().equals(Fi.Type.DEV)
             || ((Fidelity) item).getFiType().equals(Fi.Type.INTENT))) {
                 if (fiManager != null) {
-                    ((DesignFidelityManager)fiManager).reconfigure((Fidelity ) item);
+                    fiManager.reconfigure((Fidelity ) item);
                 } else {
                     developerFi.selectSelect(((Fidelity) item).getName());
                 }

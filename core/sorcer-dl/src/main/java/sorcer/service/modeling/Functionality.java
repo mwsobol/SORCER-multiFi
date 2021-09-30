@@ -52,7 +52,7 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 		// Individual Discipline Feasible (IDF),
 		// Multidiscipline Feasible (MDF)
 		// Response, Analysis, Explore
-		 AAO, SAND, IDF, MDF, MDA, RESP, FNL, ANAL, EXPL, NONE,
+		 AAO, SAND, IDF, MDF, MDA, MRPH, RESP, FNL, ANAL, EXPL, NONE,
 
 		// Finite Difference Functionality
 		VGD,	// var GradientDifferentiator
