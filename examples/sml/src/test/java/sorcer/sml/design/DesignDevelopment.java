@@ -1,4 +1,4 @@
-package sorcer.sml.disciplines;
+package sorcer.sml.design;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,15 +9,10 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.*;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.core.invoker.Observable;
-import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.mo.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.modeling.*;
-
-import java.rmi.RemoteException;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.get;
@@ -167,13 +162,12 @@ public class DesignDevelopment {
     @Test
     public void developingDesign() throws Exception {
 
-        Morpher dznMorpher = (mgr, mFi, value) -> {
+        Morpher dznMorpher = mfr("dznMorpher", (mgr, mFi, value) -> {
             if (mFi instanceof MorphFidelity) {
                 Fidelity fi = mFi.getFidelity();
-                Morpher morpher = ((MorphFidelity)mFi).getMorpher();
+                Morpher morpher = (( MorphFidelity ) mFi).getMorpher();
                 logger.info("mFi name: " + mFi.getName());
-            }
-        };
+            }});
 
         // testing syntax for intent contexts
         Intent designIntent = dznIntent(
@@ -188,24 +182,23 @@ public class DesignDevelopment {
                         cxt("myIntent4", intType("mda"))),
                     cxt("myIntent5", intType("mado"))),
                 intFi("discIntY", dscSig(DesignDevelopment.class, "getMorphingModel"))),
-            mphFi("morphDevFis", dznMorpher,
-                mphFi("morphDevFis",
-                    dev("morphDev1",
-                        (Discipline discipline, Context intent) -> {
-                            Block mdlBlock = block(
-                                loop(condition(cxt -> (double)
-                                    value(cxt, "morpher3") < 900.0), discipline));
-                            mdlBlock = exert(mdlBlock, fi("multiply", "mFi1"));
-                            return context(mdlBlock);
-                        }),
-                    dev("morphDev2",
-                        (Discipline discipline, Context cxt) -> {
-                            Block mdlBlock = block(
-                                loop(condition(bcxt -> (double)
-                                    value(bcxt, "morpher3") < 900.0), discipline));
-                            mdlBlock = exert(mdlBlock, fi("add", "mFi1"));
-                            return context(mdlBlock);
-                        })))
+            devFi("morphDevFis", dznMorpher, // dznMorpher,
+                dev("morphDev1",
+                    (Discipline discipline, Context intent) -> {
+                        Block mdlBlock = block(
+                            loop(condition(cxt -> (double)
+                                value(cxt, "morpher3") < 900.0), discipline));
+                        mdlBlock = exert(mdlBlock, fi("multiply", "mFi1"));
+                        return context(mdlBlock);
+                    }),
+                dev("morphDev2",
+                    (Discipline discipline, Context cxt) -> {
+                        Block mdlBlock = block(
+                            loop(condition(bcxt -> (double)
+                                value(bcxt, "morpher3") < 900.0), discipline));
+                        mdlBlock = exert(mdlBlock, fi("add", "mFi1"));
+                        return context(mdlBlock);
+                    }))
         );
 
         Design desg = dzn(designIntent);

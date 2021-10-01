@@ -17,6 +17,7 @@
 
 package sorcer.core.context.model.ent;
 
+import sorcer.core.context.Connector;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
@@ -26,25 +27,32 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 09/30/20.
  */
-public class Morpheror extends Entry<Morpher> implements Controller, Morpher {
+public class Morpheus extends Entry<Morpher> implements Controller, Morpher {
 
     private static final long serialVersionUID = 1L;
 
     private Signature signature;
 
-    public Morpheror(String name, Morpher morher)  {
+    private Morpher.Dir direction = Morpher.Dir.OUT;
+
+    public Morpheus(String name, Morpher morpher)  {
         this.key = name;
-        this.impl = morher;
+        this.impl = morpher;
         this.type = Functionality.Type.MRPH;
     }
 
-    public Morpheror(String name, Signature signature) {
+    public Morpheus(String name, Morpher morpher,  Morpher.Dir direction)  {
+        this(name, morpher);
+        this.direction = direction;
+    }
+
+    public Morpheus(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
         this.type = Functionality.Type.MRPH;
     }
 
-    public Morpheror(String name, Morpher mda, Context context) {
+    public Morpheus(String name, Morpher mda, Context context) {
         this.key = name;
         scope = context;
         this.impl = mda;
@@ -69,5 +77,9 @@ public class Morpheror extends Entry<Morpher> implements Controller, Morpher {
         } catch (SignatureException | ConfigurationException | RemoteException e) {
             throw new ServiceException(e);
         }
+    }
+
+    public Morpher.Dir getDirection() {
+        return direction;
     }
 }

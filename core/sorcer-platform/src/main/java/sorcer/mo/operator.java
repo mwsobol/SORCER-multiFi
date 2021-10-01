@@ -1721,13 +1721,37 @@ public class operator {
         return mdaFi;
     }
 
+    public static Morpher mfr(String name, Morpher morpher) {
+        return new Morpheus(name, morpher);
+    }
+
+    public static Morpher mfr(String name, Morpher morpher, Morpher.Dir direction) {
+        return new Morpheus(name, morpher, direction);
+    }
+
     public static Developer dev(String name, Development development) {
         return new Developer(name, development);
+    }
+
+        public static MorphFidelity devFi(String name, Morpher inMorher, Morpher outMorher, Development... devEntries) {
+        ServiceFidelity devFi = sorcer.mo.operator.devFi(name, devEntries);
+        MorphFidelity morphFi = new MorphFidelity(devFi);
+        morphFi.setInMorpher(inMorher);
+        morphFi.setMorpher(outMorher);
+        return morphFi;
+    }
+
+    public static MorphFidelity devFi(String name, Morpher morher, Development... devEntries) {
+        ServiceFidelity devFi = sorcer.mo.operator.devFi(name, devEntries);
+        MorphFidelity morphFi = new MorphFidelity(devFi);
+        morphFi.setMorpher(morher);
+        return morphFi;
     }
 
     public static ServiceFidelity devFi(Development... devEntries) {
        return devFi(null, devEntries);
     }
+
     public static ServiceFidelity devFi(String name, Development... devEntries) {
         Developer[] entries = new Developer[devEntries.length];
         for (int i = 0; i < devEntries.length; i++) {
