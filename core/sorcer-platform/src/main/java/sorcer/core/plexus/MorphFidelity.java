@@ -34,9 +34,9 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
 
     // fidelity of fidelities that are observable
     private Fidelity<T> fidelity;
-
+    private ServiceFidelity morpherFi;
     private Morpher morpher;
-
+    private ServiceFidelity inMorpherFi;
     private Morpher inMorpher;
 
     private String path;
@@ -164,6 +164,21 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
         path = fidelityPath;
     }
 
+    public ServiceFidelity getMorpherFi() {
+        return morpherFi;
+    }
+
+    public void setMorpherFi(ServiceFidelity morpherFi) {
+        this.morpherFi = morpherFi;
+    }
+
+    public ServiceFidelity getInMorpherFi() {
+        return inMorpherFi;
+    }
+
+    public void setInMorpherFi(ServiceFidelity inMorpherFi) {
+        this.inMorpherFi = inMorpherFi;
+    }
 
     @Override
     public Object getId() {

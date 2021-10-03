@@ -1729,22 +1729,67 @@ public class operator {
         return new Morpheus(name, morpher, direction);
     }
 
+    public static ServiceFidelity mfrFi(String name, Morpheus... mmfrEntries) {
+        Morpheus[] entries = new Morpheus[mmfrEntries.length];
+        for (int i = 0; i < mmfrEntries.length; i++) {
+            entries[i] = mmfrEntries[i];
+        }
+        ServiceFidelity mdaFi = new ServiceFidelity(entries);
+        mdaFi.setName(name);
+        mdaFi.setType(Fi.Type.MORPH);
+        return mdaFi;
+    }
+
     public static Developer dev(String name, Development development) {
         return new Developer(name, development);
     }
 
-        public static MorphFidelity devFi(String name, Morpher inMorher, Morpher outMorher, Development... devEntries) {
+    public static MorphFidelity devFi(String name, ServiceFidelity inMorherFi, ServiceFidelity outMorherFi, Development... devEntries) {
         ServiceFidelity devFi = sorcer.mo.operator.devFi(name, devEntries);
         MorphFidelity morphFi = new MorphFidelity(devFi);
-        morphFi.setInMorpher(inMorher);
-        morphFi.setMorpher(outMorher);
+        if (name != null) {
+            morphFi.setName(name);
+        }
+        morphFi.setInMorpherFi(inMorherFi);
+        morphFi.setMorpherFi(outMorherFi);
+        devFi.setType(Fi.Type.DEV);
+        return morphFi;
+    }
+
+    public static MorphFidelity devFi(String name, ServiceFidelity morherFi, Development... devEntries) {
+        ServiceFidelity devFi = sorcer.mo.operator.devFi(name, devEntries);
+        MorphFidelity morphFi = new MorphFidelity(devFi);
+        if (name != null) {
+            morphFi.setName(name);
+        }
+        morphFi.setMorpherFi(morherFi);
+        devFi.setType(Fi.Type.DEV);
+        return morphFi;
+    }
+
+    public static MorphFidelity devFi(String name, Morpher inMorher, Morpher outMorher, Development... devEntries) {
+        ServiceFidelity devFi = sorcer.mo.operator.devFi(name, devEntries);
+        MorphFidelity morphFi = new MorphFidelity(devFi);
+        ServiceFidelity inMrfFi = new ServiceFidelity(( Morpheus ) mfr(name, inMorher));
+        ServiceFidelity outMrfFi = new ServiceFidelity(( Morpheus ) mfr(name, outMorher));
+        if (name != null) {
+            morphFi.setName(name);
+        }
+        morphFi.setInMorpherFi(inMrfFi);
+        morphFi.setMorpherFi(outMrfFi);
+        devFi.setType(Fi.Type.DEV);
         return morphFi;
     }
 
     public static MorphFidelity devFi(String name, Morpher morher, Development... devEntries) {
         ServiceFidelity devFi = sorcer.mo.operator.devFi(name, devEntries);
         MorphFidelity morphFi = new MorphFidelity(devFi);
-        morphFi.setMorpher(morher);
+        ServiceFidelity mrfFi = new ServiceFidelity(( Morpheus ) mfr(name, morher));
+        if (name != null) {
+            morphFi.setName(name);
+        }
+        morphFi.setMorpherFi(mrfFi);
+        devFi.setType(Fi.Type.DEV);
         return morphFi;
     }
 

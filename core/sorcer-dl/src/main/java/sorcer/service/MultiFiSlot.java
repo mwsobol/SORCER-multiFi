@@ -22,6 +22,8 @@ import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Getter;
 
 import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An pair of objects as an identifiable multifidelity containers.
@@ -34,13 +36,16 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
     // selectable carrier (fidelity) of out
     protected Object impl;
 
+    // morphing fidelities
     protected Fi multiFi;
-
+    protected ServiceFidelity morpherFi;
     protected Morpher morpher;
-
+    protected ServiceFidelity inMorpherFi;
     protected Morpher inMorpher;
-
     protected FidelityManagement fiManager;
+
+    // a pool of all controllers available for bindig free controllers
+    protected Map<String, Controller>  controllers = new HashMap<>();
 
     protected Object annotation;
 
@@ -150,6 +155,22 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
         this.scope = scope;
     }
 
+    public ServiceFidelity getMorpherFi() {
+        return morpherFi;
+    }
+
+    public void setMorpherFi(ServiceFidelity morpherFi) {
+        this.morpherFi = morpherFi;
+    }
+
+    public ServiceFidelity getInMorpherFi() {
+        return inMorpherFi;
+    }
+
+    public void setInMorpherFi(ServiceFidelity inMorpherFi) {
+        this.inMorpherFi = inMorpherFi;
+    }
+
     public void initScope(Context scope) {
         this.scope = scope;
         if (impl instanceof Routine) {
@@ -169,7 +190,12 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
     }
 
     public Morpher getMorpher() {
-        return morpher;
+        if (morpherFi != null) {
+            morpher = ( Morpher ) morpherFi.getSelect();
+            return morpher;
+        } else {
+            return morpher;
+        }
     }
 
     public void setMorpher(Morpher morpher) {
@@ -177,7 +203,12 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
     }
 
     public Morpher getInMorpher() {
-        return inMorpher;
+        if (inMorpherFi != null) {
+            inMorpher = ( Morpher ) inMorpherFi.getSelect();
+            return inMorpher;
+        } else {
+            return inMorpher;
+        }
     }
 
     public void setInMorpher(Morpher inMorpher) {
@@ -290,6 +321,22 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
 
     public void setStatus(int value) {
         status = value;
+    }
+
+    public Map<String, Controller> getControllers() {
+        return controllers;
+    }
+
+    public void setControllers(Map<String, Controller> controllers) {
+        this.controllers = controllers;
+    }
+
+    public Controller getController(String name) {
+        return controllers.get(name);
+    }
+
+    public Controller putController(String name, Controller controller) {
+        return controllers.put(name, controller);
     }
 
     protected Object realizeFidelity(Fi fidelity) {
