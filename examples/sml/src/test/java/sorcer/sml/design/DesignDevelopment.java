@@ -8,6 +8,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.*;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.core.context.DesignIntent;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.service.*;
@@ -171,7 +172,7 @@ public class DesignDevelopment {
 
         // testing syntax for intent contexts
         Intent designIntent = dznIntent(
-            dscFi(dscSig(DesignDevelopment.class, "getMorphingModel")),
+            dscFi(sig("morphMdl", DesignDevelopment.class, "getMorphingModel")),
             dznFi("intFis",
                 intFi("discIntX",
                     dscInt("multiA",

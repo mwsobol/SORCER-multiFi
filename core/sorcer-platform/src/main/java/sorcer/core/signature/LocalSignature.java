@@ -100,7 +100,8 @@ public class LocalSignature extends ServiceSignature implements sig {
 		} else {
 			target = object;
 		}
-
+		// default name
+		name = selector;
 		setSelector(selector);
 		setInitSelector(initSelector);
 
