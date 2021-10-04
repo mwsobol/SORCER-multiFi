@@ -171,7 +171,7 @@ public class DesignDevelopment {
 
         // testing syntax for intent contexts
         Intent designIntent = dznIntent(
-            dscSig(DesignDevelopment.class, "getMorphingModel"),
+            dscFi(dscSig(DesignDevelopment.class, "getMorphingModel")),
             dznFi("intFis",
                 intFi("discIntX",
                     dscInt("multiA",
@@ -204,10 +204,10 @@ public class DesignDevelopment {
         Design desg = dzn(designIntent);
         setMorpher(desg, dznMorpher);
         setInMorpher(desg, dznMorpher);
-        traced(desg, true);
+//        traced(desg, true);
 
-//        Context out = dvlp(designIntent, fi("morphDev1"));
-        Context out = dvlp(desg, fi("morphDev1"));
+        Context out = dvlp(designIntent, fi("morphDev1"));
+//        Context out = dvlp(desg, fi("morphDev1"));
 //        assertTrue(value(out, "morpher3").equals(920.0));
     }
 

@@ -17,6 +17,7 @@
 
 package sorcer.core.context;
 
+import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Intent;
@@ -29,6 +30,8 @@ public class DesignIntent extends ServiceContext<Object> implements Intent {
     private Fi developerFi;
 
     private Discipline discipline;
+
+    private ServiceFidelity disciplineFi;
 
     private Signature disciplineSignature;
 
@@ -69,11 +72,30 @@ public class DesignIntent extends ServiceContext<Object> implements Intent {
     }
 
     public Discipline getDiscipline() {
+        if (disciplineFi != null) {
+             Object obj = disciplineFi.getSelect();
+             if (obj instanceof Discipline) {
+                 discipline = ( Discipline ) obj;
+             } else if (obj instanceof Signature) {
+                try {
+                    discipline = ( Discipline ) ((LocalSignature)obj).initInstance();
+                } catch (SignatureException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
         return discipline;
     }
 
     public void setDiscipline(Discipline discipline) {
         this.discipline = discipline;
+    }
+    public ServiceFidelity getDisciplineFi() {
+        return disciplineFi;
+    }
+
+    public void setDisciplineFi(ServiceFidelity disciplineFi) {
+        this.disciplineFi = disciplineFi;
     }
 
     public Signature getDisciplineSignature() {

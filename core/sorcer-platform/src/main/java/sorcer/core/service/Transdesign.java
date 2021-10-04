@@ -78,14 +78,8 @@ public class Transdesign extends MultiFiSlot implements Design {
         this(name);
         this.designIntent = designIntent;
         DesignIntent dznCxt = ( DesignIntent )designIntent;
-        Signature discSig = dznCxt.getDisciplineSignature();
+        discipline = dznCxt.getDiscipline();
         Signature discIntentSig = dznCxt.getDisciplineIntentSignature();
-        if (discSig != null) {
-            discipline = (Contextion) ((LocalSignature)discSig).initInstance();
-        } else {
-            discipline = dznCxt.getDiscipline();
-        }
-
         if (discIntentSig != null) {
             disciplineIntent = (Context) ((LocalSignature)discIntentSig).initInstance();
         } else {

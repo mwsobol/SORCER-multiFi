@@ -1744,6 +1744,19 @@ public class operator {
         return new Developer(name, development);
     }
 
+    public static ServiceFidelity dscFi(Signature... signatures) {
+        return dscFi(null, signatures);
+    }
+
+    public static ServiceFidelity dscFi(String name, Signature... signatures) {
+        ServiceFidelity disFi = new ServiceFidelity(signatures);
+        if (name != null) {
+            disFi.setName(name);
+        }
+        disFi.setType(Fi.Type.DISCIPLINE);
+        return disFi;
+    }
+
     public static MorphFidelity devFi(String name, ServiceFidelity inMorherFi, ServiceFidelity outMorherFi, Development... devEntries) {
         ServiceFidelity devFi = sorcer.mo.operator.devFi(name, devEntries);
         MorphFidelity morphFi = new MorphFidelity(devFi);

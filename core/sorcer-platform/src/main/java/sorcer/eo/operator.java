@@ -310,24 +310,19 @@ operator extends Operator {
         for (Object obj : items) {
             itemList.add(obj);
         }
-        Signature disciplineSig = null;
-        Discipline discipline = null;
+        ServiceFidelity disciplineFi = null;
         Fi devFi = null;
         ServiceFidelity dznFi = null;
         Iterator<Object> it = itemList.iterator();
         while (it.hasNext()) {
             Object obj = it.next();
-            if ((obj instanceof Signature) && ((ServiceSignature)obj).isKindOf(Kind.DESIGN)) {
-                disciplineSig = (Signature)obj;
-                it.remove();
-            } else if (obj instanceof Discipline) {
-                discipline = (Discipline) obj;
-                it.remove();
-            } else if (obj instanceof MorphFidelity && ((MorphFidelity)obj).getFidelity().getSelect() instanceof Development) {
+           if (obj instanceof MorphFidelity && ((MorphFidelity)obj).getFidelity().getSelect() instanceof Development) {
                 devFi = ( MorphFidelity ) obj;
                 it.remove();
             } else if (obj instanceof ServiceFidelity) {
-                if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DEV)) {
+               if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DISCIPLINE)) {
+                   disciplineFi = (ServiceFidelity) obj;
+               } else if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DEV)) {
                     devFi = (ServiceFidelity) obj;
                 } else if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DESIGN)) {
                     dznFi = (ServiceFidelity) obj;
@@ -345,11 +340,8 @@ operator extends Operator {
         if (dznFi != null) {
             dCxt.setMultiFi(dznFi);
         }
-        if (disciplineSig != null) {
-            dCxt.setDisciplineSignature(disciplineSig);
-        }
-        if (discipline != null) {
-            dCxt.setDiscipline(discipline);
+        if (disciplineFi != null) {
+            dCxt.setDisciplineFi(disciplineFi);
         }
         if (devFi != null) {
             dCxt.setDeveloperFi(devFi);
