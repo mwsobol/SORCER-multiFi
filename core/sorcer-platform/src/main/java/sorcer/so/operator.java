@@ -211,15 +211,6 @@ public class operator extends Operator {
         return out;
     }
 
-    public static Context eval(Node node, Arg... args)
-        throws ContextException {
-        try {
-            return (Context) node.execute(args);
-        } catch (ServiceException | RemoteException e) {
-            throw new ContextException(e);
-        }
-    }
-
     public static Context dscOut(Node node) throws ContextException {
         return node.getOutput();
     }
@@ -404,6 +395,15 @@ public class operator extends Operator {
 
     public static ServiceContext dvlp(Intent intent, Object... items) throws ServiceException {
         return eval(dzn(intent), items);
+    }
+
+    public static Context eval(Discipline node, Arg... args)
+        throws ContextException {
+        try {
+            return (Context) node.execute(args);
+        } catch (ServiceException | RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     public static ServiceContext eval(Request request, Object... items) throws ServiceException {

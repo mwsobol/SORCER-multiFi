@@ -963,6 +963,15 @@ operator extends Operator {
         return context;
     }
 
+    public static Context setTarget(Context context, Identifiable object) {
+        context.setSubject(object.getName(), object);
+        return context;
+    }
+
+    public static Object getTarget(Context context) {
+        return context.getSubjectValue();
+    }
+
     public static Context set(Context context, Identifiable... objects) {
         for (Identifiable obj : objects) {
             // just replace the eval
