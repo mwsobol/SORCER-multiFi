@@ -194,7 +194,9 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
     }
 
     public Morpher getMorpher() {
-        if (morpher == null && fidelity.getSelect() instanceof Fidelity) {
+        if (morpherFi != null) {
+            morpher = (Morpher) ((Entry)morpherFi.getSelect()).getImpl();
+        } else if (morpher == null && fidelity.getSelect() instanceof Fidelity) {
             // the case of selectable morphers
             Object ent = ((Fidelity)fidelity.getSelect()).getSelect();
             if (ent instanceof Entry && ((Entry) ent).getType().equals(Functionality.Type.LAMBDA)) {

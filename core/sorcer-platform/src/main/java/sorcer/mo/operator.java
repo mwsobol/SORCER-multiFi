@@ -1729,13 +1729,18 @@ public class operator {
         return new Morpheus(name, morpher, direction);
     }
 
-    public static ServiceFidelity mfrFi(String name, Morpheus... mmfrEntries) {
+    public static ServiceFidelity mfrFi(Morpher... mmfrEntries) {
+        return mfrFi(null, mmfrEntries) ;
+    }
+    public static ServiceFidelity mfrFi(String name, Morpher... mmfrEntries) {
         Morpheus[] entries = new Morpheus[mmfrEntries.length];
         for (int i = 0; i < mmfrEntries.length; i++) {
-            entries[i] = mmfrEntries[i];
+            entries[i] = (Morpheus)mmfrEntries[i];
         }
         ServiceFidelity mdaFi = new ServiceFidelity(entries);
-        mdaFi.setName(name);
+        if (name != null) {
+            mdaFi.setName(name);
+        }
         mdaFi.setType(Fi.Type.MORPH);
         return mdaFi;
     }

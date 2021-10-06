@@ -313,17 +313,20 @@ operator extends Operator {
         ServiceFidelity disciplineFi = null;
         Fi devFi = null;
         ServiceFidelity dznFi = null;
+        ServiceFidelity mfrFi = null;
         Iterator<Object> it = itemList.iterator();
         while (it.hasNext()) {
             Object obj = it.next();
-           if (obj instanceof MorphFidelity && ((MorphFidelity)obj).getFidelity().getSelect() instanceof Development) {
+            if (obj instanceof MorphFidelity && ((MorphFidelity)obj).getFidelity().getSelect() instanceof Development) {
                 devFi = ( MorphFidelity ) obj;
                 it.remove();
             } else if (obj instanceof ServiceFidelity) {
-               if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DISCIPLINE)) {
-                   disciplineFi = (ServiceFidelity) obj;
-               } else if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DEV)) {
+                if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DISCIPLINE)) {
+                    disciplineFi = (ServiceFidelity) obj;
+                } else if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DEV)) {
                     devFi = (ServiceFidelity) obj;
+                } else if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.MORPH)) {
+                    mfrFi = (ServiceFidelity) obj;
                 } else if (((ServiceFidelity) obj).getFiType().equals(Fi.Type.DESIGN)) {
                     dznFi = (ServiceFidelity) obj;
                 }
@@ -345,6 +348,9 @@ operator extends Operator {
         }
         if (devFi != null) {
             dCxt.setDeveloperFi(devFi);
+        }
+        if (mfrFi != null) {
+            dCxt.setMorpherFi(mfrFi);
         }
         return dCxt;
     }

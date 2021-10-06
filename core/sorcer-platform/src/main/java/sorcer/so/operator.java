@@ -24,6 +24,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.Transmodel;
+import sorcer.core.context.model.ent.Developer;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.req.Srv;
@@ -40,6 +41,7 @@ import sorcer.service.Node;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -397,7 +399,7 @@ public class operator extends Operator {
         return eval(dzn(intent), items);
     }
 
-    public static Context eval(Discipline node, Arg... args)
+    public static Context eval(Node node, Arg... args)
         throws ContextException {
         try {
             return (Context) node.execute(args);
@@ -413,6 +415,10 @@ public class operator extends Operator {
                 out = response((Mogram)request, items);
             } else if (request instanceof Design) {
                 return morphDesign(( Transdesign ) request, items);
+            }else if (request instanceof Node) {
+                Arg[] args = new Arg[items.length];
+                System.arraycopy(items, 0, args, 0, items.length);
+                return (ServiceContext) request.execute(args);
             } else if(items.length == 1) {
                 if (items[0] instanceof Context) {
                     out = eval(request, (Context) items[0]);
@@ -476,6 +482,11 @@ public class operator extends Operator {
                     }
                 } else if (design.getDiscipline() != null) {
                     out = developer.develop(( Discipline ) design.getDiscipline(), design.getDisciplineIntent());
+                    if (developerFi instanceof MorphFidelity && (( MorphFidelity ) developerFi).getMorpherFi() != null) {
+                        (( MorphFidelity ) developerFi).setChanged();
+                        (( MorphFidelity ) developerFi).notifyObservers(design);
+                        out = design.getDiscipline().getOutput();
+                    }
                 } else if (design.getDiscipline() == null) {
                     out = developer.develop(null, design.getDisciplineIntent());
                 }

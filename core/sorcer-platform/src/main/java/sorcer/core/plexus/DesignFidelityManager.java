@@ -105,6 +105,7 @@ public class DesignFidelityManager extends FidelityManager {
             if (devFi instanceof MorphFidelity) {
                 morphFidelities.put(devFi.getName(), (MorphFidelity)devFi);
                 registerMorphFidelity(( MorphFidelity ) devFi);
+                developerFidelities = (( MorphFidelity ) devFi).getFidelity();
             } else {
                 developerFidelities = (ServiceFidelity)devFi;
             }
