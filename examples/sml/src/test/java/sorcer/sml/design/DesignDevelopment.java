@@ -183,7 +183,7 @@ public class DesignDevelopment {
                         cxt("myIntent4", intType("mda"))),
                     cxt("myIntent5", intType("mado"))),
                 intFi("discIntY", dscSig(DesignDevelopment.class, "getMorphingModel"))),
-            devFi("sellar", dznMorpher),
+//            devFi("sellar", dznMorpher),
             devFi("morphDevFis", dznMorpher, // dznMorpher,
                 dev("morphDev1",
                     (Discipline discipline, Context intent) -> {
