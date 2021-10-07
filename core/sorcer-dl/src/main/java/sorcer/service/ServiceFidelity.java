@@ -130,6 +130,20 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 		this.fiName = name;
 	}
 
+	public Service properSelect(String fiName) throws ConfigurationException {
+		Object selected = null;
+		for (Service item : selects) {
+			if (((Identifiable) item).getName().equals(fiName)) {
+				selected = item;
+				break;
+			}
+		}
+		if (selected != null) {
+			select = (Service) selected;
+		}
+		return select;
+	}
+
 	@Override
 	public Service selectSelect(String fiName) throws ConfigurationException {
 		Object selected = null;
@@ -148,7 +162,6 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 		} else {
 			throw new ConfigurationException("no such fidelity: " + fiName);
 		}
-
 	}
 
 	public String getPath(String fidelityName) {

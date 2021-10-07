@@ -45,8 +45,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static sorcer.mo.operator.devFi;
-import static sorcer.mo.operator.value;
+import static sorcer.mo.operator.*;
 
 /**
  * Created by Mike Sobolewski on 9/10/20.
@@ -481,15 +480,35 @@ public class operator extends Operator {
                         }
                     }
                 } else if (design.getDiscipline() != null) {
-                    out = developer.develop(( Discipline ) design.getDiscipline(), design.getDisciplineIntent());
-                    if (developerFi instanceof MorphFidelity && (( MorphFidelity ) developerFi).getMorpherFi() != null) {
-                        (( MorphFidelity ) developerFi).setChanged();
-                        (( MorphFidelity ) developerFi).notifyObservers(design);
-                        out = design.getDiscipline().getOutput();
+                    if (developerFi instanceof MorphFidelity) {
+                        MorphFidelity morphFi = ( MorphFidelity ) developerFi;
+                        if (morphFi.getInMorpherFi() != null) {
+                            morphFi.getInMorpherFi().setSelect(null);
+                            morphFi.getInMorpherFi().properSelect((( Developer ) developer).getName());
+                            if (morphFi.getInMorpherFi().getProperSelect() != null) {
+                                morphFi.setChanged();
+                                morphFi.setFiType(Fi.Type.IN);
+                                morphFi.notifyObservers(design);
+                            }
+                        }
                     }
-                } else if (design.getDiscipline() == null) {
-                    out = developer.develop(null, design.getDisciplineIntent());
+                    out = developer.develop(( Discipline ) design.getDiscipline(), design.getDisciplineIntent());
+                    if (developerFi instanceof MorphFidelity) {
+                        MorphFidelity morphFi = ( MorphFidelity ) developerFi;
+                        if (morphFi.getMorpherFi() != null) {
+                            morphFi.getMorpherFi().setSelect(null);
+                            morphFi.getMorpherFi().properSelect((( Developer ) developer).getName());
+                            if ((( MorphFidelity ) developerFi).getMorpherFi().getProperSelect() != null) {
+                                morphFi.setChanged();
+                                morphFi.setFiType(Fi.Type.OUT);
+                                morphFi.notifyObservers(design);
+                                out = design.getDiscipline().getOutput();
+                            }
+                        }
+                    }
                 }
+            } else if (design.getDiscipline() == null) {
+                        out = developer.develop(null, design.getDisciplineIntent());
             }
         }
         return (ServiceContext)out;

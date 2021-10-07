@@ -1721,8 +1721,20 @@ public class operator {
         return mdaFi;
     }
 
+    public void clear(Fidelity fi) {
+        fi.setSelect(null);
+    }
+
     public static Morpher mfr(String name, Morpher morpher) {
-        return new Morpheus(name, morpher);
+        return new Morpheus(name, morpher,  Morpher.Dir.OUT);
+    }
+
+    public static Morpher inMfr(String name, Morpher morpher) {
+        return new Morpheus(name, morpher, Morpher.Dir.IN);
+    }
+
+    public static Morpher outMfr(String name, Morpher morpher) {
+        return new Morpheus(name, morpher, Morpher.Dir.OUT);
     }
 
     public static Morpher mfr(String name, Morpher morpher, Morpher.Dir direction) {
@@ -1776,11 +1788,24 @@ public class operator {
 
     public static MorphFidelity devFi(String name, ServiceFidelity morherFi, Development... devEntries) {
         ServiceFidelity devFi = sorcer.mo.operator.devFi(name, devEntries);
+        List<Service> inMfrs = new ArrayList();
+        List<Service> outMfrs = new ArrayList();
+
+        for (Object fi : morherFi.getSelects()) {
+            if (fi instanceof Morpheus && ((Morpheus)fi).getDirection().equals(Morpher.Dir.IN)) {
+                inMfrs.add(( Service ) fi);
+            } else if (fi instanceof Morpheus && ((Morpheus)fi).getDirection().equals(Morpher.Dir.OUT)) {
+                outMfrs.add(( Service ) fi);
+            }
+        }
+        ServiceFidelity inMrfFi = new ServiceFidelity(name, inMfrs);
+        ServiceFidelity outMrfFi = new ServiceFidelity(name, outMfrs);
         MorphFidelity morphFi = new MorphFidelity(devFi);
         if (name != null) {
             morphFi.setName(name);
         }
-        morphFi.setMorpherFi(morherFi);
+        morphFi.setInMorpherFi(inMrfFi);
+        morphFi.setMorpherFi(outMrfFi);
         devFi.setType(Fi.Type.DEV);
         return morphFi;
     }

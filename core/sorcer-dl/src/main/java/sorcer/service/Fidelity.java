@@ -112,6 +112,10 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, fi<T>, Arg {
         return selects.get(index);
     }
 
+	public T getProperSelect() {
+		return select;
+	}
+
     public T getSelect() {
 		// if a select not set return the firt one
 		if (select == null && selects.size() > 0) {

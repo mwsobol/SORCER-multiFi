@@ -125,6 +125,10 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
         return fidelity.getFiType();
     }
 
+    public void setFiType(Type type) {
+        fidelity.setType(type);
+    }
+
     @Override
     public void setChanged(boolean state) {
         fidelity.setChanged(state);
@@ -193,6 +197,19 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
         fidelity.setName(name);
     }
 
+    public Morpher getInMorpher() {
+        if (morpherFi != null) {
+            inMorpher = (Morpher) ((Entry)inMorpherFi.getSelect()).getImpl();
+        } else if (inMorpher == null && fidelity.getSelect() instanceof Fidelity) {
+            // the case of selectable morphers
+            Object ent = ((Fidelity)fidelity.getSelect()).getSelect();
+            if (ent instanceof Entry && ((Entry) ent).getType().equals(Functionality.Type.LAMBDA)) {
+                inMorpher = (Morpher) ((Entry) ent).getImpl();
+            }
+        }
+        return inMorpher;
+    }
+
     public Morpher getMorpher() {
         if (morpherFi != null) {
             morpher = (Morpher) ((Entry)morpherFi.getSelect()).getImpl();
@@ -204,10 +221,6 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
             }
         }
         return morpher;
-    }
-
-    public Morpher getInMorpher() {
-        return inMorpher;
     }
 
     public void setInMorpher(Morpher inMorpher) {
