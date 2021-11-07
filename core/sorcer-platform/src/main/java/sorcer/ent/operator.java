@@ -926,8 +926,8 @@ public class operator extends Operator {
 		return req(sig);
 	}
 
-	public static Slot<Fidelity, Service> slot(Fidelity selectFi, Service service) throws ConfigurationException {
-		Slot<Fidelity, Service> assoc = new Slot(selectFi, service);
+	public static Slot<Fi, Service> slot(Fi selectFi, Service service) throws ConfigurationException {
+		Slot<Fi, Service> assoc = new Slot(selectFi, service);
 		if (service instanceof Fidelity) {
 			Fidelity fi = (Fidelity)service;
 			if (!fi.isValid()) {
@@ -953,7 +953,7 @@ public class operator extends Operator {
 
 			fi.setName(selectFi.getName());
 			fi.setPath(selectFi.getPath());
-			selectFi.setType(fi.getFiType());
+			((Fidelity)selectFi).setType(fi.getFiType());
 		}
 
 		return assoc;
