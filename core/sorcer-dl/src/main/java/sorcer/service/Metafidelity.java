@@ -46,17 +46,17 @@ public class Metafidelity extends Fidelity<Fi> implements MetaFi, Dependency, Ar
         select = fis[0];
     }
 
-    public Metafidelity(String name, List<Fidelity> fis) {
-        for (Fidelity fi : fis) {
+    public Metafidelity(String name, List<Fi> fis) {
+        for (Fi fi : fis) {
             selects.add(fi);
         }
         select = fis.get(0);
         this.fiName = name;
     }
 
-    public Metafidelity(String name, Fidelity[] fis) {
+    public Metafidelity(String name, Fi[] fis) {
 		if (fis.length > 0) {
-			for (Fidelity fi : fis) {
+			for (Fi fi : fis) {
 				selects.add(fi);
 			}
 			select = fis[0];

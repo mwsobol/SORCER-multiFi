@@ -24,14 +24,14 @@ import sorcer.service.Projection;
 /**
  * @author Mike Sobolewski 03/11/2021
  */
-public class MultiProjection extends Fidelity<Identifiable> {
+public class ProjectionMultiFi extends Fidelity<Identifiable> {
 
-    public MultiProjection(Projection... projections) {
+    public ProjectionMultiFi(Projection... projections) {
         setSelects(projections);
         select = projections[0];
     }
 
-    public MultiProjection(String name, Projection... projections) {
+    public ProjectionMultiFi(String name, Projection... projections) {
         this.fiName = name;
         setSelects(projections);
         select = projections[0];

@@ -35,9 +35,8 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
 
     // selectable carrier (fidelity) of out
     protected Object impl;
-
-    // morphing fidelities
     protected Fi multiFi;
+    // morphing fidelities
     protected ServiceFidelity morpherFi;
     protected Morpher morpher;
     protected ServiceFidelity inMorpherFi;
@@ -279,7 +278,7 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
         contextReturn = new Context.Return(path, direction);
     }
 
-    public void selectFidelity(Fidelity fi) throws ConfigurationException {
+    public void selectFidelity(Fi fi) throws ConfigurationException {
         ((Fidelity) multiFi).selectSelect(fi);
     }
 

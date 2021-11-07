@@ -640,10 +640,10 @@ public class operator {
         ((MultiFiSlot) contextion).setInMorpher(mdlMorpher);
     }
 
-    public static Mogram reconfigure(Mogram mogram, Fidelity... fidelities) throws ConfigurationException {
+    public static Mogram reconfigure(Mogram mogram, Fi... fidelities) throws ConfigurationException {
         FidelityList fis = new FidelityList();
         List<String> metaFis = new ArrayList<>();
-        for (Fidelity fi : fidelities) {
+        for (Fi fi : fidelities) {
             if (fi instanceof Metafidelity) {
                 metaFis.add(fi.getName());
             } else if (fi instanceof Fidelity) {
@@ -663,7 +663,7 @@ public class operator {
         return mogram;
     }
 
-    public static Mogram reconfigure(Mogram model, List fiList) throws ConfigurationException {
+    public static Mogram reconfigure(Mogram model, FidelityList fiList) throws ConfigurationException {
         if (fiList instanceof FidelityList) {
             ((FidelityManager) ((ServiceMogram)model).getFidelityManager()).reconfigure((FidelityList) fiList);
         } else {
@@ -871,7 +871,7 @@ public class operator {
         return add((Context) model, objects);
     }
 
-    public static NodeFidelity add(Node node, NodeFidelity nodeFi) {
+    public static NodeFi add(Node node, NodeFi nodeFi) {
         node.getMultiFi().getSelects().add(nodeFi);
         return nodeFi;
     }
@@ -1283,11 +1283,11 @@ public class operator {
         return new SignatureDomain(name, signature);
     }
 
-    public static Node rnd(NodeFidelity... discFis) {
+    public static Node rnd(NodeFi... discFis) {
         return rnd(null, discFis);
     }
 
-    public static Node rnd(String name, NodeFidelity... discFis) {
+    public static Node rnd(String name, NodeFi... discFis) {
         return new ServiceNode(name, discFis);
     }
 
@@ -1541,7 +1541,7 @@ public class operator {
             } else if (o instanceof Node) {
                 // initialize node if thr instance was created frm builder signature
                 if (((Node)o).getName() == null) {
-                    NodeFidelity fi = (NodeFidelity) ((Node)o).getMultiFi().get(0);
+                    NodeFi fi = ( NodeFi ) ((Node)o).getMultiFi().get(0);
                     ((Node)o).getMultiFi().setSelect(fi);
                     ((Node)o).setName(fi.getName());
                 }

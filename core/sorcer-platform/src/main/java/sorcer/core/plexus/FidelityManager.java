@@ -67,7 +67,7 @@ public class FidelityManager implements Service, FidelityManagement, Observer, I
     protected Map<String, Projection> projections = new ConcurrentHashMap<>();
 
     // changed fidelities by morphers
-    protected List<Fidelity> fiTrace = new ArrayList();
+    protected List<Fi> fiTrace = new ArrayList();
 
     protected Contextion mogram;
 
@@ -147,11 +147,11 @@ public class FidelityManager implements Service, FidelityManagement, Observer, I
             this.morphFidelities.put(path, mFi);
     }
 
-    public List<Fidelity> getFiTrace() {
+    public List<Fi> getFiTrace() {
         return fiTrace;
     }
 
-    public void setFiTrace(List<Fidelity> fiTrace) {
+    public void setFiTrace(List<Fi> fiTrace) {
         this.fiTrace = fiTrace;
     }
 
@@ -245,7 +245,7 @@ public class FidelityManager implements Service, FidelityManagement, Observer, I
         return sessions;
     }
 
-    public void selectFidelity(Fidelity fi) throws ContextException, ConfigurationException {
+    public void selectFidelity(Fi fi) throws ContextException, ConfigurationException {
         // implement in subclasses
     }
 
@@ -394,17 +394,17 @@ public class FidelityManager implements Service, FidelityManagement, Observer, I
         return fi;
     }
 
-    public void reconfigure(List<Fidelity> fiList) throws ConfigurationException {
+    public void reconfigure(List<Fi> fiList) throws ConfigurationException {
         Fidelity[] list = new Fidelity[fiList.size()];
         reconfigure(fiList.toArray(list));
     }
 
     @Override
-    public void reconfigure(Fidelity... fidelities) throws ConfigurationException {
+    public void reconfigure(Fi... fidelities) throws ConfigurationException {
         if (fidelities == null || fidelities.length == 0) {
             return;
         }
-        for (Fidelity fi : fidelities) {
+        for (Fi fi : fidelities) {
             Fidelity sFi = this.fidelities.get(fi.getPath());
             if (sFi != null) {
                 sFi.selectSelect(fi.getName());

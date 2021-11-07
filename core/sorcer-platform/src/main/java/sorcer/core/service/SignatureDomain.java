@@ -222,7 +222,7 @@ public class SignatureDomain implements Domain {
         return domain.getAllExceptions();
     }
 
-    public Fidelity selectFidelity(String selection) throws ConfigurationException {
+    public Fi selectFidelity(String selection) throws ConfigurationException {
         return ((ServiceMogram)domain).selectFidelity(selection);
     }
 
@@ -537,7 +537,7 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public void selectFidelity(Fidelity fi) throws ConfigurationException, RemoteException {
+    public void selectFidelity(Fi fi) throws ConfigurationException, RemoteException {
         domain.selectFidelity(fi);
     }
 

@@ -374,7 +374,7 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 				}
 			}
 			ModelStrategy strategy = ((ModelStrategy) input.getDomainStrategy());
-			List<Fidelity> fis = Arg.selectFidelities(args);
+			List<Fi> fis = Arg.selectFidelities(args);
 			if (analyzerFi != null) {
 				strategy.setExecState(Exec.State.RUNNING);
 				// select mda Fi if provided
@@ -702,7 +702,7 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 	}
 
 	@Override
-	public void selectFidelity(Fidelity fi) {
+	public void selectFidelity(Fi fi) {
 	}
 
 	public Contextion getParent() {

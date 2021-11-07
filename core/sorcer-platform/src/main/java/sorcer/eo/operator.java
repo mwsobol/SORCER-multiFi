@@ -1849,7 +1849,7 @@ operator extends Operator {
         return signature;
     }
 
-    public static Metafidelity metaFi(String name, Fidelity... selectors) {
+    public static Metafidelity metaFi(String name, Fi... selectors) {
         Metafidelity fi = new Metafidelity(name, selectors);
         fi.fiType = Fi.Type.META;
         return fi;
@@ -1863,11 +1863,11 @@ operator extends Operator {
         }
     }
 
-    public static Fidelity fi(Contextion mogram) {
+    public static Fi fi(Contextion mogram) {
         return ((ServiceMogram)mogram).getSelectedFidelity();
     }
 
-    public static Fidelity fi(String name, String path) {
+    public static Fi fi(String name, String path) {
         Fidelity fi = new Fidelity(name, path);
         fi.fiType = Fi.Type.SELECT;
         return fi;
@@ -1913,34 +1913,34 @@ operator extends Operator {
         return fi;
     }
 
-    public static MultiProjection prjFis(Projection select) {
+    public static ProjectionMultiFi prjFis(Projection select) {
         return prjFis(null,  select);
     }
 
-    public static MultiProjection prjFis(Projection... projections) {
-        MultiProjection fi = new MultiProjection(projections);
+    public static ProjectionMultiFi prjFis(Projection... projections) {
+        ProjectionMultiFi fi = new ProjectionMultiFi(projections);
         fi.fiType = Fi.Type.PROJECTION;
         return fi;
     }
 
-    public static MultiProjection prjFis(String name, Projection select) {
+    public static ProjectionMultiFi prjFis(String name, Projection select) {
         if (name != null) {
             select.setName(name);
         }
-        MultiProjection fi = new MultiProjection(select);
+        ProjectionMultiFi fi = new ProjectionMultiFi(select);
         fi.fiType = Fi.Type.PROJECTION;
         return fi;
     }
 
-    public static NodeFidelity rndFi(String name, Object... objects) {
-        NodeFidelity fi = new NodeFidelity(name);
+    public static NodeFi rndFi(String name, Object... objects) {
+        NodeFi fi = new NodeFi(name);
         for (Object obj : objects) {
-            if (obj instanceof MultiFiVal && ((MultiFiVal)obj).getFiType().equals(Fi.Type.CONTEXTION)) {
-                fi.setContextionFi((MultiFiVal)obj);
-            } else  if (obj instanceof MultiFiVal && ((MultiFiVal)obj).getFiType().equals(Fi.Type.CONTEXT)) {
-                fi.setContextFi((MultiFiVal)obj);
-            } else if (obj instanceof MultiFiVal && ((MultiFiVal)obj).getFiType().equals(Fi.Type.DISPATCHER)) {
-                fi.setDispatcherFi((MultiFiVal)obj);
+            if (obj instanceof SlotMultiFi && (( SlotMultiFi )obj).getFiType().equals(Fi.Type.CONTEXTION)) {
+                fi.setContextionFi(( SlotMultiFi )obj);
+            } else  if (obj instanceof SlotMultiFi && (( SlotMultiFi )obj).getFiType().equals(Fi.Type.CONTEXT)) {
+                fi.setContextFi(( SlotMultiFi )obj);
+            } else if (obj instanceof SlotMultiFi && (( SlotMultiFi )obj).getFiType().equals(Fi.Type.DISPATCHER)) {
+                fi.setDispatcherFi(( SlotMultiFi )obj);
             }
         }
         return fi;
@@ -1952,22 +1952,22 @@ operator extends Operator {
         return fi;
     }
 
-    public static MultiFiVal cxtFi(Object select) {
+    public static SlotMultiFi cxtFi(Object select) {
         return cxtFi(null,  select);
     }
 
-    public static MultiFiVal cxtFi(Slot... fis) {
-        MultiFiVal fi = new MultiFiVal(fis);
+    public static SlotMultiFi cxtFi(Slot... fis) {
+        SlotMultiFi fi = new SlotMultiFi(fis);
         fi.fiType = Fi.Type.CONTEXT;
         return fi;
     }
 
-    public static MultiFiVal cxtFi(String name, Object select) {
-        MultiFiVal fi = null;
+    public static SlotMultiFi cxtFi(String name, Object select) {
+        SlotMultiFi fi = null;
         if (name == null) {
-            fi = new MultiFiVal(slot(((Identifiable) select).getName(), select));
+            fi = new SlotMultiFi(slot(((Identifiable) select).getName(), select));
         } else {
-            fi = new MultiFiVal(slot(name, select));
+            fi = new SlotMultiFi(slot(name, select));
         }
         if (select instanceof Signature && name != null) {
             ((ServiceSignature)select).setName(name);
@@ -2003,22 +2003,22 @@ operator extends Operator {
         return fi;
     }
 
-    public static MultiFiVal dspFi(Slot... fis) {
-        MultiFiVal fi = new MultiFiVal(fis);
+    public static SlotMultiFi dspFi(Slot... fis) {
+        SlotMultiFi fi = new SlotMultiFi(fis);
         fi.fiType = Fi.Type.DISPATCHER;
         return fi;
     }
 
-    public static MultiFiVal dspFi(Object select) {
+    public static SlotMultiFi dspFi(Object select) {
         return dspFi(null,  select);
     }
 
-    public static MultiFiVal dspFi(String name, Object select) {
-        MultiFiVal fi = null;
+    public static SlotMultiFi dspFi(String name, Object select) {
+        SlotMultiFi fi = null;
         if (name == null) {
-            fi = new MultiFiVal(slot(((Identifiable) select).getName(), select));
+            fi = new SlotMultiFi(slot(((Identifiable) select).getName(), select));
         } else {
-            fi = new MultiFiVal(slot(name, select));
+            fi = new SlotMultiFi(slot(name, select));
         }
         if (select instanceof Signature && name != null) {
             ((ServiceSignature)select).setName(name);
@@ -2027,22 +2027,22 @@ operator extends Operator {
         return fi;
     }
 
-    public static MultiFiVal cxtnFi(Slot... fis) {
-        MultiFiVal fi = new MultiFiVal(fis);
+    public static SlotMultiFi cxtnFi(Slot... fis) {
+        SlotMultiFi fi = new SlotMultiFi(fis);
         fi.fiType = Fi.Type.CONTEXTION;
         return fi;
     }
 
-    public static MultiFiVal cxtnFi(Object select) {
+    public static SlotMultiFi cxtnFi(Object select) {
         return cxtnFi(null,  select);
     }
 
-    public static MultiFiVal cxtnFi(String name, Object select) {
-        MultiFiVal fi = null;
+    public static SlotMultiFi cxtnFi(String name, Object select) {
+        SlotMultiFi fi = null;
         if (name == null) {
-            fi = new MultiFiVal(slot(((Identifiable) select).getName(), select));
+            fi = new SlotMultiFi(slot(((Identifiable) select).getName(), select));
         } else {
-            fi = new MultiFiVal(slot(name, select));
+            fi = new SlotMultiFi(slot(name, select));
         }
         if (select instanceof Signature && name != null) {
             ((ServiceSignature)select).setName(name);
@@ -2285,21 +2285,21 @@ operator extends Operator {
         return fi;
     }
 
-    public static Projection prj(String name, Fidelity... fidelities) {
+    public static Projection prj(String name, Fi... fidelities) {
         return projection(name, fidelities);
     }
 
-    public static Projection projection(String name, Fidelity... fidelities) {
+    public static Projection projection(String name, Fi... fidelities) {
         Projection p = new Projection(fidelities);
         p.setName(name);
         return p;
     }
 
-    public static Projection prj(Fidelity... fidelities) {
+    public static Projection prj(Fi... fidelities) {
         return new Projection(fidelities);
     }
 
-    public static Projection inProj(Fidelity... fidelities) {
+    public static Projection inProj(Fi... fidelities) {
         Projection pr = new Projection(fidelities);
         pr.setType(Fi.Type.IN_PATH);
         return pr;
@@ -2343,24 +2343,24 @@ operator extends Operator {
         return new Projection(fl);
     }
 
-    public static Fidelity fis(String fidelity, List<Path> paths, Fidelity subFi) {
+    public static Fidelity fis(String fidelity, List<Path> paths, Fi subFi) {
         FidelityList  fl = new FidelityList(paths.size());
         for (Path path : paths) {
-            fl.add(fi(fidelity, path.getName(), subFi));
+            fl.add(fi(fidelity, path.getName(), ( Fidelity ) subFi));
         }
         return new Projection(fl);
     }
 
-    public static FidelityList fis(Fidelity... fidelities) {
+    public static FidelityList fis(Fi... fidelities) {
         return new FidelityList(fidelities);
     }
 
-    public static ServiceFidelityList fiList(Fidelity... fidelities) {
-        return new ServiceFidelityList(fidelities);
+    public static FidelityList fiList(Fi... fidelities) {
+        return new FidelityList(fidelities);
     }
 
-    public static ServiceFidelityList srvFis(ServiceFidelity... fidelities) {
-        return new ServiceFidelityList(fidelities);
+    public static FidelityList srvFis(Fi... fidelities) {
+        return new FidelityList(fidelities);
     }
 
     public static ServiceFidelityList fis(Arg... args) {
@@ -2971,7 +2971,7 @@ operator extends Operator {
         FidelityManager fiManager = null;
         Strategy.FidelityManagement fm = null;
         List<Service> fis = new ArrayList<>();
-        List<Fidelity> metaFis = new ArrayList();
+        List<Fi> metaFis = new ArrayList();
         MorphFidelity mFi = null;
         List<Connector> connList = new ArrayList();
         Context.Out outPaths = null;
@@ -3084,7 +3084,7 @@ operator extends Operator {
 
         if (metaFis.size() > 0) {
             Metafidelity metaFi = new Metafidelity(name, metaFis);
-            Fidelity first = metaFis.get(0);
+            Fi first = metaFis.get(0);
             metaFi.setSelect(first);
             metaFi.setName(job.getName());
             metaFi.setPath(job.getName());
@@ -3310,7 +3310,7 @@ operator extends Operator {
         return trace;
     }
 
-    public static List<Fidelity>  fiTrace(Mogram mogram) {
+    public static List<Fi>  fiTrace(Mogram mogram) {
         try {
             return ((ServiceMogram)mogram).getFidelityManager().getFiTrace();
         } catch (RemoteException e) {

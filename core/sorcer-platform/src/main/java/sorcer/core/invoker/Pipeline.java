@@ -310,7 +310,7 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
     }
 
     @Override
-    public void selectFidelity(Fidelity fi) throws ConfigurationException {
+    public void selectFidelity(Fi fi) throws ConfigurationException {
 
     }
 }

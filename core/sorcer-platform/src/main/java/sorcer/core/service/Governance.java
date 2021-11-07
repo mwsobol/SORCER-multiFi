@@ -545,7 +545,7 @@ public class Governance extends Realm implements Dependency {
 	}
 
 	@Override
-	public void selectFidelity(Fidelity fi) throws ConfigurationException {
+	public void selectFidelity(Fi fi) throws ConfigurationException {
 
 	}
 

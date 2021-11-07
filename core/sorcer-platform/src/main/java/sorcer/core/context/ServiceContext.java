@@ -3834,7 +3834,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
     @Override
-    public Fidelity selectFidelity(String selection) throws ConfigurationException {
+    public Fi selectFidelity(String selection) throws ConfigurationException {
         if (selection == null ) {
             throw new ConfigurationException();
         }

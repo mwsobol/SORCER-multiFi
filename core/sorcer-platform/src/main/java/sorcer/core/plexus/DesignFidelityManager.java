@@ -38,24 +38,24 @@ public class DesignFidelityManager extends FidelityManager {
     }
 
     @Override
-    public void reconfigure(Fidelity... fidelities) throws ConfigurationException {
+    public void reconfigure(Fi... fidelities) throws ConfigurationException {
         if (fidelities == null || fidelities.length == 0) {
             return;
         }
-        for (Fidelity fi : fidelities) {
+        for (Fi fi : fidelities) {
             if (fi.getFiType().equals(Fi.Type.INTENT)) {
-                Fidelity intentFi = (Fidelity)getSelectFi(fi);
+                Fi intentFi = (Fi)getSelectFi(fi);
                 ((Transdesign)(( DesignIntent )mogram).getSubjectValue()).setDisciplineIntent(( Context ) intentFi.getSelect());
                 continue;
             } else if (fi.getFiType().equals(Fi.Type.DEV)) {
-                developerFidelities.selectSelect((String)fi.getName());
+                developerFidelities.selectSelect(fi.getName());
             }
             super.reconfigure(fi);
         }
     }
 
     // manager top select fidelty
-    public Object getSelectFi(Fidelity fi) throws ConfigurationException {
+    public Object getSelectFi(Fi fi) throws ConfigurationException {
         Object selectFi = null;
         if (fi.getPath() != null && fi.getPath().length() == 0) {
             selectFi = getSelectFi(intentFidelities.getSelects(), (String)fi.getName());

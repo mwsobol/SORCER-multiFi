@@ -23,7 +23,6 @@ import net.jini.id.UuidFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.signature.LocalSignature;
-import sorcer.service.modeling.ExecutiveException;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Getter;
 import sorcer.service.modeling.Model;
@@ -94,14 +93,14 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
         ((ServiceFidelity)multiFi).setName(name);
     }
 
-    public ServiceNode(String name, NodeFidelity[] fidelities) {
+    public ServiceNode(String name, NodeFi[] fidelities) {
         this(name);
         multiFi.getSelects().addAll(Arrays.asList(fidelities));
     }
 
     @Override
     public Service getContextion() {
-        return ((NodeFidelity)multiFi.getSelect()).getContextion();
+        return (( NodeFi )multiFi.getSelect()).getContextion();
     }
 
     @Override
@@ -119,7 +118,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
 
     @Override
     public Routine getDispatcher() {
-        return ((NodeFidelity)multiFi.getSelect()).getDispatcher();
+        return (( NodeFi )multiFi.getSelect()).getDispatcher();
     }
 
     public Context setInput(Context input) throws ContextException {
@@ -209,7 +208,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
             if (out != null) {
                 clear();
             }
-            List<Fidelity> fis = Arg.selectFidelities(args);
+            List<Fi> fis = Arg.selectFidelities(args);
             if (fis.size() > 0) {
                 try {
                     selectFidelity(fis.get(0));
@@ -218,7 +217,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
                 }
             }
             Routine xrt = getDispatcher();
-            Context cxt = ((NodeFidelity)multiFi.getSelect()).getContext();
+            Context cxt = (( NodeFi )multiFi.getSelect()).getContext();
             if (cxt != null && xrt != null) {
                 xrt.setContext(cxt);
             }
@@ -260,7 +259,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
     }
 
     @Override
-    public void selectFidelity(Fidelity fi) throws ConfigurationException {
+    public void selectFidelity(Fi fi) throws ConfigurationException {
         multiFi.selectSelect(fi.getName());
     }
 
@@ -326,14 +325,14 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
 
     public Context<Object> getContext(String dscName) throws ContextException {
         try {
-            return ((NodeFidelity) multiFi.selectSelect(dscName)).getContext();
+            return (( NodeFi ) multiFi.selectSelect(dscName)).getContext();
         } catch (ConfigurationException e) {
             throw new ContextException(e);
         }
     }
 
     public Context<Object> getContext() {
-        return ((NodeFidelity) multiFi.getSelect()).getContext();
+        return (( NodeFi ) multiFi.getSelect()).getContext();
     }
 
     @Override

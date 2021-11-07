@@ -44,13 +44,13 @@ public interface FidelityManagement extends RemoteEventListener, Serializable {
 
     void reconfigure(String... fiNames) throws EvaluationException, RemoteException, ConfigurationException;
 
-    void reconfigure(Fidelity... fidelities) throws EvaluationException, RemoteException, ConfigurationException;
+    void reconfigure(Fi... fidelities) throws EvaluationException, RemoteException, ConfigurationException;
 
-    List<Fidelity> getDefaultFidelities() throws RemoteException;
+    List<Fi> getDefaultFidelities() throws RemoteException;
 
     Contextion getMogram() throws RemoteException;
 
-    List<Fidelity> getFiTrace() throws RemoteException;
+    List<Fi> getFiTrace() throws RemoteException;
 
     void addTrace(ServiceFidelity fi);
 

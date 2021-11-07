@@ -414,9 +414,9 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
     }
 
     protected Service getFiService(ServiceFidelity fi, Arg[] entries, String path) throws ContextException {
-        Fidelity selected = null;
-        List<Fidelity> fiList = Projection.selectFidelities(entries);
-        for (Fidelity sfi : fiList) {
+        Fi selected = null;
+        List<Fi> fiList = Projection.selectFidelities(entries);
+        for (Fi sfi : fiList) {
             if (sfi.getName().equals(path)) {
                 selected = sfi;
                 ((Entry) get(path)).setValid(false);

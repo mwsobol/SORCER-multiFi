@@ -22,12 +22,12 @@ public class ContextFidelityManager extends FidelityManager {
     }
 
     @Override
-    public void reconfigure(Fidelity... fidelities) throws  ConfigurationException {
+    public void reconfigure(Fi... fidelities) throws  ConfigurationException {
         if (fidelities == null || fidelities.length == 0) {
             return;
         }
 
-        for (Fidelity fi : fidelities) {
+        for (Fi fi : fidelities) {
             if (fi.getFiType().equals((Fi.Type.CONTEXT))) {
                 try {
                     ((ServiceMogram) mogram).getDataContext().selectFidelity(fi.getName());

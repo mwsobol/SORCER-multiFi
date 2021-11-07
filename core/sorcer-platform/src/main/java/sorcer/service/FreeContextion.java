@@ -130,7 +130,7 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
-	public void selectFidelity(Fidelity fi) throws ConfigurationException {
+	public void selectFidelity(Fi fi) throws ConfigurationException {
 
 	}
 

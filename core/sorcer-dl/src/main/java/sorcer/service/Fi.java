@@ -20,7 +20,7 @@ package sorcer.service;
 
 import java.util.List;
 
-public interface Fi<T> extends Identifiable, Service {
+public interface Fi<T> extends Identifiable, Service, Arg {
 
     int e = 0;
     int s = 1;

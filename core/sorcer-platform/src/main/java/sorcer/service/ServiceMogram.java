@@ -874,8 +874,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.profile = profile;
     }
 
-    public Fidelity selectFidelity(Arg... entries) throws ConfigurationException {
-        Fidelity fi = null;
+    public Fi selectFidelity(Arg... entries) throws ConfigurationException {
+        Fi fi = null;
         try {
             if (entries != null && entries.length > 0) {
                 for (Arg a : entries)
@@ -905,7 +905,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
                             fi = ((ServiceMogram)mog).selectFidelity(a.getName());
                         }
                     } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.META) {
-                        fi = selectMetafidelity((Fidelity) a);
+                        fi = selectMetafidelity((Fi) a);
                     } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.CONTEXT) {
                         if (contextFidelityManager == null) {
                             dataContext.selectFidelity(a.getName());
@@ -928,18 +928,18 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return fi;
     }
 
-    public Fidelity selectFidelity(String selector) throws ConfigurationException {
+    public Fi selectFidelity(String selector) throws ConfigurationException {
         if (multiFi.size() == 1) {
-            return (Fidelity) multiFi.getSelect();
+            return ( Fi ) multiFi.getSelect();
         }
         multiFi.selectSelect(selector);
-        return (Fidelity) multiFi.getSelect();
+        return (Fi) multiFi.getSelect();
     }
 
-    public Fidelity selectMetafidelity(Fidelity fidelity) throws ConfigurationException {
+    public Fi selectMetafidelity(Fi fidelity) throws ConfigurationException {
         Metafidelity metaFi;
-        Fidelity fi = fidelity;
-        if (fidelity.fiType.equals(Fi.Type.META) && fidelity.getSelect() == null) {
+        Fi fi = fidelity;
+        if (fidelity.getFiType().equals(Fi.Type.META) && fidelity.getSelect() == null) {
             if (multiMetaFi != null) {
                 multiMetaFi.selectSelect(fidelity.getName());
                 metaFi = (Metafidelity) multiMetaFi.getSelect();

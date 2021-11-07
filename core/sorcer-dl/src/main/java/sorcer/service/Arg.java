@@ -83,8 +83,8 @@ public interface Arg extends Serializable, Service {
 		return null;
 	}
 
-	public static List<Fidelity> selectFidelities(Arg[] args) {
-		List<Fidelity> fiList = new ArrayList<>();
+	public static List<Fi> selectFidelities(Arg[] args) {
+		List<Fi> fiList = new ArrayList<>();
 		for (Arg arg : args) {
 			if (arg instanceof Fidelity)
 				fiList.add((Fidelity) arg);

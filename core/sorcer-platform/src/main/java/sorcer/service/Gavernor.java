@@ -36,7 +36,7 @@ public class Gavernor implements Service, Hypervision {
     @Override
     public Object execute(Arg... args) throws ServiceException {
         try {
-            List<Fidelity> fis = Arg.selectFidelities(args);
+            List<Fi> fis = Arg.selectFidelities(args);
             Context input = Arg.selectContext(args);
             if (input != null) {
                 governance.setInput(input);

@@ -149,6 +149,6 @@ public interface Contextion extends Request, Scopable {
 
 	FidelityManagement getFidelityManager() throws RemoteException;
 
-	void selectFidelity(Fidelity fi) throws ConfigurationException, RemoteException;
+	void selectFidelity(Fi fi) throws ConfigurationException, RemoteException;
 
 }
