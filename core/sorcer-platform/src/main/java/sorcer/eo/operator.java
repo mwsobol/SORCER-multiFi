@@ -2325,17 +2325,17 @@ operator extends Operator {
     }
 
     // projection of
-    public static Projection prj(ServiceFidelity fidelity) {
+    public static Projection prj(ServiceFidelity... fidelity) {
         return new Projection(fidelity);
     }
 
-    public static Projection prj(String name, ServiceFidelity fidelity) {
+    public static Projection prj(String name, ServiceFidelity... fidelity) {
         Projection p = new Projection(fidelity);
         p.setName(name);
         return p;
     }
 
-    public static Fidelity fis(String fidelity, List<Path> paths, String gradient) {
+    public static Fi prj(String fidelity, List<Path> paths, String gradient) {
         FidelityList  fl = new FidelityList(paths.size());
         for (Path path : paths) {
             fl.add(gFi(fidelity, path.getName(), gradient));
@@ -2343,7 +2343,7 @@ operator extends Operator {
         return new Projection(fl);
     }
 
-    public static Fidelity fis(String fidelity, List<Path> paths, Fi subFi) {
+    public static Fi prj(String fidelity, List<Path> paths, Fi subFi) {
         FidelityList  fl = new FidelityList(paths.size());
         for (Path path : paths) {
             fl.add(fi(fidelity, path.getName(), ( Fidelity ) subFi));
