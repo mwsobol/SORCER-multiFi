@@ -62,9 +62,9 @@ public class SignatureDomain implements Domain {
             domain = (Domain) ((LocalSignature) signature).initInstance();
             // domain = (Domain) sorcer.co.operator.instance(signature);
             if (name != null) {
-                ((ServiceMogram)domain).setDomainName(name);
+                domain.setName(name);
             } else {
-                ((ServiceMogram)domain).setDomainName(domain.getName());
+                domain.setName(domain.getName());
             }
         }
         return domain;

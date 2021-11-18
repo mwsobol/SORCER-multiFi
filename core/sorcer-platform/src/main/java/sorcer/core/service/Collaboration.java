@@ -34,10 +34,7 @@ import sorcer.service.Node;
 import sorcer.service.modeling.*;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static sorcer.mo.operator.getDomainContext;
 import static sorcer.so.operator.*;
@@ -509,14 +506,29 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 	public void initializeDomains() throws SignatureException {
 		// initialize domains specified by builder signatures
 		try {
-			for (Contextion domain : children.values()) {
-				if (domain instanceof SignatureDomain) {
-					boolean isExec = domain.isExec();
-					domain = ((SignatureDomain) domain).getDomain();
-
-					children.put(domain.getDomainName(), domain);
-					((ServiceMogram) domain).setExec(isExec);
+			List<Contextion> domainList = new ArrayList<>();
+			List<String> dnv = new ArrayList<>();
+			Iterator<Map.Entry<String, Contextion>> i = children.entrySet().iterator();
+			while (i.hasNext()) {
+				Map.Entry<String, Contextion> ent = i.next();
+				Contextion cxtn = ent.getValue();
+				String name = ent.getKey();
+				if (cxtn instanceof SignatureDomain) {
+					domainList.add(cxtn);
+					dnv.add(name);
 				}
+			}
+			// delete Signature domains
+			for (String name : dnv) {
+				children.remove(name);
+			}
+			// recreate domains from deleted Signatures
+			for (Contextion domain : domainList) {
+				boolean isExec = domain.isExec();
+				domain = (( SignatureDomain ) domain).getDomain();
+				children.put(domain.getName(), domain);
+				children.put(domain.getDomainName(), domain);
+				(( ServiceMogram ) domain).setExec(isExec);
 			}
 		} catch (RemoteException e) {
 			throw new SignatureException(e);
