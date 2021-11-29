@@ -546,8 +546,8 @@ public class operator extends Operator {
             ent = predVal(pn, domain, value);
         } else {
             ent = new Value<T>(pn, value);
-            ent.setType(Type.PRED);
         }
+		ent.setType(Type.PRED);
 		return ent;
 	}
 
@@ -809,6 +809,12 @@ public class operator extends Operator {
 	public static ExecDependency idfDep(String fiName, List<Path> paths) {
 		ExecDependency de =  new ExecDependency(fiName, paths);
 		de.setType(Type.IDF);
+		return de;
+	}
+
+	public static ExecDependency mdfDep(String fiName, List<Path> paths) {
+		ExecDependency de =  new ExecDependency(fiName, paths);
+		de.setType(Type.MDF);
 		return de;
 	}
 

@@ -426,7 +426,12 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 		if (((ServiceContext)context).getColabType() == Strategy.Colab.BBinCxt) {
 			collabOut = input;
 		} else {
-			 collabOut = new ServiceContext((String) key);
+			Context cxt = Arg.selectContext(args);
+			if (cxt != null) {
+				collabOut = cxt;
+			} else {
+				collabOut = new ServiceContext(getName());
+			}
 		}
 		Contextion domain = null;
 		try {
@@ -437,6 +442,12 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 					children.put(domain.getDomainName(), domain);
 				}
 				Context domainCxt = getDomainContext(context, domain.getDomainName());
+				if (domainCxt == null) {
+					domainCxt = getDomainContext(context, domain.getName());
+					if (domainCxt != null) {
+						(( ServiceContext ) domainCxt).setDomainName(domain.getDomainName());
+					}
+				}
 				Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getDomainName());
 				Context cxt = null;
 				if (domainCxt != null) {
@@ -458,10 +469,10 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 						}
 						collabOut.append(cxt);
 					} else if (domain.isExec()) {
-						if (domain instanceof Mogram) {
-							cxt = evaluateDomain(domain, domainCxt);
-						} else {
+						if (domain instanceof Transdomain) {
 							cxt = domain.evaluate(domainCxt);
+						} else {
+							cxt = evaluateDomain(domain, domainCxt);
 						}
 						collabOut.append(cxt);
 					} else {
@@ -471,10 +482,12 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 						outputs.add(cxt);
 					}
 				} else if (domain.isExec()) {
-					if (domain instanceof Context && ((ServiceContext) domain).getType() == Functionality.Type.EXEC) {
-						// eventually add argument signatures per domain
-						cxt = (Context) domain.execute();
-					} else if (domain instanceof Mogram){
+					if (domain instanceof Context && ((ServiceContext) domain).getType() == Functionality.Type.MADO) {
+						if (domainCxt == null) {
+							domainCxt = input;
+						}
+						cxt = domain.evaluate(domainCxt);
+					} else if (domain instanceof ResponseModeling){
 						cxt = response((Mogram)domain);
 					} else {
 						cxt = (Context) domain.execute();

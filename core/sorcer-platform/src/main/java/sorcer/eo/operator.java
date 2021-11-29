@@ -294,6 +294,28 @@ operator extends Operator {
         return context;
     }
 
+    public static Context inCxt(Object... entries) throws ContextException {
+        return inputContext(entries);
+    }
+
+    public static Context inputContext(Object... entries) throws ContextException {
+        Functionality.Type cxtTpe = Functionality.Type.INPUT;
+        ServiceContext cxt = context(entries);
+        cxt.setType(cxtTpe);
+        return cxt;
+    }
+
+    public static Context shrCxt(Object... entries) throws ContextException {
+        return inputContext(entries);
+    }
+
+    public static Context sharedContext(Object... entries) throws ContextException {
+        Functionality.Type cxtTpe = Functionality.Type.SHARED;
+        ServiceContext cxt = context(entries);
+        cxt.setType(cxtTpe);
+        return cxt;
+    }
+
     public static Context cxt(Object... items) throws ContextException, RemoteException {
         return context(items);
     }

@@ -185,20 +185,27 @@ public class operator {
                     out = context.getValue(path, args);
                 }
             } else {
-//                if (((ServiceContext) context).getType().equals(Functionality.Type.TRANS)) {
-                String domainPath = null;
+                String name = null;
                 String domain = null;
                 int ind = path.indexOf("$");
                 // allow $ at te end
                 if (ind > 0 && path.length() > ind + 1) {
-                    domainPath = path.substring(0, ind);
+                    name = path.substring(0, ind);
                     domain = path.substring(ind + 1);
                     if (((ServiceContext)context).get(domain) != null) {
-                        Object val = ((ServiceContext) ((ServiceContext)context).get(domain)).get(domainPath);
+                        Object val = ((ServiceContext) ((ServiceContext)context).get(domain)).get(name);
                         if (val instanceof Value) {
                             return (T) ((Value) val).getOut();
                         } else {
                             return (T) val;
+                        }
+                    } else if (((ServiceContext)context).get("model/outputs/info") != null) {
+                        // compatibility with ResponseContext entries
+                        List entries = ( List ) ((ServiceContext)context).get("model/outputs/info");
+                        for (Object ent : entries) {
+                            if (ent instanceof Entry && ((Entry)ent).getName().equals(name)
+                                && ((Entry)ent).getDomain().equals(domain))
+                                return ( T ) ((Entry)ent).getValue();
                         }
                     }
                 }
@@ -1916,7 +1923,11 @@ public class operator {
 
     public static Context getDomainContext(ContextDomain context, String domain) {
         if (context instanceof Transdomain) {
-            return ((Transdomain)context).getChildrenContexts().get(domain);
+            if (domain.equals(context.getName())) {
+                return (( Transdomain ) context).getChildrenContexts().get(domain);
+            } else {
+                return ((Transdomain)context).getChildrenContexts().get(context.getName());
+            }
         } else if (context instanceof Context) {
             Object domainContexts = ((ServiceContext)context).get(Context.COMPONENT_CONTEXT_PATH);
             if (domainContexts instanceof ContextList && ((ContextList) domainContexts).size() > 0) {
