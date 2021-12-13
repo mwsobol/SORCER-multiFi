@@ -1,9 +1,6 @@
 package sorcer.service;
 
-import sorcer.service.modeling.Data;
-import sorcer.service.modeling.Getter;
-import sorcer.service.modeling.slot;
-import sorcer.service.modeling.val;
+import sorcer.service.modeling.*;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -60,14 +57,6 @@ public class Slot<K, O> implements Identifiable, Data<O>, Arg, slot<O>, net.jini
 
     public Object asis() throws EvaluationException {
         return out;
-    }
-
-    public O valuate(Arg... args) throws ContextException {
-        return out;
-    }
-
-    public void set(O value) {
-        this.out = value;
     }
 
     @Override

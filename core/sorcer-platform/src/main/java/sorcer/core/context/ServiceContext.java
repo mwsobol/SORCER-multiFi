@@ -3528,6 +3528,18 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return data.values();
 	}
 
+//	public T valuate(Arg... args) throws ContextException {
+//		Path p = Arg.selectPath(args);
+//		T out = null;
+//		if (p != null) {
+//			out = get(p.path);
+//		}
+//		if (out == null) {
+//			out = (T) this;
+//		}
+//		return out;
+//	}
+
 	public T put(String key, T value) {
 		if (value == null)
 			return data.put(key, (T)none);

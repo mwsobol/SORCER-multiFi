@@ -34,7 +34,7 @@ public interface Model extends ContextDomain, mog, dmn, cxtn {
     // Multidiscipline Feasible (MDF)
     // Analysis, Mado, Explore, Supervise
     public enum Pattern {
-        AAO, SAND, IDF, MDF, ANAL, OPTI, MDA, MDA_EXPL, MADO, EXPL, SUPV, COLLAB, MADOCOLLAB
+        AAO, SAND, IDF, MDF, ANAL, OPTI, MDA, SNAP, MDA_EXPL, MADO, EXPL, SUPV, COLLAB, MADOCOLLAB
     }
 
     /**

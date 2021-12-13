@@ -89,9 +89,7 @@ public class operator extends Operator {
             throws ServiceException {
         try {
             synchronized (entry) {
-                if (entry instanceof Valuation) {
-                    return (T) ((Entry) entry).valuate(args);
-                } else if (entry instanceof Entry && ((Entry) entry).getOut() instanceof ServiceContext) {
+                if (entry instanceof Entry && ((Entry) entry).getOut() instanceof ServiceContext) {
                     return (T) ((ServiceContext) ((Entry) entry).getOut()).getValue(entry.getName(), args);
                 } else if (entry instanceof Incrementor) {
                     return ((Incrementor<T>) entry).next();

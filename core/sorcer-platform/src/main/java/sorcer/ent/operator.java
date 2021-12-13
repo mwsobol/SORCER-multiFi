@@ -807,7 +807,7 @@ public class operator extends Operator {
 
 	public static <T> Ref<T> ref(SupportComponent component) {
 		Ref cr = new Ref();
-		cr.set(component);
+		cr.setOut(component);
 		return cr;
 	}
 

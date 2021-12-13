@@ -14,7 +14,9 @@ import sorcer.util.url.sos.SdbUtil;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Entry<V> extends MultiFiSlot<String, V>
         implements Identifiable, ElementaryRequest, Evaluation<V>, Activity, Callable<V>, Setter, Reactive<V>, ent<V> {
@@ -40,6 +42,8 @@ public class Entry<V> extends MultiFiSlot<String, V>
     private Path.State state;
 
     protected Fidelity<Path> multiFiPath;
+
+    protected Map<String, Entry> subvalueMap;
 
     public Entry() {
     }
@@ -398,9 +402,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
                 }
                 return out;
             } else if (this instanceof Functionality) {
-                result = (V) ((Functionality)this).getValue(args);
-            } else if (this instanceof Valuation){
-                result =  (V) this.valuate(args);
+                result = (V) ((Functionality)this).evaluate(args);
             } else {
                 result = this.getValue(args);
             }
@@ -421,6 +423,20 @@ public class Entry<V> extends MultiFiSlot<String, V>
             return key;
         }
         return key+"@"+domain;
+    }
+
+    public Entry appendSubvalues(Entry... subValues) {
+        if (subvalueMap ==  null) {
+            subvalueMap = new HashMap<>();
+        }
+        for (Entry ent : subValues) {
+            subvalueMap.put(ent.getName(), ent);
+        }
+        return this;
+    }
+
+    public Map<String, Entry> getSubvalueMap() {
+        return subvalueMap;
     }
 
     public Fidelity<Path> getMultiFiPath() {

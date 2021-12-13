@@ -451,6 +451,10 @@ public class operator extends Operator {
 		return new Tuple2(x1, x2);
 	}
 
+	public static <T1, T2> Tuple2<T1, T2> assn(T1 x1, T2 x2) {
+		return new Tuple2(x1, x2);
+	}
+
 	public static String path(List<String> attributes) {
 		if (attributes.size() == 0)
 			return null;
@@ -596,6 +600,13 @@ public class operator extends Operator {
         }
         ent.setType(Type.VAL);
         return ent;
+	}
+
+	public static <T> Value<T> val(String path, Entry... subvalues) {
+		Value ent = new Value<T>(path);
+		ent.appendSubvalues(subvalues);
+		ent.setType(Type.SUPERVAL);
+		return ent;
 	}
 
 	public static <T> Value<T> val(Path path, T value) {
