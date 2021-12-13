@@ -45,6 +45,8 @@ public class Entry<V> extends MultiFiSlot<String, V>
 
     protected Map<String, Entry> subvalueMap;
 
+    protected String supername;
+
     public Entry() {
     }
 
@@ -433,6 +435,14 @@ public class Entry<V> extends MultiFiSlot<String, V>
             subvalueMap.put(ent.getName(), ent);
         }
         return this;
+    }
+
+    public String getSupername() {
+        return supername;
+    }
+
+    public void setSupername(String name) {
+        supername = name;
     }
 
     public Map<String, Entry> getSubvalueMap() {
