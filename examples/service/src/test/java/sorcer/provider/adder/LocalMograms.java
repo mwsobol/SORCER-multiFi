@@ -16,6 +16,7 @@ import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
+import static sorcer.ent.operator.srv;
 import static sorcer.eo.operator.*;
 import static sorcer.co.operator.get;
 import static sorcer.mo.operator.*;
@@ -185,7 +186,6 @@ public class LocalMograms {
 
 		Context out = response(mod);
 
-		assertTrue(get(out, "add").equals(100.0));
 		assertTrue(get(mod, "result/y").equals(100.0));
 	}
 

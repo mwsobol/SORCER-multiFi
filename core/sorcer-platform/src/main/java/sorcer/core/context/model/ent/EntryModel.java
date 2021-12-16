@@ -194,6 +194,9 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				} else {
 					return getResponse();
 				}
+//			}
+//			else if (val instanceof Signature) {
+//				return execSignature((Signature) val, args);
 			} else {
 				if (val == null && scope != null && scope != this) {
 					Object o = scope.getValue(path);

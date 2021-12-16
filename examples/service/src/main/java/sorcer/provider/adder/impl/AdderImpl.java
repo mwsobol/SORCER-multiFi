@@ -33,8 +33,9 @@ public class AdderImpl implements Adder {
 
 		// calculate the result
 		Double result = 0.0;
-		for (Double value : inputs)
+		for (Double value : inputs) {
 			result += value;
+		}
 		logger.info("result: " + result);
 		
 		// update the service context

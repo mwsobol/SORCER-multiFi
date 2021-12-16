@@ -159,10 +159,14 @@ public class operator extends Operator {
 		return req(null,  item,  context);
 	}
 
-	public static SignatureEntry ent(Signature signature) {
+	public static Srv ent(Signature sig) {
+		return req(sig);
+	}
+
+	public static SignatureEntry call(Signature signature) {
 		return new SignatureEntry(signature.getName(), signature);
 	}
-	public static SignatureEntry ent(Signature signature, Context context) {
+	public static SignatureEntry call(Signature signature, Context context) {
 		return new SignatureEntry(signature.getName(), signature, context);
 	}
 
@@ -204,10 +208,10 @@ public class operator extends Operator {
 	public static Srv aka(String name, String path) {
 		return new Srv(name, null, path);
 	}
-
 	public static Srv alias(String name, String path) {
 		return new Srv(path, null, name);
 	}
+
 	public static Prc dPar(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
 		Prc p = new Prc(identifiable.getName(), identifiable);
 		p.setPersistent(true);

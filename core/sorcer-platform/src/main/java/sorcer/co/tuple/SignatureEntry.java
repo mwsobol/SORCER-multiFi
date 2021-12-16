@@ -41,16 +41,18 @@ public class SignatureEntry extends Entry<Signature> {
 
     private Context context;
 
-    public SignatureEntry(String path, Signature value) {
-        super(path, value);
+    public SignatureEntry(String path, Signature signature) {
+        key = path;
+        impl = signature;
+        this.args = new ArgSet();
+        if (((LocalSignature)signature).getArgs() != null) {
+            this.args.paths = new Paths(((LocalSignature) signature).getArgs());
+        }
     }
 
     public SignatureEntry(String path, Signature signature, Context context) {
-        key = path;
-        impl = signature;
+        this(path, signature);
         this.context = context;
-        this.args = new ArgSet();
-        this.args.paths = new Paths(((LocalSignature)signature).getArgs());
     }
 
 }
