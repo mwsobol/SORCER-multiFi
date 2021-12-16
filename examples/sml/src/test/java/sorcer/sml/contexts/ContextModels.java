@@ -179,7 +179,7 @@ public class ContextModels {
 				inVal("y1", 20.0),
 				inVal("y2", 80.0));
 
-		Function se = ent(sig("add", AdderImpl.class, result("add", inPaths("y1", "y2"))));
+		Function se = srv(sig("add", AdderImpl.class, result("add", inPaths("y1", "y2"))));
 		Context result = (Context) exec(se, sm);
         assertEquals(100.0, value(result, "add"));
 	}
@@ -191,7 +191,7 @@ public class ContextModels {
 				inVal("y1", 20.0),
 				inVal("y2", 80.0));
 
-		Function se = ent(sig("add", Adder.class, result("add", inPaths("y1", "y2"))));
+		Function se = srv(sig("add", Adder.class, result("add", inPaths("y1", "y2"))));
 		Context result = (Context) exec(se, sm);
 		assertEquals(100.0, value(result, "add"));
 	}

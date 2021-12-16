@@ -159,6 +159,13 @@ public class operator extends Operator {
 		return req(null,  item,  context);
 	}
 
+	public static SignatureEntry ent(Signature signature) {
+		return new SignatureEntry(signature.getName(), signature);
+	}
+	public static SignatureEntry ent(Signature signature, Context context) {
+		return new SignatureEntry(signature.getName(), signature, context);
+	}
+
 	public static Srv req(String name, Identifiable item, Context context, Arg... args) {
 		String srvName = item.getName();
 		Srv srv = null;
@@ -922,7 +929,7 @@ public class operator extends Operator {
 		return entry;
 	}
 
-	public static Srv ent(Signature sig) {
+	public static Srv srv(Signature sig) {
 		return req(sig);
 	}
 

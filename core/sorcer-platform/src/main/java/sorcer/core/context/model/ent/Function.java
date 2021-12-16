@@ -49,8 +49,6 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 
 	protected boolean isValueCurrent;
 
-	protected ArgSet args;
-
 	// dependency management for this Entry
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 

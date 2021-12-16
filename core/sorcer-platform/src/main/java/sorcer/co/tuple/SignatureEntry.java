@@ -17,8 +17,11 @@
 
 package sorcer.co.tuple;
 
+import sorcer.core.signature.LocalSignature;
+import sorcer.service.ArgSet;
 import sorcer.service.Context;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.service.Paths;
 import sorcer.service.Signature;
 
 /**
@@ -42,10 +45,12 @@ public class SignatureEntry extends Entry<Signature> {
         super(path, value);
     }
 
-    public SignatureEntry(String path, Signature value, Context context) {
+    public SignatureEntry(String path, Signature signature, Context context) {
         key = path;
-        impl = value;
+        impl = signature;
         this.context = context;
+        this.args = new ArgSet();
+        this.args.paths = new Paths(((LocalSignature)signature).getArgs());
     }
 
 }

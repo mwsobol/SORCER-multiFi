@@ -17,6 +17,8 @@ package sorcer.service;
  * limitations under the License.
  */
 
+import sorcer.core.Tag;
+
 import java.rmi.RemoteException;
 import java.util.*;
 
@@ -134,7 +136,14 @@ public class ArgSet extends LinkedHashSet<Arg> {
 		 Arg[] va = new Arg[size()];
 		 return toArray(va);
 	 }
-			
+
+	public static ArgSet asSet(Object[] array) {
+		ArgSet vl = new ArgSet();
+		for (Object v : array)
+			vl.add(new Tag(v.toString()));
+		return vl;
+	}
+
 	public static ArgSet asSet(Arg[] array) {
 		ArgSet vl = new ArgSet();
 		for (Arg v : array)

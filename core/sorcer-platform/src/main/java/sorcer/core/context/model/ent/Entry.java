@@ -27,6 +27,8 @@ public class Entry<V> extends MultiFiSlot<String, V>
 
     protected Uuid id = UuidFactory.generate();
 
+    protected ArgSet args = new ArgSet();
+
     protected String domain;
 
     protected boolean negative;
@@ -92,6 +94,14 @@ public class Entry<V> extends MultiFiSlot<String, V>
             impl = (V) multiFi.getSelect();;
         }
         return impl;
+    }
+
+    public ArgSet getArgs() {
+        return args;
+    }
+
+    public void setArgs(ArgSet args) {
+        this.args = args;
     }
 
     @Override

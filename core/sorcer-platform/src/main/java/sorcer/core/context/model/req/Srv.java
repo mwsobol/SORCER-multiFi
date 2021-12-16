@@ -119,11 +119,6 @@ public class Srv extends Function<Object> implements Serviceableness,
     }
 
     @Override
-    public ArgSet getArgs() {
-        return null;
-    }
-
-    @Override
     public void addArgs(ArgSet set) throws EvaluationException {
 
     }
