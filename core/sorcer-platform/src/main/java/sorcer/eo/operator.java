@@ -1532,7 +1532,7 @@ operator extends Operator {
                 }
                 sig.setProviderName(providerName);
                 if (args != null) {
-                    ((LocalSignature)sig).setArgs(args.getNameArray());
+                    ((LocalSignature)sig).setArgs(args.args);
                 }
             }
         }
