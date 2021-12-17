@@ -73,6 +73,10 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 		}
 	}
 
+	public enum ValType {
+		DOUBLE, VECTOR, MATRIX
+	}
+
 	public enum MathType {
 		CONTINUOUS, // ordered, element math defined as usual, continuous design
 		// variable
