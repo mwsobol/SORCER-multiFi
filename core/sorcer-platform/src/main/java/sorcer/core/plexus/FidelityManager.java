@@ -52,6 +52,8 @@ public class FidelityManager implements Service, FidelityManagement, Observer, I
 
     protected String name;
 
+    protected String selectedProjection;
+
     Uuid id = UuidFactory.generate();
 
     // fidelities for signatures and other selection of T
@@ -90,6 +92,10 @@ public class FidelityManager implements Service, FidelityManagement, Observer, I
     public FidelityManager(Contextion contextion) {
         this(contextion.getName());
         this.mogram = contextion;
+    }
+
+    public String getSelectedProjection() {
+        return selectedProjection;
     }
 
     public Map<String, MetaFi> getMetafidelities() {
@@ -264,6 +270,8 @@ public class FidelityManager implements Service, FidelityManagement, Observer, I
                 Fidelity mFi = projections.get(fiName);
                 if (mFi == null) {
                     throw new EvaluationException("No such projection: " + fiName);
+                } else {
+                    selectedProjection = fiName;
                 }
                 List<Service> fis = mFi.getSelects();
                 if (isTraced) {
