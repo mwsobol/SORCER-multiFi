@@ -2129,6 +2129,15 @@ operator extends Operator {
         ((ServiceMogram)mogram).selectFidelity(selection);
     }
 
+    public Fidelity selectFidelity(Contextion contextion, Fidelity fi) throws ConfigurationException {
+        try {
+            contextion.getFidelityManager().reconfigure(fi);
+        } catch (EvaluationException | RemoteException e) {
+            throw new ConfigurationException(e);
+        }
+        return fi;
+    }
+
     public static MorphMogram fiMog(Metafidelity fidelity) {
         return new MorphMogram(fidelity.getName(), fidelity);
     }

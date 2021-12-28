@@ -56,11 +56,12 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 
 		// Finite Difference Functionality
 		VGD,	// var GradientDifferentiator
+		DVGD,	// var DpubleGradientDifferentiator
+		MXVGD,	// var MatrixGradientDifferentiator
 		GGD, 	// global gradient differentiator for coupled domains
 		FDG,   	// finite difference gradient
 		MPFD,   // model parallel finite difference gradient
-		VPFD  	// var parallel finite difference
-		;
+		VPFD;  	// var parallel finite difference
 
 		@Override
 		public String getName() {
@@ -71,10 +72,6 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 		public Object execute(Arg... args) throws ServiceException, RemoteException {
 			return this;
 		}
-	}
-
-	public enum ValType {
-		DOUBLE, VECTOR, MATRIX
 	}
 
 	public enum MathType {
