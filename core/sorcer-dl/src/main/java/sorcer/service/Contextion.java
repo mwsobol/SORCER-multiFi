@@ -41,7 +41,7 @@ public interface Contextion extends Request, Scopable {
      * @throws MogramException
      * @throws RemoteException
      */
-    Context evaluate(Context context, Arg... args) throws MogramException, RemoteException, ServiceException;
+    Context evaluate(Context context, Arg... args) throws ServiceException, RemoteException;
 
 	/**
 	 * Generic execution of mogram by cooperated services.
@@ -65,7 +65,7 @@ public interface Contextion extends Request, Scopable {
 	 * @throws RemoteException
 	 *             if remote call causes an error
 	 */
-	<T extends Contextion> T exert(Transaction txn, Arg... args) throws RemoteException, ServiceException;
+	<T extends Contextion> T exert(Transaction txn, Arg... args) throws ServiceException, RemoteException;
 
 	public String getDomainName() throws RemoteException;
 
@@ -103,7 +103,7 @@ public interface Contextion extends Request, Scopable {
 	 * @throws RemoteException
 	 */
 	Context getContext(Context contextTemplate)
-		throws RemoteException, ContextException;
+		throws ContextException, RemoteException;
 
 	/**
 	 * Appends an argument context to this context for a given path.
@@ -123,8 +123,7 @@ public interface Contextion extends Request, Scopable {
 	 * @throws ContextException
 	 * @throws RemoteException
 	 */
-	Context getContext(String path) throws ContextException,
-		RemoteException;
+	Context getContext(String path) throws ContextException, RemoteException;
 
 	/**
 	 * Returns true if this contextion is executable in Collaboration

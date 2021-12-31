@@ -165,7 +165,7 @@ public class Transdesign extends MultiFiSlot implements Design {
     }
 
     @Override
-    public Context evaluate(Context context, Arg... args) throws MogramException, RemoteException, ServiceException {
+    public Context evaluate(Context context, Arg... args) throws ServiceException, RemoteException {
         return discipline.evaluate(context, args);
     }
 
@@ -175,7 +175,7 @@ public class Transdesign extends MultiFiSlot implements Design {
     }
 
     @Override
-    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws RemoteException, ServiceException {
+    public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ServiceException, RemoteException {
          return (T) discipline.evaluate(disciplineIntent, args);
     }
 
@@ -213,7 +213,7 @@ public class Transdesign extends MultiFiSlot implements Design {
     }
 
     @Override
-    public Context getContext(Context contextTemplate) throws RemoteException, ContextException {
+    public Context getContext(Context contextTemplate) throws ContextException, RemoteException {
         return null;
     }
 
