@@ -56,10 +56,9 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 
 		// Finite Difference Functionality
 		VGD,	// var GradientDifferentiator
-		DVGD,	// var DpubleGradientDifferentiator
 		MXVGD,	// var MatrixGradientDifferentiator
 		CBDD,	// var double CombinedDifferentiator
-		CBMD,	// var double CombinedDifferentiator
+		CBMD,	// var matrix CombinedDifferentiator
 		GGD, 	// global gradient differentiator for coupled domains
 		FDG,   	// finite difference gradient
 		MPFD,   // model parallel finite difference gradient
