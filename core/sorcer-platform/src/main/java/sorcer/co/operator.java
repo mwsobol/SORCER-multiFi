@@ -443,8 +443,12 @@ public class operator extends Operator {
 		return out;
 	}
 
-	public static Tuple2<Integer, Integer> rc(Integer numRows, Integer numCols) {
-		return new Tuple2(numRows, numCols);
+	public static RC rc(Integer numRows, Integer numCols, boolean rowMajor) {
+		return new RC(numRows, numCols, rowMajor);
+	}
+
+	public static RC rc(Integer numRows, Integer numCols) {
+		return new RC(numRows, numCols);
 	}
 
 	public static <T1, T2> Tuple2<T1, T2> assoc(T1 x1, T2 x2) {
