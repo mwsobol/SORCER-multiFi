@@ -502,10 +502,10 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 	}
 
-	private void processMogram(Mogram mogram) throws MogramException{
+	private void processMogram(Mogram mogram) throws MogramException, RemoteException {
 		String codebase = System.getProperty("java.rmi.server.codebase");
 		logger.debug("Using exertlet codebase: " + codebase);
-		if (mogram.getStatus() == Exec.DONE) {
+		if (((ServiceMogram)mogram).getStatus() == Exec.DONE) {
 			showResults(mogram);
 			return;
 		}
@@ -525,7 +525,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			if (provider != null) {
                 Class<?>[] interfaces = provider.getClass().getInterfaces();
                 for (int i = 0; i < interfaces.length; i++) {
-                    if (interfaces[i] == mogram.getProcessSignature()
+                    if (interfaces[i] == ((ServiceMogram)mogram).getProcessSignature()
                             .getServiceType()) {
                         out = provider.exert(mogram, null);
                         //logger.debug(">>> done by " + provider);
@@ -550,7 +550,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		showResults(out);
 	}
 
-	private void showResults(Object mogram)  throws ContextException {
+	private void showResults(Object mogram) throws ContextException, RemoteException {
 		if (mogram == null) {
 			openOutPanel("Failed to compute the sorcer.netlet!");
 			return;

@@ -1,6 +1,5 @@
 package sorcer.core.context.model.req;
 
-import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.MogramEntry;
@@ -24,12 +23,13 @@ import java.util.concurrent.Callable;
 import static sorcer.eo.operator.task;
 
 /**
- * Created by Mike Sobolewski on 4/14/15.
+ * A service function <code>srv</code> is a functional entry which is dependent on its encapsulated service.
+ * Created by Mike Sobolewski
  */
-public class Req extends Function<Object> implements Serviceableness,
+public class Srv extends Function<Object> implements Serviceableness,
         Comparable<Object>, Reactive<Object>, Serializable, func<Object> {
 
-    private static Logger logger = LoggerFactory.getLogger(Req.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(Srv.class.getName());
 
     protected String name;
 
@@ -39,13 +39,13 @@ public class Req extends Function<Object> implements Serviceableness,
 
     protected Context.Return returnPath;
 
-    public Req(String name) {
+    public Srv(String name) {
         super(name);
         this.name = name;
         type = Functionality.Type.SRV;
     }
 
-    public Req(String name, String path, Service service, String[] paths) {
+    public Srv(String name, String path, Service service, String[] paths) {
         key = path;
         impl = service;
         this.name = name;
@@ -53,7 +53,7 @@ public class Req extends Function<Object> implements Serviceableness,
         type = Functionality.Type.SRV;
     }
 
-    public Req(String name, String path, Client service) {
+    public Srv(String name, String path, Client service) {
         key = path;
         impl = service;
         this.name = name;
@@ -61,7 +61,7 @@ public class Req extends Function<Object> implements Serviceableness,
     }
 
 
-    public Req(String name, Object value) {
+    public Srv(String name, Object value) {
         if(name == null)
             throw new IllegalArgumentException("key must not be null");
         this.key = name;
@@ -76,34 +76,34 @@ public class Req extends Function<Object> implements Serviceableness,
         type = Functionality.Type.SRV;
     }
 
-    public Req(String name, Object value, String[] paths) {
+    public Srv(String name, Object value, String[] paths) {
         this(name, value);
         this.paths = paths;
         type = Functionality.Type.SRV;
     }
 
-    public Req(String name, Object value, Context.Return returnPath) {
+    public Srv(String name, Object value, Context.Return returnPath) {
         this(name, value);
         this.returnPath = returnPath;
     }
 
-    public Req(String name, String path, Object value, Context.Return returnPath) {
+    public Srv(String name, String path, Object value, Context.Return returnPath) {
         super(path, value);
         this.returnPath = returnPath;
         type = Functionality.Type.SRV;
     }
 
-    public Req(String name, Object value, String path) {
+    public Srv(String name, Object value, String path) {
         super(path, value);
         this.name = name;
     }
 
-    public Req(String name, Object value, String path, Type type) {
+    public Srv(String name, Object value, String path, Type type) {
         this(name, value, path);
         this.type = type;
     }
 
-    public Req(String name, Model model, String path) {
+    public Srv(String name, Model model, String path) {
         super(path, model);
         this.name = name;
         type = Functionality.Type.SRV;
@@ -116,11 +116,6 @@ public class Req extends Function<Object> implements Serviceableness,
 
     public String[] getPaths() {
         return paths;
-    }
-
-    @Override
-    public ArgSet getArgs() {
-        return null;
     }
 
     @Override
@@ -143,7 +138,7 @@ public class Req extends Function<Object> implements Serviceableness,
         out = obj;
     }
 
-    public Mogram exert(Mogram mogram) throws MogramException {
+    public Mogram exert(Mogram mogram) throws ServiceException {
         return exert(mogram, null);
     }
 
@@ -280,7 +275,7 @@ public class Req extends Function<Object> implements Serviceableness,
     }
 
     @Override
-    public Object execute(Arg... args) throws ServiceException {
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
         ContextDomain mod = Arg.selectDomain(args);
         if (mod != null) {
             if (mod instanceof EntryModel && impl instanceof ValueCallable) {

@@ -25,6 +25,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.exertion.AltTask;
 import sorcer.core.exertion.LoopTask;
 import sorcer.core.exertion.OptTask;
+import sorcer.service.modeling.ExploreException;
 import sorcer.util.SorcerUtil;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -67,25 +68,25 @@ public abstract class Block extends Transroutine {
 	}
 	
 	public abstract Block doBlock(Transaction txn, Arg... args) throws RoutineException,
-		SignatureException, RemoteException, TransactionException, MogramException;
+		SignatureException, RemoteException, TransactionException, MogramException, ServiceException;
 	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
 	 */
 	@Override
-	public Discipline addMogram(Discipline mogram) throws RoutineException {
+	public Contextion addMogram(Contextion mogram) throws RoutineException {
 		mograms.add(mogram);
-		((Mogram)mogram).setIndex(mograms.indexOf(mogram));
+		((ServiceMogram)mogram).setIndex(mograms.indexOf(mogram));
 		try {
 			controlContext.registerExertion((Mogram)mogram);
-		} catch (ContextException e) {
+		} catch (ContextException | RemoteException e) {
 			throw new RoutineException(e);
 		}
-		((Mogram)mogram).setParentId(getId());
+		((ServiceMogram)mogram).setParentId(getId());
 		return this;
 	}
 
-	public void setMograms(List<Discipline> mograms) {
+	public void setMograms(List<Contextion> mograms) {
 		this.mograms = mograms;
 	}
 
@@ -120,7 +121,7 @@ public abstract class Block extends Transroutine {
 	 * @see sorcer.service.Routine#getMograms()
 	 */
 	@Override
-	public List<Discipline> getMograms() {
+	public List<Contextion> getMograms() {
 		return mograms;
 	}
 
@@ -175,16 +176,16 @@ public abstract class Block extends Transroutine {
 	 * @see sorcer.service.Subroutine#getMograms(java.util.List)
 	 */
 	@Override
-	public List<Discipline> getMograms(List<Discipline> mogramList) {
-		for (Discipline e : mograms) {
-			((Mogram)e).getMograms(mogramList);
+	public List<Contextion> getMograms(List<Contextion> mogramList) {
+		for (Contextion e : mograms) {
+			((ServiceMogram)e).getMograms(mogramList);
 		}
 		mogramList.add(this);
 		return mogramList;
 	}
 
 	@Override
-	public List<Contextion> getContextions(List<Contextion> contextionList) {
+	public List<Contextion> getContextions(List<Contextion> contextionList) throws RemoteException {
 		for (Contextion e : mograms) {
 			e.getContextions(contextionList);
 		}
@@ -192,7 +193,7 @@ public abstract class Block extends Transroutine {
 		return contextionList;
 	}
 
-	public URL persistContext() throws ServiceException, SignatureException {
+	public URL persistContext() throws ServiceException, SignatureException, RemoteException {
 		if (contextURL == null) {
 			contextURL = SdbUtil.store(dataContext);
 			dataContext = null;
@@ -240,27 +241,27 @@ public abstract class Block extends Transroutine {
 	}
 	
 	public boolean hasChild(String childName) {
-		for (Discipline ext : mograms) {
+		for (Contextion ext : mograms) {
 			if (ext.getName().equals(childName))
 				return true;
 		}
 		return false;
 	}
 
-	public Discipline getChild(String childName) {
-		for (Discipline ext : mograms) {
+	public Contextion getChild(String childName) {
+		for (Contextion ext : mograms) {
 			if (ext.getName().equals(childName))
 				return ext;
 		}
 		return null;
 	}
 
-	public Discipline getComponentMogram(String path) {
+	public Contextion getComponentMogram(String path) {
 		// TODO
 		return getChild(path);
 	}
 	
-	public Object putBlockValue(String path, Object value) throws ContextException {
+	public Object putBlockValue(String path, Object value) throws ContextException, RemoteException {
 		String[] attributes = SorcerUtil.pathToArray(path);
 		// remove the leading attribute of the current exertion
 		if (attributes[0].equals(getName())) {
@@ -294,7 +295,7 @@ public abstract class Block extends Transroutine {
 	}
 	
 	public void reset(int state) {
-		for(Discipline e : mograms)
+		for(Contextion e : mograms)
 			((ServiceMogram)e).reset(state);
 		
 		this.setStatus(state);
@@ -325,14 +326,14 @@ public abstract class Block extends Transroutine {
 				}
 			}
 			updateConditions();
-		} catch (ContextException ex) {
+		} catch (ContextException | RemoteException ex) {
 			ex.printStackTrace();
 			throw new SetterException(ex);
 		}
 	}
 	
-	private void updateConditions() throws ContextException {
-		for (Discipline mogram : mograms) {
+	private void updateConditions() throws ContextException, RemoteException {
+		for (Contextion mogram : mograms) {
 			if (mogram instanceof Mogram && ((Mogram)mogram).isConditional()) {
 				if (mogram instanceof OptTask) {
 					((OptTask)mogram).getCondition().getConditionalContext().append(dataContext);
@@ -357,11 +358,12 @@ public abstract class Block extends Transroutine {
 		if (rp != null && rp.returnPath != null)
 			dataContext.removePath(rp.returnPath);
 
-		List<Discipline> mograms = getAllMograms();
+		List<Contextion> mograms = getAllMograms();
 		Context cxt = null;
-		for (Discipline mo : mograms) {
-			if (mo instanceof Mogram)
-				((ServiceContext) ((Mogram)mo).getDataContext()).clearScope();
+		for (Contextion mo : mograms) {
+			if (mo instanceof Mogram) {
+				((ServiceMogram) mo).getDataContext().clearScope();
+			}
 
 //			if (mo instanceof Mogram)
 //				cxt = mo.getContext();
@@ -394,4 +396,21 @@ public abstract class Block extends Transroutine {
 		return this;
 	}
 
+	@Override
+	public Context analyze(Context context, Arg... args) throws EvaluationException {
+		try {
+			return exert(context);
+		} catch (ServiceException e) {
+			throw new EvaluationException(e);
+		}
+	}
+
+	@Override
+	public Context explore(Context context, Arg... args) throws ContextException {
+		try {
+			return exert(context);
+		} catch (ServiceException e) {
+			throw new ContextException(e);
+		}
+	}
 }

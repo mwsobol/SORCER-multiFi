@@ -20,7 +20,7 @@ public class ModelStrategy implements ServiceStrategy, Serializable {
 
     protected List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
 
-    protected List<String> traceList = new ArrayList<String>();
+    protected List<String> traceList;
 
     private boolean isTraceable = false;
 
@@ -265,8 +265,8 @@ public class ModelStrategy implements ServiceStrategy, Serializable {
     }
 
 
-    public <T extends Mogram> Mogram exert(Transaction txn, Arg... entries) throws TransactionException, MogramException, RemoteException {
-        return ((Mogram)target).exert(txn, entries);
+    public <T extends Mogram> Mogram exert(Transaction txn, Arg... entries) throws TransactionException, ServiceException, RemoteException {
+        return target.exert(txn, entries);
     }
 
     public <T extends Mogram> Mogram exert(Arg... entries) throws TransactionException, ServiceException, RemoteException {
@@ -330,7 +330,9 @@ public class ModelStrategy implements ServiceStrategy, Serializable {
     }
 
     public void appendTrace(String info) {
-        traceList.add(info);
+        if (traceList != null) {
+            traceList.add(info);
+        }
     }
 
     public List<String> getTrace() {

@@ -72,7 +72,7 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 	
 	protected void replaceNullExertionIDs(Routine ex) {
 		if (ex != null && ((Subroutine) ex).getId() == null) {
-			ex.setId(UuidFactory.generate());
+			((ServiceMogram)ex).setId(UuidFactory.generate());
 			if (ex.isJob()) {
 				for (int i = 0; i < ((Job) ex).size(); i++)
 					replaceNullExertionIDs(((Job) ex).get(i));
@@ -155,7 +155,7 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 		try {
 
 			setServiceID(mogram);
-			mogram.appendTrace("mogram: " + mogram.getName() + " rendezvous: " +
+			((ServiceMogram)mogram).appendTrace("mogram: " + mogram.getName() + " rendezvous: " +
 					(provider != null ? provider.getProviderName() + " " : "")
 					+ this.getClass().getName());
             if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock
@@ -168,7 +168,7 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 			}
 
 			if (mogram instanceof Routine)
-				mogram.getDataContext().setRoutine(null);
+				((ServiceMogram)mogram).getDataContext().setRoutine(null);
         }
 		catch (Exception e) {
 			logger.debug("exert failed for: " + mogram.getName(), e);

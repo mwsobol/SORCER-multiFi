@@ -20,6 +20,7 @@ package sorcer.service.modeling;
 import sorcer.service.*;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 /**
  * A variable has id, name and execute. Its execute can be evaluated by a related
@@ -37,28 +38,41 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 	 * a list of types called kinds - addKind(Type). FUNDAMENTAL - if scalar has
 	 * meaning to the client
 	 */
-	public enum Type { SIGNATURE,
-		INPUT, CONSTANT, DOMAIN_CONSTANT, INVARIANT, OUTPUT, SHARED, INOUT, RESPONSE, DESIGN, INITIAL_DESIGN, PARAMETER,
+	public enum Type implements Arg { SIGNATURE,
+		INPUT, CONSTANT, PARAMETER, DOMAIN_CONSTANT, INVARIANT, OUTPUT, SHARED, INOUT, RESPONSE, DESIGN, INITIAL_DESIGN, PARAMETRIC,
 		LINKED, CONSTRAINT, OBJECTIVE, DERIVATIVE, GRADIENT, RANDOM, BOUNDED, FUNDAMENTAL, RAW, DELEGATION, COMPOSITION,
 		MULTIVAL, PRED, DOMAIN_PRED, DEP, DOMAIN_DEP, FILTER, PERSISTER, EVALUATOR, EVALUATION, PRODUCT, WATCHABLE, ENT, PROC, DUAL,
-		NEURON, VAR, SRV, LAMBDA, VAL, THRESHOLD, BIAS, FUNCTION, DATA, CONTEXT, MFI_CONTEXT, ARRAY, LIST, PIPELINE, ROUTINE, MODEL,
+		NEURON, VAR, SRV, LAMBDA, VAL, SUPERVAL, THRESHOLD, BIAS, FUNCTION, DATA, CONTEXT, MFI_CONTEXT, ARRAY, LIST, PIPELINE, ROUTINE, MODEL,
 		DOMAIN, NODE, REGION, DISCIPLINE, EXERTION, MOGRAM, SELF, CONDITION, FIDELITY, LOCATOR, ARG, PATH, CONFIG, PROXY, DISPATCH,
-		OBJECTIVE_GRADIENT, CONSTRAINT_GRADIENT, COUPLED, MADO, TRANS, CONTEXTION, COLLABORATION, SEARCH, GOVERNANCE,
-		SUPERVISOR, EXECUTION, STRATEGY, EXEC, SCOPE,
+		OBJECTIVE_GRADIENT, CONSTRAINT_GRADIENT, COUPLED, MADO, INTENT, TRANS, CONTEXTION, COLLABORATION, SEARCH, GOVERNANCE,
+		SUPERVISOR, DEVELOPER, EXECUTION, STRATEGY, EXEC, SCOPE,
         // in Model Pattern
         // All-at-Once (AAO),
 		// Simultaneous Analysis and Design (SAND),
 		// Individual Discipline Feasible (IDF),
 		// Multidiscipline Feasible (MDF)
 		// Response, Analysis, Explore
-		 AAO, SAND, IDF, MDF, MDA, RESP, FNL, ANAL, EXPL, NONE,
+		 AAO, SAND, IDF, MDF, MDA, MRPH, RESP, FNL, ANAL, EXPL, SNAP, NONE,
 
 		// Finite Difference Functionality
 		VGD,	// var GradientDifferentiator
+		MXVGD,	// var MatrixGradientDifferentiator
+		CBDD,	// var double CombinedDifferentiator
+		CBMD,	// var matrix CombinedDifferentiator
 		GGD, 	// global gradient differentiator for coupled domains
 		FDG,   	// finite difference gradient
-		MPFD,  // model parallel finite difference gradient
-		VPFD  	// var parallel finite difference
+		MPFD,   // model parallel finite difference gradient
+		VPFD;  	// var parallel finite difference
+
+		@Override
+		public String getName() {
+			return toString();
+		}
+
+		@Override
+		public Object execute(Arg... args) throws ServiceException, RemoteException {
+			return this;
+		}
 	}
 
 	public enum MathType {

@@ -19,6 +19,7 @@ package sorcer.service;
 
 import net.jini.id.Uuid;
 import sorcer.core.context.ControlContext;
+import sorcer.core.context.ServiceContext;
 import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.dmn;
 
@@ -36,7 +37,7 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 	/**
 	 * Component domains of this job (the Composite Design pattern)
 	 */
-	protected List<Discipline> mograms = new ArrayList<Discipline>();
+	protected List<Contextion> mograms = new ArrayList<Contextion>();
 
 	protected Fidelity<Analysis> analyzerFi;
 
@@ -62,7 +63,7 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 	};
 
 	public void reset(int state) {
-		for(Discipline e : mograms)
+		for(Contextion e : mograms)
 			((Subroutine)e).reset(state);
 
 		this.setStatus(state);
@@ -100,7 +101,7 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 		}
 	}
 
-	public Discipline removeExertion(Discipline mogram) throws ContextException {
+	public Contextion removeExertion(Contextion mogram) throws ContextException {
 		// int index = ((ExertionImpl)exertion).getIndex();
 		mograms.remove(mogram);
 		controlContext.deregisterExertion(this, (Mogram)mogram);
@@ -118,7 +119,7 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 		return (Routine) mograms.get(index);
 	}
 
-	public void setMograms(List<Discipline> mograms) {
+	public void setMograms(List<Contextion> mograms) {
 		this.mograms = mograms;
 
 	}
@@ -143,30 +144,30 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 	 *
 	 * @return all component domains
 	 */
-	public List<Discipline> getMograms() {
+	public List<Contextion> getMograms() {
 		return mograms;
 	}
 
-	public List<Discipline> getAllMograms() {
-		List<Discipline> allMograms = new ArrayList<>();
+	public List<Contextion> getAllMograms() {
+		List<Contextion> allMograms = new ArrayList<>();
 		return getMograms(allMograms);
 	}
 
-	public List<Contextion> getAllContextions() {
+	public List<Contextion> getAllContextions() throws RemoteException {
 		List<Contextion> allContextions = new ArrayList<>();
 		return getContextions(allContextions);
 	}
 
-	public List<Discipline> getMograms(List<Discipline> mogramList) {
-		for (Discipline e : mograms) {
-			((Mogram)e).getMograms(mogramList);
+	public List<Contextion> getMograms(List<Contextion> mogramList) {
+		for (Contextion e : mograms) {
+			((ServiceMogram)e).getMograms(mogramList);
 		}
 		mogramList.add(this);
 		return mogramList;
 	}
 
-	public List<Contextion> getContextions(List<Contextion> contextionList) {
-		for (Discipline e : mograms) {
+	public List<Contextion> getContextions(List<Contextion> contextionList) throws RemoteException {
+		for (Contextion e : mograms) {
 			e.getContextions(contextionList);
 		}
 		contextionList.add(this);
@@ -174,15 +175,15 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 	}
 
 	public boolean hasChild(String childName) {
-		for (Discipline ext : mograms) {
+		for (Contextion ext : mograms) {
 			if (ext.getName().equals(childName))
 				return true;
 		}
 		return false;
 	}
 
-	public Discipline getChild(String childName) {
-		for (Discipline ext : mograms) {
+	public Contextion getChild(String childName) {
+		for (Contextion ext : mograms) {
 			if (ext.getName().equals(childName))
 				return ext;
 		}
@@ -200,8 +201,8 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 
 	@Override
 	public Object get(String component) {
-		List<Discipline> allMograms = getAllMograms();
-		for (Discipline mog : allMograms) {
+		List<Contextion> allMograms = getAllMograms();
+		for (Contextion mog : allMograms) {
 			if (mog.getName().equals(component)) {
 				return mog;
 			}
@@ -209,25 +210,25 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 		return null;
 	}
 
-	abstract public Discipline getComponentMogram(String path);
+	abstract public Contextion getComponentMogram(String path);
 	
 	abstract public Context getComponentContext(String path) throws ContextException;
 
 	@Override
 	public Context evaluate(Context context, Arg... args) throws EvaluationException {
 		try {
-		    getContext().substitute(context);
+			((ServiceContext)getContext()).substitute(context);
 			Routine out = exert(args);
 			return out.getContext();
-		} catch (MogramException | RemoteException e) {
+		} catch (ServiceException e) {
 			throw new EvaluationException(e);
 		}
 	}
 
 	@Override
-	public Map<String, Discipline> getChildren() {
-		Map<String, Discipline> children = new HashMap<>();
-		for (Discipline mog : mograms) {
+	public Map<String, Contextion> getChildren() {
+		Map<String, Contextion> children = new HashMap<>();
+		for (Contextion mog : mograms) {
 			children.put(mog.getName(), mog);
 		}
 		return children;

@@ -16,22 +16,22 @@
  */
 package sorcer.so;
 
-import net.jini.core.transaction.Transaction;
 import sorcer.Operator;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ContextSelector;
+import sorcer.core.context.DesignIntent;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.Transmodel;
+import sorcer.core.context.model.ent.Developer;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.core.context.model.req.Req;
-import sorcer.core.plexus.ContextFidelityManager;
-import sorcer.core.plexus.FidelityManager;
-import sorcer.core.plexus.MultiFiMogram;
+import sorcer.core.context.model.req.Srv;
+import sorcer.core.plexus.*;
 import sorcer.core.service.Collaboration;
 import sorcer.core.service.Governance;
+import sorcer.core.service.Transdesign;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.Exertion;
 import sorcer.core.provider.exerter.ServiceShell;
@@ -41,10 +41,11 @@ import sorcer.service.Node;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static sorcer.mo.operator.value;
+import static sorcer.mo.operator.*;
 
 /**
  * Created by Mike Sobolewski on 9/10/20.
@@ -88,16 +89,14 @@ public class operator extends Operator {
             throws ServiceException {
         try {
             synchronized (entry) {
-                if (entry instanceof Valuation) {
-                    return (T) ((Entry) entry).valuate(args);
-                } else if (entry instanceof Entry && ((Entry) entry).getOut() instanceof ServiceContext) {
+                if (entry instanceof Entry && ((Entry) entry).getOut() instanceof ServiceContext) {
                     return (T) ((ServiceContext) ((Entry) entry).getOut()).getValue(entry.getName(), args);
                 } else if (entry instanceof Incrementor) {
                     return ((Incrementor<T>) entry).next();
                 } else if (entry instanceof Routine) {
                     return (T) ((Routine) entry).exert(args).getContext();
                 } else if (entry instanceof Functionality) {
-                    if (entry instanceof Req && entry.getImpl() instanceof SignatureEntry) {
+                    if (entry instanceof Srv && entry.getImpl() instanceof SignatureEntry) {
                         return  (T) entry.execute(args);
                     } else {
                         return (T) ((Functionality) entry).getValue(args);
@@ -126,7 +125,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Object exec(Mogram domain, String path, Arg... args) throws ServiceException {
+    public static Object exec(Mogram domain, String path, Arg... args) throws ServiceException, RemoteException {
         if (domain instanceof Model) {
             try {
                 return ((Model)domain).getValue(path, args);
@@ -167,7 +166,7 @@ public class operator extends Operator {
         return collab.evaluateDomain(domainName, context);
     }
 
-    public static ServiceContext eval(Request request, Context context) throws ServiceException {
+    public static ServiceContext eval(Request request, Context context) throws ContextException {
         Context rc;
         try {
             if (request instanceof Contextion) {
@@ -183,7 +182,7 @@ public class operator extends Operator {
                     throw new ContextException(e);
                 }
             }
-        } catch (RemoteException e) {
+        } catch (RemoteException | ServiceException e) {
             throw new ContextException(e);
         }
         return (ServiceContext)rc;
@@ -209,15 +208,6 @@ public class operator extends Operator {
             throw new ContextException(e);
         }
         return out;
-    }
-
-    public static Context eval(Node node, Arg... args)
-        throws ContextException {
-        try {
-            return (Context) node.execute(args);
-        } catch (ServiceException | RemoteException e) {
-            throw new ContextException(e);
-        }
     }
 
     public static Context dscOut(Node node) throws ContextException {
@@ -303,8 +293,8 @@ public class operator extends Operator {
     }
 
     public static Object response(ContextDomain model, String path, String domain) throws ServiceException {
-        if (model.isEvaluated() && ((ServiceMogram)model).getMdaFi() == null) {
-            return ((Mogram)((ServiceContext)model).getChild(domain)).getEvaluatedValue(path);
+        if (((ServiceMogram)model).isEvaluated() && ((ServiceMogram)model).getMdaFi() == null) {
+            return ((ServiceMogram)((ServiceContext)model).getChild(domain)).getEvaluatedValue(path);
         } else {
             try {
                 return ((Context)((ServiceContext)model).getChild(domain)).getValue(path);
@@ -326,20 +316,25 @@ public class operator extends Operator {
 
     public static Context outcome(Contextion domain, Context context, Arg... args) throws ServiceException {
         if (domain instanceof Model) {
-            return ((Model) domain).getResponse(context, args);
+            try {
+                return ((Model) domain).getResponse(context, args);
+            } catch (RemoteException e) {
+                throw new ServiceException(e);
+            }
         } else if (domain instanceof Routine) {
             ((Routine)domain).getDataContext().append(context);
             return exertionResponse((Routine) domain, (Object[])args);
         }
-        return ((Mogram)domain).getDataContext().append(context);
+        return ((ServiceMogram)domain).getDataContext().append(context);
     }
+
 
     public static ServiceContext response(Mogram mogram, Object... items) throws ServiceException {
         if (mogram instanceof Routine) {
             return exertionResponse((Routine) mogram, items);
         } else if (mogram instanceof ContextDomain &&  ((ServiceMogram)mogram).getType().equals(Functionality.Type.MADO)) {
-            if (mogram.isEvaluated()) {
-                return (ServiceContext) ((Mogram)((ServiceContext) mogram).getChild((String) items[0])).getEvaluatedValue((String) items[1]);
+            if (((ServiceMogram)mogram).isEvaluated()) {
+                return (ServiceContext) ((ServiceMogram)((ServiceContext) mogram).getChild((String) items[0])).getEvaluatedValue((String) items[1]);
             } else {
                 return (ServiceContext) ((ServiceContext) ((ServiceContext) mogram).getChild((String) items[0])).getValue((String) items[1]);
             }
@@ -358,31 +353,178 @@ public class operator extends Operator {
             } catch (RemoteException e) {
                 throw new ContextException(e);
             }
+        } else if (mogram instanceof ContextDomain &&  ((ServiceMogram)mogram).getType().equals(Functionality.Type.DESIGN)) {
+            return developDsign(( DesignIntent ) mogram, items);
         } else {
             return modelResponse((ContextDomain) mogram, items);
         }
     }
 
+    public static Transdesign dzn(String name) throws ServiceException {
+        return new Transdesign(name);
+    }
+
+    public static Transdesign dzn(Intent designIntent) throws ServiceException {
+        return dzn(null, designIntent);
+    }
+
+    public static Transdesign dzn(String name, Intent designIntent) throws ServiceException {
+        try {
+            Transdesign design = new Transdesign(name, designIntent);
+            FidelityManager fiManger = new DesignFidelityManager(design);
+            design.setFidelityManager(fiManger);
+            designIntent.setSubject(design.getName(),design);
+            return design;
+        } catch (SignatureException | RemoteException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    public static Transdesign dzn(String name, Discipline discipline, Context discContext, Development developer) throws ServiceException {
+        return new Transdesign(name, discipline, discContext, developer);
+    }
+
+    public static Transdesign dzn(Discipline discipline, Context discContext, Development developer) throws ServiceException {
+        return new Transdesign(null, discipline, discContext, developer);
+    }
+
+    public static ServiceContext dvlp(Request request, Object... items) throws ServiceException {
+        return eval(request, items);
+    }
+
+    public static ServiceContext dvlp(Intent intent, Object... items) throws ServiceException {
+        return eval(dzn(intent), items);
+    }
+
+    public static Context eval(Node node, Arg... args)
+        throws ContextException {
+        try {
+            return (Context) node.execute(args);
+        } catch (ServiceException | RemoteException e) {
+            throw new ContextException(e);
+        }
+    }
+
     public static ServiceContext eval(Request request, Object... items) throws ServiceException {
         Context out = null;
-        if (request instanceof Mogram) {
-            out = response((Mogram)request, items);
-        } else if(items.length == 1) {
-            if (items[0] instanceof Context) {
-                out = eval(request, (Context) items[0]);
-            } else  if (items[0] instanceof Signature) {
-                //&& ((ServiceSignature)items[0]).isKindOf(Signature.Kind.CONTEXT)) {
-                try {
+        try {
+            if (request instanceof Mogram) {
+                out = response((Mogram)request, items);
+            } else if (request instanceof Design) {
+                return morphDesign(( Transdesign ) request, items);
+            }else if (request instanceof Node) {
+                Arg[] args = new Arg[items.length];
+                System.arraycopy(items, 0, args, 0, items.length);
+                return (ServiceContext) request.execute(args);
+            } else if(items.length == 1) {
+                if (items[0] instanceof Context) {
+                    out = eval(request, (Context) items[0]);
+                } else  if (items[0] instanceof Signature) {
+                    //&& ((ServiceSignature)items[0]).isKindOf(Signature.Kind.CONTEXT)) {
                     Context cxt = (Context) ((LocalSignature)items[0]).initInstance();
                     out = eval(request, cxt);
-                } catch (SignatureException e) {
-                    throw new ContextException(e);
                 }
+            } else if(items.length == 0) {
+                out = eval(request, (Context)null);
             }
-        } else if(items.length == 0) {
-            out = eval(request, (Context)null);
+        } catch (SignatureException | RemoteException | ExecutiveException | ConfigurationException e) {
+            throw new ContextException(e);
         }
         return (ServiceContext)out;
+    }
+
+    public static ServiceContext morphDesign(Transdesign design, Object... items)
+        throws ServiceException, RemoteException, ExecutiveException, ConfigurationException {
+        if (design.getDevelopmentFi() == null) {
+            design.setDeveloperFi(design.getDesignIntent());
+        }
+        Fi developerFi =  design.getDevelopmentFi();
+        // setup the design developer and discipline intent
+        Context disciplineIntent = null;
+        DesignFidelityManager fiManager = (DesignFidelityManager)design.getFidelityManager();
+        for (Object item : items) {
+            if (item instanceof Fidelity && (((Fidelity) item).getFiType().equals(Fi.Type.DEV)
+            || ((Fidelity) item).getFiType().equals(Fi.Type.INTENT))) {
+                if (fiManager != null) {
+                    fiManager.reconfigure((Fidelity ) item);
+                } else {
+                    developerFi.selectSelect(((Fidelity) item).getName());
+                }
+            }
+        }
+        Context out = null;
+        Morpher inMorpher = design.getInMorpher();
+        Morpher outMorpher = design.getMorpher();
+        if (developerFi != null) {
+            Development developer = ( Development ) developerFi.getSelect();
+            if (design.getDesignIntent() != null) {
+                // setup a design intent for the design developer
+                Object obj = design.getDesignIntent();
+                if (inMorpher != null || outMorpher != null) {
+                    if (obj != null && obj instanceof Context) {
+                        if (fiManager != null && inMorpher != null) {
+                            inMorpher.morph(fiManager, developerFi, design);
+                        }
+                        // handle the development morph fidelity
+                        if (developerFi instanceof MorphFidelity && (( MorphFidelity ) developerFi).getMorpher() != null) {
+                            (( MorphFidelity ) developerFi).setChanged();
+                            (( MorphFidelity ) developerFi).notifyObservers(obj);
+                            out = design.getOutput();
+                        } else {
+                            out = developer.develop(null, ( ServiceContext ) obj);
+                            if (fiManager != null && outMorpher != null) {
+                                outMorpher.morph(fiManager, developerFi, design);
+                            }
+                        }
+                    }
+                } else if (design.getDiscipline() != null) {
+                    if (developerFi instanceof MorphFidelity) {
+                        MorphFidelity morphFi = ( MorphFidelity ) developerFi;
+                        if (morphFi.getInMorpherFi() != null) {
+                            morphFi.getInMorpherFi().setSelect(null);
+                            morphFi.getInMorpherFi().properSelect((( Developer ) developer).getName());
+                            if (morphFi.getInMorpherFi().getProperSelect() != null) {
+                                morphFi.setChanged();
+                                morphFi.setFiType(Fi.Type.IN);
+                                morphFi.notifyObservers(design);
+                            }
+                        }
+                    }
+                    out = developer.develop(( Discipline ) design.getDiscipline(), design.getDisciplineIntent());
+                    if (developerFi instanceof MorphFidelity) {
+                        MorphFidelity morphFi = ( MorphFidelity ) developerFi;
+                        if (morphFi.getMorpherFi() != null) {
+                            morphFi.getMorpherFi().setSelect(null);
+                            morphFi.getMorpherFi().properSelect((( Developer ) developer).getName());
+                            if ((( MorphFidelity ) developerFi).getMorpherFi().getProperSelect() != null) {
+                                morphFi.setChanged();
+                                morphFi.setFiType(Fi.Type.OUT);
+                                morphFi.notifyObservers(design);
+                                out = design.getDiscipline().getOutput();
+                            }
+                        }
+                    }
+                }
+            } else if (design.getDiscipline() == null) {
+                        out = developer.develop(null, design.getDisciplineIntent());
+            }
+        }
+        return (ServiceContext)out;
+    }
+
+    public static ServiceContext developDsign(DesignIntent designIntent, Object... items) throws ContextException {
+        Development developer = (Development) designIntent.getDeveloperFi().getSelect();
+        Discipline discipline = null;
+        try {
+            if (designIntent.getDisciplineSignature() != null) {
+                discipline =  (Discipline) ((LocalSignature) designIntent.getDisciplineSignature()).initInstance();
+            } else {
+                discipline = designIntent.getDiscipline();
+            }
+            return (ServiceContext) developer.develop(discipline, designIntent.getDisciplineIntent());
+        } catch (SignatureException | ExecutiveException | ServiceException | RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     public static ServiceContext modelResponse(ContextDomain model, Object... items) throws ContextException {
@@ -460,20 +602,20 @@ public class operator extends Operator {
             }
             Arg[] args = new Arg[argl.size()];
             argl.toArray(args);
-            if (model.getFidelityManager() != null) {
+            if (((ServiceMogram)model).getFidelityManager() != null) {
                 try {
-                    ((FidelityManager) model.getFidelityManager()).reconfigure(Arg.selectFidelities(args));
+                    ((FidelityManager) ((ServiceMogram)model).getFidelityManager()).reconfigure(Arg.selectFidelities(args));
                 } catch (ConfigurationException e) {
                    throw new ContextException(e);
                 }
             }
-            model.substitute(args);
-            model.setValid(false);
+            ((ServiceContext)model).substitute(args);
+            ((ServiceMogram)model).setValid(false);
             if (cfmgr != null && cfmgr.getDataContext().getMorpher() != null) {
                 ((ServiceContext)model).getContextFidelityManager().morph();
             }
             ServiceContext out = (ServiceContext) model.getResponse(args);
-            model.setValid(true);
+            ((ServiceMogram)model).setValid(true);
             if (cfmgr != null && cfmgr.getDataContext().getMorpher() != null) {
                 ((ServiceContext)model).getContextFidelityManager().morph();
             }
@@ -507,8 +649,8 @@ public class operator extends Operator {
             }
             Arg[] args = new Arg[argl.size()];
             argl.toArray(args);
-            if (exertion.getFidelityManager() != null) {
-                ((FidelityManager) exertion.getFidelityManager()).reconfigure(Arg.selectFidelities(args));
+            if (((ServiceMogram)exertion).getFidelityManager() != null) {
+                ((FidelityManager) ((ServiceMogram)exertion).getFidelityManager()).reconfigure(Arg.selectFidelities(args));
             }
             return (ServiceContext) exertion.exert(args).getContext();
         } catch (RemoteException | ServiceException | ConfigurationException e) {
@@ -565,7 +707,7 @@ public class operator extends Operator {
             if (service instanceof Entry || service instanceof Signature ) {
                 return service.execute(args);
             } else if (service instanceof Mogram) {
-                if (service instanceof DataContext || service instanceof MultiFiMogram) {
+                if (service instanceof DataContext || service instanceof MorphMogram) {
                     return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
                 } else if (service instanceof Node) {
                     return service.execute(args);
@@ -579,7 +721,7 @@ public class operator extends Operator {
                 if (cxt != null) {
                     return ((Modeling) service).evaluate((ServiceContext)cxt);
                 } else {
-                    ((Context)service).substitute(args);
+                    ((ServiceContext)service).substitute(args);
                     ((Modeling) service).evaluate();
                 }
                 return ((Model)service).getResult();
@@ -591,11 +733,11 @@ public class operator extends Operator {
         }
     }
 
-    public static List<ThrowableTrace> exceptions(Routine exertion) {
+    public static List<ThrowableTrace> exceptions(Routine exertion) throws RemoteException {
         return exertion.getExceptions();
     }
 
-    public static <T extends Mogram> T exert(T mogram, Arg... args) throws ServiceException {
+    public static <T extends Contextion> T exert(T mogram, Arg... args) throws ServiceException {
         try {
             return mogram.exert(null, args);
         } catch (RemoteException e) {
@@ -603,12 +745,12 @@ public class operator extends Operator {
         }
     }
 
-    public static <T extends Contextion> T exert(T input, Transaction transaction, Arg... entries)
-            throws ServiceException {
-        return new sorcer.core.provider.exerter.ServiceShell().exert(input, transaction, entries);
-    }
+//    public static <T extends Contextion> T exert(T input, Transaction transaction, Arg... entries)
+//            throws ServiceException {
+//        return new sorcer.core.provider.exerter.ServiceShell().exert(input, transaction, entries);
+//    }
 
-    public static <T extends Mogram> T exert(Exertion service, T mogram, Arg... entries) throws ServiceException {
+    public static <T extends Contextion> T exert(Exertion service, T mogram, Arg... entries) throws ServiceException {
         try {
             return service.exert(mogram, null, entries);
         } catch (RemoteException e) {
@@ -616,21 +758,13 @@ public class operator extends Operator {
         }
     }
 
-    public static <T extends Mogram> T exert(Mogram service, T mogram, Arg... entries) throws ServiceException {
-        try {
-            return service.exert(mogram, null, entries);
-        } catch (RemoteException e) {
-            throw new ServiceException(e);
-        }
-    }
-
-    public static <T extends Mogram> T exert(Mogram service, T mogram, Transaction txn, Arg... entries)
-            throws ServiceException {
-        try {
-            return service.exert(mogram, txn, entries);
-        } catch (RemoteException e) {
-            throw new ServiceException(e);
-        }
-    }
+//    public static <T extends Contextion> T exert(Exertion service, T mogram, Transaction txn, Arg... entries)
+//            throws ServiceException {
+//        try {
+//            return service.exert(mogram, txn, entries);
+//        } catch (RemoteException e) {
+//            throw new ServiceException(e);
+//        }
+//    }
 
 }

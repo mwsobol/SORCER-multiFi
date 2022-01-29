@@ -42,6 +42,7 @@ import sorcer.service.*;
 import sorcer.service.Signature.Direction;
 import sorcer.service.modeling.*;
 import sorcer.service.ContextDomain;
+import sorcer.util.Checkpoint;
 import sorcer.util.ObjectCloner;
 import sorcer.util.Row;
 import sorcer.util.SorcerUtil;
@@ -53,9 +54,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import static sorcer.eo.operator.cxtFi;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
+import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.setValues;
 import static sorcer.mo.operator.value;
 
@@ -96,9 +95,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected Subroutine exertion;
 	protected String currentPrefix;
 	protected boolean isFinalized = false;
-	protected Function.Type type = Function.Type.CONTEXT;
+	protected Context.Type contextType = Context.Type.CONTEXT;
+	protected IntentType intentType = IntentType.EVALUATE;
 	protected Model.Pattern pattern =  Model.Pattern.ANAL;
-	Signature.Direction direction = Signature.Direction.INOUT;
+	protected Signature.Direction direction = Signature.Direction.INOUT;
+	protected List<String> traceList = null;
+	protected int evalCount = 0;
 
 	protected boolean isSoft = false;
 	protected boolean isSelf = false;
@@ -319,7 +321,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public List<ThrowableTrace> getExceptions() {
+	public List<ThrowableTrace> getExceptions() throws RemoteException {
 		if (exertion != null)
 			// compatibility for contexts with domains
 			return exertion.getExceptions();
@@ -327,13 +329,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return ((ModelStrategy) domainStrategy).getAllExceptions();
 	}
 
-	@Override
 	public List<String> getTrace() {
 		return ((ModelStrategy) domainStrategy).getTraceList();
 	}
 
-	@Override
-	public List<ThrowableTrace> getAllExceptions() {
+	public List<ThrowableTrace> getAllExceptions() throws RemoteException {
 		List<ThrowableTrace> exertExceptions;
 		if (exertion != null) {
 			exertExceptions = exertion.getExceptions();
@@ -409,47 +409,43 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 *
 	 * @throws
 	 */
-	public Object getValue0(String path) throws ContextException {
+	public Object getValue0(String path) throws ContextException, RemoteException {
 		Object result = get(path);
-		try {
-			if (result instanceof Value) {
-				return ((Value)result).getData();
-			} else if (result instanceof ContextLink) {
-				String offset = ((ContextLink) result).getOffset();
-				Context linkedCntxt = ((ContextLink) result).getContext();
-				result = linkedCntxt.getValue(offset);
-			}
-			if (result == null) {
-				// could be in a linked context
-				List<String> paths = localLinkPaths();
-				int len;
-				for (String linkPath : paths) {
-					ContextLink link;
-					link = (ContextLink) get(linkPath);
-					String offset = link.getOffset();
-					int index = offset.lastIndexOf(CPS);
-					String extendedLinkPath = linkPath;
-					if (index < 0) {
-						if (offset.length() > 0)
-							extendedLinkPath = linkPath + CPS + offset;
-					} else
-						extendedLinkPath = linkPath + offset.substring(index);
-					len = extendedLinkPath.length();
-					if (path.startsWith(extendedLinkPath)
-						&& (path.indexOf(CPS, len) == len || path.length() > len)) {
-						// looking for something in this linked context
-						String keyInLinkedCntxt = path.substring(len + 1);
-						if (offset.length() > 0)
-							keyInLinkedCntxt = offset + path.substring(len);
-						Context linkedCntxt;
-						linkedCntxt = getLinkedContext(link);
-						result = linkedCntxt.getValue(keyInLinkedCntxt);
-						break;
-					}
+		if (result instanceof Value) {
+			return ((Value)result).getData();
+		} else if (result instanceof ContextLink) {
+			String offset = ((ContextLink) result).getOffset();
+			Context linkedCntxt = ((ContextLink) result).getContext();
+			result = linkedCntxt.getValue(offset);
+		}
+		if (result == null) {
+			// could be in a linked context
+			List<String> paths = localLinkPaths();
+			int len;
+			for (String linkPath : paths) {
+				ContextLink link;
+				link = (ContextLink) get(linkPath);
+				String offset = link.getOffset();
+				int index = offset.lastIndexOf(CPS);
+				String extendedLinkPath = linkPath;
+				if (index < 0) {
+					if (offset.length() > 0)
+						extendedLinkPath = linkPath + CPS + offset;
+				} else
+					extendedLinkPath = linkPath + offset.substring(index);
+				len = extendedLinkPath.length();
+				if (path.startsWith(extendedLinkPath)
+					&& (path.indexOf(CPS, len) == len || path.length() > len)) {
+					// looking for something in this linked context
+					String keyInLinkedCntxt = path.substring(len + 1);
+					if (offset.length() > 0)
+						keyInLinkedCntxt = offset + path.substring(len);
+					Context linkedCntxt;
+					linkedCntxt = getLinkedContext(link);
+					result = linkedCntxt.getValue(keyInLinkedCntxt);
+					break;
 				}
 			}
-		} catch (RemoteException e) {
-			throw new ContextException(e);
 		}
 		return result;
 	}
@@ -1588,7 +1584,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return links;
 	}
 
-	public Context execSignature(Signature sig, Arg... items) throws MogramException {
+	public Context execSignature(Signature sig, Arg... items) throws ServiceException, RemoteException {
 		if (sig.getContextReturn() == null)
 			throw new MogramException("No signature return contextReturn defined!");
 		Context.Return rp = sig.getContextReturn();
@@ -1631,7 +1627,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			this.setChanged(true);
 		} else {
 			if (returnPath != null  && !returnPath.equals(Signature.SELF)) {
-				this.put(returnPath, (T) outcxt.get(returnPath));
+				this.put(returnPath, (T) ((ServiceContext)outcxt).get(returnPath));
 			}
 			this.appendInout(outcxt);
 			this.setChanged(true);
@@ -1718,6 +1714,16 @@ public class ServiceContext<T> extends ServiceMogram implements
 				else
 					subcntxt.putValue(path, val);
 			}
+			// check if entry checkpoint is valid
+			Object obj = asis(path);
+			if (obj instanceof Entry && ((Entry) obj).getCheckpoint() != null) {
+				Checkpoint ckpt = (Checkpoint) ((Entry) obj).getCheckpoint();
+				if (ckpt.isTrue()) {
+					ckpt.setState(Exec.RETURNED);
+					subcntxt.setCheckpoint(ckpt);
+					return subcntxt;
+				}
+			}
 		}
 		return subcntxt;
 	}
@@ -1742,7 +1748,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			Iterator it = ((ServiceContext)context).entryIterator();
 			while (it.hasNext()) {
 				Map.Entry e = (Map.Entry) it.next();
-				putInValue((String) e.getKey(), asis((String) e.getValue()));
+				putInValue((String) e.getKey(), (T) asis((String) e.getValue()));
 				if (!isRedundant) {
 					removePath((String) e.getValue());
 				}
@@ -2756,6 +2762,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
+	public List<Entry> substituteInfos(Context context) throws ContextException {
+		return new ArrayList();
+	}
+
 	public void substitute(Arg... entries) throws SetterException {
 		if (entries == null)
 			return;
@@ -2836,7 +2846,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		MonitorUtil.checkpoint(this);
 	}
 
-	public T asis(String path) {
+	public Object asis(String path) {
         T val = null;
         synchronized (this) {
             if (isRevaluable == true) {
@@ -2851,7 +2861,7 @@ public class ServiceContext<T> extends ServiceMogram implements
         if (val == null) {
             try {
                 return (T) getValue0(path);
-            } catch (ContextException e) {
+            } catch (ContextException | RemoteException e) {
                 e.printStackTrace();
             }
             return null;
@@ -2861,7 +2871,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
     @Override
     public T asis(Path path) throws ContextException {
-        return asis(path.path);
+        return (T) asis(path.path);
     }
 
     @Override
@@ -3103,7 +3113,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Context evaluate(Context inputContext, Arg... args) throws EvaluationException {
+	public Context evaluate(Context inputContext, Arg... args) throws EvaluationException, RemoteException {
 		try {
 			if (args != null) {
 				substitute(args);
@@ -3428,68 +3438,39 @@ public class ServiceContext<T> extends ServiceMogram implements
 	/* (non-Javadoc)
      * @see sorcer.service.Service#exert(sorcer.service.Routine, net.jini.core.transaction.Transaction)
      */
-    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException {
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException {
         try {
-            if (mogram instanceof NetTask) {
-                Task task = (NetTask)mogram;
-                Class serviceType = task.getServiceType();
-                if (provider != null) {
+			if (mogram instanceof NetTask) {
+				Task task = (NetTask)mogram;
+				Class serviceType = task.getServiceType();
+				if (provider != null) {
 					Task out = ((ServiceExerter)provider).getDelegate().doTask(task, txn, args);
 					// clearSessions provider execution scope
 					out.getContext().setScope(null);
 					return (T) out;
-                } else if (Invocation.class.isAssignableFrom(serviceType)) {
-                    Object out = ((Invocation)this).invoke(task.getContext(), args);
-                    handleExertOutput(task, out);
-                    return (T) task;
-                } else if (Evaluation.class.isAssignableFrom(serviceType)) {
-                    Object out = ((Evaluation)this).evaluate(args);
-                    handleExertOutput(task, out);
-                    return (T) task;
-                }
-            }
+				} else if (Invocation.class.isAssignableFrom(serviceType)) {
+					Object out = ((Invocation)this).invoke(task.getContext(), args);
+					handleExertOutput(task, out);
+					return (T) task;
+				} else if (Evaluation.class.isAssignableFrom(serviceType)) {
+					Object out = ((Evaluation)this).evaluate(args);
+					handleExertOutput(task, out);
+					return (T) task;
+				}
+			}
             exertion.getContext().appendContext(this);
             return (T) exertion.exert(txn);
         } catch (Exception e) {
             e.printStackTrace();
-			((Mogram)mogram).getContext().reportException(e);
-            if (e instanceof Exception)
-				((Mogram)mogram).setStatus(FAILED);
-            else
-				((Mogram)mogram).setStatus(ERROR);
-
+			((ServiceMogram)mogram.getContext()).reportException(e);
+            if (e instanceof Exception) {
+				((ServiceMogram) mogram).setStatus(FAILED);
+			} else {
+				((ServiceMogram) mogram).setStatus(ERROR);
+			}
             throw new ContextException(e);
         }
     }
-
-	private void handleExertOutput(Task task, Object result ) throws ContextException {
-		ServiceContext dataContext = (ServiceContext) task.getDataContext();
-		if (result instanceof Context) {
-			Context.Return rp = dataContext.getContextReturn();
-			if (rp != null) {
-				try {
-					if (((Context) result).getValue(rp.returnPath) != null) {
-						dataContext.setReturnValue(((Context) result).getValue(rp.returnPath));
-					} else if (rp.outPaths != null && rp.outPaths.size() > 0) {
-						Context out = dataContext.getDirectionalSubcontext(rp.outPaths);
-						dataContext.setReturnValue(out);
-					}
-				} catch (RemoteException e) {
-					throw new ContextException(e);
-				}
-			} else if (dataContext.getScope() != null) {
-				dataContext.getScope().append((Context)result);
-			} else {
-				dataContext = (ServiceContext) result;
-			}
-		} else {
-			dataContext.setReturnValue(result);
-		}
-		dataContext.updateContextWith(((ServiceSignature)task.getProcessSignature()).getOutConnector());
-		task.setContext(dataContext);
-		task.setStatus(DONE);
-	}
-
 
 	public Context updateInOutPaths(In inpaths, Out outpaths) throws ContextException {
 		if (containsPath(Condition._closure_)) {
@@ -3547,6 +3528,18 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return data.values();
 	}
 
+//	public T valuate(Arg... args) throws ContextException {
+//		Path p = Arg.selectPath(args);
+//		T out = null;
+//		if (p != null) {
+//			out = get(p.path);
+//		}
+//		if (out == null) {
+//			out = (T) this;
+//		}
+//		return out;
+//	}
+
 	public T put(String key, T value) {
 		if (value == null)
 			return data.put(key, (T)none);
@@ -3554,12 +3547,20 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return data.put(key, value);
 	}
 
-	public Functionality.Type getType() {
-		return type;
+	public Context.Type getContextType() {
+		return contextType;
 	}
 
-	public void setType(Functionality.Type type) {
-		this.type = type;
+	public void setContextType(Context.Type type) {
+		this.contextType = type;
+	}
+
+	public IntentType getIntentType() {
+		return intentType;
+	}
+
+	public void setIntentType(IntentType intentType) {
+		this.intentType = intentType;
 	}
 
 	public Iterator<String> keyIterator() {
@@ -3623,7 +3624,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (provider == null)
 			return key;
 		else
-			return provider.getProviderName();
+			return ((ServiceExerter)provider).getProviderName();
 	}
 
 	public boolean compareTo(Object object) {
@@ -3652,12 +3653,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Discipline getChild(String name) throws ContextException {
+	public Contextion getChild(String name) {
         Object domain = data.get(name);
-        if (domain instanceof Mogram) {
-            return (Mogram) domain;
+        if (domain instanceof Contextion) {
+            return (Contextion) domain;
         }
-        throw new ContextException("no such domain: " + name);
+        return null;
 	}
 
 	@Override
@@ -3666,7 +3667,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Object execute(Arg... args) throws ServiceException {
+	public Object execute(Arg... args) throws ServiceException, RemoteException {
 		Context cxt = (Context) Arg.selectDomain(args);
 		if (cxt != null) {
 			scope = cxt;
@@ -3678,7 +3679,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public Entry act(Arg... args) throws ServiceException {
-		Object result = this.execute(args);
+		Object result = null;
+		try {
+			result = this.execute(args);
+		} catch (RemoteException e) {
+			throw new ServiceException(e);
+		}
 		if (result instanceof Entry) {
 			return (Entry)result;
 		} else {
@@ -3688,7 +3694,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public Data act(String entryName, Arg... args) throws ServiceException {
-		Object result = this.execute(args);
+		Object result = null;
+		try {
+			result = this.execute(args);
+		} catch (RemoteException e) {
+			throw new ServiceException(e);
+		}
 		if (result instanceof Entry) {
 			return (Entry)result;
 		} else {
@@ -3812,7 +3823,7 @@ public class ServiceContext<T> extends ServiceMogram implements
         this.exertion = context.exertion;
         this.currentPrefix = context.currentPrefix;
         this.isFinalized = context.isFinalized;
-        this.type = context.type;
+        this.contextType = context.contextType;
         this.direction = context.direction;
 
         this.isSoft = context.isSoft;
@@ -3835,7 +3846,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
     @Override
-    public Fidelity selectFidelity(String selection) throws ConfigurationException {
+    public Fi selectFidelity(String selection) throws ConfigurationException {
         if (selection == null ) {
             throw new ConfigurationException();
         }
@@ -3871,5 +3882,47 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public void setPattern(Model.Pattern pattern) {
 		this.pattern = pattern;
+	}
+
+
+	public List<String> getTraceList() {
+		return traceList;
+	}
+
+	public void setTraceList(List<String> traceList) {
+		this.traceList = traceList;
+	}
+
+	public void setTracable() {
+		traceList = new ArrayList<>();
+	}
+
+	public boolean isTracable() {
+    	return (traceList != null);
+	}
+
+	public void  clearTrace() {
+    	if (traceList != null) {
+			traceList.clear();
+		} else {
+			traceList = new ArrayList<>();
+		}
+	}
+
+	public void setTracable(boolean state) {
+		if (state) {
+			traceList = new ArrayList<>();
+		} else {
+			traceList.clear();
+			traceList = null;
+		}
+	}
+
+	public int getEvalCount() {
+		return evalCount;
+	}
+
+	public void setEvalCount(int evalCount) {
+		this.evalCount = evalCount;
 	}
 }

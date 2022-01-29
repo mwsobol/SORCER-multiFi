@@ -17,7 +17,7 @@
 package sorcer.service;
 
 import sorcer.core.Dispatcher;
-import sorcer.service.modeling.MultiFiVal;
+import sorcer.service.modeling.SlotMultiFi;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -25,19 +25,19 @@ import java.rmi.RemoteException;
 /**
  * @author Mike Sobolewski 03/11/2021
  */
-public class NodeFidelity implements Identifiable, Serializable, Arg {
+public class NodeFi implements Identifiable, Serializable, Arg {
 
     private String name;
 
     protected String path;
 
-    private MultiFiVal cxtFi;
+    private SlotMultiFi cxtFi;
 
-    private MultiFiVal cxtnFi;
+    private SlotMultiFi cxtnFi;
 
-    private MultiFiVal dspFi;
+    private SlotMultiFi dspFi;
 
-    public NodeFidelity(String name) {
+    public NodeFi(String name) {
         this.name = name;
     }
 
@@ -108,7 +108,7 @@ public class NodeFidelity implements Identifiable, Serializable, Arg {
         return cxtFi;
     }
 
-    public void setContextFi(MultiFiVal contextMultiFi) {
+    public void setContextFi(SlotMultiFi contextMultiFi) {
         this.cxtFi = contextMultiFi;
     }
 
@@ -116,7 +116,7 @@ public class NodeFidelity implements Identifiable, Serializable, Arg {
         return cxtnFi;
     }
 
-    public void setContextionFi(MultiFiVal govFi) {
+    public void setContextionFi(SlotMultiFi govFi) {
         this.cxtnFi = govFi;
     }
 
@@ -124,11 +124,11 @@ public class NodeFidelity implements Identifiable, Serializable, Arg {
         return dspFi;
     }
 
-    public void setDispatcherFi(MultiFiVal dsptFi) {
+    public void setDispatcherFi(SlotMultiFi dsptFi) {
         this.dspFi = dsptFi;
     }
 
-    private void assignFi(MultiFiVal fi) {
+    private void assignFi(SlotMultiFi fi) {
         if (fi.getFiType().equals(Fi.Type.DISPATCHER)) {
             this.dspFi = fi;
         } else if (fi.getFiType().equals(Fi.Type.CONTEXTION)) {

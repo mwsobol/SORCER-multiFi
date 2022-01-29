@@ -8,10 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.core.context.ServiceContext;
 import sorcer.mo.operator;
 import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
+import sorcer.util.Checkpoint;
 
 import java.util.Collection;
 import java.util.List;
@@ -54,7 +56,7 @@ public class SmlOperators {
 		func p1 = prc("x3", ev1);
 		func n2 = snr("x6", 1.0);
 		func r0 = req(op1);
-		func r1 = fxn("s1", args("v1", "f1"));
+		func r1 = srv("s1", args("v1", "f1"));
 
 		// ent - generic operator for all entries
 		ent e1 = ent(sig("s1", Class.class));
@@ -112,10 +114,17 @@ public class SmlOperators {
 		// Evaluate domains
 		cxt c4 = eval(model());
 		Context c5 = eval(ex2, context());
-		cxt c6 = eval(operator.rnd(), cxt());
+		cxt c6 = eval(rnd(), cxt());
 		// Domain results
 		cxt out1 = result(model());
 		cxt out2 = result(job());
+		Object out1b = result(model(), "path");
+		Object out2b = result(job(), "path");
+
+		// Discipline controllers
+//		analyze(context());
+//		explore(context());
+//		search(context());
 
 		// Evaluate specific models
 		// Context, Table, row is rsp (Response)
@@ -205,6 +214,8 @@ public class SmlOperators {
 		}
 		Class mmtc = mtc2.getClass();
 		Class mmmtc = mmtc.getClass();
+		logger.info("Mogram instanceof Class:" + (Mogram.class instanceof Class));
+		logger.info("mtc1 instanceof Class:" + (mtc1 instanceof Class));
 		logger.info("mmmtc is Object: " + (mmmtc instanceof Object));
 		logger.info("mmtc: " + mmtc.getName());
 		logger.info("mmmtc: " + mmmtc.getName());
@@ -214,6 +225,20 @@ public class SmlOperators {
 	public void isModelContext() throws Exception {
 		logger.info("one:" + Model.class.isAssignableFrom(Context.class));
 		logger.info("two:" + Context.class.isAssignableFrom(Model.class));
+		logger.info("one:" + Model.class.isAssignableFrom(ServiceContext.class));
+		logger.info("two:" + Context.class.isAssignableFrom(ServiceContext.class));
+		logger.info("one:" + ContextDomain.class.isAssignableFrom(Model.class));
+		logger.info("two:" + ContextDomain.class.isAssignableFrom(Context.class));
+	}
 
+	@Test
+	public void checkPoint() throws Exception {
+		Checkpoint cpt = ckpt("discipline$");
+		String disciplineName = cpt.getDisciplineName();
+		String pathName = cpt.getEvaluationPath();
+		logger.info("isDisciplinaryOnly: " + cpt.isDisciplinaryOnly());
+		logger.info("disciplineName:" + disciplineName);
+		logger.info("pathName:" + pathName);
+		assertTrue(cpt.isDisciplinaryOnly());
 	}
 }

@@ -15,18 +15,41 @@
 */
 package sorcer.service;
 
-import sorcer.service.Arg;
-import sorcer.service.FidelityManagement;
-import sorcer.service.Service;
-import sorcer.service.ServiceException;
-
 import java.rmi.RemoteException;
 
 /**
  * Created by Mike Sobolewski on 11/9/15.
  */
 @FunctionalInterface
-public interface Morpher<T extends Service> extends Directive{
+public interface Morpher extends Controller, Directive {
 
-    public void morph(FidelityManagement<T> manager, Fi<T> mFi, Object value) throws RemoteException, ServiceException, ConfigurationException;
+    public void morph(FidelityManagement manager, Fi<Service> mFi, Object value) throws RemoteException, ServiceException, ConfigurationException;
+
+    enum Dir implements Arg {
+        IN, OUT, INOUT;
+
+        @Override
+        public String getName() {
+            return toString();
+        }
+
+        static public Dir fromString(String direction) {
+            if (direction == null) {
+                return null;
+            } else if (direction.equals(""+IN)) {
+                return IN;
+            } else if (direction.equals(""+OUT)) {
+                return OUT;
+            } else if (direction.equals(""+INOUT)) {
+                return INOUT;
+            } else {
+                return null;
+            }
+        }
+
+        public Object execute(Arg... args) {
+            return this;
+        }
+    }
+
 }

@@ -11,6 +11,7 @@ import sorcer.service.*;
 import sorcer.service.Strategy.*;
 import sorcer.util.Log;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -504,7 +505,7 @@ private Routine f1SEQpull() throws Exception {
 	}
 	
 	private Task getTask() throws RoutineException, SignatureException,
-			ContextException {
+		ContextException, RemoteException {
 		
 		Task f5 = task(
 				"f5",

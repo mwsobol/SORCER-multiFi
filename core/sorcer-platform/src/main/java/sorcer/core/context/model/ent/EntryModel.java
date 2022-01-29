@@ -21,11 +21,12 @@ import sorcer.core.context.Contexts;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.req.Req;
+import sorcer.core.context.model.req.Srv;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.service.Collaboration;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
+import sorcer.service.modeling.Conditional;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
 import sorcer.util.Row;
@@ -193,6 +194,9 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				} else {
 					return getResponse();
 				}
+//			}
+//			else if (val instanceof Signature) {
+//				return execSignature((Signature) val, args);
 			} else {
 				if (val == null && scope != null && scope != this) {
 					Object o = scope.getValue(path);
@@ -243,7 +247,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
                 if (scope != null && ((Context) scope).size() > 0) {
                     ((Context) scope).append(this);
                 }
-                if (value instanceof Req && ((Req) value).getImpl() instanceof ServiceInvoker) {
+                if (value instanceof Srv && ((Srv) value).getImpl() instanceof ServiceInvoker) {
                     ((ServiceInvoker) ((Entry) value).getImpl()).setInvokeContext(this);
                 } else if (value instanceof ServiceInvoker) {
                     ((ServiceInvoker) value).setInvokeContext(this);
@@ -636,7 +640,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	}
 
 	@Override
-	public Context getResponse(Context context, Arg... args) throws ContextException {
+	public Context getResponse(Context context, Arg... args) throws ContextException, RemoteException {
 		evaluate(context, args);
 		return getOutput(args);
 	}

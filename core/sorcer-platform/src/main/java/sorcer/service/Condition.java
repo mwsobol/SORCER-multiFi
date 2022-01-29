@@ -27,6 +27,7 @@ import sorcer.core.exertion.LoopTask;
 import sorcer.core.exertion.OptTask;
 import sorcer.core.invoker.GroovyInvoker;
 import sorcer.core.invoker.ServiceInvoker;
+import sorcer.service.modeling.Conditional;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -293,16 +294,24 @@ import java.util.Map;
 	public void setConditionalContext(Context conditionaContext) {
 		this.conditionalContext = conditionaContext;
 	}
-	
+
+	public String getEvaluationPath() {
+		return evaluationPath;
+	}
+
+	public void setEvaluationPath(String evaluationPath) {
+		this.evaluationPath = evaluationPath;
+	}
+
 	public String getClosureExpression() {
 		return closureExpression;
 	}
 	
-	static public void cleanupScripts(Routine exertion) throws ContextException {
+	static public void cleanupScripts(Routine exertion) throws ContextException, RemoteException {
 		if (exertion == null)
 			return;
 		clenupContextScripts(exertion.getContext());
-		for (Discipline e : exertion.getMograms()) {
+		for (Contextion e : exertion.getMograms()) {
 			if (e instanceof Routine) {
 				clenupContextScripts(e.getContext());
 				clenupExertionScripts((Routine) e);
@@ -335,7 +344,7 @@ import java.util.Map;
 	}
 
 	public static void clenupExertionScripts(Routine exertion)
-			throws ContextException {
+		throws ContextException, RemoteException {
 		if (exertion instanceof ConditionalTask) {
 			List<Conditional> cs = ((ConditionalTask) exertion)
 					.getConditions();

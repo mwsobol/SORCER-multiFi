@@ -75,7 +75,7 @@ public interface ContextDomain extends Domain {
 	ContextDomain add(Identifiable... objects) throws ContextException,
 			RemoteException;
 
-	Path getPath(String path) throws ContextException;
+	Path getPath(String path) throws ContextException, RemoteException;
 
 	Object getValue(Path path, Arg... args) throws ContextException, RemoteException;
 }

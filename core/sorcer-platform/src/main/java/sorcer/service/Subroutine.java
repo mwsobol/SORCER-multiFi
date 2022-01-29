@@ -18,7 +18,6 @@
 package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,7 +105,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
                         cxtn = (Contextion)((LocalSignature) service).build();
                         cxtn.setName(((Signature)service).getName());
                         cxtn.setContext(dataContext);
-                    } catch (SignatureException | ContextException e) {
+                    } catch (SignatureException | ContextException | RemoteException e) {
                         throw new DispatchException(e);
                     }
                 }
@@ -146,13 +145,8 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see sorcer.service.Service#service(sorcer.service.Routine,
-     * net.jini.core.transaction.Transaction)
-     */
-    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws MogramException {
+    @Override
+    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... args) throws ContextException, RemoteException, MogramException {
         try {
             if (mogram instanceof Routine) {
                 Subroutine exertion = (Subroutine) mogram;
@@ -179,11 +173,15 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
             }
             return (T) exert(txn);
         } catch (Exception e) {
-            mogram.getContext().reportException(e);
+            try {
+                ((ServiceMogram)mogram.getContext()).reportException(e);
+            } catch (RemoteException remoteException) {
+                remoteException.printStackTrace();
+            }
             if (e instanceof Exception)
-                ((Mogram)mogram).setStatus(FAILED);
+                ((ServiceMogram)mogram).setStatus(FAILED);
             else
-                ((Mogram)mogram).setStatus(ERROR);
+                ((ServiceMogram)mogram).setStatus(ERROR);
 
             throw new ContextException(e);
         }
@@ -276,8 +274,8 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
             substitute(entries);
             if (context != null) {
                 if (((ServiceContext) context).isLinked()) {
-                    List<Discipline> exts = getAllMograms();
-                    for (Discipline e : exts) {
+                    List<Contextion> exts = getAllMograms();
+                    for (Contextion e : exts) {
                         Object link = context.getLink(e.getName());
                         if (link instanceof ContextLink) {
                             e.getContext().append(
@@ -299,7 +297,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      * @see sorcer.service.Routine#exert(net.jini.core.transaction.Transaction,
      * sorcer.servie.Arg[])
      */
-    public Routine exert(Transaction txn, Arg... entries) throws MogramException {
+    public Routine exert(Transaction txn, Arg... entries) throws ServiceException {
         substitute(entries);
 
         String prvName = null;
@@ -318,7 +316,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      *
      * @see sorcer.service.Routine#exert(sorcer.core.context.Path.Entry[])
      */
-    public <T extends Contextion> T  exert(Arg... entries) throws MogramException {
+    public <T extends Contextion> T  exert(Arg... entries) throws ServiceException {
         try {
             substitute(entries);
         } catch (SetterException e) {
@@ -429,7 +427,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     public void setSessionId(Uuid id) {
         sessionId = id;
         if (this instanceof Transroutine) {
-            List<Discipline> v =  this.getMograms();
+            List<Contextion> v =  this.getMograms();
             for (int i = 0; i < v.size(); i++) {
                 ((Subroutine) v.get(i)).setSessionId(id);
             }
@@ -473,8 +471,8 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
             return false;
     }
 
-    public List<Discipline> getAllMograms() {
-        List<Discipline> exs = new ArrayList();
+    public List<Contextion> getAllMograms() {
+        List<Contextion> exs = new ArrayList();
         getMograms(exs);
         return exs;
     }
@@ -514,7 +512,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     public Context getContext(String componentExertionName)
-            throws ContextException {
+        throws ContextException, RemoteException {
         Routine component = (Routine)getMogram(componentExertionName);
         if (component != null)
             return getMogram(componentExertionName).getContext();
@@ -746,7 +744,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         return info.toString();
     }
 
-    public List<ServiceDeployment> getDeployments() {
+    public List<ServiceDeployment> getDeployments() throws RemoteException {
         List<Signature> nsigs = getAllNetSignatures();
         List<ServiceDeployment> deploymnets = new ArrayList<ServiceDeployment>();
         for (Signature s : nsigs) {
@@ -758,7 +756,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     @Override
-    public List<Signature> getAllNetSignatures() {
+    public List<Signature> getAllNetSignatures() throws RemoteException {
         List<Signature> allSigs = getAllSignatures();
         List<Signature> netSignatures = new ArrayList<Signature>();
         for (Signature s : allSigs) {
@@ -781,17 +779,6 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
         return netSignatures;
     }
 
-    public List<ServiceDeployment> getDeploymnets() {
-        List<Signature> nsigs = getAllNetSignatures();
-        List<ServiceDeployment> deploymnets = new ArrayList<ServiceDeployment>();
-        for (Signature s : nsigs) {
-            ServiceDeployment d = ((ServiceSignature)s).getDeployment();
-            if (d != null)
-                deploymnets.add(d);
-        }
-        return deploymnets;
-    }
-
 	public void trimNotSerializableSignatures() throws SignatureException {
 		super.trimNotSerializableSignatures();
         getControlContext().setScope(null);
@@ -804,7 +791,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      * @see sorcer.service.Routine#getExceptions()
      */
     @Override
-    public List<ThrowableTrace> getExceptions() {
+    public List<ThrowableTrace> getExceptions() throws RemoteException {
         if (controlContext != null)
             return controlContext.getExceptions();
         else
@@ -817,30 +804,37 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
      * @see sorcer.service.Routine#getExceptions()
      */
     @Override
-    public List<ThrowableTrace> getAllExceptions() {
+    public List<ThrowableTrace> getAllExceptions() throws RemoteException {
         List<ThrowableTrace> exceptions = new ArrayList<>();
         return getExceptions(exceptions);
     }
 
-    public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exs) {
+    public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exs) throws RemoteException {
         if (controlContext != null)
             exs.addAll(controlContext.getExceptions());
         return exs;
     }
 
-    public List<Signature> getAllSignatures() {
+    public List<Signature> getAllSignatures() throws RemoteException {
         List<Signature> allSigs = new ArrayList<>();
-        List<Discipline> allExertions = getAllMograms();
-        for (Discipline e : allExertions) {
-            allSigs.add(((Mogram)e).getProcessSignature());
+        List<Contextion> allExertions = getAllMograms();
+        for (Contextion ct : allExertions) {
+            if (ct instanceof  ServiceMogram) {
+                allSigs.add(((ServiceMogram) ct).getProcessSignature());
+            } else if (ct instanceof FreeContextion) {
+                Contextion ct2 = ((FreeContextion) ct).getContextion();
+                if (ct2 instanceof  ServiceMogram) {
+                    allSigs.add(((ServiceMogram) ct2).getProcessSignature());
+                }
+            }
         }
         return allSigs;
     }
 
     public List<Signature> getAllTaskSignatures() {
         List<Signature> allSigs = new ArrayList<>();
-        List<Discipline> allExertions = getAllMograms();
-        for (Discipline e : allExertions) {
+        List<Contextion> allExertions = getAllMograms();
+        for (Contextion e : allExertions) {
             if (e instanceof Task)
                 allSigs.add(((Routine)e).getProcessSignature());
         }
@@ -857,11 +851,11 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     public void updateValue(Object value) throws ContextException {
-        List<Discipline> exertions = getAllMograms();
+        List<Contextion> exertions = getAllMograms();
         // logger.info(" eval = " + eval);
         // logger.info(" this exertion = " + this);
         // logger.info(" domains = " + domains);
-        for (Discipline e : exertions) {
+        for (Contextion e : exertions) {
             if (e instanceof Routine && !((Routine)e).isJob()) {
                 // logger.info(" exertion i = "+ e.getName());
                 Context cxt = ((Routine)e).getContext();
@@ -958,7 +952,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     public Context dispatch(Context context, Arg... args) throws DispatchException {
         try {
             return evaluate(context,args);
-        } catch (MogramException e) {
+        } catch (ServiceException | RemoteException e) {
             throw new DispatchException(e);
         }
     }
@@ -1098,7 +1092,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     @Override
-    public Object execute(Arg... args) throws MogramException {
+    public Object execute(Arg... args) throws MogramException, ServiceException {
         Context cxt = (Context) Arg.selectDomain(args);
         if (cxt != null) {
             dataContext = (ServiceContext) cxt;
@@ -1165,7 +1159,7 @@ public abstract class Subroutine extends ServiceMogram implements Routine {
     }
 
     @Override
-    public Context evaluate(Context context, Arg... args) throws MogramException {
+    public Context evaluate(Context context, Arg... args) throws ServiceException, RemoteException {
         substitute(context);
         return exert(args).getContext();
     }

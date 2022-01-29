@@ -42,7 +42,7 @@ public class MultiFiEvaluator<T> extends MultiFiSlot<String, T> implements Evalu
 	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
 		if (multiFi != null) {
 			try {
-				List<Fidelity> fis = Arg.selectFidelities(args);
+				List<Fi> fis = Arg.selectFidelities(args);
 				if (fis.size() > 0) {
 					multiFi.selectSelect(fis.get(0).getName());
 					isValid = false;
@@ -110,7 +110,7 @@ public class MultiFiEvaluator<T> extends MultiFiSlot<String, T> implements Evalu
 
 	@Override
 	public void substitute(Arg... args) throws SetterException, RemoteException {
-		scope.substitute(args);
+		((ServiceMogram)scope).substitute(args);
 	}
 
 	@Override

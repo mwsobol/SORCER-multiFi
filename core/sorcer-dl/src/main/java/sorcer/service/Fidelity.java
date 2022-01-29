@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 6/27/16.
  */
-public class Fidelity<T> implements Fi<T>, Activity, Dependency, fi<T>, Arg {
+public class Fidelity<T> implements Fi<T>, Activity, Dependency, fi<T> {
 
     static final long serialVersionUID = 1L;
 
@@ -44,6 +44,12 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, fi<T>, Arg {
 	public Fidelity(String name) {
 		this();
 		this.fiName = name;
+	}
+
+	public Fidelity(String name, T select) {
+		this();
+		this.fiName = name;
+		this.select = select;
 	}
 
 	public Fidelity(String name, String path) {
@@ -106,6 +112,10 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, fi<T>, Arg {
         return selects.get(index);
     }
 
+	public T getProperSelect() {
+		return select;
+	}
+
     public T getSelect() {
 		// if a select not set return the firt one
 		if (select == null && selects.size() > 0) {
@@ -165,7 +175,7 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, fi<T>, Arg {
         }
     }
 
-	public T selectSelect(Fidelity fi) throws ConfigurationException {
+	public T selectSelect(Fi fi) throws ConfigurationException {
 		return findSelect(fi.getName());
 	}
 
@@ -212,6 +222,10 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, fi<T>, Arg {
 
     public Type getFiType() {
 		return fiType;
+	}
+
+	public void setFiType(Type type) {
+		 fiType = type;
 	}
 
     @Override

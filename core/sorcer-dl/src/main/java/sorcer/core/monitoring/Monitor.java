@@ -25,7 +25,7 @@ import java.io.IOException;
  * @author Dennis Reedy
  */
 public interface Monitor {
-    enum Status {SUBMITTED, ACTIVE, COMPLETED, FAILED }
+    enum Status { SUBMITTED, ACTIVE, COMPLETED, FAILED }
 
     /**
      * Clients first register with the {@code Monitor} service in order provide status. Clients are responsible

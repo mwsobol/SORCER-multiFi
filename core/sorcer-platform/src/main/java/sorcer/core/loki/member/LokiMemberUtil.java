@@ -19,6 +19,7 @@ import sorcer.core.loki.key.KeyGenerator;
 import sorcer.service.Accessor;
 import sorcer.service.ContextException;
 import sorcer.service.Routine;
+import sorcer.service.ServiceMogram;
 import sorcer.service.space.SpaceAccessor;
 
 import javax.crypto.Cipher;
@@ -654,7 +655,7 @@ public class LokiMemberUtil {
 				{
 					context1.iv(0,groupSeqId);
 					context1.iv(1,template.exertion.getName());
-					context1.iv(2,template.exertion.getSelectedFidelity().toString());
+					context1.iv(2, ((ServiceMogram)template.exertion).getSelectedFidelity().toString());
 					context1.iv(3,(new Timestamp(System.currentTimeMillis())).toString());
 					context1.iv(4,myName);
 					context1.iv(5,(new Timestamp(System.currentTimeMillis())).toString());

@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * Created by Mike Sobolewski on 5/19/16.
  */
-public class FidelityList extends ArrayList<Fidelity> implements Arg {
+public class FidelityList extends ArrayList<Fi> implements Arg {
 
     static final long serialVersionUID = 1L;
 
@@ -41,13 +41,13 @@ public class FidelityList extends ArrayList<Fidelity> implements Arg {
         super(size);
     }
 
-    public FidelityList(Set<Fidelity> fiSet) {
+    public FidelityList(Set<Fi> fiSet) {
         addAll(fiSet);
     }
 
-    public FidelityList(Fidelity... array) {
+    public FidelityList(Fi... array) {
         super();
-        for (Fidelity mf : array) {
+        for (Fi mf : array) {
             add(mf);
         }
     }
@@ -87,6 +87,12 @@ public class FidelityList extends ArrayList<Fidelity> implements Arg {
 
     public List<Service> toServiceList() {
         List<Service> sl = new ArrayList<>();
+        sl.addAll(this);
+        return sl;
+    }
+
+    public List<Fi> toFiList() {
+        List<Fi> sl = new ArrayList<>();
         sl.addAll(this);
         return sl;
     }

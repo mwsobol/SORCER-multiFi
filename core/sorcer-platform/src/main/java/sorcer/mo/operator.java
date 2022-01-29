@@ -23,14 +23,14 @@ import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
 import sorcer.core.context.*;
 import sorcer.core.context.model.Transmodel;
-import sorcer.core.context.model.req.AnalysisModel;
+import sorcer.core.context.model.req.ExploreModel;
+import sorcer.core.context.model.req.Srv;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.service.*;
 import sorcer.service.Analysis;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
-import sorcer.core.context.model.req.Req;
 import sorcer.core.context.model.req.RequestModel;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.dispatch.SortingException;
@@ -89,7 +89,7 @@ public class operator {
         while (i.hasNext()) {
             path = (String) i.next();
             obj = cxt.get(path);
-            v = model.get(path);
+            v = ((ServiceMogram)model).get(path);
             if (v instanceof Entry) {
                 ((Entry) v).setValue(obj);
             } else {
@@ -117,7 +117,7 @@ public class operator {
 
     public static Object value(Context context, String path, String domain) throws ContextException {
         if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
-            return ((Mogram)context.getChild(domain)).getEvaluatedValue(path);
+            return ((ServiceMogram)context.getChild(domain)).getEvaluatedValue(path);
         } else {
             try {
                 return ((Context) context.getChild(domain)).getValue(path);
@@ -138,7 +138,7 @@ public class operator {
 
     public static Object value(Request request, String path, Arg... args) {
         if (request instanceof Governance) {
-            return ((Governance) request).getOutput().get(path);
+            return ((ServiceContext)((Governance) request).getOutput()).get(path);
         }
         return null;
     }
@@ -169,7 +169,7 @@ public class operator {
                               Arg... args) throws ContextException {
         try {
             T out = null;
-            Object obj = context.get(path);
+            Object obj = ((ServiceContext)context).get(path);
             if (obj != null) {
                 out = (T) obj;
                 if (obj instanceof Number || obj instanceof Boolean
@@ -185,26 +185,33 @@ public class operator {
                     out = context.getValue(path, args);
                 }
             } else {
-//                if (((ServiceContext) context).getType().equals(Functionality.Type.TRANS)) {
-                String domainPath = null;
+                String name = null;
                 String domain = null;
                 int ind = path.indexOf("$");
                 // allow $ at te end
                 if (ind > 0 && path.length() > ind + 1) {
-                    domainPath = path.substring(0, ind);
+                    name = path.substring(0, ind);
                     domain = path.substring(ind + 1);
-                    if (context.get(domain) != null) {
-                        Object val = ((ServiceContext) context.get(domain)).get(domainPath);
+                    if (((ServiceContext)context).get(domain) != null) {
+                        Object val = ((ServiceContext) ((ServiceContext)context).get(domain)).get(name);
                         if (val instanceof Value) {
                             return (T) ((Value) val).getOut();
                         } else {
                             return (T) val;
                         }
+                    } else if (((ServiceContext)context).get("model/outputs/info") != null) {
+                        // compatibility with ResponseContext entries
+                        List entries = ( List ) ((ServiceContext)context).get("model/outputs/info");
+                        for (Object ent : entries) {
+                            if (ent instanceof Entry && ((Entry)ent).getName().equals(name)
+                                && ((Entry)ent).getDomain().equals(domain))
+                                return ( T ) ((Entry)ent).getValue();
+                        }
                     }
                 }
 
                 if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
-                    out = (T) context.getEvaluatedValue(path);
+                    out = (T) ((ServiceContext)context).getEvaluatedValue(path);
                 } else if (context instanceof Model && context.getDomainStrategy().getOutcome() != null) {
                     context.getDomainStrategy().getOutcome().putValue(path, out);
                 } else {
@@ -225,10 +232,10 @@ public class operator {
 
     public static ContextDomain setValues(ContextDomain model, Entry... entries) throws ContextException {
         for (Entry e : entries) {
-            Object v = model.asis(e.getName());
-            Object nv = e.asis();
-            String en = e.getName();
             try {
+                Object v = model.asis(e.getName());
+                Object nv = e.asis();
+                String en = e.getName();
                 if (v instanceof Setter) {
                     ((Setter) v).setValue(nv);
                 } else if (SdbUtil.isSosURL(v)) {
@@ -247,7 +254,7 @@ public class operator {
     public static ContextDomain setValue(ContextDomain model, String entName, Object value)
         throws ContextException {
         try {
-            Object entry = model.get(entName);
+            Object entry = ((ServiceMogram)model).get(entName);
             if (entry == null) {
                 if (model.getClass().equals(ServiceContext.class)) {
                     ((ServiceContext)model).put(entName, value);
@@ -275,7 +282,12 @@ public class operator {
 
     public static Model setValue(Model model, String entName, String path, Object value)
         throws ContextException {
-        Object entry = model.asis(entName);
+        Object entry = null;
+        try {
+            entry = model.asis(entName);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
         if (entry instanceof Setup) {
             ((Setup) entry).setEntry(path, value);
         } else {
@@ -286,7 +298,12 @@ public class operator {
 
     public static Model setValue(Model model, String entName, Function... entries)
         throws ContextException {
-        Object entry = model.asis(entName);
+        Object entry = null;
+        try {
+            entry = model.asis(entName);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
         if (entry != null) {
             if (entry instanceof Setup) {
                 for (Function e : entries) {
@@ -338,7 +355,7 @@ public class operator {
     }
 
     public static EntryModel entModel(Object... entries)
-        throws ContextException {
+        throws ContextException, RemoteException {
         if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
             ((Context) entries[0]).setModeling(true);
             return new EntryModel((Context) entries[0]);
@@ -409,7 +426,7 @@ public class operator {
         return out;
     }
 
-    public static ServiceContext result(Mogram mogram) throws ContextException {
+    public static ServiceContext result(Mogram mogram) throws ContextException, RemoteException {
         if (mogram instanceof ContextDomain) {
             return (ServiceContext) ((ServiceContext) mogram).getDomainStrategy().getOutcome();
         } else if (mogram instanceof Routine) {
@@ -436,7 +453,7 @@ public class operator {
     }
 
     public static Object get(ContextDomain model, String path) {
-        return model.get(path);
+        return ((ServiceMogram)model).get(path);
     }
 
     public static void subIn(Context target, Context context, String... varNames) throws ContextException {
@@ -485,13 +502,13 @@ public class operator {
         }
     }
 
-    public static Mogram setResponse(Mogram mogram, Path... mogramPaths) {
+    public static Mogram setResponse(Mogram mogram, Path... mogramPaths) throws RemoteException {
         List<Path> paths = Arrays.asList(mogramPaths);
         mogram.getDomainStrategy().setResponsePaths(paths);
         return mogram;
     }
 
-    public static Mogram setResponse(Mogram mogram, String... mogramPaths) {
+    public static Mogram setResponse(Mogram mogram, String... mogramPaths) throws RemoteException {
         List<Path> paths = new ArrayList();
         for (String ps : mogramPaths) {
             paths.add(new Path(ps));
@@ -500,7 +517,7 @@ public class operator {
         return mogram;
     }
 
-    public static void init(ContextDomain model, Arg... args) throws ContextException {
+    public static void init(ContextDomain model, Arg... args) throws ContextException, RemoteException {
         // initialize a model
         Map<String, List<ExecDependency>> depMap = ((ModelStrategy) model.getDomainStrategy()).getDependentPaths();
         Paths paths = Arg.selectPaths(args);
@@ -513,12 +530,15 @@ public class operator {
     }
 
     public static Mogram clear(Mogram mogram) throws MogramException {
-        mogram.clear();
+        ((ServiceMogram)mogram).clear();
         return mogram;
     }
 
-    public static ServiceContext out(Contextion contextion) throws ServiceException {
-        if (contextion instanceof Node) {
+    public static ServiceContext out(Contextion contextion) throws ServiceException, RemoteException {
+        if (contextion instanceof Context) {
+            ((ServiceContext)contextion).setType(Functionality.Type.OUTPUT);
+            return (ServiceContext) contextion;
+        } if (contextion instanceof Node) {
             return (ServiceContext) contextion.getOutput();
         } else if (contextion instanceof Governance) {
             return (ServiceContext) ((Governance) contextion).getOutput();
@@ -528,7 +548,10 @@ public class operator {
     }
 
     public static ServiceContext in(Contextion contextion) throws ContextException {
-        if (contextion instanceof Node) {
+        if (contextion instanceof Context) {
+            ((ServiceContext)contextion).setType(Functionality.Type.INPUT);
+            return (ServiceContext) contextion;
+        } else if (contextion instanceof Node) {
             return (ServiceContext) ((ServiceNode) contextion).getInput();
         } else if (contextion instanceof Collaboration) {
             return (ServiceContext) ((Collaboration) contextion).getInput();
@@ -547,8 +570,8 @@ public class operator {
         return collab.setInput(in);
     }
 
-    public static void traced(Mogram mogram, boolean isTraced)  {
-        ((FidelityManager) mogram.getFidelityManager()).setTraced(isTraced);
+    public static void traced(Contextion contextion, boolean isTraced) throws RemoteException {
+        ((FidelityManager) contextion.getFidelityManager()).setTraced(isTraced);
     }
 
     public static Connector inConn(List<Entry> entries) throws ContextException {
@@ -602,20 +625,32 @@ public class operator {
 
     public static Mogram addFidelities(Mogram mogram, Fidelity... fidelities) {
         for (Fidelity fi : fidelities) {
-            ((FidelityManager) mogram.getFidelityManager()).put(fi.getName(), fi);
+            ((FidelityManager) ((ServiceMogram)mogram).getFidelityManager()).put(fi.getName(), fi);
         }
         return mogram;
     }
 
-    public static Mogram setMorpher(Mogram mogram, Morpher mdlMorpher) {
-        ((MultiFiSlot) mogram).setMorpher(mdlMorpher);
-        return mogram;
+    public static void setInOutMorpher(Contextion contextion, Morpher inMorpher, Morpher outMorpher) {
+        ((MultiFiSlot) contextion).setInMorpher(inMorpher);
+        ((MultiFiSlot) contextion).setMorpher(outMorpher);
     }
 
-    public static Mogram reconfigure(Mogram mogram, Fidelity... fidelities) throws ConfigurationException {
+    public static void setOutMorpher(Contextion contextion, Morpher mdlMorpher) {
+        ((MultiFiSlot) contextion).setMorpher(mdlMorpher);
+    }
+
+    public static void setMorpher(Contextion contextion, Morpher mdlMorpher) {
+        ((MultiFiSlot) contextion).setMorpher(mdlMorpher);
+    }
+
+    public static void setInMorpher(Contextion contextion, Morpher mdlMorpher) {
+        ((MultiFiSlot) contextion).setInMorpher(mdlMorpher);
+    }
+
+    public static Mogram reconfigure(Mogram mogram, Fi... fidelities) throws ConfigurationException {
         FidelityList fis = new FidelityList();
         List<String> metaFis = new ArrayList<>();
-        for (Fidelity fi : fidelities) {
+        for (Fi fi : fidelities) {
             if (fi instanceof Metafidelity) {
                 metaFis.add(fi.getName());
             } else if (fi instanceof Fidelity) {
@@ -624,20 +659,20 @@ public class operator {
         }
         if (metaFis.size() > 0) {
             try {
-                ((FidelityManager) mogram.getFidelityManager()).morph(metaFis);
+                ((FidelityManager) ((ServiceMogram)mogram).getFidelityManager()).morph(metaFis);
             } catch (EvaluationException e) {
                 throw new ConfigurationException(e);
             }
         }
         if (fis.size() > 0) {
-            ((FidelityManager) mogram.getFidelityManager()).reconfigure(fis);
+            ((FidelityManager) ((ServiceMogram)mogram).getFidelityManager()).reconfigure(fis);
         }
         return mogram;
     }
 
-    public static Mogram reconfigure(Mogram model, List fiList) throws ConfigurationException {
+    public static Mogram reconfigure(Mogram model, FidelityList fiList) throws ConfigurationException {
         if (fiList instanceof FidelityList) {
-            ((FidelityManager) model.getFidelityManager()).reconfigure((FidelityList) fiList);
+            ((FidelityManager) ((ServiceMogram)model).getFidelityManager()).reconfigure((FidelityList) fiList);
         } else {
             throw new ConfigurationException("A list of fidelities is required for reconfigurartion");
         }
@@ -647,7 +682,7 @@ public class operator {
     public static Mogram morph(Mogram model, String... fiNames) throws ConfigurationException {
 //        ((FidelityManager)model.getFidelityManager()).morph(fiNames);
         try {
-            model.morph(fiNames);
+            model.project(fiNames);
         } catch (ContextException | RemoteException e) {
             throw new ConfigurationException(e);
         }
@@ -666,7 +701,7 @@ public class operator {
         return new FreeContextion(name, Functionality.Type.PIPELINE);
     }
 
-    public static Model model(Object... items) throws ContextException {
+    public static Model model(Object... items) throws ContextException, RemoteException {
         String name = "unknown" + count++;
         boolean hasEntry = false;
         boolean aneType = false;
@@ -689,7 +724,7 @@ public class operator {
                     hasEntry = true;
                     if (i instanceof Prc)
                         procType = true;
-                    else if (i instanceof Req || i instanceof Snr) {
+                    else if (i instanceof Srv || i instanceof Snr) {
                         srvType = true;
                     }
                 } catch (Exception e) {
@@ -738,7 +773,7 @@ public class operator {
 
     public static Transmodel tModel(Object... data) throws ContextException {
         String name = getUnknown();
-        List<Domain> domains = new ArrayList<>();
+        List<Contextion> domains = new ArrayList<>();
         List<ServiceFidelity> modelFis = new ArrayList<>();
         Dependency dependency = null;
         ExecDeps execDeps = null;
@@ -772,7 +807,7 @@ public class operator {
         for (Object fi : modelFis) {
             dataList.remove(fi);
         }
-        Transmodel transModel = new AnalysisModel(name);
+        Transmodel transModel = new ExploreModel(name);
         try {
             transModel.addChildren(domains);
             Object[] names = new Object[domains.size()];
@@ -783,10 +818,10 @@ public class operator {
 
             if (modelFis.size() > 0) {
                 FidelityManager fiManager = new FidelityManager(transModel);
-                Map<String, ServiceFidelity> fis = new HashMap<>();
+                Map<String, Fidelity> fis = new HashMap<>();
                 for (ServiceFidelity mdlFi : modelFis) {
                     fis.put(mdlFi.getName(), mdlFi);
-                    transModel.getChildren().put(mdlFi.getName(), (RequestModel) mdlFi.getSelect());
+                    transModel.getChildren().put(mdlFi.getName(), (Discipline) mdlFi.getSelect());
                 }
                 fiManager.setFidelities(fis);
                 ((RequestModel)transModel).setFidelityManager(fiManager);
@@ -832,7 +867,7 @@ public class operator {
                 dest[i + 1] = dataList.get(i);
             }
             reqModel(dest);
-        } catch (ContextException | SignatureException e) {
+        } catch (ContextException | SignatureException | RemoteException e) {
             throw new EvaluationException(e);
         }
         return transModel;
@@ -843,7 +878,7 @@ public class operator {
         return add((Context) model, objects);
     }
 
-    public static NodeFidelity add(Node node, NodeFidelity nodeFi) {
+    public static NodeFi add(Node node, NodeFi nodeFi) {
         node.getMultiFi().getSelects().add(nodeFi);
         return nodeFi;
     }
@@ -940,7 +975,7 @@ public class operator {
     }
 
     public static Model aneModel(String name, Object... objects)
-        throws ContextException {
+        throws ContextException, RemoteException {
         return reqModel(name, objects);
     }
 
@@ -962,13 +997,13 @@ public class operator {
         return obj;
     }
 
-    public static Model reqModel(Object... items) throws ContextException {
+    public static Model reqModel(Object... items) throws ContextException, RemoteException {
         sorcer.eo.operator.Complement complement = null;
         Fidelity<Path> responsePaths = null;
         RequestModel model = null;
         FidelityManager fiManager = null;
         List<Metafidelity> metaFis = new ArrayList<>();
-        List<Req> morphFiEnts = new ArrayList<>();
+        List<Srv> morphFiEnts = new ArrayList<>();
         List<Fidelity> fis = new ArrayList<>();
         Projection inPathPrj = null;
         Projection outPathPrj = null;
@@ -991,8 +1026,8 @@ public class operator {
                 } else if (((Projection) item).getFiType().equals(Fi.Type.CXT_PRJ)) {
                     cxtPrjs.add((Projection) item);
                 }
-            } else if (item instanceof Req && ((Req) item).getImpl() instanceof MorphFidelity) {
-                morphFiEnts.add((Req) item);
+            } else if (item instanceof Srv && ((Srv) item).getImpl() instanceof MorphFidelity) {
+                morphFiEnts.add((Srv) item);
             } else if (item instanceof Fidelity) {
                 if (item instanceof Metafidelity) {
                     metaFis.add((Metafidelity) item);
@@ -1048,7 +1083,7 @@ public class operator {
             fiManager.add(fis);
             MorphFidelity mFi;
             if ((morphFiEnts.size() > 0)) {
-                for (Req morphFiEnt : morphFiEnts) {
+                for (Srv morphFiEnt : morphFiEnts) {
                     mFi = (MorphFidelity) morphFiEnt.getImpl();
                     fiManager.addMorphedFidelity(morphFiEnt.getName(), mFi);
                     fiManager.addFidelity(morphFiEnt.getName(), mFi.getFidelity());
@@ -1113,11 +1148,28 @@ public class operator {
     }
 
     public static String rgnn(Context context) {
-        return (String) context.get(Functionality.Type.REGION.toString());
+        return (String) ((ServiceContext)context).get(Functionality.Type.REGION.toString());
     }
 
-    public static void analyze(Collaboration collab, Context context) throws ServiceException {
-        collab.analyze(context);
+//    public static Context analyze(Transdiscipline discipline, Context context) throws ContextException {
+//        try {
+//            if (discipline instanceof Collaboration) {
+//                ((Collaboration)discipline).analyze(context);
+//            } else {
+//                discipline.getAnalyzerFi().getSelect().analyze(discipline, context);
+//            }
+//            return discipline.getOutput();
+//        } catch (ServiceException | AnalysisException | RemoteException e) {
+//            throw new ContextException(e);
+//        }
+//    }
+
+    public static Context explore(Transdiscipline discipline, Context context) throws ContextException {
+        try {
+            return discipline.getExplorerFi().getSelect().explore(context);
+        } catch (ServiceException | RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     public static Context dmnCxt(Request request, String domainName) {
@@ -1158,7 +1210,7 @@ public class operator {
         } else if (request instanceof Transdomain) {
             return ((Transmodel) request).getChildrenContexts().get(domainName);
         } else if (request instanceof Context) {
-            return ((Map<String, Context>)((Context)request).get(Context.DOMAIN_OUTPUTS_PATH)).get(domainName);
+            return ((Map<String, Context>)((ServiceContext)request).get(Context.DOMAIN_OUTPUTS_PATH)).get(domainName);
         }
         return null;
     }
@@ -1182,19 +1234,19 @@ public class operator {
     }
 
     public static String dmnName(Context context) {
-        return (String) context.get(Functionality.Type.DOMAIN.toString());
+        return (String) ((ServiceContext)context).get(Functionality.Type.DOMAIN.toString());
     }
 
-    public static boolean isExec(Domain domain)  {
+    public static boolean isExec(Domain domain) throws RemoteException {
         return domain.isExec();
     }
 
-    public static Domain notExec(Domain domain)  {
-        domain.setExec(false);
+    public static Domain notExec(Domain domain) throws RemoteException {
+        ((SignatureDomain)domain).setExec(false);
         return domain;
     }
-    public static Domain setExec(Domain domain)  {
-        domain.setExec(true);
+    public static Domain setExec(Domain domain) throws RemoteException {
+        ((SignatureDomain)domain).setExec(true);
         return domain;
     }
 
@@ -1223,11 +1275,11 @@ public class operator {
     }
 
     public static String clbName(Context context) {
-        return (String) context.get(Functionality.Type.COLLABORATION.toString());
+        return (String) ((ServiceContext)context).get(Functionality.Type.COLLABORATION.toString());
     }
 
     public static String domain(Context context) {
-        return (String) context.get(Functionality.Type.DOMAIN.toString());
+        return (String) ((ServiceContext)context).get(Functionality.Type.DOMAIN.toString());
     }
 
     public static SignatureDomain domain(Signature signature) {
@@ -1238,11 +1290,11 @@ public class operator {
         return new SignatureDomain(name, signature);
     }
 
-    public static Node rnd(NodeFidelity... discFis) {
+    public static Node rnd(NodeFi... discFis) {
         return rnd(null, discFis);
     }
 
-    public static Node rnd(String name, NodeFidelity... discFis) {
+    public static Node rnd(String name, NodeFi... discFis) {
         return new ServiceNode(name, discFis);
     }
 
@@ -1250,7 +1302,7 @@ public class operator {
         return (Node) ((Collaboration)region).getChildren().get(rndName);
     }
 
-    public static Collaboration clb(Object... data) throws ContextException {
+    public static Collaboration clb(Object... data) throws ContextException, RemoteException {
         if (data[0] instanceof Context &&
                 ((Context)data[0]).getSubjectValue() instanceof Collaboration) {
             return (Collaboration) ((Context)data[0]).getSubjectValue();
@@ -1282,12 +1334,17 @@ public class operator {
                 execDeps = (ExecDeps) o;
             } else if (o instanceof ServiceFidelity) {
                 discFis.add((ServiceFidelity) o);
-            } else if (o instanceof Paths && ((Paths) o).type.equals(Functionality.Type.COLLABORATION)) {
+            } else if (o instanceof Paths && ((Paths) o).type.equals(Functionality.Type.DISCIPLINE)) {
                 domainPaths = (Paths) o;
             }
         }
 
-        Collaboration collab = new Collaboration(name, domains);
+        Collaboration collab = null;
+        try {
+            collab = new Collaboration(name, domains);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
         collab.setDomainName(name);
         if (collabContext != null) {
             collab.setInput(collabContext);
@@ -1295,16 +1352,20 @@ public class operator {
         Object[] names = new Object[domains.size()];
 
         for (int i = 0; i < domains.size(); i++) {
-            domains.get(i).setParent(collab);
+            try {
+                domains.get(i).setParent(collab);
+            } catch (RemoteException e) {
+                throw new ContextException(e);
+            }
             names[i] = domains.get(i).getName();
         }
 
         if (discFis.size() > 0) {
             FidelityManager fiManager = new FidelityManager();
-            Map<String, ServiceFidelity> fis = new HashMap<>();
+            Map<String, Fidelity> fis = new HashMap<>();
             for (ServiceFidelity discFi : discFis) {
                 fis.put(discFi.getName(), discFi);
-                collab.getChildren().put(discFi.getName(), (Domain) discFi.getSelect());
+                collab.getChildren().put(discFi.getName(), (Discipline) discFi.getSelect());
             }
             fiManager.setFidelities(fis);
             collab.setFiManager(fiManager);
@@ -1369,7 +1430,7 @@ public class operator {
         return contextList;
     }
 
-    public static Governance gov(Object... data) throws ContextException {
+    public static Governance gov(Object... data) throws ContextException, RemoteException {
         String name = getUnknown();
         List<Region> regions = new ArrayList<>();
         List<ServiceFidelity> discFis = new ArrayList<>();
@@ -1414,7 +1475,7 @@ public class operator {
 
         if (discFis.size() > 0) {
             FidelityManager fiManager = new FidelityManager();
-            Map<String, ServiceFidelity> fis = new HashMap<>();
+            Map<String, Fidelity> fis = new HashMap<>();
             for (ServiceFidelity discFi : discFis) {
                 fis.put(discFi.getName(), discFi);
                 gov.getRegions().put(discFi.getName(), (Region) discFi.getSelect());
@@ -1460,11 +1521,11 @@ public class operator {
         return gov;
     }
 
-    public static Region rgn(Object... data) throws ContextException {
+    public static Region rgn(Object... data) throws ContextException, RemoteException {
         return rgn(null, data);
     }
 
-    public static Region rgn(String rgnName, Object... data) throws ContextException {
+    public static Region rgn(String rgnName, Object... data) throws ContextException, RemoteException {
         String name = getUnknown();
         if (rgnName != null) {
             name = rgnName;
@@ -1487,7 +1548,7 @@ public class operator {
             } else if (o instanceof Node) {
                 // initialize node if thr instance was created frm builder signature
                 if (((Node)o).getName() == null) {
-                    NodeFidelity fi = (NodeFidelity) ((Node)o).getMultiFi().get(0);
+                    NodeFi fi = ( NodeFi ) ((Node)o).getMultiFi().get(0);
                     ((Node)o).getMultiFi().setSelect(fi);
                     ((Node)o).setName(fi.getName());
                 }
@@ -1500,7 +1561,7 @@ public class operator {
                 execDeps = (ExecDeps) o;
             } else if (o instanceof ServiceFidelity) {
                 discFis.add((ServiceFidelity) o);
-            } else if (o instanceof Paths && ((Paths) o).type.equals(Functionality.Type.NODE)) {
+            } else if (o instanceof Paths && ((Paths) o).type.equals(Functionality.Type.DISCIPLINE)) {
                 nodePaths = (Paths) o;
             }
         }
@@ -1520,7 +1581,7 @@ public class operator {
         }
         if (discFis.size() > 0) {
             FidelityManager fiManager = new FidelityManager();
-            Map<String, ServiceFidelity> fis = new HashMap<>();
+            Map<String, Fidelity> fis = new HashMap<>();
             for (ServiceFidelity discFi : discFis) {
                 fis.put(discFi.getName(), discFi);
                 ((Collaboration)rgn).getChildren().put(discFi.getName(), (Region) discFi.getSelect());
@@ -1596,6 +1657,62 @@ public class operator {
         return sFi;
     }
 
+    public static ServiceFidelity intFi(String fiName, Signature... signatures) {
+        Fidelity ifi = null;
+        List<Service> intentFis = new ArrayList<>();
+        for (Signature sig : signatures) {
+            ifi =  new Fidelity(sig.getName(), sig);
+            ifi.setType(Fi.Type.INTENT);
+            intentFis.add(ifi);
+        }
+        ServiceFidelity sFi = new ServiceFidelity(fiName, intentFis);
+        sFi.setType(Fi.Type.INTENT);
+        return sFi;
+    }
+
+    public static Fi intFi(Signature... signatures) {
+        return intFi(null, signatures);
+    }
+
+    public static Context.IntentType intType(String type) {
+        for (Context.IntentType itype : Context.IntentType.values()) {
+            if (itype.toString().equals(type.toUpperCase())) {
+                return itype;
+            }
+        }
+        return Context.IntentType.DATA;
+    }
+
+    public static ServiceFidelity intFi(Context... contexts) {
+        return intFi(null, contexts);
+    }
+
+    public static ServiceFidelity intFi(String fiName, Context... contexts) {
+        Fidelity ifi = null;
+        List<Service> intentFis = new ArrayList<>();
+        for (Context cxt : contexts) {
+            ifi = new Fidelity(cxt.getName(), cxt);
+            ifi.setType(Fi.Type.INTENT);
+            intentFis.add(ifi);
+        }
+        ServiceFidelity sFi = new ServiceFidelity(fiName, intentFis);
+        sFi.setType(Fi.Type.INTENT);
+        return sFi;
+    }
+
+    public static ServiceFidelity dznFi(Fi... intentFis) {
+        ServiceFidelity iFi = new ServiceFidelity(intentFis);
+        iFi.setType(Fi.Type.DESIGN);
+        return iFi;
+    }
+
+    public static ServiceFidelity dznFi(String name, Fi... intentFis) {
+        ServiceFidelity iFi = new ServiceFidelity(intentFis);
+        iFi.setName(name);
+        iFi.setType(Fi.Type.DESIGN);
+        return iFi;
+    }
+
     public static Analysis mda(String name, Analysis mda) {
         return new Analyzer(name, mda);
     }
@@ -1609,6 +1726,138 @@ public class operator {
         mdaFi.setName(name);
         mdaFi.setType(Fi.Type.MDA);
         return mdaFi;
+    }
+
+    public void clear(Fidelity fi) {
+        fi.setSelect(null);
+    }
+
+    public static Morpher mfr(String name, Morpher morpher) {
+        return new Morpheus(name, morpher,  Morpher.Dir.OUT);
+    }
+
+    public static Morpher inMfr(String name, Morpher morpher) {
+        return new Morpheus(name, morpher, Morpher.Dir.IN);
+    }
+
+    public static Morpher outMfr(String name, Morpher morpher) {
+        return new Morpheus(name, morpher, Morpher.Dir.OUT);
+    }
+
+    public static Morpher mfr(String name, Morpher morpher, Morpher.Dir direction) {
+        return new Morpheus(name, morpher, direction);
+    }
+
+    public static ServiceFidelity mfrFi(Morpher... mmfrEntries) {
+        return mfrFi(null, mmfrEntries) ;
+    }
+    public static ServiceFidelity mfrFi(String name, Morpher... mmfrEntries) {
+        Morpheus[] entries = new Morpheus[mmfrEntries.length];
+        for (int i = 0; i < mmfrEntries.length; i++) {
+            entries[i] = (Morpheus)mmfrEntries[i];
+        }
+        ServiceFidelity mdaFi = new ServiceFidelity(entries);
+        if (name != null) {
+            mdaFi.setName(name);
+        }
+        mdaFi.setType(Fi.Type.MORPH);
+        return mdaFi;
+    }
+
+    public static Developer dev(String name, Development development) {
+        return new Developer(name, development);
+    }
+
+    public static ServiceFidelity dscFi(Signature... signatures) {
+        return dscFi(null, signatures);
+    }
+
+    public static ServiceFidelity dscFi(String name, Signature... signatures) {
+        ServiceFidelity disFi = new ServiceFidelity(signatures);
+        if (name != null) {
+            disFi.setName(name);
+        }
+        disFi.setType(Fi.Type.DISCIPLINE);
+        return disFi;
+    }
+
+    public static MorphFidelity devFi(String name, ServiceFidelity inMorherFi, ServiceFidelity outMorherFi, Development... devEntries) {
+        ServiceFidelity devFi = sorcer.mo.operator.devFi(name, devEntries);
+        MorphFidelity morphFi = new MorphFidelity(devFi);
+        if (name != null) {
+            morphFi.setName(name);
+        }
+        morphFi.setInMorpherFi(inMorherFi);
+        morphFi.setMorpherFi(outMorherFi);
+        devFi.setType(Fi.Type.DEV);
+        return morphFi;
+    }
+
+    public static MorphFidelity devFi(String name, ServiceFidelity morherFi, Development... devEntries) {
+        ServiceFidelity devFi = sorcer.mo.operator.devFi(name, devEntries);
+        List<Service> inMfrs = new ArrayList();
+        List<Service> outMfrs = new ArrayList();
+
+        for (Object fi : morherFi.getSelects()) {
+            if (fi instanceof Morpheus && ((Morpheus)fi).getDirection().equals(Morpher.Dir.IN)) {
+                inMfrs.add(( Service ) fi);
+            } else if (fi instanceof Morpheus && ((Morpheus)fi).getDirection().equals(Morpher.Dir.OUT)) {
+                outMfrs.add(( Service ) fi);
+            }
+        }
+        ServiceFidelity inMrfFi = new ServiceFidelity(name, inMfrs);
+        ServiceFidelity outMrfFi = new ServiceFidelity(name, outMfrs);
+        MorphFidelity morphFi = new MorphFidelity(devFi);
+        if (name != null) {
+            morphFi.setName(name);
+        }
+        morphFi.setInMorpherFi(inMrfFi);
+        morphFi.setMorpherFi(outMrfFi);
+        devFi.setType(Fi.Type.DEV);
+        return morphFi;
+    }
+
+    public static MorphFidelity devFi(String name, Morpher inMorher, Morpher outMorher, Development... devEntries) {
+        ServiceFidelity devFi = sorcer.mo.operator.devFi(name, devEntries);
+        MorphFidelity morphFi = new MorphFidelity(devFi);
+        ServiceFidelity inMrfFi = new ServiceFidelity(( Morpheus ) mfr(name, inMorher));
+        ServiceFidelity outMrfFi = new ServiceFidelity(( Morpheus ) mfr(name, outMorher));
+        if (name != null) {
+            morphFi.setName(name);
+        }
+        morphFi.setInMorpherFi(inMrfFi);
+        morphFi.setMorpherFi(outMrfFi);
+        devFi.setType(Fi.Type.DEV);
+        return morphFi;
+    }
+
+    public static MorphFidelity devFi(String name, Morpher morher, Development... devEntries) {
+        ServiceFidelity devFi = sorcer.mo.operator.devFi(name, devEntries);
+        MorphFidelity morphFi = new MorphFidelity(devFi);
+        ServiceFidelity mrfFi = new ServiceFidelity(( Morpheus ) mfr(name, morher));
+        if (name != null) {
+            morphFi.setName(name);
+        }
+        morphFi.setMorpherFi(mrfFi);
+        devFi.setType(Fi.Type.DEV);
+        return morphFi;
+    }
+
+    public static ServiceFidelity devFi(Development... devEntries) {
+       return devFi(null, devEntries);
+    }
+
+    public static ServiceFidelity devFi(String name, Development... devEntries) {
+        Developer[] entries = new Developer[devEntries.length];
+        for (int i = 0; i < devEntries.length; i++) {
+            entries[i] = (Developer) devEntries[i];
+        }
+        ServiceFidelity devFi = new ServiceFidelity(entries);
+        if (name != null) {
+            devFi.setName(name);
+        }
+        devFi.setType(Fi.Type.DEV);
+        return devFi;
     }
 
     public static ServiceFidelity explFi(String name, Exploration... explEntries) {
@@ -1665,18 +1914,22 @@ public class operator {
     }
 
     public static ContextList getDomainContexts(Context context) {
-        return (ContextList) context.get(Context.COMPONENT_CONTEXT_PATH);
+        return (ContextList) ((ServiceContext)context).get(Context.COMPONENT_CONTEXT_PATH);
     }
 
     public static DispatcherList getDomainDispatchers(Context context) {
-        return (DispatcherList) context.get(Context.COMPONENT_DISPATCHER_PATH);
+        return (DispatcherList) ((ServiceContext)context).get(Context.COMPONENT_DISPATCHER_PATH);
     }
 
     public static Context getDomainContext(ContextDomain context, String domain) {
         if (context instanceof Transdomain) {
-            return ((Transdomain)context).getChildrenContexts().get(domain);
+            if (domain.equals(context.getName())) {
+                return (( Transdomain ) context).getChildrenContexts().get(domain);
+            } else {
+                return ((Transdomain)context).getChildrenContexts().get(context.getName());
+            }
         } else if (context instanceof Context) {
-            Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
+            Object domainContexts = ((ServiceContext)context).get(Context.COMPONENT_CONTEXT_PATH);
             if (domainContexts instanceof ContextList && ((ContextList) domainContexts).size() > 0) {
                 return ((ContextList) domainContexts).select(domain);
             }
@@ -1686,7 +1939,7 @@ public class operator {
 
     public static Dispatch getDomainDispatcher(Context context, String domain) {
         if (context instanceof ServiceContext) {
-            Object domainDispatchers = context.get(Context.COMPONENT_DISPATCHER_PATH);
+            Object domainDispatchers = ((ServiceContext)context).get(Context.COMPONENT_DISPATCHER_PATH);
             if (domainDispatchers instanceof DispatcherList && ((DispatcherList) domainDispatchers).size() > 0) {
                 return ((DispatcherList) domainDispatchers).select(domain);
             }
@@ -1708,7 +1961,7 @@ public class operator {
 
     public static Context addDomainContext(Context context, Context domainContext) {
         if (context instanceof ServiceContext) {
-            Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
+            Object domainContexts = ((ServiceContext)context).get(Context.COMPONENT_CONTEXT_PATH);
             if (domainContexts == null) {
                 domainContexts = new ContextList();
                 ((ServiceContext) context).put(Context.COMPONENT_CONTEXT_PATH, domainContexts);
@@ -1723,7 +1976,7 @@ public class operator {
 
     public static Dispatch addDomainDispatcher(Context context, Dispatch domainDispatcher) {
         if (context instanceof ServiceContext) {
-            Object domainDispatchers = context.get(Context.COMPONENT_DISPATCHER_PATH);
+            Object domainDispatchers = ((ServiceContext)context).get(Context.COMPONENT_DISPATCHER_PATH);
             if (domainDispatchers == null) {
                 domainDispatchers = new DispatcherList();
                 ((ServiceContext) context).put(Context.COMPONENT_DISPATCHER_PATH, domainDispatchers);
@@ -1738,7 +1991,7 @@ public class operator {
 
     public static Context updateDomainContext(Context context, Context domainContext) {
         if (context instanceof ServiceContext) {
-            ContextList domainContexts = (ContextList) context.get(Context.COMPONENT_CONTEXT_PATH);
+            ContextList domainContexts = (ContextList) ((ServiceContext)context).get(Context.COMPONENT_CONTEXT_PATH);
             Context edc = domainContexts.select(domainContext.getName());
             Iterator<Map.Entry<String, Object>> eit =
                 ((ServiceContext)domainContext).getData().entrySet().iterator();
@@ -1752,7 +2005,7 @@ public class operator {
 
     public static Context setDomainContext(Context context, Context domainContext) {
         if (context instanceof ServiceContext) {
-            Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
+            Object domainContexts = ((ServiceContext)context).get(Context.COMPONENT_CONTEXT_PATH);
             if (domainContexts == null) {
                 domainContexts = new ContextList();
                 ((ServiceContext) context).put(Context.COMPONENT_CONTEXT_PATH, domainContexts);
@@ -1766,7 +2019,7 @@ public class operator {
 
     public static Dispatch setDomainDispatcher(Context context, Dispatch domainDispatcher) {
         if (context instanceof ServiceContext) {
-            Object domainDispatchers = context.get(Context.COMPONENT_DISPATCHER_PATH);
+            Object domainDispatchers = ((ServiceContext)context).get(Context.COMPONENT_DISPATCHER_PATH);
             if (domainDispatchers == null) {
                 domainDispatchers = new DispatcherList();
                 ((ServiceContext) context).put(Context.COMPONENT_DISPATCHER_PATH, domainDispatchers);
@@ -1780,7 +2033,7 @@ public class operator {
 
     public static void removeDomainContext(Context context, String domain) {
         if (context instanceof ServiceContext) {
-            Object domainContexts = context.get(Context.COMPONENT_CONTEXT_PATH);
+            Object domainContexts = ((ServiceContext)context).get(Context.COMPONENT_CONTEXT_PATH);
             if (domainContexts instanceof ContextList && ((ContextList) domainContexts).size() > 0) {
                 ((ContextList) domainContexts).remove(domain);
             }
@@ -1789,7 +2042,7 @@ public class operator {
 
     public static void removeDomainDispatchers(Context context, String domain) {
         if (context instanceof ServiceContext) {
-            Object domainDispatchers = context.get(Context.COMPONENT_DISPATCHER_PATH);
+            Object domainDispatchers = ((ServiceContext)context).get(Context.COMPONENT_DISPATCHER_PATH);
             if (domainDispatchers instanceof DispatcherList && ((DispatcherList) domainDispatchers).size() > 0) {
                 ((ContextList) domainDispatchers).remove(domain);
             }

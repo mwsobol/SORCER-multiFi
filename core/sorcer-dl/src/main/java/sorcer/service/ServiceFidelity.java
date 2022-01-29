@@ -41,11 +41,15 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 		this.fiType = type;
 	}
 	public ServiceFidelity(String name) {
-		this.fiName = name;
+		if (name == null) {
+			fiName = "fidelity" + count++;
+		} else {
+			this.fiName = name;
+		}
 	}
 
 	public ServiceFidelity(String name, String path) {
-		this.fiName = name;
+		this(name);
 		this.path = path;
 	}
 
@@ -81,14 +85,22 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 	}
 
 	public ServiceFidelity(String name, Service... selects) {
-		this.fiName = name;
-		for (Service s : selects)
+		this(name);
+		for (Service s : selects) {
 			this.selects.add(s);
+		}
+		if (selects.length > 0) {
+			select = selects[0];
+		}
 	}
 
 	public ServiceFidelity(ServiceFidelity fidelity) {
-		for (Service s : fidelity.selects)
+		for (Service s : fidelity.selects) {
 			selects.add(s);
+		}
+		if (fidelity.selects.size() > 0) {
+			select = selects.get(0);
+		}
 		this.path = fidelity.path;
 		this.fiType = fidelity.fiType;
 		if (fidelity.fiName != null)
@@ -108,12 +120,28 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 	public ServiceFidelity(String name, List<Service> selectors) {
 		for (Service s : selectors)
 			selects.add(s);
-		this.fiName = name;
+		if (name != null) {
+			this.fiName = name;
+		}
 	}
 
 	public ServiceFidelity(String name, Service selector) {
 		selects.add(selector);
 		this.fiName = name;
+	}
+
+	public Service properSelect(String fiName) throws ConfigurationException {
+		Object selected = null;
+		for (Service item : selects) {
+			if (((Identifiable) item).getName().equals(fiName)) {
+				selected = item;
+				break;
+			}
+		}
+		if (selected != null) {
+			select = (Service) selected;
+		}
+		return select;
 	}
 
 	@Override
@@ -134,7 +162,6 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 		} else {
 			throw new ConfigurationException("no such fidelity: " + fiName);
 		}
-
 	}
 
 	public String getPath(String fidelityName) {

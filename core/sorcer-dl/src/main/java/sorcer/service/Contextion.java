@@ -41,7 +41,18 @@ public interface Contextion extends Request, Scopable {
      * @throws MogramException
      * @throws RemoteException
      */
-    Context evaluate(Context context, Arg... args) throws MogramException, RemoteException, ServiceException;
+    Context evaluate(Context context, Arg... args) throws ServiceException, RemoteException;
+
+	/**
+	 * Generic execution of mogram by cooperated services.
+	 *
+	 * @return a resulting Contextion
+	 * @throws ServiceException
+	 *             if a mogram error occurs
+	 * @throws RemoteException
+	 *             if remote call causes an error
+	 */
+	public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException;
 
 	/**
 	 * Generic federated execution called exertion by federated services.
@@ -54,9 +65,9 @@ public interface Contextion extends Request, Scopable {
 	 * @throws RemoteException
 	 *             if remote call causes an error
 	 */
-	<T extends Contextion> T exert(Transaction txn, Arg... args) throws RemoteException, ServiceException;
+	<T extends Contextion> T exert(Transaction txn, Arg... args) throws ServiceException, RemoteException;
 
-	public String getDomainName();
+	public String getDomainName() throws RemoteException;
 
 	/**
 	 * Returns the data context of this contextion.
@@ -64,16 +75,16 @@ public interface Contextion extends Request, Scopable {
 	 * @return the data context
 	 * @throws ContextException
 	*/
-	Context getContext() throws ContextException;
+	Context getContext() throws ContextException, RemoteException;
 
-	Context getOutput(Arg... args) throws ContextException;
+	Context getOutput(Arg... args) throws ContextException, RemoteException;
 
 	/**
 	 * Sets the data context of this contextion.
 	 *
 	 * @throws ContextException
 	 */
-	void setContext(Context input) throws ContextException;
+	void setContext(Context input) throws ContextException, RemoteException;
 
 	/**
 	 * Appends an argument context to the data context of this contextion.
@@ -92,7 +103,7 @@ public interface Contextion extends Request, Scopable {
 	 * @throws RemoteException
 	 */
 	Context getContext(Context contextTemplate)
-		throws RemoteException, ContextException;
+		throws ContextException, RemoteException;
 
 	/**
 	 * Appends an argument context to this context for a given path.
@@ -112,13 +123,12 @@ public interface Contextion extends Request, Scopable {
 	 * @throws ContextException
 	 * @throws RemoteException
 	 */
-	Context getContext(String path) throws ContextException,
-		RemoteException;
+	Context getContext(String path) throws ContextException, RemoteException;
 
 	/**
 	 * Returns true if this contextion is executable in Collaboration
 	 */
-	public boolean isExec();
+	public boolean isExec() throws RemoteException;
 
 	/**
 	 * Returns a Context.Return that specifies a returned context
@@ -126,16 +136,18 @@ public interface Contextion extends Request, Scopable {
 	 *
 	 * @return Context.Return to the return execute
 	 */
-	Context.Return getContextReturn();
+	Context.Return getContextReturn() throws RemoteException;
 
-	ServiceStrategy getDomainStrategy();
+	ServiceStrategy getDomainStrategy() throws RemoteException;
 
-	Projection getInPathProjection();
+	Projection getInPathProjection() throws RemoteException;
 
-	Projection getOutPathProjection();
+	Projection getOutPathProjection() throws RemoteException;
 
-	List<Contextion> getContextions(List<Contextion> contextionList);
+	List<Contextion> getContextions(List<Contextion> contextionList) throws RemoteException;
 
-	void selectFidelity(Fidelity fi) throws ConfigurationException;
+	FidelityManagement getFidelityManager() throws RemoteException;
+
+	void selectFidelity(Fi fi) throws ConfigurationException, RemoteException;
 
 }

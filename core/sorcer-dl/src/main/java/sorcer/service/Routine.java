@@ -90,7 +90,7 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * @return an added component exertion
 	 * @throws ContextException 
 	 */
-	Discipline addMogram(Discipline component) throws RoutineException;
+	Contextion addMogram(Contextion component) throws RoutineException;
 	
 	/**
 	 * Returns a data service context (service data) of this exertion to be
@@ -115,7 +115,7 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
     /**
 	 * Returns a component exertion at a given path.
 	 */
-	Discipline getComponentMogram(String path);
+	Contextion getComponentMogram(String path);
 	
 	/**
 	 * Returns a execute associated with a path (key) in this exertion's context.
@@ -141,7 +141,7 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * @return a service context
 	 * @throws ContextException
 	 */
-	Context getContext(String componentExertionName) throws ContextException;
+	Context getContext(String componentExertionName) throws ContextException, RemoteException;
 
 	/**
 	 * Returns a control context (service control strategy) of this exertion to be 
@@ -192,14 +192,14 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	 * 
 	 * @return Signature list
 	 */
-	List<Signature> getAllSignatures();
+	List<Signature> getAllSignatures() throws RemoteException;
 
 	/**
 	 * Returns the list of all net signatures of component exertions.
 	 * 
 	 * @return Signature list
 	 */
-	List<Signature> getAllNetSignatures();
+	List<Signature> getAllNetSignatures() throws RemoteException;
 	
 	/**
 	 * Returns the list of all net task signatures of component exertions.
@@ -211,20 +211,20 @@ public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object
 	/**
 	 * Returns a component exertion with a given name.
 	 * @return Routine list
-	 */ 
-	Discipline getMogram(String name);
+	 */
+	Contextion getMogram(String name);
 
 	/**
 	 * Returns the list of direct component exertions.
 	 * @return Routine list
 	 */ 
-	List<Discipline> getMograms();
+	List<Contextion> getMograms();
 	
 	/**
 	 * Returns the list of all nested component exertions/
 	 * @return Routine list
 	 */ 
-	List<Discipline> getAllMograms();
+	List<Contextion> getAllMograms();
 	
 	/**
 	 * Returns <code>true</code> if this exertion can be provisioned for its

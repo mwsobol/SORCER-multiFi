@@ -9,6 +9,7 @@ import sorcer.service.*;
 import sorcer.service.ContextDomain;
 
 import java.io.File;
+import java.rmi.RemoteException;
 
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.paths;
@@ -48,13 +49,13 @@ public class CoffeemakerConsumer extends ServiceConsumer {
         return null;
     }
 
-    private Context getEspressoContext() throws ContextException {
+    private Context getEspressoContext() throws ContextException, RemoteException {
         return context(val("key", "espresso"), val("price", 50),
             val("amtCoffee", 6), val("amtMilk", 0),
             val("amtSugar", 1), val("amtChocolate", 0));
     }
 
-    private Task getRecipeTask() throws MogramException, SignatureException {
+    private Task getRecipeTask() throws MogramException, SignatureException, RemoteException {
         // make sure we have a recipe for required coffee
         return task("recipe", sig("addRecipe", CoffeeService.class), getEspressoContext());
     }

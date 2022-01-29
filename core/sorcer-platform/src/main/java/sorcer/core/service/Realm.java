@@ -15,25 +15,21 @@
  * limitations under the License.
  */
 
-package sorcer.service.modeling;
+package sorcer.core.service;
 
-import sorcer.service.Fidelity;
-import sorcer.service.Identifiable;
-import sorcer.service.Projection;
+import net.jini.id.Uuid;
+import net.jini.id.UuidFactory;
+import sorcer.service.*;
 
 /**
- * @author Mike Sobolewski 03/11/2021
+ * @author Mike Sobolewski
  */
-public class MultiProjection extends Fidelity<Identifiable> {
+abstract public class Realm extends MultiFiSlot implements Transdiscipline {
 
-    public MultiProjection(Projection... projections) {
-        setSelects(projections);
-        select = projections[0];
-    }
+    protected Uuid id = UuidFactory.generate();
 
-    public MultiProjection(String name, Projection... projections) {
-        this.fiName = name;
-        setSelects(projections);
-        select = projections[0];
+    @Override
+    public Object getId() {
+        return id;
     }
 }

@@ -26,7 +26,7 @@ import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
 
 public interface Modeling extends Model {
-	
+
 	public EventRegistration register(long eventID, MarshalledObject handback,
 			RemoteEventListener toInform, long leaseLenght)
 			throws UnknownEventException, RemoteException;
@@ -76,16 +76,16 @@ public interface Modeling extends Model {
 			EvaluationException, RemoteException;
 	
 	public void setContext(Context context)
-			throws ContextException;
+			throws ContextException, RemoteException;
 
 	public void reconfigure(Fidelity... fidelities)
 			throws ConfigurationException, RemoteException;
 
 	public void isolateModel(Context inContext)
-			throws ContextException;
+			throws ContextException, RemoteException;
 	
 	public void initializeBuilder()
-			throws ContextException;
+			throws ContextException, RemoteException;
 	
 	public static enum Type {
 		RESPONSE, PARAMETRIC, OPTIMIZATION

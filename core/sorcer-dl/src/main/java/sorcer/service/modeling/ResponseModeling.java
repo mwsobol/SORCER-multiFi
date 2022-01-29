@@ -18,13 +18,16 @@ package sorcer.service.modeling;
 import sorcer.service.*;
 import sorcer.util.ModelTable;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 
 /**
  * @author Mike Sobolewski, Ray Kolonay
  */
-public interface ResponseModeling extends Modeling, Configurable {
+public interface ResponseModeling extends Modeling, Configurable, Remote {
+
+	public String getModelName() throws RemoteException;
 
 	public Context getSnapshot(Context context) throws ContextException,
 			RemoteException;

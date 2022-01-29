@@ -37,11 +37,8 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
-import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.*;
 import sorcer.service.modeling.Functionality.Type;
-import sorcer.service.modeling.Valuation;
-import sorcer.service.modeling.ent;
 import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
@@ -323,7 +320,7 @@ public class operator extends Operator {
 		List<Object> rowValues = new ArrayList<>();
 		while (it.hasNext()) {
 			path = (String) it.next();
-			obj = context.get(path);
+			obj = ((ServiceContext)context).get(path);
 			columnNames.add(path);
 			if (obj == null) {
 				rowValues.add(Context.none);
@@ -356,6 +353,30 @@ public class operator extends Operator {
 			}
 		}
 		return cxt;
+	}
+
+	public static boolean isCkpt(MultiFiSlot slot) {
+		return slot.getCheckpoint() != null;
+	}
+
+	public static boolean isCkpt(ContextDomain slot) {
+		return ((MultiFiSlot)slot).getCheckpoint() != null;
+	}
+
+	public static Checkpoint ckpt(String name) {
+		return new Checkpoint(name);
+	}
+
+	public static Checkpoint ckpt(String name, int iteration) {
+		return new Checkpoint(name, iteration);
+	}
+
+	public static Checkpoint ckpt() {
+		return new Checkpoint();
+	}
+
+	public static Checkpoint ckpt(boolean status) {
+		return new Checkpoint(status);
 	}
 
 	public static List<Object> values(Row response) {
@@ -422,8 +443,20 @@ public class operator extends Operator {
 		return out;
 	}
 
+	public static RC rc(Integer numRows, Integer numCols, boolean rowMajor) {
+		return new RC(numRows, numCols, rowMajor);
+	}
+
+	public static RC rc(Integer numRows, Integer numCols) {
+		return new RC(numRows, numCols);
+	}
+
 	public static <T1, T2> Tuple2<T1, T2> assoc(T1 x1, T2 x2) {
-		return new Tuple2<T1, T2>(x1, x2);
+		return new Tuple2(x1, x2);
+	}
+
+	public static <T1, T2> Tuple2<T1, T2> assn(T1 x1, T2 x2) {
+		return new Tuple2(x1, x2);
 	}
 
 	public static String path(List<String> attributes) {
@@ -525,8 +558,8 @@ public class operator extends Operator {
             ent = predVal(pn, domain, value);
         } else {
             ent = new Value<T>(pn, value);
-            ent.setType(Type.PRED);
         }
+		ent.setType(Type.PRED);
 		return ent;
 	}
 
@@ -571,6 +604,13 @@ public class operator extends Operator {
         }
         ent.setType(Type.VAL);
         return ent;
+	}
+
+	public static <T> Value<T> val(String path, Entry... subvalues) {
+		Value ent = new Value<T>(path);
+		ent.appendSubvalues(subvalues);
+		ent.setType(Type.SUPERVAL);
+		return ent;
 	}
 
 	public static <T> Value<T> val(Path path, T value) {
@@ -641,11 +681,11 @@ public class operator extends Operator {
 	}
 
     public static Uuid id(Mogram mogram) {
-        return mogram.getId();
+        return ((ServiceMogram)mogram).getId();
     }
 
     public static void setId(Mogram mogram, Uuid id) {
-	    mogram.setId(id);
+		((ServiceMogram)mogram).setId(id);
     }
 
 	public static Entry in(Entry... entries) {
@@ -751,15 +791,15 @@ public class operator extends Operator {
 		}
 	}
 
-	public static Paths mado(String... disciplines) {
+	public static Paths disciplines(String... disciplines) {
 		Paths paths = new Paths(disciplines);
-		paths.type = Type.MADO;
+		paths.type = Type.DISCIPLINE;
 		return paths;
 	}
 
 	public static Paths domains(String... domains) {
 		Paths paths = new Paths(domains);
-		paths.type = Type.COLLABORATION;
+		paths.type = Type.DISCIPLINE;
 		return paths;
 	}
 
@@ -788,6 +828,12 @@ public class operator extends Operator {
 	public static ExecDependency idfDep(String fiName, List<Path> paths) {
 		ExecDependency de =  new ExecDependency(fiName, paths);
 		de.setType(Type.IDF);
+		return de;
+	}
+
+	public static ExecDependency mdfDep(String fiName, List<Path> paths) {
+		ExecDependency de =  new ExecDependency(fiName, paths);
+		de.setType(Type.MDF);
 		return de;
 	}
 
@@ -1044,7 +1090,7 @@ public class operator extends Operator {
 	}
 
 	public static URL update(Object object) throws ServiceException,
-			SignatureException {
+		SignatureException, RemoteException {
 		return SdbUtil.update(object);
 	}
 
@@ -1056,11 +1102,11 @@ public class operator extends Operator {
 		return SdbUtil.list(store);
 	}
 
-	public static URL delete(Object object) throws ServiceException, SignatureException {
+	public static URL delete(Object object) throws ServiceException, SignatureException, RemoteException {
 		return SdbUtil.delete(object);
 	}
 
-	public static int clear(DatabaseStorer.Store type) throws ServiceException, SignatureException {
+	public static int clear(DatabaseStorer.Store type) throws ServiceException, SignatureException, RemoteException {
 		return SdbUtil.clear(type);
 	}
 
@@ -1085,7 +1131,7 @@ public class operator extends Operator {
 	}
 
 	public static int size(DatabaseStorer.Store type) throws ServiceException,
-			SignatureException, ContextException {
+		SignatureException, RemoteException {
 		return SdbUtil.size(type);
 	}
 
@@ -1186,7 +1232,6 @@ public class operator extends Operator {
         out.setRowIdentifiers(rowIds);
         return out;
     }
-
 
 	public static OutType out(Type type) {
 		return new OutType(type);
@@ -1300,7 +1345,11 @@ public class operator extends Operator {
 			if (request instanceof Context) {
 				((Context)request).putValue(path, value);
 			} else {
-				((Contextion) request).getOutput().putValue(path, value);
+				try {
+					((Contextion) request).getOutput().putValue(path, value);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return request;
@@ -1364,7 +1413,7 @@ public class operator extends Operator {
 	}
 
 	public static Object evalValue(Mogram mogram, String path) throws MogramException {
-		return mogram.getEvaluatedValue(path);
+		return ((ServiceMogram)mogram).getEvaluatedValue(path);
 	}
 
 	public static <T> T v(Valuation<T> valuation) throws ContextException {
@@ -1385,7 +1434,7 @@ public class operator extends Operator {
 	}
 
 	public static Object get(Service service, String path)
-		throws ContextException {
+		throws ContextException, RemoteException {
 		Object obj = null;
 		if (service instanceof Context) {
 			obj = ((ServiceContext) service).get(path);
@@ -1570,16 +1619,16 @@ public class operator extends Operator {
 //	}
 
 	public static Object rimpl(Context context, String path) {
-		Object obj = context.get(path);
+		Object obj = ((ServiceContext)context).get(path);
 		if (obj instanceof Entry) {
-			return ((Entry)context.get(path)).getImpl();
+			return ((Entry)((ServiceContext)context).get(path)).getImpl();
 		} else {
 			return null;
 		}
 	}
 
 	public static Object impl(Mogram context, String path) {
-		Object obj = context.get(path);
+		Object obj = ((ServiceContext)context).get(path);
 		if (obj instanceof MultiFiSlot) {
 			return ((Entry)obj).getImpl();
 		} else {
@@ -1608,11 +1657,15 @@ public class operator extends Operator {
 	}
 
 	public static Object asis(Context context, String path) {
-		return context.get(path);
+		return ((ServiceContext)context).get(path);
 	}
 
 	public static Object asis(Model model, String path) throws ContextException {
-		return  model.asis(path);
+		try {
+			return  model.asis(path);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 	}
 
     public static Copier copier(ContextDomain fromContext, Arg[] fromEntries,
@@ -1673,7 +1726,7 @@ public class operator extends Operator {
          return ((ServiceContext)model).getDomainStrategy().getDependentPaths();
     }
 
-    public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
+    public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException, RemoteException {
 		List<ExecDependency> functional = new ArrayList<>();
 		List<ExecDependency> domain = new ArrayList<>();
         List<ExecDependency> vals = new ArrayList<>();
@@ -1709,7 +1762,7 @@ public class operator extends Operator {
 		}
 	}
 
-    public static Dependency domainDependency(Dependency dependee,  Evaluation... dependers) throws ContextException {
+    public static Dependency domainDependency(Dependency dependee,  Evaluation... dependers) throws ContextException, RemoteException {
         String path ;
         List<Dependency> dl = new ArrayList<>();
         // find dependency lists
@@ -1773,7 +1826,7 @@ public class operator extends Operator {
         return dependee;
     }
 
-	public static Dependency funcDependency(Dependency dependee,  Evaluation... dependers) throws ContextException {
+	public static Dependency funcDependency(Dependency dependee,  Evaluation... dependers) throws ContextException, RemoteException {
 		String path;
 		List<Dependency> dl = new ArrayList<>();
 		// find dependency lists
@@ -1843,7 +1896,7 @@ public class operator extends Operator {
 	}
 
 	public static Dependency dependsOn(Dependency dependee, Context scope, Evaluation... dependers)
-			throws ContextException {
+		throws ContextException, RemoteException {
 		if (dependee instanceof Scopable) {
 			Context context;
 			context = ((Mogram) dependee).getScope();
@@ -2017,7 +2070,7 @@ public class operator extends Operator {
 		if (out instanceof Contextion) {
 			try {
 				((Contextion)out).selectFidelity(fidefity);
-			} catch (ConfigurationException e) {
+			} catch (ConfigurationException | RemoteException e) {
 				throw new SignatureException(e);
 			}
 		}
@@ -2033,18 +2086,23 @@ public class operator extends Operator {
 		if (!(model instanceof ContextDomain)) {
 			throw new SignatureException("Signature does not specify te ContextDomain: " + signature);
 		}
-		if (model instanceof Model) {
-			((Model)model).setBuilder(signature);
+		try {
+			if (model instanceof Model) {
+				((Model)model).setBuilder(signature);
+			}
+		} catch (ServiceException | RemoteException e) {
+			throw new SignatureException(e);
 		}
 		return (ContextDomain) model;
 	}
 
-	public static Mogram instance(Mogram mogram, Arg... args) throws SignatureException, MogramException {
-		Signature builder = mogram.getBuilder(args);
+	public static Mogram instance(Mogram mogram, Arg... args) throws SignatureException, ServiceException {
+		Signature builder = null;
+		builder = ((ServiceMogram)mogram).getBuilder(args);
 		if (builder == null) {
 			throw new SignatureException("No signature builder for: " + mogram.getName());
 		}
-		Mogram mog = (Mogram) sorcer.co.operator.instance(builder);
+		ServiceMogram mog = (ServiceMogram) sorcer.co.operator.instance(builder);
 		mog.setBuilder(builder);
 		Tag name = (Arg.getName(args));
 		if (name != null)
@@ -2072,7 +2130,7 @@ public class operator extends Operator {
         return new Index(index, type);
     }
 
-	public static String dmnName(Object identifiable) {
+	public static String dmnName(Object identifiable) throws RemoteException {
 		String dname = null;
 		if (identifiable instanceof Domain) {
 			dname = ((Domain) identifiable).getDomainName();

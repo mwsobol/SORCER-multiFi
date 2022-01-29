@@ -34,7 +34,7 @@ public interface Model extends ContextDomain, mog, dmn, cxtn {
     // Multidiscipline Feasible (MDF)
     // Analysis, Mado, Explore, Supervise
     public enum Pattern {
-        AAO, SAND, IDF, MDF, ANAL, MDA, MDA_EXPL, MADO, EXPL, SUPV, COLLAB, MADOCOLLAB
+        AAO, SAND, IDF, MDF, ANAL, OPTI, MDA, SNAP, MDA_EXPL, MADO, EXPL, SUPV, COLLAB, MADOCOLLAB
     }
 
     /**
@@ -53,13 +53,13 @@ public interface Model extends ContextDomain, mog, dmn, cxtn {
      * @throws ContextException
      * @throws RemoteException
      */
-    public Context getResponse(Context context, Arg... args) throws ContextException;
+    public Context getResponse(Context context, Arg... args) throws ContextException, RemoteException;
 
     /**
      * Sets a buider of this model to be used for replication it when needed.
      *
      * @param signature
      */
-    public void setBuilder(Signature signature);
+    public void setBuilder(Signature signature)  throws ServiceException, RemoteException;
 
 }

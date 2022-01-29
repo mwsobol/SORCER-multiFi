@@ -57,7 +57,7 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
     public void doExec(Arg... args) throws RoutineException,
 			SignatureException {
         List<Future<Routine>> results = new ArrayList<Future<Routine>>(inputXrts.size());
-        for (Discipline mogram : inputXrts) {
+        for (Contextion mogram : inputXrts) {
             if (mogram instanceof Routine)
                 results.add(executor.submit(new ExecExertion((Routine)mogram)));
 		}
@@ -120,7 +120,7 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 	}
 
     @Override
-    protected List<Discipline> getInputExertions() throws ContextException {
+    protected List<Contextion> getInputExertions() throws ContextException {
         return Mograms.getInputExertions(((Job) xrt));
     }
 

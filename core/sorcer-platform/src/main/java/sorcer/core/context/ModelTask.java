@@ -46,7 +46,7 @@ public class ModelTask extends Task {
 		addSignature(signature);
 	}
 
-	public Task doTask(Transaction txn, Arg... args) throws MogramException {
+	public Task doTask(Transaction txn, Arg... args) throws ServiceException {
 		try {
 			if (model != null) {
 				model =model.exert(txn, args);

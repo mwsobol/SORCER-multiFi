@@ -62,7 +62,7 @@ public class SpacerAccessor {
         String spacerName = (name == null) ? Sorcer.getProperty(SorcerConstants.S_SPACER_NAME): name;
         Spacer spacer = cache.get(Spacer.class.getName());
         try {
-            if (Accessor.isAlive((Exerter) spacer)) {
+            if (Accessor.isAlive(spacer)) {
                 log.info(">>>returned cached Spacer ({}) by {}",
                 ((Exerter) spacer).getProviderID(), Accessor.get().getClass().getName());
             } else {

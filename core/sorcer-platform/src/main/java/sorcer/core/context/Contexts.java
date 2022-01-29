@@ -338,9 +338,9 @@ public class Contexts implements SorcerConstants {
 		return false;
 	}
 
-	public static String getTitle(Context cntxt) {
+	public static String getTitle(Context cntxt) throws RemoteException {
 		String domainName = cntxt.getDomainName();
-		String subdomainName = cntxt.getSubdomainName();
+		String subdomainName = ((ServiceMogram)cntxt).getSubdomainName();
 		return cntxt.getName() + ", "
 				+ (domainName == null ? "" : domainName + ", ")
 				+ (subdomainName == null ? "" : subdomainName);
@@ -618,7 +618,7 @@ public class Contexts implements SorcerConstants {
 		List allNodes = new ArrayList();
 		List additional = null;
 
-		List<Discipline> exertions = ((Job) job).getMograms();
+		List<Contextion> exertions = ((Job) job).getMograms();
 		for (Object exertion : exertions) {
 			if (exertion instanceof Subroutine) {
 				additional = Arrays
@@ -1059,7 +1059,7 @@ public class Contexts implements SorcerConstants {
 	public static Object putDirectionalValue(Context context, String path,
 			Object node, String attribute, String value)
 			throws ContextException {
-		Uuid contextID = context.getId();
+		Uuid contextID = ((ServiceMogram)context).getId();
 		if (value == null)
 			value = SorcerConstants.NULL;
 		StringBuffer sb = new StringBuffer();

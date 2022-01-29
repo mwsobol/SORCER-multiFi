@@ -11,21 +11,13 @@ import sorcer.core.service.Collaboration;
 import sorcer.service.*;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.setValue;
-import static sorcer.ent.operator.invoker;
-import static sorcer.ent.operator.pl;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.fi;
-import static sorcer.eo.operator.loop;
-import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.*;
-import static sorcer.mo.operator.out;
 import static sorcer.mo.operator.value;
 import static sorcer.so.operator.eval;
-import static sorcer.so.operator.exec;
-import static sorcer.so.operator.exert;
+
 
 /**
  * Created by Mike Sobolewski on 12/27/19.

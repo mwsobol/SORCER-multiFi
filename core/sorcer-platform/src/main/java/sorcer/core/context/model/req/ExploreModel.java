@@ -1,6 +1,5 @@
 package sorcer.core.context.model.req;
 
-import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecDependency;
@@ -22,11 +21,11 @@ import static sorcer.mo.operator.result;
 /**
  * Created by Mike Sobolewski on 12/28/2019.
  */
-public class AnalysisModel extends RequestModel implements Transmodel, Configurable {
+public class ExploreModel extends RequestModel implements Transmodel, Configurable {
 
     private static final Logger logger = LoggerFactory.getLogger(Transmodel.class);
 
-    protected Map<String, Discipline> children = new HashMap<>();
+    protected Map<String, Contextion> children = new HashMap<>();
 
     protected Map<String, Context> childrenContexts = new HashMap<>();
 
@@ -36,24 +35,24 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
 
     protected Fidelity<Exploration> explorerFi;
 
-    public AnalysisModel() {
+    public ExploreModel() {
         super();
         type = Functionality.Type.TRANS;
     }
 
-    public AnalysisModel(String name) {
+    public ExploreModel(String name) {
         super(name);
         type = Functionality.Type.TRANS;
     }
 
-    public static AnalysisModel instance(Signature builder) throws SignatureException {
-        AnalysisModel model = AnalysisModel.instance(null, builder);
+    public static ExploreModel instance(Signature builder) throws SignatureException {
+        ExploreModel model = ExploreModel.instance(null, builder);
         model.setEvaluated(false);
         return model;
     }
 
-    public static AnalysisModel instance(String name, Signature builder) throws SignatureException {
-        AnalysisModel model = (AnalysisModel) sorcer.co.operator.instance(builder);
+    public static ExploreModel instance(String name, Signature builder) throws SignatureException {
+        ExploreModel model = (ExploreModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         if (name != null) {
             model.setName(name);
@@ -62,13 +61,13 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
         return model;
     }
 
-    public AnalysisModel(String name, List<Transmodel> models) {
+    public ExploreModel(String name, List<Transmodel> models) {
         super(name);
         for (Transmodel vm : models)
             children.put(vm.getName(), vm);
     }
 
-    public AnalysisModel(String name, Transmodel... models) {
+    public ExploreModel(String name, Transmodel... models) {
         super(name);
         for (Transmodel vm : models)
             children.put(vm.getName(), vm);
@@ -82,10 +81,10 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
         this.childrenPaths = childrenPaths;
     }
 
-    public void addChildren(List<Domain> domains) {
-        for (Domain vm : domains) {
+    public void addChildren(List<Contextion> domains) throws RemoteException {
+        for (Contextion vm : domains) {
             this.children.put(vm.getName(), vm);
-            vm.setParent(this);
+            ((ServiceMogram)vm).setParent(this);
         }
     }
 
@@ -104,12 +103,12 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
     }
 
     @Override
-    public Map<String, Discipline> getChildren() {
+    public Map<String, Contextion> getChildren() {
         return children;
     }
 
     @Override
-    public Discipline getChild(String name) {
+    public Contextion getChild(String name) {
         return children.get(name);
     }
 
@@ -176,6 +175,22 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
     }
 
     @Override
+    public Context analyze(Context modelContext, Arg... args) throws EvaluationException, RemoteException {
+        try {
+            out = modelContext;
+            analyzerFi.getSelect().analyze(this, modelContext);
+            return (Context) out;
+        } catch (ServiceException | AnalysisException e) {
+            throw new EvaluationException(e);
+        }
+    }
+
+    @Override
+    public Context explore(Context context, Arg... args) throws ContextException, RemoteException {
+        return explorerFi.getSelect().explore(context);
+    }
+
+    @Override
     public Object get(String path$domain) {
         String path = null;
         String domain = null;
@@ -183,7 +198,7 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
             int ind = path$domain.indexOf("$");
             path = path$domain.substring(0, ind);
             domain = path$domain.substring(ind + 1);
-            return ((Mogram)getChild(domain)).get(path);
+            return ((ServiceMogram)getChild(domain)).get(path);
         } else if (path$domain != null){
             return data.get(path$domain);
         } else {
@@ -191,7 +206,7 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
         }
     }
 
-    public void execDependencies(String path, Context inContext, Arg... args) throws ServiceException {
+    public void execDependencies(String path, Context inContext, Arg... args) throws ServiceException, RemoteException {
         Map<String, List<ExecDependency>> dpm = ((ModelStrategy) domainStrategy).getDependentDomains();
         if (dpm != null && dpm.get(path) != null) {
             List<Path> dpl = null;
@@ -202,7 +217,7 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
                     if (de.getName().equals(key)) {
                         dpl = de.getData();
                         for (Path p : dpl) {
-                            Discipline domain = children.get(p.getName());
+                            Contextion domain = children.get(p.getName());
                             execDependencies(p.getName(), inContext, args);
                             Context cxt = null;
                             if (children.get(p.path) instanceof EntryModel) {
@@ -221,10 +236,10 @@ public class AnalysisModel extends RequestModel implements Transmodel, Configura
                                 if (domain instanceof Job) {
                                     cxt = ((Job) child).getJobContext();
                                 } else if (domain instanceof Routine) {
-                                    cxt = child.getDataContext();
+                                    cxt = ((ServiceMogram)child).getDataContext();
                                 }
                                 logger.info("exertion domain context: " + cxt);
-                                Context.Return rp = child.getProcessSignature().getContextReturn();
+                                Context.Return rp = ((ServiceMogram)child).getProcessSignature().getContextReturn();
                                 if (rp != null && rp.outPaths != null && rp.outPaths.size() > 0) {
                                     cxt = cxt.getDirectionalSubcontext(rp.outPaths);
                                     if (rp.outPaths.getName().equals(rp.outPaths.get(0).getName())) {

@@ -30,6 +30,7 @@ import sorcer.util.Stopwatch;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.rmi.RemoteException;
 import java.util.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -150,17 +151,11 @@ public class ControlContext extends ServiceContext<Object> implements RoutineStr
 
 	public final static String FALSE = "false";
 
-	public final static String TRACE_LIST = "exertion/execEnt/trace";
-
-	public final static String EXERTION_TRACABLE = "exertion/tracable";
-
 	private List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
 
 	private List<Signature> signatures = new ArrayList<Signature>();
 
 	private  Map<String, Service> freeServices = new HashMap();
-
-	private List<String> traceList = new ArrayList<String>();
 
 	// reponse paths of this context startegu
 	protected List<Path> responsePaths = new ArrayList<Path>();
@@ -200,8 +195,6 @@ public class ControlContext extends ServiceContext<Object> implements RoutineStr
 		setExecTimeRequested(true);
 		setWaitable(true);
 		put(EXCEPTIONS, exceptions);
-		put(TRACE_LIST, traceList);
-		put(EXERTION_TRACABLE, false);
 	}
 
 	public ControlContext(Routine exertion) {
@@ -252,22 +245,6 @@ public class ControlContext extends ServiceContext<Object> implements RoutineStr
 			put(EXERTION_WAITABLE, true);
 		else if (Wait.NO.equals(value) || Wait.FALSE.equals(value))
 			put(EXERTION_WAITABLE, false);
-	}
-
-	public void setTracable(boolean isTracable) {
-		if (isTracable)
-			put(EXERTION_TRACABLE, true);
-		else
-			put(EXERTION_TRACABLE, false);
-	}
-
-	public boolean isTracable() {
-		try {
-			return (Boolean) getValue(EXERTION_TRACABLE);
-		} catch (ContextException e) {
-			// ignrore it
-		}
-		return false;
 	}
 
 	public void setNotifierEnabled(boolean state) {
@@ -502,7 +479,7 @@ public class ControlContext extends ServiceContext<Object> implements RoutineStr
 		return getAttributeValue(ex, NOTIFY_EXEC);
 	}
 
-	public void registerExertion(Mogram mogram) throws ContextException {
+	public void registerExertion(Mogram mogram) throws ContextException, RemoteException {
 		if (mogram instanceof Job)
 			put(((Job)mogram).getControlContext().getName(), mogram.getId());
 		else if (mogram instanceof Routine) {
@@ -512,7 +489,7 @@ public class ControlContext extends ServiceContext<Object> implements RoutineStr
 			put(mogram.getName(), mogram.getId());
 			return;
 		}
-		setPriority((Routine) mogram, MAX_PRIORITY - mogram.getIndex());
+		setPriority((Routine) mogram, MAX_PRIORITY - ((ServiceMogram)mogram).getIndex());
 		setExecTimeRequested(((Routine)mogram), true);
 	}
 
@@ -522,9 +499,9 @@ public class ControlContext extends ServiceContext<Object> implements RoutineStr
 		Routine component = (Routine)componentMogram;
 		String path = component.getContext().getName();
 		remove(path);
-		for (int i = component.getIndex(); i < parent.size(); i++) {
+		for (int i = ((ServiceMogram)component).getIndex(); i < parent.size(); i++) {
 			String oldPath = parent.get(i).getContext().getName();
-			parent.get(i).setIndex(i);
+			((ServiceMogram)parent.get(i)).setIndex(i);
 			put(parent.get(i).getContext().getName(), remove(oldPath));
 			Map map;
 			Map<String, LinkedHashMap<String, String>> imc = getMetacontext();

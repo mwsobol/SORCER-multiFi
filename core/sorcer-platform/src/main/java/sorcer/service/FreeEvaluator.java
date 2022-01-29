@@ -16,6 +16,7 @@
  */
 package sorcer.service;
 
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 
 import java.rmi.RemoteException;
@@ -85,7 +86,7 @@ public class FreeEvaluator implements FreeService, Identifiable, Evaluation, Ser
 
     @Override
     public void substitute(Arg... entries) throws SetterException, RemoteException {
-        scope.substitute(entries);
+        ((ServiceContext)scope).substitute(entries);
     }
 
     public Evaluator getEvaluator() {

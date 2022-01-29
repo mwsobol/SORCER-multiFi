@@ -164,7 +164,7 @@ public class MultiFiSignature extends MultiFiSlot<String, Signature> implements 
     public Object execute(Arg... args) throws MogramException {
         if (multiFi != null) {
             try {
-                List<Fidelity> fis = Arg.selectFidelities(args);
+                List<Fi> fis = Arg.selectFidelities(args);
                 if (fis.size() > 0) {
                     multiFi.selectSelect(fis.get(0).getName());
                 }

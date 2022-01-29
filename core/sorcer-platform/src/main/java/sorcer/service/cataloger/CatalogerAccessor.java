@@ -68,7 +68,7 @@ public class CatalogerAccessor  {
         String catalogerName = (name == null) ? providerNameUtil.getName(Cataloger.class) : name;
         Cataloger cataloger = cache.get(Cataloger.class.getName());
         try {
-            if (Accessor.isAlive((Exerter) cataloger)) {
+            if (Accessor.isAlive(cataloger)) {
                 log.info(">>>returned cached cataloger ({}) by {}",
                          ((Exerter) cataloger).getProviderID(), Accessor.get().getClass().getName());
             } else {
