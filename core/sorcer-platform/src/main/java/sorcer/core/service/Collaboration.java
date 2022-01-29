@@ -1,6 +1,6 @@
 /*
- * Copyright 2019 the original author or authors.
- * Copyright 2019 SorcerSoft.org.
+ * Copyright 2021 the original author or authors.
+ * Copyright 2021 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
 package sorcer.core.service;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.id.Uuid;
-import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ContextList;
@@ -36,25 +34,21 @@ import sorcer.service.Node;
 import sorcer.service.modeling.*;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static sorcer.so.operator.exec;
-import static sorcer.so.operator.response;
+import static sorcer.mo.operator.getDomainContext;
+import static sorcer.so.operator.*;
 
-public class Collaboration implements Transdiscipline, Dependency, cxtn {
+/**
+ * @author Mike Sobolewski
+ */
+public class Collaboration extends Realm implements Dependency, cxtn {
 
 	static final long serialVersionUID = 1L;
 
 	protected static Logger logger = LoggerFactory.getLogger(Collaboration.class.getName());
 
 	private static int count = 0;
-
-	protected Uuid id = UuidFactory.generate();
-
-	protected  String name;
 
 	protected  String domainName;
 
@@ -71,17 +65,15 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	// domain outputs
 	protected ContextList outputs = new ContextList();
 
-    protected Fi multiFi;
-
-	protected Morpher morpher;
-
 	protected Fidelity<Finalization> finalizerFi;
 
 	protected Fidelity<Analysis> analyzerFi;
 
 	protected Fidelity<Exploration> explorerFi;
 
-	protected Map<String, Discipline> children = new HashMap<>();
+	protected Fidelity<Development> developerFi;
+
+	protected Map<String, Contextion> children = new HashMap<>();
 
 	protected List<Coupling> couplings;
 
@@ -101,8 +93,6 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	// context output connector
 	protected Context outConnector;
 
-	protected Context scope;
-
 	protected Projection inPathProjection;
 
 	protected Projection outPathProjection;
@@ -119,21 +109,21 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
     public Collaboration(String name) {
         if (name == null) {
-            this.name = getClass().getSimpleName() + "-" + count++;
+            this.key = getClass().getSimpleName() + "-" + count++;
         } else {
-            this.name = name;
+            this.key = name;
         }
 		serviceStrategy = new ModelStrategy(this);
     }
 
-    public Collaboration(String name, Domain[] domains) {
+    public Collaboration(String name, Contextion[] domains) throws RemoteException {
         this(name);
-        for (Domain domain : domains) {
+        for (Contextion domain : domains) {
                 this.children.put(domain.getDomainName(), domain);
         }
     }
 
-	public Collaboration(String name, List<Domain> domains) {
+	public Collaboration(String name, List<Domain> domains) throws RemoteException {
 		this(name);
 		for (Domain domain : domains) {
 			this.children.put(domain.getDomainName(), domain);
@@ -156,12 +146,17 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
         this.domainPaths = domainPaths;
     }
 
-	public Discipline getDomain(String name) {
+	public Contextion getDomain(String name) {
 		return children.get(name);
 	}
 
 	public Fidelity<Exploration> getExplorerFi() {
 		return explorerFi;
+	}
+
+	@Override
+	public Context explore(Context context, Arg... args) throws ContextException, RemoteException {
+		return explorerFi.getSelect().explore(context);
 	}
 
 	public void setExplorerFi(Fidelity<Exploration> explorerFi) {
@@ -214,6 +209,9 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		isExec = exec;
 	}
 
+	public void setDeveloperFi(Fidelity<Development> developerFi) {
+		this.developerFi = developerFi;
+	}
 
 	@Override
 	public Context.Return getContextReturn() {
@@ -222,7 +220,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 	@Override
 	public void setName(String name) {
-		this.name = name;
+		this.key = name;
 	}
 
 	@Override
@@ -236,13 +234,8 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	}
 
 	@Override
-	public Object getId() {
-		return id;
-	}
-
-	@Override
 	public String getName() {
-		return name;
+		return (String) key;
 	}
 
 	public Fidelity<Analysis> getAnalyzerFi() {
@@ -253,9 +246,9 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		this.analyzerFi = analyzerFi;
 	}
 
-	public List<Discipline> getDisciplineList() {
-		List<Discipline> domainList = new ArrayList<>();
-		for (Discipline disc : children.values()) {
+	public List<Contextion> getDisciplineList() {
+		List<Contextion> domainList = new ArrayList<>();
+		for (Contextion disc : children.values()) {
 			if (disc instanceof Node) {
 				domainList.add(disc);
 			}
@@ -265,7 +258,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 	public Fidelity<Exploration> setExplorerFi(Context context) {
 		if(explorerFi == null) {
-			Object exploreComponent = context.get(Context.EXPLORER_PATH);
+			Object exploreComponent = ((ServiceContext)context).get(Context.EXPLORER_PATH);
 			if (exploreComponent != null) {
 				if (exploreComponent instanceof Explorer) {
 					explorerFi = new Fidelity(((Explorer)exploreComponent).getName());
@@ -282,14 +275,14 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		}
 		((ServiceContext)context).getDomainStrategy().setExecState(Exec.State.INITIAL);
 		if (output == null) {
-			output = new ServiceContext(name);
+			output = new ServiceContext((String) key);
 		}
 		return explorerFi;
 	}
 
 	public Fidelity<Analysis> setAnalyzerFi(Context context) {
 		if(analyzerFi == null) {
-			Object mdaComponent = context.get(Context.MDA_PATH);
+			Object mdaComponent = ((ServiceContext)context).get(Context.MDA_PATH);
 			if (mdaComponent != null) {
 				if (mdaComponent instanceof Analyzer) {
 					analyzerFi = new Fidelity(((Analyzer)mdaComponent).getName());
@@ -305,7 +298,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		}
 		((ServiceContext)context).getDomainStrategy().setExecState(Exec.State.INITIAL);
 		if (output == null) {
-			output = new ServiceContext(name);
+			output = new ServiceContext((String) key);
 		}
 		return analyzerFi;
 	}
@@ -367,9 +360,18 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 				input = context;
 			} else if (context != null){
 				input.append(context);
+			} else {
+				// transfer inputs from collaborating contextions
+				Context ccxt;
+				for (Contextion cxtn: children.values()) {
+					ccxt = getDomainContext(input, cxtn.getName());
+					if (ccxt != null) {
+						((ServiceContext)ccxt).substituteInfos(input);
+					}
+				}
 			}
 			ModelStrategy strategy = ((ModelStrategy) input.getDomainStrategy());
-			List<Fidelity> fis = Arg.selectFidelities(args);
+			List<Fi> fis = Arg.selectFidelities(args);
 			if (analyzerFi != null) {
 				strategy.setExecState(Exec.State.RUNNING);
 				// select mda Fi if provided
@@ -407,21 +409,31 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 				((ModelStrategy) serviceStrategy).setOutcome(out);
 				strategy.setExecState(Exec.State.DONE);
 			}
-		} catch (ConfigurationException | ContextException | ExploreException | RemoteException | AnalysisException e) {
+		} catch (ConfigurationException | RemoteException | AnalysisException e) {
 			throw new EvaluationException(e);
 		}
 		return out;
 	}
 
-	public void analyze(Context context) throws ServiceException {
+	@Override
+	public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException {
+		return (T) execute(args);
+	}
+
+	@Override
+	public Context analyze(Context context, Arg... args) throws EvaluationException, RemoteException {
 		Context collabOut;
 		if (((ServiceContext)context).getColabType() == Strategy.Colab.BBinCxt) {
 			collabOut = input;
 		} else {
-			 collabOut = new ServiceContext(name);
-
+			Context cxt = Arg.selectContext(args);
+			if (cxt != null) {
+				collabOut = cxt;
+			} else {
+				collabOut = new ServiceContext(getName());
+			}
 		}
-		Discipline domain = null;
+		Contextion domain = null;
 		try {
 			for (Path path : domainPaths) {
 				domain = children.get(path.path);
@@ -429,7 +441,13 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 					domain = ((SignatureDomain) domain).getDomain();
 					children.put(domain.getDomainName(), domain);
 				}
-				Context domainCxt = sorcer.mo.operator.getDomainContext(context, domain.getDomainName());
+				Context domainCxt = getDomainContext(context, domain.getDomainName());
+				if (domainCxt == null) {
+					domainCxt = getDomainContext(context, domain.getName());
+					if (domainCxt != null) {
+						(( ServiceContext ) domainCxt).setDomainName(domain.getDomainName());
+					}
+				}
 				Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getDomainName());
 				Context cxt = null;
 				if (domainCxt != null) {
@@ -451,10 +469,10 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 						}
 						collabOut.append(cxt);
 					} else if (domain.isExec()) {
-						if (domain instanceof Mogram) {
-							cxt = evaluateDomain(domain, domainCxt);
-						} else {
+						if (domain instanceof Transdomain) {
 							cxt = domain.evaluate(domainCxt);
+						} else {
+							cxt = evaluateDomain(domain, domainCxt);
 						}
 						collabOut.append(cxt);
 					} else {
@@ -464,10 +482,12 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 						outputs.add(cxt);
 					}
 				} else if (domain.isExec()) {
-					if (domain instanceof Context && ((ServiceContext) domain).getType() == Functionality.Type.EXEC) {
-						// eventually add argument signatures per domain
-						cxt = (Context) domain.execute();
-					} else if (domain instanceof Mogram){
+					if (domain instanceof Context && ((ServiceContext) domain).getType() == Functionality.Type.MADO) {
+						if (domainCxt == null) {
+							domainCxt = input;
+						}
+						cxt = domain.evaluate(domainCxt);
+					} else if (domain instanceof ResponseModeling){
 						cxt = response((Mogram)domain);
 					} else {
 						cxt = (Context) domain.execute();
@@ -486,29 +506,50 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 					analyzer.analyze(domain, collabOut);
 				}
 
-				collabOut.setSubject(name, this);
+				collabOut.setSubject((String) key, this);
 				((ServiceContext) collabOut).put(Context.DOMAIN_OUTPUTS_PATH, outputs);
 			}
 			output = collabOut;
-		} catch (SignatureException | RemoteException | DispatchException | AnalysisException e) {
-			throw new ContextException(e);
+		} catch (SignatureException | RemoteException | DispatchException | ServiceException | AnalysisException e) {
+			throw new EvaluationException(e);
 		}
+		return collabOut;
 	}
 
 	public void initializeDomains() throws SignatureException {
 		// initialize domains specified by builder signatures
-		for (Discipline domain : children.values()) {
-			if (domain instanceof SignatureDomain) {
-				boolean isExec = domain.isExec();
-				domain = ((SignatureDomain) domain).getDomain();
-				children.put(domain.getDomainName(), domain);
-				((Mogram)domain).setExec(isExec);
+		try {
+			List<Contextion> domainList = new ArrayList<>();
+			List<String> dnv = new ArrayList<>();
+			Iterator<Map.Entry<String, Contextion>> i = children.entrySet().iterator();
+			while (i.hasNext()) {
+				Map.Entry<String, Contextion> ent = i.next();
+				Contextion cxtn = ent.getValue();
+				String name = ent.getKey();
+				if (cxtn instanceof SignatureDomain) {
+					domainList.add(cxtn);
+					dnv.add(name);
+				}
 			}
+			// delete Signature domains
+			for (String name : dnv) {
+				children.remove(name);
+			}
+			// recreate domains from deleted Signatures
+			for (Contextion domain : domainList) {
+				boolean isExec = domain.isExec();
+				domain = (( SignatureDomain ) domain).getDomain();
+				children.put(domain.getName(), domain);
+				children.put(domain.getDomainName(), domain);
+				(( ServiceMogram ) domain).setExec(isExec);
+			}
+		} catch (RemoteException e) {
+			throw new SignatureException(e);
 		}
 	}
 
 	public OptimizationModeling getOptimizationDomain() {
-		for (Discipline domain : children.values()) {
+		for (Contextion domain : children.values()) {
 			if (domain instanceof OptimizationModeling) {
 				return (OptimizationModeling) domain;
 			}
@@ -595,12 +636,12 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 		this.domainName = domainName;
 	}
 
-	public Map<String, Discipline> getChildren() {
+	public Map<String, Contextion> getChildren() {
 		return children;
 	}
 
 	@Override
-	public Discipline getChild(String name) {
+	public Contextion getChild(String name) {
 		return children.get(name);
 	}
 
@@ -621,7 +662,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 			int ind = path$domain.indexOf("$");
 			path = path$domain.substring(0, ind);
 			domain = path$domain.substring(ind + 1);
-			return ((Mogram)getChild(domain)).get(path);
+			return ((ServiceMogram)getChild(domain)).get(path);
 		} else if (path$domain != null) {
 			return getChild(path$domain);
 		}
@@ -647,7 +688,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	}
 
 	@Override
-	public List<Contextion> getContextions(List<Contextion> contextionList) {
+	public List<Contextion> getContextions(List<Contextion> contextionList) throws RemoteException {
 		for (Contextion e : getChildren().values()) {
 			e.getContextions(contextionList);
 		}
@@ -686,7 +727,7 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 	}
 
 	@Override
-	public void selectFidelity(Fidelity fi) {
+	public void selectFidelity(Fi fi) {
 	}
 
 	public Contextion getParent() {
@@ -707,5 +748,10 @@ public class Collaboration implements Transdiscipline, Dependency, cxtn {
 
 	public Functionality.Type getType() {
 		return Functionality.Type.COLLABORATION;
+	}
+
+	@Override
+	public List<Signature> getAllSignatures() throws RemoteException {
+		return null;
 	}
 }

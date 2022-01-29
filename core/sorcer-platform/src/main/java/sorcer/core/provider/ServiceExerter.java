@@ -59,6 +59,7 @@ import sorcer.service.*;
 import sorcer.service.Exerter;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
+import sorcer.service.modeling.Conditional;
 import sorcer.serviceui.UIComponentFactory;
 import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.serviceui.UIFrameFactory;
@@ -1438,7 +1439,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 	 * @return Routine
 	 * @throws sorcer.service.RoutineException
 	 * @see Routine
-	 * @see sorcer.service.Conditional
+	 * @see Conditional
 	 * @see sorcer.core.provider.ControlFlowManager
 	 * @throws java.rmi.RemoteException
 	 * @throws sorcer.service.RoutineException
@@ -1511,8 +1512,8 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 		if (mogram instanceof Task) {
 			ServiceContext cxt;
 			try {
-				cxt = (ServiceContext) ((Mogram)mogram).getDataContext();
-				cxt.updateContextWith(((Mogram)mogram).getProcessSignature().getInConnector());
+				cxt = (ServiceContext) ((ServiceMogram)mogram).getDataContext();
+				cxt.updateContextWith(((ServiceMogram)mogram).getProcessSignature().getInConnector());
 				Uuid id = cxt.getId();
 				// a created session to be used in the implementation class of the bean itself
 				ProviderSession ps = (ProviderSession) sessions.get(id);
@@ -1563,7 +1564,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 			out = doExertion(exertion, txn);
 		} catch (Exception e) {
 			logger.error("{} failed", getProviderName(), e);
-			out.reportException(new RoutineException(getProviderName() + " failed", e));
+			((ServiceMogram)out).reportException(new RoutineException(getProviderName() + " failed", e));
 		}
 		return out;
 	}

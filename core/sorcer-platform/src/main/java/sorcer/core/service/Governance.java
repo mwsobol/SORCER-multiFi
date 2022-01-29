@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
+/**
+ * @author Mike Sobolewski
+ */
 package sorcer.core.service;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.id.Uuid;
-import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ModelStrategy;
@@ -37,7 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Governance implements Transdiscipline, Dependency {
+public class Governance extends Realm implements Dependency {
 
 	private static final long serialVersionUID = 1L;
 
@@ -45,19 +46,11 @@ public class Governance implements Transdiscipline, Dependency {
 
 	private static int count = 0;
 
-	protected Uuid id = UuidFactory.generate();
-
-	protected  String name;
-
     // the input of this governance
     protected Context input;
 
     // the output of this governance
     protected Context output;
-
-    protected Fi multiFi;
-
-	protected Morpher morpher;
 
     // active disciplnes
     protected Paths disciplnePaths = new Paths();
@@ -95,8 +88,6 @@ public class Governance implements Transdiscipline, Dependency {
 	// context output connector
 	protected Context outConnector;
 
-	protected Context scope;
-
 	protected Projection inPathProjection;
 
 	protected Projection outPathProjection;
@@ -109,9 +100,9 @@ public class Governance implements Transdiscipline, Dependency {
 
     public Governance(String name) {
         if (name == null) {
-            this.name = getClass().getSimpleName() + "-" + count++;
+            this.key = getClass().getSimpleName() + "-" + count++;
         } else {
-            this.name = name;
+            this.key = name;
         }
 		serviceStrategy = new ModelStrategy(this);
 		governor = new Gavernor(this);
@@ -233,7 +224,7 @@ public class Governance implements Transdiscipline, Dependency {
 
 	@Override
 	public void setName(String name) {
-		this.name = name;
+		this.key = name;
 	}
 
 	@Override
@@ -247,18 +238,28 @@ public class Governance implements Transdiscipline, Dependency {
 	}
 
 	@Override
-	public Object getId() {
-		return id;
-	}
-
-	@Override
 	public String getName() {
-		return name;
+		return (String) key;
 	}
 
 	@Override
 	public Fidelity<Exploration> getExplorerFi() {
 		return explorerFi;
+	}
+
+	@Override
+	public Context analyze(Context modelContext, Arg... args) throws EvaluationException, RemoteException {
+		try {
+			analyzerFi.getSelect().analyze(this, modelContext);
+		} catch (ServiceException | AnalysisException e) {
+			throw new EvaluationException(e);
+		}
+		return output;
+	}
+
+	@Override
+	public Context explore(Context context, Arg... args) throws ContextException, RemoteException {
+		return explorerFi.getSelect().explore(context);
 	}
 
 	public void setExplorerFi(Fidelity<Exploration> explorerFi) {
@@ -285,7 +286,7 @@ public class Governance implements Transdiscipline, Dependency {
 
 	public Fidelity<Analysis> setAnalyzerFi(Context context) throws ConfigurationException {
 		if(analyzerFi == null) {
-			Object mdaComponent = context.get(Context.MDA_PATH);
+			Object mdaComponent = ((ServiceContext)context).get(Context.MDA_PATH);
 			if (mdaComponent != null) {
 				if (mdaComponent instanceof Analyzer) {
 					analyzerFi = new Fidelity(((Analyzer) mdaComponent).getName());
@@ -299,14 +300,14 @@ public class Governance implements Transdiscipline, Dependency {
 		}
 		((ServiceContext)context).getDomainStrategy().setExecState(Exec.State.INITIAL);
 		if (output == null) {
-			output = new ServiceContext(name);
+			output = new ServiceContext((String) key);
 		}
 		return analyzerFi;
 	}
 
 	public Fidelity<Supervision> setSupervisorFi(Context context) throws ConfigurationException {
 		if(supervisorFi == null) {
-			Object supComponent = context.get(Context.MDA_PATH);
+			Object supComponent = ((ServiceContext)context).get(Context.MDA_PATH);
 			if (supComponent != null) {
 				if (supComponent instanceof Supervisor) {
 					supervisorFi = new Fidelity(((Supervisor) supComponent).getName());
@@ -320,7 +321,7 @@ public class Governance implements Transdiscipline, Dependency {
 		}
 		((ServiceContext)context).getDomainStrategy().setExecState(Exec.State.INITIAL);
 		if (output == null) {
-			output = new ServiceContext(name);
+			output = new ServiceContext((String) key);
 		}
 		return supervisorFi;
 	}
@@ -406,8 +407,13 @@ public class Governance implements Transdiscipline, Dependency {
 	}
 
 	@Override
+	public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException {
+		return (T) execute(args);
+	}
+
+	@Override
 	public String getDomainName() {
-		return name;
+		return (String) key;
 	}
 
 	@Override
@@ -509,7 +515,7 @@ public class Governance implements Transdiscipline, Dependency {
 	}
 
 	@Override
-	public List<Contextion> getContextions(List<Contextion> contextionList) {
+	public List<Contextion> getContextions(List<Contextion> contextionList) throws RemoteException {
 		for (Contextion e : regions.values()) {
 			e.getContextions(contextionList);
 		}
@@ -539,7 +545,7 @@ public class Governance implements Transdiscipline, Dependency {
 	}
 
 	@Override
-	public void selectFidelity(Fidelity fi) throws ConfigurationException {
+	public void selectFidelity(Fi fi) throws ConfigurationException {
 
 	}
 
@@ -552,4 +558,8 @@ public class Governance implements Transdiscipline, Dependency {
 		isExec = exec;
 	}
 
+	@Override
+	public List<Signature> getAllSignatures() throws RemoteException {
+		return null;
+	}
 }

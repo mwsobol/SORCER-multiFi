@@ -82,7 +82,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
     protected void afterExec(Routine ex, Routine result)
             throws SignatureException, RoutineException, ContextException {
         Subroutine ser = (Subroutine) result;
-		((Transroutine)xrt).setMogramAt(result, ex.getIndex());
+		((Transroutine)xrt).setMogramAt(result, ((ServiceMogram)ex).getIndex());
         if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
             ser.setStatus(DONE);
             // update all outputs from sharedcontext only for tasks. For jobs,
@@ -99,7 +99,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         afterExec(result);
     }
 
-    protected Task execTask(Task task, Arg... args) throws MogramException,
+    protected Task execTask(Task task, Arg... args) throws ServiceException,
             SignatureException, RemoteException {
 		if (task instanceof NetTask) {
 			return execServiceTask(task, args);
@@ -299,10 +299,10 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 			dispatcher = MogramDispatcherFactory.getFactory()
 					.createDispatcher(block, sharedContexts, true, provider);
 
-            for (Discipline mog : block.getMograms()) {
-                if (((Mogram)mog).getDataContext() != null && ((Mogram)mog).getDataContext().getScope() == null) {
+            for (Contextion mog : block.getMograms()) {
+                if (((ServiceMogram)mog).getDataContext() != null && ((ServiceMogram)mog).getDataContext().getScope() == null) {
                     if (block.getContext() != null) {
-                        ((Mogram)mog).getDataContext().setScope(block.getContext());
+                        ((ServiceMogram)mog).getDataContext().setScope(block.getContext());
                     }
                 }
             }

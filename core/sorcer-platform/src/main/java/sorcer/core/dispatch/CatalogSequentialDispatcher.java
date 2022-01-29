@@ -65,7 +65,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
 
         xrt.startExecTime();
         Context previous = null;
-        for (Discipline mogram: inputXrts) {
+        for (Contextion mogram: inputXrts) {
             if (xrt.isBlock()) {
                 try {
                     if (mogram.getScope() != null)
@@ -146,7 +146,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         }
     }
 
-    protected List<Discipline> getInputExertions() throws ContextException {
+    protected List<Contextion> getInputExertions() throws ContextException {
         return Mograms.getInputExertions(((Job) xrt));
     }
 

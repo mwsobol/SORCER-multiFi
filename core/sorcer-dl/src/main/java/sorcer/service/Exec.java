@@ -40,7 +40,8 @@ public interface Exec {
     final static int ASIS		   		=  14;
 
     final static int PROVISION          =  15;
-    
+    final static int MORPHED            =  16;
+
     final static int ERROR            	= -1;  
     public static final int POISONED	= -2;
 

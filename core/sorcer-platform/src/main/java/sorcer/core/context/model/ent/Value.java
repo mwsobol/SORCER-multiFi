@@ -123,6 +123,11 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Setter, Comparab
         return getValue(args);
     }
 
+    @Override
+    public void set(T value) {
+        this.out = value;
+    }
+
     public T getValue(Arg... args) throws ContextException {
 //        substitute(args);
         if (args != null && args.length > 0) {

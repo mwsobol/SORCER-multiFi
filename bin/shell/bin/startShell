@@ -169,8 +169,6 @@ fi
 RIO_CLASSPATH="$RIO_HOME/lib/rio-platform-$rio_version.jar:\
 $RIO_HOME/lib/rio-lib-$rio_version.jar:\
 $RIO_HOME/lib/rio-start-$rio_version.jar:\
-$RIO_HOME/lib-dl/rio-api-$rio_version.jar:\
-$RIO_HOME/lib-dl/monitor-api-$rio_version.jar:\
 $RIO_HOME/lib/logging/slf4j-api-$slf4j_version.jar:\
 $RIO_HOME/lib/logging/logback-core-$logback_version.jar:\
 $RIO_HOME/lib/logging/logback-classic-$logback_version.jar:\
@@ -344,7 +342,6 @@ startShell ( ) {
             -Dmodeling.version="$modeling_version" \
             -Dsorcer.home="$SORCER_HOME" \
             -Drio.home="$RIO_HOME" \
-            -Dorg.rioproject.keystore="$RIO_HOME"/config/security/rio-cert.ks \
             -Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.url|org.rioproject.url" \
             -Djava.net.preferIPv4Stack="true" \
             -Dtools.jar="$TOOLS_JAR" \

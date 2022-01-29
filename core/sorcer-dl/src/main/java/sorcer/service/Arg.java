@@ -19,6 +19,7 @@ package sorcer.service;
 
 import sorcer.core.Index;
 import sorcer.core.Tag;
+import sorcer.service.modeling.Conditional;
 import sorcer.service.modeling.Functionality;
 
 import java.io.Serializable;
@@ -50,6 +51,14 @@ public interface Arg extends Serializable, Service {
 		return null;
 	}
 
+	public static Conditional selectCheckpoint(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Conditional)
+				return (Conditional) arg;
+		}
+		return null;
+	}
+
 	public static Context selectContext(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Context)
@@ -74,8 +83,8 @@ public interface Arg extends Serializable, Service {
 		return null;
 	}
 
-	public static List<Fidelity> selectFidelities(Arg[] args) {
-		List<Fidelity> fiList = new ArrayList<>();
+	public static List<Fi> selectFidelities(Arg[] args) {
+		List<Fi> fiList = new ArrayList<>();
 		for (Arg arg : args) {
 			if (arg instanceof Fidelity)
 				fiList.add((Fidelity) arg);
@@ -97,6 +106,38 @@ public interface Arg extends Serializable, Service {
 		for (Arg arg : args) {
 			if (arg instanceof Service)
 				return (Service) arg;
+		}
+		return null;
+	}
+
+	public static Signature.Type selectSignatureType(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Signature.Type)
+				return (Signature.Type) arg;
+		}
+		return null;
+	}
+
+	public static Response.Type selectResponseType(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Response.Type)
+				return (Response.Type) arg;
+		}
+		return null;
+	}
+
+	public static Context.Type selectContextType(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Context.Type)
+				return (Context.Type) arg;
+		}
+		return null;
+	}
+
+	public static Functionality.Type selectFunctionalityType(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Functionality.Type)
+				return (Functionality.Type) arg;
 		}
 		return null;
 	}

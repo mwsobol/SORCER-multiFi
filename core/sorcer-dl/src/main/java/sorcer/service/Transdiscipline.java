@@ -16,23 +16,27 @@
  */
 package sorcer.service;
 
-import sorcer.service.modeling.Exploration;
-import sorcer.service.modeling.Finalization;
-import sorcer.service.modeling.cxtn;
-import sorcer.service.modeling.disc;
+import sorcer.service.modeling.*;
 
+import java.rmi.RemoteException;
 import java.util.Map;
 
 public interface Transdiscipline extends Discipline, disc, cxtn {
 
     public Map<String, Context>  getChildrenContexts();
 
-    public Discipline getChild(String name);
+    public Contextion getChild(String name);
 
     public Fidelity<Finalization> getFinalizerFi();
 
     public Fidelity<Analysis> getAnalyzerFi();
 
     public Fidelity<Exploration> getExplorerFi();
+
+    public Context analyze(Context modelContext, Arg... args)
+        throws ContextException, RemoteException;
+
+    public Context explore(Context context, Arg... args)
+        throws ContextException, RemoteException;
 
 }

@@ -27,6 +27,7 @@ import org.sorcer.test.TestsRequiringRio;
 import sorcer.core.SorcerConstants;
 import sorcer.service.Job;
 import sorcer.service.Mogram;
+import sorcer.service.ServiceMogram;
 
 import java.util.Collection;
 import java.util.List;
@@ -74,7 +75,7 @@ public class DeployExertionTest implements SorcerConstants {
         logger.info("===> out: "+ upcontext(out));
         assertEquals(400.0, get(out, "f1/f3/result/y3"));
 
-        ServiceDeployment deployment = (ServiceDeployment)out.getProcessSignature().getDeployment();
+        ServiceDeployment deployment = (ServiceDeployment)((ServiceMogram)out).getProcessSignature().getDeployment();
         assertNotNull(deployment);
         Collection<String> deploymentNames = deployment.getDeployedNames();
         assertTrue(deploymentNames.size()>0);

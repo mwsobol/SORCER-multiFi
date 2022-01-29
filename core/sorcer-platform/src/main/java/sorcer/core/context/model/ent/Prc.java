@@ -171,9 +171,15 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
 			return out;
 		} else if (out instanceof Number &&  isValid && impl == null && !isPersistent) {
 			return (T) out;
-		} else if (impl instanceof Incrementor || ((impl instanceof ServiceInvoker) &&
-			scope != null && scope.isChanged())) {
-			isValid = false;
+		} else {
+			try {
+				if (impl instanceof Incrementor || ((impl instanceof ServiceInvoker) &&
+					scope != null && scope.isChanged())) {
+					isValid = false;
+				}
+			} catch (ContextException | RemoteException e) {
+				throw new EvaluationException(e);
+			}
 		}
 
 		Object val = null;

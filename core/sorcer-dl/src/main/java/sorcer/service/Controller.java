@@ -19,14 +19,14 @@ package sorcer.service;
 
 /**
  * A Controller is the abstract type for functional dependency injection
- * of Analyzers, Explorers, Supervisors, Initializers and Finalizers
+ * of Moprher, Analyzer, Explorer, Supervisor, Initializer and Finalizer
  * declared in input service contexts to be injected at runtime for
- * controlling execution of Disciplines. Tey can be declared directly
- * in contexts as Java lambda expressions or by service signatures
- * that reference static methods (builders) of classes that provide
- * relevant implementation of the declared Controller.
+ *controlling execution of services. Tey can be declared directly
+ * in contexts as Java lambda expressions or by fee controllers or
+ * service signatures that reference static methods (builders) of
+ * classes that provide relevant implementation of the declared Controller.
  *
- * Created by Mike Sobolewski on 02/01/21.
+ * Created by Mike Sobolewski on 09/09/21.
  */
 public interface Controller {
 

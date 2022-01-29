@@ -10,7 +10,7 @@ import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.context.model.req.Req;
+import sorcer.core.context.model.req.Srv;
 import sorcer.service.Morpher;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
@@ -43,12 +43,15 @@ public class ArithmeticMograms {
 			val("x3", 20.0d), val("x4", 80.0d),
 			ent("y1", expr("x1 * x2", args("x1", "x2"))),
 			ent("y2", expr("x3 + x4", args("x3", "x4"))),
-			ent("y3", expr("y1 - y2", args("y1", "y2"))),
+//			ent("y2", expr("x3 + x4", args("x3", "x4")), ckpt(true)),
+//			ent("y3", expr("y1 - y2", args("y1", "y2"))),
+			ent("y3", expr("y1 - y2", args("y1", "y2")), ckpt(true)),
 			response("y1", "y2", "y3"));
 
 		Context out = response(mdl);
 		logger.info("out: " + out);
 		logger.info("model response: " + out);
+		assertTrue(isCkpt(out));
 		assertTrue(get(out, "y3").equals(400.0));
 		assertTrue(get(out, "y1").equals(500.0));
 		assertTrue(get(out, "y2").equals(100.0));
@@ -84,11 +87,11 @@ public class ArithmeticMograms {
 
 		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			ent("add/x1", 20.0), ent("add/x2", 80.0),
-			fxn("add", (Context <Double> model) ->
+			srv("add", (Context <Double> model) ->
 				value(model, "add/x1") + value(model, "add/x2"), args("add/x1", "add/x2")),
-			fxn("multiply", (Context <Double> model) ->
+			srv("multiply", (Context <Double> model) ->
 				value(model, "multiply/x1") * value(model, "multiply/x2"), args("multiply/x1", "multiply/x2")),
-			fxn("subtract", (Context <Double> model) ->
+			srv("subtract", (Context <Double> model) ->
 				value(model, "multiply") - value(model, "add"), result("add/out",
 				inPaths("multiply", "add"))),
 			response("subtract", "multiply", "add"));
@@ -106,13 +109,13 @@ public class ArithmeticMograms {
 
 		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			ent("add/x1", 20.0), ent("add/x2", 80.0),
-			fxn("add", (Context <Double> model) ->
+			srv("add", (Context <Double> model) ->
 				value(model, "add/x1") + value(model, "add/x2")),
-			fxn("multiply", (Context <Double> model) ->
+			srv("multiply", (Context <Double> model) ->
 				value(model, "multiply/x1") * value(model, "multiply/x2")),
-			fxn("subtract", (Context <Double> model) ->
+			srv("subtract", (Context <Double> model) ->
 				value(model, "multiply") - value(model, "add")),
-			fxn("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
+			srv("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
 				double out = (double)exec(entry, scope);
 				if (out > 400) {
 					putValue(scope, "multiply/x1", 20.0);
@@ -126,10 +129,10 @@ public class ArithmeticMograms {
 		dependsOn(mo, dep("subtract", paths("multiply2", "add")));
 
 		Object val = asis(mo, "subtract");
-		if (val instanceof Req) {
-			Req req = ((Req)val);
-			if (req.getValue() instanceof ContextCallable) {
-				ContextCallable ctx = (ContextCallable) req.getValue();
+		if (val instanceof Srv) {
+			Srv srv = ((Srv)val);
+			if (srv.getValue() instanceof ContextCallable) {
+				ContextCallable ctx = (ContextCallable) srv.getValue();
 				logger.info("class: " + ctx.getClass());
 			}
 		}
@@ -147,15 +150,15 @@ public class ArithmeticMograms {
 		Model mdl = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			ent("add/x1", 20.0), ent("add/x2", 80.0),
 			ent("arg/x1", 30.0), ent("arg/x2", 90.0),
-			fxn("add", (Context <Double> model) ->
+			srv("add", (Context <Double> model) ->
 					value(model, "add/x1") + value(model, "add/x2"),
 				result("add/out",
 					inPaths("add/x1", "add/x2"))),
-			fxn("multiply", (Context <Double> model) ->
+			srv("multiply", (Context <Double> model) ->
 					value(model, "multiply/x1") * value(model, "multiply/x2"),
 				result("multiply/out",
 					inPaths("multiply/x1", "multiply/x2"))),
-			fxn("subtract", (Context <Double> model) ->
+			srv("subtract", (Context <Double> model) ->
 					value(model, "multiply/out") - value(model, "add/out"),
 				result("model/response", inPaths("multiply/out", "add/out"))),
 			response("subtract", "multiply/out", "add/out", "model/response"));
@@ -431,6 +434,12 @@ public class ArithmeticMograms {
 		assertTrue(get(out, "mFi1").equals(100.0));
 		assertTrue(get(out, "mFi2").equals(9.0));
 		assertTrue(get(out, "mFi3").equals(50.0));
+
+	}
+
+
+	@Test
+	public void providerProxy() throws Exception {
 
 	}
 }

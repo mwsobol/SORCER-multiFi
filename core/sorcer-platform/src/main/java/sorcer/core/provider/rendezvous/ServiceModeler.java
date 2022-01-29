@@ -72,7 +72,7 @@ public class ServiceModeler extends SorcerExerterBean implements Modeler {
                 }
             }
 
-            dataContext =  mogram.getDataContext();
+            dataContext =  ((ServiceMogram)mogram).getDataContext();
 
             if (dataContext instanceof Model) {
                 result = ((ServiceContext)dataContext).getResponse(args);
@@ -80,7 +80,7 @@ public class ServiceModeler extends SorcerExerterBean implements Modeler {
                     model = (Model) ((LocalSignature)builder).newInstance();
                 }
                 if (model != null) {
-                    model.substitute((Arg) result);
+                    ((ServiceMogram)model).substitute((Arg) result);
                     result = model.exert(args);
                 }
                 if (contextSelector != null) {

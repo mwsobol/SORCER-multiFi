@@ -37,13 +37,18 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
-	public ServiceContext evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
-		return null;
+	public Context evaluate(Context context, Arg... args) throws ServiceException, RemoteException {
+		return contextion.evaluate(context, args);
 	}
 
 	@Override
-	public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ContextException, RemoteException {
-		return null;
+	public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException {
+		return contextion.exert(args);
+	}
+
+	@Override
+	public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ServiceException, RemoteException {
+		return contextion.exert(txn, args);
 	}
 
 	@Override
@@ -57,7 +62,7 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
-	public Context getOutput(Arg... args) throws ContextException {
+	public Context getOutput(Arg... args) throws ContextException, RemoteException {
 		 if (contextion != null) {
 			 return contextion.getOutput(args);
 		} else {
@@ -111,7 +116,7 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
-	public List<Contextion> getContextions(List<Contextion> contextionList) {
+	public List<Contextion> getContextions(List<Contextion> contextionList) throws RemoteException {
 		if (contextion != null) {
 			return contextion.getContextions(contextionList);
 		} else {
@@ -120,7 +125,12 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
-	public void selectFidelity(Fidelity fi) throws ConfigurationException {
+	public FidelityManagement getFidelityManager() throws RemoteException {
+		return null;
+	}
+
+	@Override
+	public void selectFidelity(Fi fi) throws ConfigurationException {
 
 	}
 

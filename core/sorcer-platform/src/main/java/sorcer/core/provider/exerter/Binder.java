@@ -37,13 +37,13 @@ public class Binder {
 
     public Mogram bind(Arg... args) throws ContextException {
         try {
-            mogram.substitute(args);
+            ((ServiceMogram)mogram).substitute(args);
 
             if (mogram instanceof Routine) {
                 ((Subroutine)mogram).selectFidelity(args);
                 initExecState(args);
             } else if (mogram instanceof Context) {
-                mogram.substitute(args);
+                ((ServiceMogram)mogram).substitute(args);
             }
         } catch (Exception e) {
             throw new ContextException(e);
@@ -71,10 +71,10 @@ public class Binder {
 //		}
         Exec.State state = exertion.getControlContext().getExecState();
         if (state == Exec.State.INITIAL) {
-            for (Discipline e : exertion.getAllMograms()) {
+            for (Contextion e : exertion.getAllMograms()) {
                 if (e instanceof Routine) {
                     if (((ControlContext) ((Routine)e).getControlContext()).getExecState() == Exec.State.INITIAL) {
-                        ((Mogram)e).setStatus(Exec.INITIAL);
+                        ((ServiceMogram)e).setStatus(Exec.INITIAL);
                     }
                 }
                 if (e instanceof Block) {

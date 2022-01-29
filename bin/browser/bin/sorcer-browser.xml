@@ -33,10 +33,11 @@
         <pathelement location="${rio.lib}/groovy-all-${groovy.version}.jar" />
         <pathelement location="${jini.lib}/jsk-lib-${river.version}.jar" />
         <pathelement location="${jini.lib}/jsk-platform-${river.version}.jar" />
+        <pathelement location="${jini.lib}/start-${river.version}.jar" />
         <pathelement location="${jini.lib}/outrigger-dl-${river.version}.jar" />
         <pathelement location="${jini.lib}/serviceui-${river.version}.jar" />
         <pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />
-        <pathelement location="${rio-dl.lib}/rio-api-${rio.version}.jar" />
+        <pathelement location="${rio.lib}/rio-start-${rio.version}.jar" />
         <pathelement location="${rio.lib}/rio-lib-${rio.version}.jar" />
         <pathelement location="${rio.lib}/logging/slf4j-api-${slf4j.version}.jar" />
         <pathelement location="${rio.lib}/logging/jul-to-slf4j-${slf4j.version}.jar" />
@@ -62,7 +63,7 @@
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
             <sysproperty key="java.security.policy" value="../policy/ssb.policy" />
             <sysproperty key="rio.home" value="${rio.home}"/>
-            <sysproperty key="org.rioproject.keystore" value="${rio.home}/config/security/rio-cert.ks"/>
+<!--            <sysproperty key="org.rioproject.keystore" value="${rio.home}/config/security/rio-cert.ks"/>-->
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
             <sysproperty key="java.net.preferIPv4Stack" value="true" />
             <sysproperty key="ssb.logFile" value="${sorcer.home}/bin/browser/logs/browser.log" />

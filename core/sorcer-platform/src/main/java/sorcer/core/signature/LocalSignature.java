@@ -100,7 +100,8 @@ public class LocalSignature extends ServiceSignature implements sig {
 		} else {
 			target = object;
 		}
-
+		// default name
+		name = selector;
 		setSelector(selector);
 		setInitSelector(initSelector);
 
@@ -360,15 +361,15 @@ public class LocalSignature extends ServiceSignature implements sig {
 				((Modeling)obj).isolateModel(inContext);
 				((Modeling)obj).setContext(inContext);
 				((Modeling)obj).initializeBuilder();
-			} catch (ContextException e) {
+			} catch (ContextException | RemoteException e) {
 				logger.error("instance creation failed", e);
 				throw new SignatureException("Build isolation failed", this, e);
 			}
 		}
-		if (inContext != null && obj instanceof ServiceMogram && inContext.get(Context.SRV_PROJECTION) != null) {
+		if (inContext != null && obj instanceof ServiceMogram && ((ServiceContext)inContext).get(Context.SRV_PROJECTION) != null) {
 			try {
 				// morph new service mogram with a given projection
-				((ServiceMogram)obj).morph((String[])inContext.get(Context.SRV_PROJECTION));
+				((ServiceMogram)obj).project((String[])((ServiceContext)inContext).get(Context.SRV_PROJECTION));
 			} catch (ConfigurationException e) {
 				throw new SignatureException(e);
 			}
@@ -377,12 +378,12 @@ public class LocalSignature extends ServiceSignature implements sig {
 	}
 
 	@Override
-	public Context exert(Contextion mogram) throws MogramException {
+	public Context exert(Contextion mogram) throws ServiceException {
 		return exert(mogram, null);
 	}
 
 	@Override
-	public Context exert(Contextion mogram, Transaction txn, Arg... args) throws MogramException {
+	public Context exert(Contextion mogram, Transaction txn, Arg... args) throws ServiceException {
 		Context cxt;
 		ObjectTask task;
 		if (mogram instanceof Context) {
@@ -399,7 +400,7 @@ public class LocalSignature extends ServiceSignature implements sig {
 	}
 
 	@Override
-	public Object execute(Arg... args) throws MogramException {
+	public Object execute(Arg... args) throws ServiceException, RemoteException {
 		Mogram mog = Arg.selectMogram(args);
 		if (mog == null && contextReturn != null) {
 			mog = contextReturn.getDataContext();

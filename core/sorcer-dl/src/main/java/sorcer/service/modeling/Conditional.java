@@ -15,8 +15,12 @@
  * limitations under the License.
  */
 
-package sorcer.service;
+package sorcer.service.modeling;
 
+
+import sorcer.service.Context;
+import sorcer.service.ContextException;
+import sorcer.service.RoutineException;
 
 @SuppressWarnings("rawtypes")
 public interface Conditional {
@@ -28,7 +32,7 @@ public interface Conditional {
 	 * @return boolean true or false depending on the condition
 	 * @throws RoutineException
 	 *             if there is any problem within the isTrue method.
-	 * @throws ContextException 
+	 * @throws ContextException
 	 */
 	public boolean isTrue() throws ContextException;
 	

@@ -61,7 +61,6 @@ bootme {
 }
 
 test {
-
 	systemProperty "java.rmi.server.codebase",
 				   "${websterUrl}/${repoPath()}/pml-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 

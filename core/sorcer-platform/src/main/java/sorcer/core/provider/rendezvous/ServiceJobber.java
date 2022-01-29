@@ -61,7 +61,7 @@ public class ServiceJobber extends SorcerExerterBean implements Jobber {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                mogram.reportException(e);
+                ((ServiceMogram)mogram).reportException(e);
                 logger.warn("Error: " + e.getMessage());
                 return mogram;
             }

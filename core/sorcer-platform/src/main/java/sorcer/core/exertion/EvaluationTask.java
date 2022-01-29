@@ -22,7 +22,7 @@ import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.Prc;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.core.context.model.req.Req;
+import sorcer.core.context.model.req.Srv;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
@@ -58,7 +58,7 @@ public class EvaluationTask extends Task {
 			if (dataContext.getScope() == null)
 				dataContext.setScope(new EntryModel(key));
 		}
-		if (evaluator instanceof Req) {
+		if (evaluator instanceof Srv) {
 			if (dataContext.getContextReturn() == null)
 				dataContext.setContextReturn(Signature.SELF_VALUE);
 		}
@@ -144,8 +144,8 @@ public class EvaluationTask extends Task {
 			if (evaluator instanceof FreeEvaluator) {
 				evaluator = ((FreeEvaluator)evaluator).getEvaluator();
 			}
-			if (evaluator instanceof Req) {
-				result = handleSrvEntry((Req)evaluator, args);
+			if (evaluator instanceof Srv) {
+				result = handleSrvEntry((Srv)evaluator, args);
 			} else if (evaluator instanceof Invocation) {
 				result = ((Invocation)evaluator).invoke(dataContext, args);
 			} else {
@@ -158,7 +158,7 @@ public class EvaluationTask extends Task {
 			if (evaluator instanceof Scopable && ((Scopable)evaluator).getScope() != null) {
 				(((Scopable)evaluator).getScope()).putValue(dataContext.getContextReturn().returnPath, result);
 			}
-			if (evaluator instanceof Req && dataContext.getScope() != null)
+			if (evaluator instanceof Srv && dataContext.getScope() != null)
 				dataContext.getScope().putValue(((Identifiable)evaluator).getName(), result);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -168,11 +168,11 @@ public class EvaluationTask extends Task {
 		return this;
 	}
 
-	private Object handleSrvEntry(Req evaluator, Arg... args) throws ServiceException, RemoteException, TransactionException {
+	private Object handleSrvEntry(Srv evaluator, Arg... args) throws ServiceException, RemoteException, TransactionException {
 		Object out = null;
 		Object val = null;
 
-		if (evaluator instanceof Req) {
+		if (evaluator instanceof Srv) {
 			if (isChanged())
 				evaluator.setValid(false);
 			val = evaluator.asis();

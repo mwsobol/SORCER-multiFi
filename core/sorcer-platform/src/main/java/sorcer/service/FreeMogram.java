@@ -55,9 +55,9 @@ public class FreeMogram extends ServiceMogram implements FreeService {
             try {
                 mogram = (Mogram) ((LocalSignature) object).build();
                 builder = (Signature) object;
-                mogram.setBuilder(builder);
+                ((ServiceMogram)mogram).setBuilder(builder);
                 mogram.setName(builder.getName());
-            } catch (SignatureException | MogramException e) {
+            } catch (SignatureException e) {
                 throw new ConfigurationException(e);
             }
         }
@@ -84,25 +84,24 @@ public class FreeMogram extends ServiceMogram implements FreeService {
     }
 
     @Override
-    public List<ThrowableTrace> getExceptions() {
+    public List<ThrowableTrace> getExceptions()  throws RemoteException {
         return null;
     }
 
     @Override
-    public List<Discipline> getMograms(List<Discipline> allMograms) {
-        List<Discipline> mograms = new ArrayList<>();
+    public List<Contextion> getMograms(List<Contextion> allMograms) {
+        List<Contextion> mograms = new ArrayList<>();
         mograms.add(this);
         return mograms;
     }
 
-    public Discipline getMogram() {
+    public Contextion getMogram() {
         return mogram;
     }
 
     public void setMogram(Mogram mogram) {
         this.mogram = mogram;
     }
-
 
     @Override
     public ServiceContext evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
@@ -115,11 +114,6 @@ public class FreeMogram extends ServiceMogram implements FreeService {
 
     public boolean isRoutine() {
         return type == Functionality.Type.ROUTINE;
-    }
-
-    @Override
-    public <T extends Contextion> T exert(T mogram, Transaction txn, Arg... entries) throws ContextException, RemoteException {
-        return null;
     }
 
 }

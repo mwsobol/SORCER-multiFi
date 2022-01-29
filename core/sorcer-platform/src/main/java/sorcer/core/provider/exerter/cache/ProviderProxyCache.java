@@ -34,7 +34,7 @@ public class ProviderProxyCache implements ProviderCache  {
     public Object getProvider(Signature signature) {
         Object provider = doProviderGet(signature);
         if (provider != null) {
-            if (!Accessor.isAlive((Exerter) provider)) {
+            if (!Accessor.isAlive(provider)) {
                 /* If we had a provider and now it's no longer there, retry */
                 proxyCache.remove(signature);
                 provider = doProviderGet(signature);

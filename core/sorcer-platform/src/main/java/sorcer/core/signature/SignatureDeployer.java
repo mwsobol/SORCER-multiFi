@@ -68,11 +68,7 @@ public class SignatureDeployer implements Deployee {
     public void deploy() throws ConfigurationException {
         if (deployee != null && builders != null) {
             if (deployee instanceof Model) {
-                try {
-                    deployee.deploy(builders);
-                } catch (ServiceException e) {
-                    throw new ConfigurationException(e);
-                }
+                ((ServiceMogram)deployee).deploy(builders);
             }
         } else {
             throw new ConfigurationException("Invalid builders: " + builders);

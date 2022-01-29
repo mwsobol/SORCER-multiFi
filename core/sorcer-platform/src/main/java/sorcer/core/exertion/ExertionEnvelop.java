@@ -22,10 +22,7 @@ import net.jini.id.Uuid;
 import net.jini.lookup.entry.Name;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.signature.RemoteSignature;
-import sorcer.service.Exec;
-import sorcer.service.Routine;
-import sorcer.service.Subroutine;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
 
 import javax.security.auth.Subject;
 import java.rmi.RemoteException;
@@ -112,7 +109,7 @@ public class ExertionEnvelop implements Entry {
 		ee.exertion = ex;
 		ee.serviceType = ss.getServiceType();
 		ee.providerName = ss.getProviderName().getName();
-		ee.exertionID = ex.getId();
+		ee.exertionID = ((ServiceMogram)ex).getId();
 		ee.parentID = ((Subroutine) ex).getParentId();
 		ee.isJob = new Boolean(ex.isJob());
 

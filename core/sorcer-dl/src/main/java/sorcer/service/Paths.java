@@ -43,6 +43,13 @@ public class Paths extends ArrayList<Path> implements Arg {
             add(path) ;
         }
     }
+
+    public Paths(Object[] objects) {
+        for (Object obj : objects) {
+            add(new Path(obj.toString(), obj)) ;
+        }
+    }
+
     public Paths(String[] names) {
         for (String name : names) {
             add(new Path(name)) ;

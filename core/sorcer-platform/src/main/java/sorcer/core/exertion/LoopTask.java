@@ -23,14 +23,13 @@ import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.req.RequestModel;
 import sorcer.core.invoker.Pipeline;
 import sorcer.service.*;
+import sorcer.service.modeling.Conditional;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 //import sorcer.service.Condition;
-
-
 /**
  * The loop Routine executes its target exertion while its condition is true.
  * Other types of looping types depend on parameters provided as described for
@@ -151,7 +150,7 @@ public class LoopTask extends ConditionalTask {
 				}
 				while (condition.isTrue()) {
 					if (target instanceof Routine) {
-						Signature sig = ((Mogram)target).getProcessSignature();
+						Signature sig = ((ServiceMogram)target).getProcessSignature();
 						if (sig != null && sig.getVariability() != null) {
 							target.getContext().append(condition.getConditionalContext());
 						}
@@ -195,7 +194,7 @@ public class LoopTask extends ConditionalTask {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Conditional#getConditions()
+	 * @see sorcer.service.modeling.Conditional#getConditions()
 	 */
 	@Override
 	public List<Conditional> getConditions() {
@@ -215,15 +214,15 @@ public class LoopTask extends ConditionalTask {
 	}
 
 	@Override
-	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) {
+	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) throws RemoteException {
 		exceptions.addAll(((Mogram)target).getExceptions());
 		exceptions.addAll(this.getExceptions());
 		return exceptions;
 	}
 	
-	public List<Discipline> getMograms(List<Discipline> exs) {
-		if (target instanceof Mogram) {
-			exs.add((Mogram) target);
+	public List<Contextion> getMograms(List<Contextion> exs) {
+		if (target instanceof Contextion) {
+			exs.add(target);
 			exs.add(this);
 		}
 		return exs;

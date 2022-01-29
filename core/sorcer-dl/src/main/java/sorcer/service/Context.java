@@ -192,6 +192,9 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 	final static String MDA_PATH = "domain" + SorcerConstants.CPS + "mda"
 		+ SorcerConstants.CPS + "component";
 
+	final static String DEV_PATH = "design" + SorcerConstants.CPS + "dev"
+		+ SorcerConstants.CPS + "component";
+
 	final static String EXPLORER_PATH = "domain" + SorcerConstants.CPS + "explorer"
 		+ SorcerConstants.CPS + "component";
 
@@ -200,6 +203,8 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 			+ SorcerConstants.CPS + "data";
 
 	final static String DOMAIN_OUTPUTS_PATH = "transdomain" + SorcerConstants.CPS + "domain" + SorcerConstants.CPS + "outputs";
+
+	final static String CHECKPOINT_ITERATION = "checkpoint" + SorcerConstants.CPS + "iteration";
 
 	/**
 	 * An object to specify no context execute.
@@ -761,10 +766,10 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 	 *
 	 * @param path
 	 *            the attribute-based path
-	 * @return the value as-is at the path
 	 * @throws ContextException
+	 * @return
 	 */
-	public T asis(String path);
+	public Object asis(String path);
 
 	public T asis(Path path) throws ContextException;
 
@@ -951,7 +956,7 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 
 	public int size();
 
-	Discipline getChild(String name) throws ContextException;
+	Contextion getChild(String name) throws ContextException;
 
 	public Return getContextReturn();
 
@@ -961,8 +966,32 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 
 	public void setContextReturn(Return requestPath);
 
-	public enum Type {
-		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY
+	public enum Type implements Arg {
+		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY, DESIGN, CONTEXT, RESPONSE;
+
+		@Override
+		public String getName() {
+			return toString();
+		}
+
+		@Override
+		public Object execute(Arg... args) throws ServiceException, RemoteException {
+			return this;
+		}
+	}
+
+	public enum IntentType implements Arg {
+		DATA, EXEC, EXERT, EVALUATE, DEVELOP, ANALYZE, MDA, SEARCH, OPTIMIZE, OPTI, EXPLORE, MADO, SVISE, HVISE;
+
+		@Override
+		public String getName() {
+			return toString();
+		}
+
+		@Override
+		public Object execute(Arg... args) throws ServiceException, RemoteException {
+			return this;
+		}
 	}
 
 	final static String PARAMETER_TYPES = "context/parameter/types";

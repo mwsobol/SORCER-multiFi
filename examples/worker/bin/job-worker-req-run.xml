@@ -8,7 +8,7 @@
 	<echo message="webster: ${provider.webster.url}" />
 
 	<!-- setValue property values here -->
-	<property name="requestor.name" value="worker-req" />
+	<property name="requestor.name" value="worker-srv" />
 	<property name="requestor.class" value="sorcer.worker.requestor.WorkerJobApplication	" />
 
 	<path id="project.classpath">

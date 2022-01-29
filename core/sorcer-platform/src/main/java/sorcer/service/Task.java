@@ -27,6 +27,7 @@ import sorcer.core.provider.ControlFlowManager;
 import sorcer.core.signature.LocalSignature;
 import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.ServiceSignature;
+import sorcer.service.modeling.Conditional;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -111,11 +112,11 @@ public class Task extends Subroutine implements ElementaryRequest {
 		multiFi.setSelect(sFi);
 	}
 
-	public Task doTask(Arg... args) throws MogramException {
+	public Task doTask(Arg... args) throws ServiceException {
 		return doTask(null, args);
 	}
 
-	public Task doTask(Transaction txn, Arg... args) throws MogramException {
+	public Task doTask(Transaction txn, Arg... args) throws MogramException, ServiceException {
 		initDelegate();
 		Task done = delegate.doTask(txn, args);
 		setContext(done.getDataContext());
@@ -343,7 +344,7 @@ public class Task extends Subroutine implements ElementaryRequest {
 	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
 	 */
 	@Override
-	public Discipline addMogram(Discipline component) {
+	public Contextion addMogram(Contextion component) {
 		throw new RuntimeException("Tasks do not contain component domains!");
 	}
 
@@ -380,7 +381,7 @@ public class Task extends Subroutine implements ElementaryRequest {
 		this.isContinous = isContinous;
 	}
 
-	protected Task doBatchTask(Transaction txn) throws MogramException {
+	protected Task doBatchTask(Transaction txn) throws ServiceException {
 		ControlFlowManager ep = new ControlFlowManager();
 		return ep.doFidelityTask(this);
 	}
@@ -403,7 +404,7 @@ public class Task extends Subroutine implements ElementaryRequest {
 		return val;
 	}
 
-	public List<Discipline> getMograms(List<Discipline> exs) {
+	public List<Contextion> getMograms(List<Contextion> exs) {
 		exs.add(this);
 		return exs;
 	}
@@ -414,8 +415,8 @@ public class Task extends Subroutine implements ElementaryRequest {
 	}
 
 	@Override
-	public List<Discipline> getMograms() {
-		List<Discipline> ml = new ArrayList<>();
+	public List<Contextion> getMograms() {
+		List<Contextion> ml = new ArrayList<>();
 		ml.add(this);
 		return ml;
 	}

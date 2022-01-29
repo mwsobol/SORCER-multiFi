@@ -23,9 +23,7 @@ String ref = new File(rootProject.projectDir, ".git/HEAD").text
 int ndx = ref.lastIndexOf("/")
 String branch = ref.substring(ndx+1).trim()
 String branchRef = branch.equals("master")?"":"-$branch"
-
-version = "8.8.5$branchRef"
-
+version = "8.8.3.107$branchRef"
 apply plugin: 'idea'
 idea {
     project {
@@ -157,7 +155,6 @@ subprojects {
             mavenLocal()
             if (!enclave) {
                 maven { url "https://repo.repsy.io/mvn/mwsobol/sorcersoft"}
-                maven { url "https://dl.bintray.com/dreedyman/maven"}
                 maven { url "https://repo.repsy.io/mvn/dreedy/maven" }
                 mavenCentral()
             } else {
@@ -249,8 +246,7 @@ if (JavaVersion.current().isJava8Compatible()) {
  */
 task allJavadoc(type: Javadoc) {
     options.links = ['http://docs.oracle.com/javase/8/docs/api/',
-                     'https://river.apache.org/doc/api/',
-                     'http://www.rio-project.org/apidocs']
+                     'https://river.apache.org/doc/api/']
     exclude '**/*Test.java'
     exclude '**/edu/*'
     description = 'Creates SORCER API Specification, view them in build/javadoc/index.html'

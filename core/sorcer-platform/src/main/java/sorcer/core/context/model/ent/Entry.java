@@ -14,7 +14,9 @@ import sorcer.util.url.sos.SdbUtil;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Entry<V> extends MultiFiSlot<String, V>
         implements Identifiable, ElementaryRequest, Evaluation<V>, Activity, Callable<V>, Setter, Reactive<V>, ent<V> {
@@ -24,6 +26,8 @@ public class Entry<V> extends MultiFiSlot<String, V>
     protected static Logger logger = LoggerFactory.getLogger(Entry.class.getName());
 
     protected Uuid id = UuidFactory.generate();
+
+    protected ArgSet args = new ArgSet();
 
     protected String domain;
 
@@ -40,6 +44,10 @@ public class Entry<V> extends MultiFiSlot<String, V>
     private Path.State state;
 
     protected Fidelity<Path> multiFiPath;
+
+    protected Map<String, Entry> subvalueMap;
+
+    protected String supername;
 
     public Entry() {
     }
@@ -88,6 +96,14 @@ public class Entry<V> extends MultiFiSlot<String, V>
         return impl;
     }
 
+    public ArgSet getArgs() {
+        return args;
+    }
+
+    public void setArgs(ArgSet args) {
+        this.args = args;
+    }
+
     @Override
     public void setValue(Object value) throws SetterException {
         if (isPersistent) {
@@ -101,7 +117,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
                         SdbUtil.update((URL) this.impl, value);
                     }
                 }
-            } catch (ServiceException | SignatureException e) {
+            } catch (ServiceException | SignatureException | RemoteException e) {
                 throw new SetterException(e);
             }
         } else {
@@ -254,7 +270,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
     }
 
     @Override
-    public Entry act(Arg... args) throws ServiceException {
+    public Entry act(Arg... args) throws ServiceException, RemoteException {
         Object result = this.execute(args);
         if (result instanceof Entry) {
             return (Entry)result;
@@ -264,7 +280,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
     }
 
     @Override
-    public Data act(String entryName, Arg... args) throws ServiceException {
+    public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
         Object result = this.execute(args);
         if (result instanceof Entry) {
             return (Entry)result;
@@ -273,7 +289,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
         }
     }
 
-    public Object execute(Arg... args) throws ServiceException {
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
         ContextDomain cxt = Arg.selectDomain(args);
         if (cxt != null) {
             // entry substitution
@@ -398,9 +414,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
                 }
                 return out;
             } else if (this instanceof Functionality) {
-                result = (V) ((Functionality)this).getValue(args);
-            } else if (this instanceof Valuation){
-                result =  (V) this.valuate(args);
+                result = (V) ((Functionality)this).evaluate(args);
             } else {
                 result = this.getValue(args);
             }
@@ -416,16 +430,40 @@ public class Entry<V> extends MultiFiSlot<String, V>
         }
     }
 
+    public String getAtDomainName() {
+        if (domain == null) {
+            return key;
+        }
+        return key+"@"+domain;
+    }
+
+    public Entry appendSubvalues(Entry... subValues) {
+        if (subvalueMap ==  null) {
+            subvalueMap = new HashMap<>();
+        }
+        for (Entry ent : subValues) {
+            subvalueMap.put(ent.getName(), ent);
+        }
+        return this;
+    }
+
+    public String getSupername() {
+        return supername;
+    }
+
+    public void setSupername(String name) {
+        supername = name;
+    }
+
+    public Map<String, Entry> getSubvalueMap() {
+        return subvalueMap;
+    }
+
     public Fidelity<Path> getMultiFiPath() {
         return multiFiPath;
     }
 
     public void setMultiFiPath(Fidelity<Path> multiFiPath) {
         this.multiFiPath = multiFiPath;
-    }
-
-    @Override
-    public Morpher getMorpher() {
-        return null;
     }
 }

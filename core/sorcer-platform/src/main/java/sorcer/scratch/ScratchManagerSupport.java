@@ -18,6 +18,7 @@ package sorcer.scratch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.Contexts;
+import sorcer.core.context.ServiceContext;
 import sorcer.data.DataService;
 import sorcer.service.Context;
 import sorcer.util.Sorcer;
@@ -127,7 +128,7 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
                     "\ncontext key = " + context.getName() + "\ncontext = "+
                     context + "\nscratchDirNamePrefix = "+ scratchDirPrefix;
             logger.warn(message, e);
-            context.reportException(message, e);
+            ((ServiceContext)context).reportException(message, e);
         }
         return scratchDir;
     }

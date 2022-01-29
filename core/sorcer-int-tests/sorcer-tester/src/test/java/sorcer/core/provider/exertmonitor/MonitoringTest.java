@@ -2,6 +2,7 @@ package sorcer.core.provider.exertmonitor;
 
 import net.jini.id.Uuid;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -163,8 +164,8 @@ public class MonitoringTest {
 	private static void verifyExertionMonitorStatus(Routine exertion, String state) throws Exception {
 		ExecUtils.CmdResult result = CommonsExecUtil.execCommand(nshCmd, cmds);
 
-		for (Discipline xrt : exertion.getAllMograms())
-			verifyMonitorStatus(result.getOut(), ((Routine)xrt).getId(), "DONE");
+		for (Contextion xrt : exertion.getAllMograms())
+			verifyMonitorStatus(result.getOut(), ((ServiceMogram)xrt).getId(), "DONE");
 	}
 
 	private static void verifyMonitorStatus(String output, Uuid exertionId, String state) {

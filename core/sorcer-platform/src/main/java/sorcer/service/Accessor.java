@@ -18,6 +18,7 @@
 
 package sorcer.service;
 
+import net.jini.admin.Administrable;
 import net.jini.config.Configuration;
 import net.jini.config.EmptyConfiguration;
 import org.slf4j.Logger;
@@ -121,14 +122,21 @@ public class Accessor {
      * @param provider the provider to check
      * @return true if a provider is alive, otherwise false
      */
-    public static boolean isAlive(Exerter provider) {
+    public static boolean isAlive(Object provider) {
         if (provider == null)
             return false;
         try {
-            provider.getProviderName();
+            if (provider instanceof Exerter) {
+                ((Exerter)provider).getProviderName();
+            } else if (provider instanceof Administrable){
+                ((Administrable)provider).getAdmin();
+            } else {
+                logger.warn("Provider is of unknown type " + provider.getClass().getName());
+                return false;
+            }
             return true;
         } catch (RemoteException e) {
-            logger.debug("Exerter is dead " + e.getMessage());
+            logger.debug("Provider is dead " + e.getMessage());
             return false;
         }
     }

@@ -101,7 +101,7 @@ bootme {
     systemProperties = ["relative.repo.path" : repoPath(),
                         "java.util.logging.config.file" : "${projectDir.path}/configs/sorcer-prv.logging",
                         "webster.url" : websterUrl]
-//    spawn = true
+//    spawn = false
 //    debug = true
 }
 

@@ -37,6 +37,7 @@ import sorcer.core.signature.RemoteSignature;
 import sorcer.security.util.Auth;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Strategy.Access;
+import sorcer.service.modeling.ExploreException;
 import sorcer.util.SorcerUtil;
 
 import javax.security.auth.Subject;
@@ -167,22 +168,22 @@ public class Job extends Transroutine {
 	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
 	 */
 	@Override
-	public Discipline addMogram(Discipline ex) throws RoutineException {
+	public Contextion addMogram(Contextion ex) throws RoutineException {
 		mograms.add(ex);
-		((Mogram)ex).setIndex(mograms.indexOf(ex));
+		((ServiceMogram)ex).setIndex(mograms.indexOf(ex));
 		try {
 			controlContext.registerExertion((Mogram)ex);
-			((Mogram)ex).getDataContext().setScope(dataContext);
-		} catch (ContextException e) {
+			((ServiceMogram)ex).getDataContext().setScope(dataContext);
+		} catch (ContextException | RemoteException e) {
 			throw new RoutineException(e);
 		}
-		((Mogram)ex).setParentId(getId());
+		((ServiceMogram)ex).setParentId(getId());
 //		((ServiceMogram)ex).setParent(this);
 		return this;
 	}
 
     public Job doJob(Transaction txn) throws MogramException,
-            SignatureException, RemoteException, TransactionException {
+            SignatureException, RemoteException, TransactionException, ServiceException {
         if (delegate == null) {
             if (delegate == null) {
                 Signature ps = (Signature) ((ServiceFidelity)multiFi.getSelect()).getSelect();
@@ -211,7 +212,7 @@ public class Job extends Transroutine {
                 }
             }
             if (mograms.size() > 0) {
-                for (Discipline ex : mograms) {
+                for (Contextion ex : mograms) {
                     delegate.addMogram(ex);
                 }
             }
@@ -321,9 +322,9 @@ public class Job extends Transroutine {
 	}
 
 	@Override
-	public List<ThrowableTrace> getExceptions() {
+	public List<ThrowableTrace> getExceptions() throws RemoteException {
 		List<ThrowableTrace> exceptions = new ArrayList<>();
-		for (Discipline ext : mograms) {
+		for (Contextion ext : mograms) {
 			exceptions.addAll(((Mogram)ext).getExceptions());
 		}
 		return exceptions;
@@ -349,7 +350,7 @@ public class Job extends Transroutine {
 		return true;
 	}
 
-	public Discipline getExertion(int index) {
+	public Contextion getExertion(int index) {
 		return mograms.get(index);
 	}
 
@@ -610,6 +611,24 @@ public class Job extends Transroutine {
 		} catch (ContextException ex) {
 			ex.printStackTrace();
 			throw new SetterException(ex);
+		}
+	}
+
+	@Override
+	public Context analyze(Context context, Arg... args) throws EvaluationException {
+		try {
+			return exert(context);
+		} catch (ServiceException e) {
+			throw new EvaluationException(e);
+		}
+	}
+
+	@Override
+	public Context explore(Context context, Arg... args) throws ContextException {
+		try {
+			return exert(context);
+		} catch (ServiceException e) {
+			throw new ContextException(e);
 		}
 	}
 }

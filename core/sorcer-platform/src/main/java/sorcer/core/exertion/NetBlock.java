@@ -71,10 +71,9 @@ public class NetBlock extends Block implements Invocation<Object> {
 		return temp;
 	}
 
-	public Block doBlock(Transaction txn, Arg... args) throws  MogramException,
-			SignatureException, RemoteException, TransactionException {
+	public Block doBlock(Transaction txn, Arg... args) throws  ServiceException {
 		ServiceShell se = new ServiceShell(this);
-		return (Block)se.exert(txn, null, args);
+		return se.exert(txn, null, args);
 	}
 
 }

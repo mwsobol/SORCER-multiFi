@@ -93,14 +93,14 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
         ((ServiceFidelity)multiFi).setName(name);
     }
 
-    public ServiceNode(String name, NodeFidelity[] fidelities) {
+    public ServiceNode(String name, NodeFi[] fidelities) {
         this(name);
         multiFi.getSelects().addAll(Arrays.asList(fidelities));
     }
 
     @Override
     public Service getContextion() {
-        return ((NodeFidelity)multiFi.getSelect()).getContextion();
+        return (( NodeFi )multiFi.getSelect()).getContextion();
     }
 
     @Override
@@ -112,13 +112,13 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
         return out;
     }
 
-    public Context getContextionContext() throws ContextException {
+    public Context getContextionContext() throws ContextException, RemoteException {
         return ((Contextion)out).getContext();
     }
 
     @Override
     public Routine getDispatcher() {
-        return ((NodeFidelity)multiFi.getSelect()).getDispatcher();
+        return (( NodeFi )multiFi.getSelect()).getDispatcher();
     }
 
     public Context setInput(Context input) throws ContextException {
@@ -208,7 +208,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
             if (out != null) {
                 clear();
             }
-            List<Fidelity> fis = Arg.selectFidelities(args);
+            List<Fi> fis = Arg.selectFidelities(args);
             if (fis.size() > 0) {
                 try {
                     selectFidelity(fis.get(0));
@@ -217,7 +217,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
                 }
             }
             Routine xrt = getDispatcher();
-            Context cxt = ((NodeFidelity)multiFi.getSelect()).getContext();
+            Context cxt = (( NodeFi )multiFi.getSelect()).getContext();
             if (cxt != null && xrt != null) {
                 xrt.setContext(cxt);
             }
@@ -259,7 +259,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
     }
 
     @Override
-    public void selectFidelity(Fidelity fi) throws ConfigurationException {
+    public void selectFidelity(Fi fi) throws ConfigurationException {
         multiFi.selectSelect(fi.getName());
     }
 
@@ -325,21 +325,21 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
 
     public Context<Object> getContext(String dscName) throws ContextException {
         try {
-            return ((NodeFidelity) multiFi.selectSelect(dscName)).getContext();
+            return (( NodeFi ) multiFi.selectSelect(dscName)).getContext();
         } catch (ConfigurationException e) {
             throw new ContextException(e);
         }
     }
 
     public Context<Object> getContext() {
-        return ((NodeFidelity) multiFi.getSelect()).getContext();
+        return (( NodeFi ) multiFi.getSelect()).getContext();
     }
 
     @Override
     public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
         try {
             if (input != null) {
-                input.substitute(context);
+                ((ServiceContext)input).substitute(context);
             }
             Object out = execute(args);
             if (out instanceof Context) {
@@ -350,6 +350,11 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
         } catch (ServiceException e) {
             throw new EvaluationException(e);
         }
+    }
+
+    @Override
+    public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException {
+        return (T) execute(args);
     }
 
     @Override
@@ -388,7 +393,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
     }
 
     public void clear() throws MogramException {
-        outDispatcher.clear();
+        ((ServiceMogram)outDispatcher).clear();
     }
 
     public Contextion getParent() {
@@ -453,5 +458,10 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
 
     public void setExec(boolean exec) {
         isExec = exec;
+    }
+
+    @Override
+    public List<Signature> getAllSignatures() throws RemoteException {
+        return null;
     }
 }

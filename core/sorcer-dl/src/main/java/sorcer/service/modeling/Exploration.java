@@ -28,6 +28,6 @@ import sorcer.service.Context;
 @FunctionalInterface
 public interface Exploration {
 
-    public Context explore(Context context) throws ServiceException, ExploreException, RemoteException;
+    public Context explore(Context context) throws ContextException, RemoteException;
 
 }

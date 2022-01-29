@@ -20,7 +20,7 @@ package sorcer.service;
 
 import java.util.List;
 
-public interface Fi<T> extends Identifiable, Service {
+public interface Fi<T> extends Identifiable, Service, Arg {
 
     int e = 0;
     int s = 1;
@@ -36,10 +36,10 @@ public interface Fi<T> extends Identifiable, Service {
     int dVar = 11;
 
     enum Type implements Arg {
-        VAL, ENTRY, SIG, REF, MORPH, VAR, VAR_FI, PROC, SRV, ANE, EVALUATOR, GETTER, SETTER, GRADIENT, DERIVATIVE,
+        IN, OUT, VAL, ENTRY, SIG, REF, MORPH, VAR, VAR_FI, PROC, SRV, ANE, EVALUATOR, GETTER, SETTER, GRADIENT, DERIVATIVE,
         MULTI, REQUEST, RESPONSE, UPDATE, ADD, REPLACE, DELETE, SELECT, META, NAME, SOA, IF, IF_SOA, SYS, CONTEXT,
-        MODEL, PATH, IN_PATH, OUT_PATH, MDA, SUP, ANALYZER, EXPLORER, CONFIG, DISCIPLINE, DISPATCHER, CONTEXTION,
-        PROJECTION, FROM_TO, CXT_PRJ, MTF, MMTF;
+        MODEL, PATH, IN_PATH, OUT_PATH, MDA, INTENT, DESIGN, DEV, SUP, ANALYZER, EXPLORER, CONFIG, DISCIPLINE, DISPATCHER,
+        CONTEXTION, PROJECTION, FROM_TO, CXT_PRJ, MTF, MMTF;
 
 		static public String name(int fiType) {
 			for (Type s : Type.values()) {
