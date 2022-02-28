@@ -8,7 +8,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.*;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.context.DesignIntent;
+import sorcer.core.context.Intent;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.service.*;
@@ -16,7 +16,6 @@ import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.modeling.*;
 
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.get;
 import static sorcer.co.operator.*;
 import static sorcer.ent.operator.*;
 import static sorcer.eo.operator.fi;

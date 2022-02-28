@@ -17,7 +17,7 @@
 
 package sorcer.core.context.model.ent;
 
-import sorcer.core.context.DesignIntent;
+import sorcer.core.context.Intent;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.ExecutiveException;
@@ -81,8 +81,8 @@ public class Developer extends Entry<Development> implements Controller, Develop
         Context out = null;
         try {
             if (impl != null && impl instanceof Development) {
-                if (this.discipline == null && context instanceof DesignIntent) {
-                    discipline = ((DesignIntent)context).getDiscipline();
+                if (this.discipline == null && context instanceof Intent) {
+                    discipline = (( Intent )context).getDiscipline();
                 }
                 out = ((Development) impl).develop(discipline, context);
             } else if (signature != null) {

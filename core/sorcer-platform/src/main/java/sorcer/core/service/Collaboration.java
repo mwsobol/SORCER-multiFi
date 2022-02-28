@@ -20,10 +20,7 @@ package sorcer.core.service;
 import net.jini.core.transaction.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.context.ContextList;
-import sorcer.core.context.ModelStrategy;
-import sorcer.core.context.ModelTask;
-import sorcer.core.context.ServiceContext;
+import sorcer.core.context.*;
 import sorcer.core.context.model.OptimizerState;
 import sorcer.core.context.model.ent.Coupling;
 import sorcer.core.context.model.ent.Analyzer;
@@ -37,6 +34,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.mo.operator.getDomainContext;
+import static sorcer.mo.operator.in;
 import static sorcer.so.operator.*;
 
 /**
@@ -54,6 +52,9 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 
     // the input of this collaboration
     protected Context input;
+
+	// the design intent of this collaboration
+	protected Intent intent;
 
 	protected ServiceFidelity contextMultiFi;
 
@@ -128,6 +129,14 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 		for (Domain domain : domains) {
 			this.children.put(domain.getDomainName(), domain);
 		}
+	}
+
+	public Intent getIntent() {
+		return intent;
+	}
+
+	public void setIntent(Intent intent) {
+		this.intent = intent;
 	}
 
     public Context getOutput(Arg... args) {
@@ -359,7 +368,8 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 			if (input == null) {
 				input = context;
 			} else if (context != null){
-				input.append(context);
+				intent = ( Intent ) context;
+				intent.append(input);
 			} else {
 				// transfer inputs from collaborating contextions
 				Context ccxt;
@@ -395,16 +405,26 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 
 			if (analyzerFi == null) {
 				setAnalyzerFi(input);
+				if (intent != null && analyzerFi == null) {
+					setAnalyzerFi(intent);
+				}
 			}
 			if (explorerFi == null) {
 				setExplorerFi(input);
+				if (intent != null && explorerFi == null) {
+					setExplorerFi(intent);
+				}
+			}
+			Context data = input;
+			if (intent != null) {
+				data = intent;
 			}
 			if (explorerFi != null) {
-				out = explorerFi.getSelect().explore(input);
+				out = explorerFi.getSelect().explore(data);
 				((ModelStrategy) serviceStrategy).setOutcome(out);
 				strategy.setExecState(Exec.State.DONE);
 			} else if (analyzerFi != null) {
-				analyzerFi.getSelect().analyze(this, input);
+				analyzerFi.getSelect().analyze(this, data);
 				out = input;
 				((ModelStrategy) serviceStrategy).setOutcome(out);
 				strategy.setExecState(Exec.State.DONE);
@@ -500,8 +520,8 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 					collabOut = input;
 				}
 
-				Analysis analyzer = analyzerFi.getSelect();
 				if (analyzerFi != null) {
+					Analysis analyzer = analyzerFi.getSelect();
 					collabOut.putValue(Functionality.Type.DOMAIN.toString(), domain.getDomainName());
 					analyzer.analyze(domain, collabOut);
 				}

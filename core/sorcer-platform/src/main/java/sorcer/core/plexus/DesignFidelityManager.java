@@ -16,7 +16,7 @@
 
 package sorcer.core.plexus;
 
-import sorcer.core.context.DesignIntent;
+import sorcer.core.context.Intent;
 import sorcer.core.service.Transdesign;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
@@ -45,7 +45,7 @@ public class DesignFidelityManager extends FidelityManager {
         for (Fi fi : fidelities) {
             if (fi.getFiType().equals(Fi.Type.INTENT)) {
                 Fi intentFi = (Fi)getSelectFi(fi);
-                ((Transdesign)(( DesignIntent )mogram).getSubjectValue()).setDisciplineIntent(( Context ) intentFi.getSelect());
+                ((Transdesign)(( Intent )mogram).getSubjectValue()).setDisciplineIntent(( Context ) intentFi.getSelect());
                 continue;
             } else if (fi.getFiType().equals(Fi.Type.DEV)) {
                 developerFidelities.selectSelect(fi.getName());

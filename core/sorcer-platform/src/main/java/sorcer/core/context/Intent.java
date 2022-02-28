@@ -1,6 +1,6 @@
 /*
- * Copyright 2021 the original author or authors.
- * Copyright 2021 SorcerSoft.org.
+ * Copyright 2022 the original author or authors.
+ * Copyright 2022 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,12 @@
 
 package sorcer.core.context;
 
+import com.oracle.jrockit.jfr.EventInfo;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Intent;
 
-/**
- * @author Mike Sobolewski, 05/20/2021
- */
-public class DesignIntent extends ServiceContext<Object> implements Intent {
+public class Intent extends ServiceContext<Object> {
 
     private Fi developerFi;
 
@@ -37,12 +34,22 @@ public class DesignIntent extends ServiceContext<Object> implements Intent {
 
     private Signature disciplineIntentSignature;
 
-    private Context disciplineIntent;
+    private Intent disciplineIntent;
 
-    private Context developmentIntent;
+    private Intent developmentIntent;
 
-    public DesignIntent(String name) {
+    public Intent() {
+        super();
+        type = Functionality.Type.DESIGN;
+    }
+
+    public Intent(String name) {
         super(name);
+        type = Functionality.Type.DESIGN;
+    }
+
+    public Intent(String name, String subject, Object value) {
+        super(name, subject, value);
         type = Functionality.Type.DESIGN;
     }
 
@@ -60,7 +67,7 @@ public class DesignIntent extends ServiceContext<Object> implements Intent {
     }
 
     public void setDisciplineIntent(Context disciplineIntent) {
-        this.disciplineIntent = disciplineIntent;
+        this.disciplineIntent = ( Intent ) disciplineIntent;
     }
 
     public Context getDevelopmentIntent() {
@@ -68,15 +75,15 @@ public class DesignIntent extends ServiceContext<Object> implements Intent {
     }
 
     public void setDevelopmentIntent(Context developmentIntent) {
-        this.developmentIntent = developmentIntent;
+        this.developmentIntent = ( Intent ) developmentIntent;
     }
 
     public Discipline getDiscipline() {
         if (disciplineFi != null) {
-             Object obj = disciplineFi.getSelect();
-             if (obj instanceof Discipline) {
-                 discipline = ( Discipline ) obj;
-             } else if (obj instanceof Signature) {
+            Object obj = disciplineFi.getSelect();
+            if (obj instanceof Discipline) {
+                discipline = ( Discipline ) obj;
+            } else if (obj instanceof Signature) {
                 try {
                     discipline = ( Discipline ) ((LocalSignature)obj).initInstance();
                 } catch (SignatureException e) {
@@ -113,5 +120,8 @@ public class DesignIntent extends ServiceContext<Object> implements Intent {
     public void setDisciplineIntentSignature(Signature disciplineIntentSignature) {
         this.disciplineIntentSignature = disciplineIntentSignature;
     }
+
+
+
 
 }

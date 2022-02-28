@@ -358,7 +358,7 @@ operator extends Operator {
         itemList.add(0, Context.Type.DESIGN);
         Object[] cxtItems = new Object[itemList.size()];
         itemList.toArray(cxtItems);
-        DesignIntent dCxt = ( DesignIntent ) domainContext(cxtItems);
+        Intent dCxt = (Intent) domainContext(cxtItems);
         dCxt.setContextType(Context.Type.DESIGN);
         dCxt.setIntentType(Context.IntentType.DEVELOP);
 
@@ -549,7 +549,7 @@ operator extends Operator {
 
         if (cxt == null) {
              if (types.contains(Context.Type.DESIGN)) {
-                cxt = new DesignIntent(name);
+                cxt = new Intent(name);
             } else if (types.contains(Context.Type.ARRAY)) {
                 if (subject != null)
                     cxt = new ArrayContext(name, subject.getName(), subject.getImpl());
