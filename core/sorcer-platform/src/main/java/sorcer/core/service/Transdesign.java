@@ -252,6 +252,16 @@ public class Transdesign extends MultiFiSlot implements Design {
     }
 
     @Override
+    public void setParent(Contextion parent) {
+
+    }
+
+    @Override
+    public Contextion getParent() {
+        return null;
+    }
+
+    @Override
     public Context getContext() throws ContextException {
         return developmentIntent;
     }

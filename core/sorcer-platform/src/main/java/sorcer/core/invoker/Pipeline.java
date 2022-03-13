@@ -23,6 +23,8 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
 
     protected Projection outPathProjection;
 
+    protected Contextion parent;
+
     public Pipeline(Opservice... opservices) {
         this(null, opservices);
     }
@@ -312,5 +314,15 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
     @Override
     public void selectFidelity(Fi fi) throws ConfigurationException {
 
+    }
+
+    @Override
+    public void setParent(Contextion parent) {
+        this.parent  = parent;
+    }
+
+    @Override
+    public Contextion getParent() {
+        return parent;
     }
 }

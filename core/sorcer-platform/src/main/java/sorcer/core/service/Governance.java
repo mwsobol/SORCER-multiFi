@@ -92,6 +92,8 @@ public class Governance extends Realm implements Dependency {
 
 	protected Projection outPathProjection;
 
+	protected Contextion parent;
+
 	protected boolean isExec = true;
 
     public Governance() {
@@ -547,6 +549,16 @@ public class Governance extends Realm implements Dependency {
 	@Override
 	public void selectFidelity(Fi fi) throws ConfigurationException {
 
+	}
+
+	@Override
+	public void setParent(Contextion parent) {
+		this.parent  = parent;
+	}
+
+	@Override
+	public Contextion getParent() {
+		return parent;
 	}
 
 	@Override

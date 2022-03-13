@@ -22,9 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.*;
 import sorcer.core.context.model.OptimizerState;
-import sorcer.core.context.model.ent.Coupling;
-import sorcer.core.context.model.ent.Analyzer;
-import sorcer.core.context.model.ent.Explorer;
+import sorcer.core.context.model.ent.*;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
 import sorcer.service.Node;
@@ -663,6 +661,32 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 	@Override
 	public Contextion getChild(String name) {
 		return children.get(name);
+	}
+
+	public Entry getEnt(String entName) {
+		Entry ent = ( Entry ) ((ServiceContext)input).get(entName);
+		if (ent != null) {
+			return ent;
+		} else {
+			// try children
+			return getDomainEnt(entName);
+		}
+	}
+
+	public Entry getDomainEnt(String entName) {
+		Entry ent = null;
+		int ind = entName.indexOf('$');
+		if (ind > 0) {
+			String pn = entName;
+			String dn = null;
+			pn = entName.substring(0, ind);
+			dn = entName.substring(ind + 1);
+			ent = ( Entry ) ( (EntryModel ) children.get(pn)).get(dn);
+		} else if (((ServiceContext) scope).getData() != null) {
+			ent = (Entry) ((ServiceContext) scope).get(entName);
+		}
+//		logger.warn("No such ent " + entName + " in the model: " + name);
+		return ent;
 	}
 
 	@Override

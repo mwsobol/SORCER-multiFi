@@ -11,6 +11,8 @@ public class Slot<K, O> implements Identifiable, Data<O>, Arg, slot<O>, net.jini
 
     protected O out;
 
+    protected String domain;
+
     public Slot() {
     }
 
@@ -90,6 +92,14 @@ public class Slot<K, O> implements Identifiable, Data<O>, Arg, slot<O>, net.jini
             }
         }
         return false;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     @Override

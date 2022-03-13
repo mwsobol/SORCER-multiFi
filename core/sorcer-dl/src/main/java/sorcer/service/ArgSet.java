@@ -18,9 +18,11 @@ package sorcer.service;
  */
 
 import sorcer.core.Tag;
+import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * @author Mike Sobolewski
@@ -70,7 +72,14 @@ public class ArgSet extends LinkedHashSet<Arg> {
 		if (arg == null)
 			throw new ArgException("No such Arg in the list: " + argName);
 	}
-	
+
+	public void setDomain(String domainName) {
+		for (Arg arg : this) {
+			if (arg instanceof Slot)
+				((Slot)arg).setDomain(domainName);
+		}
+	}
+
 	public ArgSet selectArgs(String... argnames) {
 		List<String> vnames = Arrays.asList(argnames);
 		ArgSet out = new ArgSet();

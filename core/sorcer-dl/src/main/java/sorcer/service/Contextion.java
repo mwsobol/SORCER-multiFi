@@ -150,4 +150,8 @@ public interface Contextion extends Request, Scopable {
 
 	void selectFidelity(Fi fi) throws ConfigurationException, RemoteException;
 
+	public void setParent(Contextion parent);
+
+	public Contextion getParent();
+
 }

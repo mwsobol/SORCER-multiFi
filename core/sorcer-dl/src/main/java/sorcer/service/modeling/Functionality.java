@@ -112,4 +112,5 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 	public void valueChanged(Object obj) throws EvaluationException;
 
 	void valueChanged() throws EvaluationException;
+
 }

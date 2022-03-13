@@ -19,6 +19,8 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 
 	protected Projection outPathProjection;
 
+	protected Contextion parent;
+
 	public FreeContextion(String name) {
 		this.name = name;
 	}
@@ -132,6 +134,16 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	@Override
 	public void selectFidelity(Fi fi) throws ConfigurationException {
 
+	}
+
+	@Override
+	public void setParent(Contextion parent) {
+		this.parent  = parent;
+	}
+
+	@Override
+	public Contextion getParent() {
+		return parent;
 	}
 
 	@Override

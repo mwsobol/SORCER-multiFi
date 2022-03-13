@@ -90,6 +90,8 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	// invocation delegate to
 	Evaluator evaluator;
 
+	protected String domain;
+
 	protected boolean isFunctional = false;
 
 	private boolean isCurrent = false;

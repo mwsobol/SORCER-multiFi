@@ -103,7 +103,7 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public void setParent(Contextion parent) throws RemoteException {
+    public void setParent(Contextion parent) {
         if (domain == null) {
             this.parent = parent;
         } else {
@@ -149,8 +149,8 @@ public class SignatureDomain implements Domain {
         ((ServiceMogram)domain).setIndex(i);
     }
 
-    public Contextion getParent() throws RemoteException {
-        return ((ServiceMogram)domain).getParent();
+    public Contextion getParent() {
+        return domain.getParent();
     }
 
     public void setParentId(Uuid parentId) {

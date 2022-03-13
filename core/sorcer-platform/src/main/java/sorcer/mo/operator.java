@@ -1352,11 +1352,7 @@ public class operator {
         Object[] names = new Object[domains.size()];
 
         for (int i = 0; i < domains.size(); i++) {
-            try {
-                domains.get(i).setParent(collab);
-            } catch (RemoteException e) {
-                throw new ContextException(e);
-            }
+            domains.get(i).setParent(collab);
             names[i] = domains.get(i).getName();
         }
 
