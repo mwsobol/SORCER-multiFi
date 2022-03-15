@@ -273,7 +273,9 @@ public class LocalSignature extends ServiceSignature implements sig {
 			if(operation.selector!=null) {
 				try {
 					if (scope != null) {
-						Field initCxt = multitype.providerType.getDeclaredField("initData");
+						//&& Builder.class.isAssignableFrom(multitype.providerType)) {
+						Field initCxt = multitype.providerType.getField("initData");
+//						Field initCxt = multitype.providerType.getDeclaredField("initData");
 						if (initCxt != null) {
 							initCxt.setAccessible(true);
 							initCxt.set(null, scope);

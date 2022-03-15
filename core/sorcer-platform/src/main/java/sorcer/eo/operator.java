@@ -4092,6 +4092,16 @@ operator extends Operator {
         return modelSig(serviceType, initSelector);
     }
 
+    public static Signature modelSig(Class<?> serviceType, String initSelector, Context scope)  {
+        try {
+            Signature sig = modelSig(sig(serviceType, initSelector));
+            sig.setScope(scope);
+            return sig;
+        } catch (SignatureException e) {
+            throw new RuntimeException("invalid signature: " + serviceType + "#" + initSelector);
+        }
+    }
+
     public static Signature modelSig(Class<?> serviceType, String initSelector)  {
         try {
             return modelSig(sig(serviceType, initSelector));
