@@ -510,6 +510,8 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 					} else {
 						cxt = (Context) domain.execute();
 					}
+					// collabOut serves as the shared blackboard for the analysis and exploration
+					// if data overwritten then it represents the most recent shared state
 					collabOut.append(cxt.getDomainData());
 					if (cxt != null) {
 						outputs.add(cxt);
@@ -523,15 +525,20 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 					collabOut.putValue(Functionality.Type.DOMAIN.toString(), domain.getDomainName());
 					analyzer.analyze(domain, collabOut);
 				}
-
-				collabOut.setSubject((String) key, this);
-				((ServiceContext) collabOut).put(Context.DOMAIN_OUTPUTS_PATH, outputs);
 			}
+			collabOut.setSubject((String) key, this);
+			((ServiceContext) collabOut).put(Context.DOMAIN_OUTPUTS_PATH, outputs);
 			output = collabOut;
 		} catch (SignatureException | RemoteException | DispatchException | ServiceException | AnalysisException e) {
 			throw new EvaluationException(e);
 		}
-		return collabOut;
+		if (intent != null) {
+			intent.setSubject((String) key, this);
+			intent.put(Context.DOMAIN_OUTPUTS_PATH, outputs);
+			return intent;
+		} else {
+			return collabOut;
+		}
 	}
 
 	public void initializeDomains() throws SignatureException {

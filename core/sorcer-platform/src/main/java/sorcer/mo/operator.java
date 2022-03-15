@@ -1933,6 +1933,22 @@ public class operator {
         return null;
     }
 
+    public static Context getDiscOutContext(ContextDomain context, String domain) {
+        if (context instanceof Transdomain) {
+            if (domain.equals(context.getName())) {
+                return (( Transdomain ) context).getChildrenContexts().get(domain);
+            } else {
+                return ((Transdomain)context).getChildrenContexts().get(context.getName());
+            }
+        } else if (context instanceof Context) {
+            Object domainContexts = ((ServiceContext)context).get(Context.DOMAIN_OUTPUTS_PATH);
+            if (domainContexts instanceof ContextList && ((ContextList) domainContexts).size() > 0) {
+                return ((ContextList) domainContexts).select(domain);
+            }
+        }
+        return null;
+    }
+
     public static Dispatch getDomainDispatcher(Context context, String domain) {
         if (context instanceof ServiceContext) {
             Object domainDispatchers = ((ServiceContext)context).get(Context.COMPONENT_DISPATCHER_PATH);

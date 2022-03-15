@@ -29,6 +29,7 @@ import sorcer.service.modeling.Modeling;
 import sorcer.service.modeling.sig;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.rmi.RemoteException;
@@ -271,6 +272,13 @@ public class LocalSignature extends ServiceSignature implements sig {
 		try {
 			if(operation.selector!=null) {
 				try {
+					if (scope != null) {
+						Field initCxt = multitype.providerType.getDeclaredField("initData");
+						if (initCxt != null) {
+							initCxt.setAccessible(true);
+							initCxt.set(null, scope);
+						}
+					}
 					Method selectorMethod = multitype.providerType.getDeclaredMethod(operation.selector, argTypes);
 					if(Modifier.isStatic(selectorMethod.getModifiers())) {
 						return  selectorMethod.invoke(null, args);
