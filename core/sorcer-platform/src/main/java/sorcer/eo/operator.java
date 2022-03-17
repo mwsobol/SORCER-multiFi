@@ -4092,6 +4092,10 @@ operator extends Operator {
         return modelSig(serviceType, initSelector);
     }
 
+    public static Signature dscSig(Class<?> serviceType, String initSelector, Context scope)  {
+        return modelSig(serviceType, initSelector, scope);
+    }
+
     public static Signature modelSig(Class<?> serviceType, String initSelector, Context scope)  {
         try {
             Signature sig = modelSig(sig(serviceType, initSelector));
