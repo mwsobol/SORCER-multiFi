@@ -45,6 +45,8 @@ public class Slot<K, O> implements Identifiable, Data<O>, Arg, slot<O>, net.jini
         return out;
     }
 
+    protected Signature builder;
+
     public void setOut(O out) {
         this.out = out;
     }
@@ -110,5 +112,13 @@ public class Slot<K, O> implements Identifiable, Data<O>, Arg, slot<O>, net.jini
     @Override
     public Object execute(Arg... args) throws ServiceException, RemoteException {
         return out;
+    }
+
+    public Signature getBuilder(Arg... args)  {
+        return builder;
+    }
+
+    public void setBuilder(Signature builder) {
+        this.builder = builder;
     }
 }

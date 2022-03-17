@@ -109,7 +109,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     // sequence number for unnamed mogram instances
     protected static int count = 0;
     protected MonitoringSession monitorSession;
-    protected Signature builder;
     protected String configFilename;
     protected ServiceContext dataContext;
     protected Fidelity<Finalization> finalizerFi;
@@ -806,11 +805,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.serviceMorphFidelity = morphFidelity;
     }
 
-    public Signature getBuilder(Arg... args)  {
-        return builder;
-    }
-
-    /**
+     /**
      * Initialization by a service provider (container)
      * when this mogram is used as as a service bean.
      */
@@ -819,10 +814,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         logger.info("*** provider init properties:\n"
                 + GenericUtil.getPropertiesString(((ServiceExerter)provider).getProviderProperties()));
         System.getProperties().putAll(((ServiceExerter)provider).getProviderProperties());
-    }
-
-    public void setBuilder(Signature builder) {
-        this.builder = builder;
     }
 
     public void setSelectedFidelity(ServiceFidelity fidelity) {

@@ -27,6 +27,7 @@ import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 import sorcer.service.modeling.Modeling;
 import sorcer.service.modeling.sig;
+import sorcer.util.Builder;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -272,8 +273,7 @@ public class LocalSignature extends ServiceSignature implements sig {
 		try {
 			if(operation.selector!=null) {
 				try {
-					if (scope != null) {
-						//&& Builder.class.isAssignableFrom(multitype.providerType)) {
+					if (scope != null && Builder.class.isAssignableFrom(multitype.providerType)) {
 						Field initCxt = multitype.providerType.getField("initData");
 						if (initCxt != null) {
 							initCxt.setAccessible(true);
@@ -285,7 +285,7 @@ public class LocalSignature extends ServiceSignature implements sig {
 						return  selectorMethod.invoke(null, args);
 					}
 				} catch (NoSuchMethodException e) {
-					//skip;
+					throw new SignatureException(e);
 				}
 			}
 			if ((initSelector == null || initSelector.equals("new")) && args == null) {
