@@ -285,7 +285,8 @@ public class LocalSignature extends ServiceSignature implements sig {
 						return  selectorMethod.invoke(null, args);
 					}
 				} catch (NoSuchMethodException e) {
-					throw new SignatureException(e);
+					// skip it
+//					throw new SignatureException(e);
 				}
 			}
 			if ((initSelector == null || initSelector.equals("new")) && args == null) {
