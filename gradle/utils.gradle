@@ -1,0 +1,214 @@
+/*
+ * Copyright to the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: "maven"
+
+/*
+ * Declares utilities for starting Sorcer using sorcer boot, as we as starting Sorcer with Rio
+ */
+
+/*
+ * Start Sorcer only with http
+ */
+task bootSorcer(type: Exec) {
+    description = 'Starts SORCER Operating System Services.'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+    }
+    args << "ant"
+    args << "-f"
+    args << "${file("${sorcerDistHome}").path}/bin/sorcer/bin/boot-sorcer.xml"
+    args << "spawn"
+    commandLine args
+}
+bootSorcer.onlyIf {
+    def jps = jps().execute()
+    !jps.text.contains("boot-sorcer")
+}
+
+/*
+ * Start Sorcer only
+ */
+task bootSorcerNoHttpd(type: Exec) {
+    description = 'Starts SORCER OS Services without a class servcer (webster).'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+    }
+    args << "ant"
+    args << "-verbose"
+    args << "-f"
+    args << "${file("${sorcerDistHome}").path}/bin/sorcer/bin/boot-sorcer-noHttpd.xml"
+    args << "run"
+    commandLine args
+}
+bootSorcerNoHttpd.onlyIf {
+    def jps = jps().execute()
+    !jps.text.contains("boot-sorcer")
+}
+
+/*
+ * Start Sorcer using Rio
+ */
+task bootSorcerRio(type: Exec) {
+
+    description = 'Starts SORCER OS Services with Rio services for service provisioning.'
+    def args = []
+    if (System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+    }
+    args << "ant"
+    args << "-f"
+    args << "${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"
+    if (useHttps()) {
+        dependsOn("jetty")
+        args << "useHttps"
+    } else {
+        dependsOn("webster")
+    }
+    args << "sorcer.boot.nofork"
+    //if(System.properties['sorcer.lite']==null) {
+        environment "sorcer.start.all" : true
+        environment "RIO_HOME" : "${rioHome}"
+    //}
+    commandLine args
+}
+
+bootSorcerRio.onlyIf {
+    File sorcerDist = file(sorcerDistHome)
+    if(!sorcerDist.exists()) {
+        println "Sorcer distribution not found, cannot start Sorcer"
+        return false
+    }
+    def jps = jps().execute()
+    !jps.text.contains("start-monitor")
+}
+
+/*
+ * Destroy Sorcer and Rio
+ */
+task terminateSorcerRio(type: Exec) {
+    description = 'Halts SORCER OS Services and Rio services.'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+    }
+    args << "ant"
+    args << "-f"
+    args << "${file("${sorcerDistHome}").path}/bin/rio/destroy-sorcer-rio.xml"
+    commandLine args
+}
+
+/*
+ * Destroy Sorcer and Rio
+ */
+task terminateSorcer(type: Exec) {
+    description = 'Halts SORCER OS Services.'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+    }
+    args << "ant"
+    args << "-f"
+    args << "${file("${sorcerDistHome}").path}/bin/sorcer/bin/destroy-sorcer.xml"
+    commandLine args
+}
+
+/*
+ * Start a browser
+ */
+task browser(type: Exec) {
+    description = 'Starts the SORCER service browser.'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+    }
+    args << "ant"
+    args << "-f"
+    args << "${file("${sorcerDistHome}").path}/bin/browser/bin/sorcer-browser.xml"
+    args << "browser.spawn"
+    commandLine args
+}
+browser.onlyIf {
+    def jps = jps().execute()
+    !jps.text.contains("sorcer-browser")
+}
+
+/*
+ * Start Sorcer Webster
+ */
+task webster(type: Exec) {
+    description = 'Starts a class server (webster).'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+        args << "groovy"
+    }
+/*
+    args << "-classpath"
+    args << "${sorcerDistHome}/rio-${rioVersion}/lib/rio-platform-${rioVersion}.jar"
+*/
+    args << "${sorcerDistHome}/bin/webster/bin/webster.groovy"
+    commandLine args
+}
+
+webster.onlyIf {
+    File sorcerDist = file(sorcerDistHome)
+    if(!sorcerDist.exists()) {
+        println "Sorcer distribution not found cannot start Webster."
+        return false
+    }
+    boolean running
+    try {
+        def connection = new URL(websterUrl).openConnection()
+        connection.responseCode
+        running = true
+        println "Webster already serving up ${websterAddress}:${websterPort}"
+    } catch(Exception e) {
+        running = false
+    }
+    !running
+}
+
+task jetty(type: Exec) {
+    description = 'Starts a class server (Jetty).'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+        args << "groovy"
+    }
+
+    args << "${sorcerDistHome}/bin/webster/bin/jetty.groovy"
+    commandLine args
+}
+
+static def jps() {
+    StringBuilder s = new StringBuilder()
+    if(System.properties['os.name'].contains("Windows")) {
+        s.append("cmd.exe /C ")
+    }
+    s.append("jps -lm")
+    s.toString()
+}

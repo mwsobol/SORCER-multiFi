@@ -1,0 +1,221 @@
+import com.sun.tools.attach.VirtualMachine
+import sun.management.ConnectorAddressLink
+
+import javax.management.MBeanServerConnection
+import javax.management.remote.JMXConnector
+import javax.management.remote.JMXConnectorFactory
+import javax.management.remote.JMXServiceURL
+/*
+ * Copyright to the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: HaltMePlugin
+
+task bootme(type: BootMe) {
+    description = "Starts a provider from this project."
+}
+
+class BootMe extends DefaultTask {
+    @InputFile
+    File starterConfig
+    @Input @Optional
+    def systemProperties = [:]
+    @Input @Optional
+    boolean spawn = true
+    @Input @Optional
+    boolean debug
+    @Input @Optional
+    int instances = 1
+
+    @TaskAction
+    def bootMe() {
+        //println "Classpath: ${project.bootClassPath.getAsPath()}"
+        StringBuilder java = new StringBuilder()
+        if (System.getProperty("os.name").startsWith("Windows"))
+            java.append("java")
+        else
+            java.append(System.getProperty('java.home')).append("/bin/java")
+
+        def args = []
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            args << "cmd.exe"
+            args << "/C"
+        }
+        args << java.toString()
+        args << "-cp"
+        args << project.bootClassPath.getAsPath()
+        if (debug) {
+            args << "-Xdebug"
+            args << "-Xrunjdwp:transport=dt_socket,server=y,address=8765"
+        }
+        args << "-Dproject.id=${project.name}"
+        args << '-Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.url|org.rioproject.url"'
+
+        def projTestProps = ((Test)project.getTasks().getByName("test")).getSystemProperties()
+        if (projTestProps.get("org.rioproject.keystore") != null) {
+            args << "-Dorg.rioproject.keystore=${projTestProps.get("org.rioproject.keystore")}"
+        }
+        // use distribution or project specific java.util.logging.config.file
+        if (System.getProperty("java.util.logging.config.file") != null)
+            args << "-Djava.util.logging.config.file=${System.getProperty("java.util.logging.config.file")}"
+        else
+            args << "-Djava.util.logging.config.file=${project.sorcerDistHome}/configs/sorcer.logging"
+
+        if (System.getProperty("logback.configurationFile") != null)
+            args << "-Dlogback.configurationFile=${System.getProperty("logback.configurationFile")}"
+        else
+            args << "-Dlogback.configurationFile=${project.sorcerDistHome}/configs/sorcer-logging.groovy"
+
+        if (!spawn)
+            args << "-DforceConsoleLogging=true"
+
+        String logName = project.path.substring(1).replaceAll(":", ".")
+        args << "-Drio.log.dir=${project.sorcerDistHome}/logs"
+        args << "-Dorg.rioproject.service=${logName}"
+        args << "-Djava.security.policy=${project.sorcerDistHome}/policy/policy.all"
+        args << "-Djava.rmi.server.useCodebaseOnly=false"
+        args << "-Djava.net.preferIPv4Stack=true"
+        args << "-Dplexus.version=${project.plexusVersion}"
+        args << "-Dguava.version=${project.guavaVersion}"
+        args << "-Driver.version=${project.riverVersion}"
+        args << "-Dsorcer.version=${project.sorcerVersion}"
+        args << "-Dsorcer.home=${project.sorcerDistHome}"
+        args << "-Drio.home=${project.rioHome}"
+        args << "-Dsorcer.env.file=${project.sorcerDistHome}/configs/sorcer.env"
+        args << "-Dproject.build.dir=${project.buildDir.path}"
+        systemProperties.each { k, v ->
+            args << "-D$k=$v"
+        }
+        args << "com.sun.jini.start.ServiceStarter"
+        args << "${starterConfig.path}"
+
+        if (project.logger.isInfoEnabled()) {
+            StringBuilder sb = new StringBuilder()
+            for(String arg : args) {
+                if (sb.length()>0)
+                    sb.append(" ")
+                sb.append(arg)
+            }
+            project.logger.info "\nCommand line\n=================\n${sb.toString()}\n"
+        }
+        ProcessBuilder pb = new ProcessBuilder(args as String[])
+        Map<String, String> env = pb.environment()
+        env.put("SORCER_HOME", "${project.sorcerDistHome}")
+        env.put("RIO_HOME", "${project.rioHome}")
+
+        for (int i = 0; i< instances; i++) {
+            Process process = pb.start()
+            if (!spawn) {
+                process.consumeProcessOutput(System.out, System.err)
+                process.waitFor()
+                break
+            } else {
+                process.in.close()
+                process.out.close()
+                process.err.close()
+            }
+        }
+    }
+}
+
+class HaltMePlugin implements Plugin<Project> {
+
+    void apply(Project project) {
+        project.task('haltme') {
+            description = 'Stops a provider booted from this project.)'
+            doLast {
+                def pids = getPids(project.name)
+                destroy(project.name, pids)
+                kill(pids, true)
+            }
+        }
+    }
+
+    static void destroy(projectId, pids)  {
+        pids.each { pid ->
+            String address = ConnectorAddressLink.importFrom(Integer.valueOf(pid))
+            if (address==null)
+                startManagementAgent(pid)
+            address = ConnectorAddressLink.importFrom(Integer.valueOf(pid))
+            if (address!=null) {
+                JMXServiceURL jmxUrl = new JMXServiceURL(address)
+                JMXConnector jmxc = JMXConnectorFactory.connect(jmxUrl, null)
+                MBeanServerConnection serverConnection = jmxc.getMBeanServerConnection()
+                serverConnection.queryNames(null, null).each { mBean ->
+                    if (mBean.domain == "sorcer.core.provider") {
+                        String id = mBean.getKeyProperty("projectId")
+                        if (id != null && id == projectId) {
+                            serverConnection.invoke(mBean, "destroy", null, null)
+                        }
+                    }
+                }
+                jmxc.close()
+            } else {
+                println "Unable to obtain JMX URL for $pid"
+            }
+        }
+    }
+
+    static def getPids(projectId) {
+        def pids = []
+        "jps -v".execute().text.eachLine { line ->
+            if (line.contains("project.id=${projectId}")) {
+                pids << line.split()[0]
+            }
+        }
+        String p = pids.size()==1? "JVM" : "JVMs"
+        println "Found ${pids.size()} $p for ${projectId} to destroy"
+        pids
+    }
+
+    static void kill(pids, force) {
+        String command
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            command = "taskkill /f /pid "
+        } else {
+            String option = force?"-9":""
+            command = "kill ${option} "
+        }
+        pids.each { pid ->
+            "$command $pid".execute().waitFor()
+        }
+    }
+
+    private static void startManagementAgent(String pid) throws IOException {
+        /*
+         * JAR file normally in ${java.home}/jre/lib but may be in ${java.home}/lib
+         * with development/non-images builds
+         */
+        String home = System.getProperty("java.home")
+        String agent = "$home/jre/lib/management-agent.jar"
+        File f = new File(agent)
+        if (!f.exists()) {
+            agent = "$home/lib/management-agent.jar"
+            f = new File(agent)
+            if (!f.exists()) {
+                throw new RuntimeException("management-agent.jar missing")
+            }
+        }
+        agent = f.getCanonicalPath()
+        //println("Loading $agent into target JVM ...")
+        try {
+            VirtualMachine.attach(pid).loadAgent(agent)
+        } catch (Exception x) {
+            throw new IOException(x.getMessage())
+        }
+    }
+
+}
+
