@@ -4088,12 +4088,24 @@ operator extends Operator {
         return signature;
     }
 
-    public static Signature mdlSig(Class<?> serviceType, String initSelector)  {
-        return modelSig(serviceType, initSelector);
+    public static Signature dscSig(Class<?> serviceType, String initSelector, Slot... slots)  {
+        return modelSig(serviceType, initSelector, slots);
     }
 
     public static Signature dscSig(Class<?> serviceType, String initSelector, Context scope)  {
         return modelSig(serviceType, initSelector, scope);
+    }
+
+    public static Signature modelSig(Class<?> serviceType, String initSelector, Slot... slots)  {
+        try {
+            Signature sig = modelSig(sig(serviceType, initSelector));
+            if (slots != null) {
+                ((ServiceSignature)sig).setInitSlots(slots);
+            }
+            return sig;
+        } catch (SignatureException e) {
+            throw new RuntimeException("invalid signature: " + serviceType + "#" + initSelector);
+        }
     }
 
     public static Signature modelSig(Class<?> serviceType, String initSelector, Context scope)  {

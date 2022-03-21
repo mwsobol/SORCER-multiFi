@@ -2073,7 +2073,11 @@ public class operator {
 
     // service instantiation operators also with initialization given initContext
     public static Object inst(Signature builder) throws SignatureException {
-        return instance(null, builder);
+        return instance((String)null, builder);
+    }
+
+    public static Object inst(Signature builder, Slot... slots) throws SignatureException {
+        return instance(null, builder, slots);
     }
 
     public static Object inst(String name, Signature builder) throws SignatureException {
@@ -2097,6 +2101,10 @@ public class operator {
         builder.setScope(initContext);
         Object obj = inst(name, builder);
         return obj;
+    }
+
+    public static Slot init(String name, Object value) throws SignatureException {
+        return new Slot(name, value);
     }
 
 

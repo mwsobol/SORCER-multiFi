@@ -280,6 +280,19 @@ public class LocalSignature extends ServiceSignature implements sig {
 							initCxt.set(null, scope);
 						}
 					}
+					if (initSlots != null && Builder.class.isAssignableFrom(multitype.providerType)) {
+						for (Slot slot : initSlots) {
+							try {
+								Field initField = multitype.providerType.getDeclaredField(slot.getName());
+								if (initField != null) {
+									initField.setAccessible(true);
+									initField.set(null, slot.getOut());
+								}
+							} catch (Exception e) {
+								logger.warn(e.getMessage());
+							}
+						}
+					}
 					Method selectorMethod = multitype.providerType.getDeclaredMethod(operation.selector, argTypes);
 					if(Modifier.isStatic(selectorMethod.getModifiers())) {
 						return  selectorMethod.invoke(null, args);

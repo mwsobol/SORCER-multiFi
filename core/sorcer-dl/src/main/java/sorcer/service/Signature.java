@@ -222,7 +222,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 * Returns an access types to a provider, synchronous (PUSH) or asynchronous (PULL);
 	 */
 	Strategy.Access getAccessType();
-	
+
 	/**
 	 * There are four types of {@link Signature} operations that can be
 	 * associated with signatures: <code>PRE</code> (preprocess),

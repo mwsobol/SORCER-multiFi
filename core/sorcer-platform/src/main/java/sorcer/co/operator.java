@@ -2006,8 +2006,9 @@ public class operator extends Operator {
 	 * @return object created
 	 * @throws SignatureException
 	 */
-	public static Object instance(LocalSignature signature, Context context)
+	public static Object instance(LocalSignature signature, Context context, Slot... slots)
 			throws SignatureException {
+		signature.setInitSlots(slots);
 		return signature.build(context);
 	}
 
@@ -2016,9 +2017,10 @@ public class operator extends Operator {
 		return signature.build();
 	}
 
-	public static Contextion instance(String domainName, Signature signature)
+	public static Contextion instance(String domainName, Signature signature, Slot... slots)
 		throws SignatureException {
 		if (signature instanceof LocalSignature) {
+			((ServiceSignature)signature).setInitSlots(slots);
 			Object obj = ((LocalSignature) signature).build();
 			if (obj instanceof Contextion) {
 				((Contextion) obj).setName(domainName);
@@ -2040,7 +2042,7 @@ public class operator extends Operator {
 	 * @return object created
 	 * @throws SignatureException
 	 */
-	public static Object instance(Signature signature)
+	public static Object instance(Signature signature, Slot... slots)
 			throws SignatureException {
 		if (signature instanceof NetletSignature) {
 			String source = ((NetletSignature) signature).getServiceSource();
@@ -2061,8 +2063,10 @@ public class operator extends Operator {
 				|| (((LocalSignature) signature).getInitSelector() != null
 				&& ((LocalSignature) signature).getInitSelector().equals("new")))
 			return ((LocalSignature) signature).newInstance();
-		else
-			return ((LocalSignature) signature).initInstance();
+		else {
+			((ServiceSignature)signature).setInitSlots(slots);
+			return (( LocalSignature ) signature).initInstance();
+		}
 	}
 
 	public static Object instance(Signature signature, Fidelity fidefity) throws SignatureException {

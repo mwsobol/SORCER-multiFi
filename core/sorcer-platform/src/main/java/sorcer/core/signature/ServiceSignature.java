@@ -59,6 +59,8 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 
 	protected Context scope;
 
+	protected Slot[] initSlots;
+
 	protected Context.Return contextReturn;
 
 	// the indicated usage of this signature
@@ -663,6 +665,14 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 
 	public Strategy.Access getAccessType() {
 		return operation.accessType;
+	}
+
+	public void setInitSlots(Slot[] slots) {
+		initSlots = slots;
+	}
+
+	public Slot[]  getInitSlots(Slot[] slots) {
+		return slots;
 	}
 
 	public void setAccessType(Strategy.Access accessType) {
