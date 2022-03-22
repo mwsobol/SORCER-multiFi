@@ -5,6 +5,8 @@ import sorcer.service.Context;
 
 public class Builder {
 
+    public static Class parent;
+
     public static Context initData;
 
     public static Object initData(String path) {
@@ -27,4 +29,7 @@ public class Builder {
         }
     }
 
+    public static void setParent(Class clazz) {
+        parent = clazz;
+    }
 }
