@@ -50,7 +50,7 @@ import java.util.Set;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class Task extends Subroutine implements ElementaryRequest {
+public class Task extends Subroutine implements ElementaryRequestor {
 
 	private static final long serialVersionUID = 5179772214884L;
 

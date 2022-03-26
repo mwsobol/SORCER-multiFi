@@ -1340,7 +1340,7 @@ public class operator extends Operator {
         return setValue((Entry)entry, value);
     }
 
-	public static Request setValue(Request request, String path, Object value) throws ContextException {
+	public static Requestor setValue(Requestor request, String path, Object value) throws ContextException {
 		if (request instanceof Contextion) {
 			if (request instanceof Context) {
 				((Context)request).putValue(path, value);

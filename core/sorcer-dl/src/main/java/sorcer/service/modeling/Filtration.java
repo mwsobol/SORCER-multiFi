@@ -17,8 +17,6 @@
 
 package sorcer.service.modeling;
 
-import sorcer.service.Request;
-
 import java.rmi.RemoteException;
 
 /**

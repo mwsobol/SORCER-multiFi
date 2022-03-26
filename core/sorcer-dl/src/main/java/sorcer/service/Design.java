@@ -17,8 +17,6 @@
 
 package sorcer.service;
 
-import sorcer.service.modeling.ExecutiveException;
-import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.Finalization;
 import sorcer.service.modeling.Initialization;
 
@@ -34,7 +32,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski, 05/23/2021
  */
-public interface Design extends Request, Contextion, Remote {
+public interface Design extends Requestor, Contextion, Remote {
 
     public Context getContext() throws ContextException;
 

@@ -8,7 +8,6 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sml.builder.MuiltidisciplinaryBuilder;
 import sorcer.core.service.Governance;
-import sorcer.core.service.CollabRegion;
 import sorcer.core.service.Region;
 import sorcer.service.*;
 
@@ -57,7 +56,7 @@ public class Regions {
                 })),
             mdaFi("analyzer",
                 (mda("analyzer1",
-                    (Request rgn, Context cxt) -> {
+                    (Requestor rgn, Context cxt) -> {
                         String dmnName = dmnName(cxt);
                         if (dmnName.equals("plDisc")) {
                             setValue(cxt, "pl1", value(cxt, "lambdaOut"));
@@ -90,7 +89,7 @@ public class Regions {
         // the explicit input context with MDA
         Context govCxt = context(mdaFi("multidiscMdaFi",
             mda("analyzer",
-                (Request gov, Context cxt) -> {
+                (Requestor gov, Context cxt) -> {
                     double x1, x2, x3;
                     String discName = rgnn(cxt);
                     if (discName.equals("morphModelDisc")) {

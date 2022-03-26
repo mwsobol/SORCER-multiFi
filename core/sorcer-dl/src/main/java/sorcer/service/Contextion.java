@@ -19,7 +19,6 @@ package sorcer.service;
 
 
 import net.jini.core.transaction.Transaction;
-import sorcer.service.modeling.cxtn;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -30,7 +29,7 @@ import java.util.List;
  *
  * @author Mike Sobolewski
  */
-public interface Contextion extends Request, Scopable {
+public interface Contextion extends Requestor, Scopable {
 
     /**
      * Returns the context of evaluation of this contextion.

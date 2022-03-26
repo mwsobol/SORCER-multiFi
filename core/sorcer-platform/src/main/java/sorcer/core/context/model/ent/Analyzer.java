@@ -71,7 +71,7 @@ public class Analyzer extends Entry<Analysis> implements Controller, Analysis {
     }
 
     @Override
-    public void analyze(Request request, Context context) throws ServiceException {
+    public void analyze(Requestor request, Context context) throws ServiceException {
         try {
             if (impl != null && impl instanceof Analysis) {
                 if (contextion == null || context == contextion) {

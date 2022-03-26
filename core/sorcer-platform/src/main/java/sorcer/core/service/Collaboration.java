@@ -354,7 +354,7 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 		return evaluateDomain(children.get(domainName), context);
 	}
 
-	public Context evaluateDomain(Request request, Context context) throws ServiceException {
+	public Context evaluateDomain(Requestor request, Context context) throws ServiceException {
 			return response((Mogram) request, context);
 	}
 

@@ -46,7 +46,7 @@ public class Collaborations {
                 })),
             mdaFi("analyzer",
                 (mda("analyzer1",
-                    (Request collab, Context cxt) -> {
+                    (Requestor collab, Context cxt) -> {
                         double y1, y2, y3;
                         String dmnName = dmnName(cxt);
                         if (dmnName.equals("srvBlock")) {
