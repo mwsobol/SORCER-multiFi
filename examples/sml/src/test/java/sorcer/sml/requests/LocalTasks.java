@@ -10,11 +10,13 @@ import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.ent.operator.ent;
+import static sorcer.ent.operator.invoker;
 import static sorcer.mo.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.co.operator.get;
@@ -205,6 +207,18 @@ public class LocalTasks {
 
 		//logger.info("t4: " + eval(t4));
 		assertTrue(exec(t4).equals(500.0));
+	}
+
+	@Test
+	public void evalEntryTaskTest() throws Exception {
+
+		Task tl = task("tl", ent(invoker("fxn",
+				(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
+				args("x", "y"))),
+			context(val("x", 10.0), val("y", 20.0), result("result/y")));
+
+//		logger.info("tl: " + eval(tl));
+		assertTrue(exec(tl).equals(60.0));
 	}
 }
 	

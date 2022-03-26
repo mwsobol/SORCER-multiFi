@@ -19,6 +19,7 @@ package sorcer.core.exertion;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.Prc;
 import sorcer.core.context.model.ent.EntryModel;
@@ -132,6 +133,14 @@ public class EvaluationTask extends Task {
 								((Setter) v).setValue(val);
 							}
 						}
+				}
+			} else if (evaluator instanceof Entry && (( Entry) evaluator).getImpl() != null) {
+				Object impl = (( Entry) evaluator).getImpl();
+				if (impl != null && impl instanceof Evaluation) {
+					(( Evaluation) impl).setScope(dataContext);
+					evaluator = ( Evaluation ) impl;
+				} else {
+					evaluator.setScope(dataContext);
 				}
 			}
 //			else {

@@ -3025,8 +3025,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 					((Scopable)((Entry)obj).getValue()).setScope(this);
 				obj = (T) ((Entry) obj).getValue(args);
 			}
-			if (scope != null && (obj == Context.none || obj == null ))
-				obj = (T ) scope.getValue(path, args);
+			if (scope != null && (obj == Context.none || obj == null ) && scope != this) {
+				obj = ( T ) scope.getValue(path, args);
+			}
 
 			return (T) obj;
 		} catch (Throwable e) {

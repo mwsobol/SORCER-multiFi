@@ -16,6 +16,7 @@
  */
 package sorcer.eo;
 
+import ch.qos.logback.core.encoder.EchoEncoder;
 import groovy.lang.Closure;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
@@ -2679,6 +2680,7 @@ operator extends Operator {
         List<String> strings = new ArrayList();
         List<Service> sigs = new ArrayList();
         Service srvSig = null;
+        Evaluation evaluator = null;
         Context context = null;
         ControlContext cc = null;
         Projection inPathPrj = null;
@@ -2696,9 +2698,25 @@ operator extends Operator {
                 context = ((Context) item);
             } else if (item instanceof Signature) {
                 sigs.add((Signature) item);
+            } else if (item instanceof Evaluation) {
+                evaluator = (Evaluation)item;
             }
         }
-
+        Task task = null;
+        if (evaluator != null) {
+            try {
+                task = new EvaluationTask(evaluator);
+                if (strings.size() == 1) {
+                    task.setName(strings.get(0));
+                }
+                if (context != null) {
+                    task.setContext(context);
+                }
+                return task;
+            } catch (RemoteException | ContextException e) {
+                throw new EvaluationException(e);
+            }
+        }
         if (sigs.size() == 1) {
             srvSig = sigs.get(0);
         } else if (sigs.size() > 1) {
@@ -2733,7 +2751,6 @@ operator extends Operator {
         }
 
         ServiceFidelity sigFi = null;
-        Task task = null;
         // construction phase
         if (srvSig != null) {
             try {
