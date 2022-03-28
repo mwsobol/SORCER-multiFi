@@ -1672,51 +1672,51 @@ operator extends Operator {
         return mType;
     }
 
-    public static String property(String property) {
-        return System.getProperty(property);
-    }
-
-    public static String property(String property, Properties properties) {
-        return properties.getProperty(property);
-    }
-
-    public static String setProperty(String property, String value) {
-        return System.setProperty(property, value);
-    }
-
-    public static Object setProperty(String property,  String value, Properties properties) {
-        return properties.setProperty(property, value);
-    }
-
-    public static Properties resourceProperties(String resourceName, Object dependent) throws IOException {
-        ClassLoader classLoader = dependent.getClass().getClassLoader();
-        URL url = classLoader.getResource(resourceName);
-        Properties properties = new Properties();
-        try (InputStream rs = url.openStream()) {
-            properties.load(rs);
-        }
-        return properties;
-    }
-
-    public static Properties providerProperties(String propertiesFile, Object provider) throws IOException {
-        Class<?> providerClass;
-        if (provider instanceof Class) {
-            providerClass = (Class) provider;
-        } else {
-            providerClass = provider.getClass();
-        }
-        return new PropertyHelper(propertiesFile, providerClass.getClassLoader()).getProperties();
-    }
-
-    public static Properties modelProperties(Class<?> providerClass) throws IOException {
-        String propertiesFile = System.getProperty("model.properties");
-        return new PropertyHelper(propertiesFile, providerClass.getClassLoader()).getProperties();
-    }
-
-    public static Properties providerProperties(Class<?> providerClass) throws IOException {
-        String propertiesFile = System.getProperty("provider.properties");
-        return new PropertyHelper(propertiesFile, providerClass.getClassLoader()).getProperties();
-    }
+//    public static String property(String property) {
+//        return System.getProperty(property);
+//    }
+//
+//    public static String property(String property, Properties properties) {
+//        return properties.getProperty(property);
+//    }
+//
+//    public static String setProperty(String property, String value) {
+//        return System.setProperty(property, value);
+//    }
+//
+//    public static Object setProperty(String property,  String value, Properties properties) {
+//        return properties.setProperty(property, value);
+//    }
+//
+//    public static Properties resourceProperties(String resourceName, Object dependent) throws IOException {
+//        ClassLoader classLoader = dependent.getClass().getClassLoader();
+//        URL url = classLoader.getResource(resourceName);
+//        Properties properties = new Properties();
+//        try (InputStream rs = url.openStream()) {
+//            properties.load(rs);
+//        }
+//        return properties;
+//    }
+//
+//    public static Properties providerProperties(String propertiesFile, Object provider) throws IOException {
+//        Class<?> providerClass;
+//        if (provider instanceof Class) {
+//            providerClass = (Class) provider;
+//        } else {
+//            providerClass = provider.getClass();
+//        }
+//        return new PropertyHelper(propertiesFile, providerClass.getClassLoader()).getProperties();
+//    }
+//
+//    public static Properties modelProperties(Class<?> providerClass) throws IOException {
+//        String propertiesFile = System.getProperty("model.properties");
+//        return new PropertyHelper(propertiesFile, providerClass.getClassLoader()).getProperties();
+//    }
+//
+//    public static Properties providerProperties(Class<?> providerClass) throws IOException {
+//        String propertiesFile = System.getProperty("provider.properties");
+//        return new PropertyHelper(propertiesFile, providerClass.getClassLoader()).getProperties();
+//    }
 
     public static String home() {
         return Sorcer.getHome();

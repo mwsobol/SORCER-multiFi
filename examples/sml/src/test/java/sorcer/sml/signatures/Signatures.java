@@ -30,6 +30,7 @@ import static sorcer.mo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.so.operator.exec;
 import static sorcer.so.operator.exert;
+import static sorcer.util.Builder.*;
 
 /**
  * @author Mike Sobolewski

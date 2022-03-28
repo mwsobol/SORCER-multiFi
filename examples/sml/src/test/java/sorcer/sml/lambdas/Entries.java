@@ -16,7 +16,6 @@ import static java.lang.Math.pow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.paths;
 import static sorcer.eo.operator.*;
 import static sorcer.co.operator.get;
 import static sorcer.mo.operator.*;
@@ -24,6 +23,7 @@ import static sorcer.ent.operator.invoker;
 import static sorcer.ent.operator.*;
 import static sorcer.so.operator.*;
 import static sorcer.util.exec.ExecUtils.CmdResult;
+import static sorcer.util.Builder.*;
 
 /**
  * @author Mike Sobolewski
