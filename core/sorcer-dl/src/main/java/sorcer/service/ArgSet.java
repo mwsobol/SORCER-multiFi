@@ -75,8 +75,14 @@ public class ArgSet extends LinkedHashSet<Arg> {
 
 	public void setDomain(String domainName) {
 		for (Arg arg : this) {
-			if (arg instanceof Slot)
-				((Slot)arg).setDomain(domainName);
+			if (arg instanceof Slot) {
+				(( Slot ) arg).setDomain(domainName);
+			}
+		}
+		if (paths != null && paths.size() > 0) {
+			for (Path p : paths) {
+				p.domain = domainName;
+			}
 		}
 	}
 

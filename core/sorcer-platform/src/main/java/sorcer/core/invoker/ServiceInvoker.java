@@ -178,7 +178,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	}
 	
 	public ServiceInvoker(Evaluator evaluator, ArgSet args) {
-		this(((Identifiable)evaluator).getName());
+		this(evaluator.getName());
 		this.evaluator = evaluator;
 		this.args = args;
 	}
@@ -376,7 +376,10 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 			}
 			if (isValid)
 				return value;
-			else {
+			else if (evaluator != null) {
+				value = (T)  evaluator.evaluate(args);
+				isValid = true;
+			} else {
 				value = (T) invoke(args);
 				isValid = true;
 			}
