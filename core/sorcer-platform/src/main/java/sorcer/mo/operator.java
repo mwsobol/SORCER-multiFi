@@ -23,8 +23,8 @@ import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
 import sorcer.core.context.*;
 import sorcer.core.context.model.Transmodel;
-import sorcer.core.context.model.req.ExploreModel;
-import sorcer.core.context.model.req.Srv;
+import sorcer.core.context.model.req.RequestTransmodel;
+import sorcer.core.context.model.req.Req;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.service.*;
 import sorcer.service.Analysis;
@@ -725,7 +725,7 @@ public class operator {
                     hasEntry = true;
                     if (i instanceof Prc)
                         procType = true;
-                    else if (i instanceof Srv || i instanceof Snr) {
+                    else if (i instanceof Req || i instanceof Snr) {
                         srvType = true;
                     }
                 } catch (Exception e) {
@@ -808,7 +808,7 @@ public class operator {
         for (Object fi : modelFis) {
             dataList.remove(fi);
         }
-        Transmodel transModel = new ExploreModel(name);
+        Transmodel transModel = new RequestTransmodel(name);
         try {
             transModel.addChildren(domains);
             Object[] names = new Object[domains.size()];
@@ -975,7 +975,7 @@ public class operator {
         return context;
     }
 
-    public static Model aneModel(String name, Object... objects)
+    public static Model snrModel(String name, Object... objects)
         throws ContextException, RemoteException {
         return reqModel(name, objects);
     }
@@ -1004,7 +1004,7 @@ public class operator {
         RequestModel model = null;
         FidelityManager fiManager = null;
         List<Metafidelity> metaFis = new ArrayList<>();
-        List<Srv> morphFiEnts = new ArrayList<>();
+        List<Req> morphFiEnts = new ArrayList<>();
         List<Fidelity> fis = new ArrayList<>();
         Projection inPathPrj = null;
         Projection outPathPrj = null;
@@ -1027,8 +1027,8 @@ public class operator {
                 } else if ((( Projection ) item).getFiType().equals(Fi.Type.CXT_PRJ)) {
                     cxtPrjs.add(( Projection ) item);
                 }
-            } else if (item instanceof Srv && (( Srv ) item).getImpl() instanceof MorphFidelity) {
-                morphFiEnts.add(( Srv ) item);
+            } else if (item instanceof Req && (( Req ) item).getImpl() instanceof MorphFidelity) {
+                morphFiEnts.add(( Req ) item);
             } else if (item instanceof Fidelity) {
                 if (item instanceof Metafidelity) {
                     metaFis.add(( Metafidelity ) item);
@@ -1084,7 +1084,7 @@ public class operator {
             fiManager.add(fis);
             MorphFidelity mFi;
             if ((morphFiEnts.size() > 0)) {
-                for (Srv morphFiEnt : morphFiEnts) {
+                for (Req morphFiEnt : morphFiEnts) {
                     mFi = ( MorphFidelity ) morphFiEnt.getImpl();
                     fiManager.addMorphedFidelity(morphFiEnt.getName(), mFi);
                     fiManager.addFidelity(morphFiEnt.getName(), mFi.getFidelity());

@@ -21,7 +21,7 @@ import sorcer.core.context.Contexts;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.req.Srv;
+import sorcer.core.context.model.req.Req;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.service.Collaboration;
 import sorcer.service.*;
@@ -247,7 +247,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
                 if (scope != null && ((Context) scope).size() > 0) {
                     ((Context) scope).append(this);
                 }
-                if (value instanceof Srv && ((Srv) value).getImpl() instanceof ServiceInvoker) {
+                if (value instanceof Req && (( Req ) value).getImpl() instanceof ServiceInvoker) {
                     ((ServiceInvoker) ((Entry) value).getImpl()).setInvokeContext(this);
                 } else if (value instanceof ServiceInvoker) {
                     ((ServiceInvoker) value).setInvokeContext(this);

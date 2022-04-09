@@ -23,13 +23,14 @@ import java.util.concurrent.Callable;
 import static sorcer.eo.operator.task;
 
 /**
- * A service function <code>srv</code> is a functional entry which is dependent on its encapsulated service.
+ * A service request function <code>Req</code> is a functional entry <code>Entry</code> which
+ * is dependent on its encapsulated requst service (requestor).
  * Created by Mike Sobolewski
  */
-public class Srv extends Function<Object> implements Serviceableness,
+public class Req extends Function<Object> implements Serviceableness,
         Comparable<Object>, Reactive<Object>, Serializable, func<Object> {
 
-    private static Logger logger = LoggerFactory.getLogger(Srv.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(Req.class.getName());
 
     protected String name;
 
@@ -39,13 +40,13 @@ public class Srv extends Function<Object> implements Serviceableness,
 
     protected Context.Return returnPath;
 
-    public Srv(String name) {
+    public Req(String name) {
         super(name);
         this.name = name;
         type = Functionality.Type.SRV;
     }
 
-    public Srv(String name, String path, Service service, String[] paths) {
+    public Req(String name, String path, Service service, String[] paths) {
         key = path;
         impl = service;
         this.name = name;
@@ -53,7 +54,7 @@ public class Srv extends Function<Object> implements Serviceableness,
         type = Functionality.Type.SRV;
     }
 
-    public Srv(String name, String path, Client service) {
+    public Req(String name, String path, Client service) {
         key = path;
         impl = service;
         this.name = name;
@@ -61,7 +62,7 @@ public class Srv extends Function<Object> implements Serviceableness,
     }
 
 
-    public Srv(String name, Object value) {
+    public Req(String name, Object value) {
         if(name == null)
             throw new IllegalArgumentException("key must not be null");
         this.key = name;
@@ -76,34 +77,34 @@ public class Srv extends Function<Object> implements Serviceableness,
         type = Functionality.Type.SRV;
     }
 
-    public Srv(String name, Object value, String[] paths) {
+    public Req(String name, Object value, String[] paths) {
         this(name, value);
         this.paths = paths;
         type = Functionality.Type.SRV;
     }
 
-    public Srv(String name, Object value, Context.Return returnPath) {
+    public Req(String name, Object value, Context.Return returnPath) {
         this(name, value);
         this.returnPath = returnPath;
     }
 
-    public Srv(String name, String path, Object value, Context.Return returnPath) {
+    public Req(String name, String path, Object value, Context.Return returnPath) {
         super(path, value);
         this.returnPath = returnPath;
         type = Functionality.Type.SRV;
     }
 
-    public Srv(String name, Object value, String path) {
+    public Req(String name, Object value, String path) {
         super(path, value);
         this.name = name;
     }
 
-    public Srv(String name, Object value, String path, Type type) {
+    public Req(String name, Object value, String path, Type type) {
         this(name, value, path);
         this.type = type;
     }
 
-    public Srv(String name, Model model, String path) {
+    public Req(String name, Model model, String path) {
         super(path, model);
         this.name = name;
         type = Functionality.Type.SRV;

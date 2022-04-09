@@ -16,7 +16,6 @@
  */
 package sorcer.eo;
 
-import ch.qos.logback.core.encoder.EchoEncoder;
 import groovy.lang.Closure;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
@@ -32,7 +31,7 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.QueueStrategy;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.req.RequestModel;
-import sorcer.core.context.model.req.Srv;
+import sorcer.core.context.model.req.Req;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
@@ -58,7 +57,6 @@ import sorcer.util.url.sos.SdbUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.InetAddress;
@@ -788,8 +786,8 @@ operator extends Operator {
             while(i.hasNext()) {
                 e = i.next();
                 val = e.getValue();
-                if (val instanceof Srv && ((Srv)val).asis() instanceof ServiceFidelity) {
-                    fiMap.put(e.getKey(), (ServiceFidelity)((Srv)val).asis());
+                if (val instanceof Req && (( Req )val).asis() instanceof ServiceFidelity) {
+                    fiMap.put(e.getKey(), (ServiceFidelity)(( Req )val).asis());
                 }
             }
             Projection prj = ((ServiceContext)cxt).getProjection();
@@ -839,7 +837,7 @@ operator extends Operator {
                                                    List<Entry> entryList) throws ContextException {
         for (int i = 0; i < entryList.size(); i++) {
             Entry ent = entryList.get(i);
-            if (ent instanceof Srv) {
+            if (ent instanceof Req) {
                 if (ent.asis() instanceof Scopable) {
                     if (((Scopable) ent.getImpl()).getScope() != null)
                         ((Scopable) ent.getImpl()).getScope().setScope(pcxt);

@@ -176,5 +176,13 @@ public class ArgSet extends LinkedHashSet<Arg> {
 				} 
 		}
 	}
-	
+
+	@Override
+	public int size() {
+		if (super.size() == 0 && paths != null) {
+			return paths.size();
+		} else {
+			return super.size();
+		}
+	}
 }

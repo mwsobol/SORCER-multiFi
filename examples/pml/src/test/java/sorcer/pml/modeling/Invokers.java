@@ -114,7 +114,7 @@ public class Invokers {
 
 	@Test
 	public void serviceNeurons() throws Exception {
-		Model nm = aneModel("neural-model");
+		Model nm = snrModel("neural-model");
 		add(nm, snr("x1", 10.0), snr("x2", 20.0));
 		add(nm, snr("x3", weights(val("x1", 2.0), val("x2", 10.0)), signals("x1", "x2")));
 

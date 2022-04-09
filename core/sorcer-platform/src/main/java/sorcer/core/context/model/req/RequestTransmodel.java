@@ -19,9 +19,11 @@ import java.util.*;
 import static sorcer.mo.operator.result;
 
 /**
+ * Specifies instances of request models as models of request models.
+ *
  * Created by Mike Sobolewski on 12/28/2019.
  */
-public class ExploreModel extends RequestModel implements Transmodel, Configurable {
+public class RequestTransmodel extends RequestModel implements Transmodel, Configurable {
 
     private static final Logger logger = LoggerFactory.getLogger(Transmodel.class);
 
@@ -35,24 +37,24 @@ public class ExploreModel extends RequestModel implements Transmodel, Configurab
 
     protected Fidelity<Exploration> explorerFi;
 
-    public ExploreModel() {
+    public RequestTransmodel() {
         super();
         type = Functionality.Type.TRANS;
     }
 
-    public ExploreModel(String name) {
+    public RequestTransmodel(String name) {
         super(name);
         type = Functionality.Type.TRANS;
     }
 
-    public static ExploreModel instance(Signature builder) throws SignatureException {
-        ExploreModel model = ExploreModel.instance(null, builder);
+    public static RequestTransmodel instance(Signature builder) throws SignatureException {
+        RequestTransmodel model = RequestTransmodel.instance(null, builder);
         model.setEvaluated(false);
         return model;
     }
 
-    public static ExploreModel instance(String name, Signature builder) throws SignatureException {
-        ExploreModel model = (ExploreModel) sorcer.co.operator.instance(builder);
+    public static RequestTransmodel instance(String name, Signature builder) throws SignatureException {
+        RequestTransmodel model = ( RequestTransmodel ) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         if (name != null) {
             model.setName(name);
@@ -61,13 +63,13 @@ public class ExploreModel extends RequestModel implements Transmodel, Configurab
         return model;
     }
 
-    public ExploreModel(String name, List<Transmodel> models) {
+    public RequestTransmodel(String name, List<Transmodel> models) {
         super(name);
         for (Transmodel vm : models)
             children.put(vm.getName(), vm);
     }
 
-    public ExploreModel(String name, Transmodel... models) {
+    public RequestTransmodel(String name, Transmodel... models) {
         super(name);
         for (Transmodel vm : models)
             children.put(vm.getName(), vm);

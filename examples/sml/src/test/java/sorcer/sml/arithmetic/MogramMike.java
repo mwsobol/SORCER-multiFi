@@ -10,7 +10,7 @@ import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.context.model.req.Srv;
+import sorcer.core.context.model.req.Req;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -137,10 +137,10 @@ public class MogramMike {
 		dependsOn(mo, dep("subtract", paths("multiply2", "add")));
 
 		Object val = asis(mo, "subtract");
-		if (val instanceof Srv) {
-			Srv srv = ((Srv)val);
-			if (srv.getValue() instanceof ContextCallable) {
-				ContextCallable ctx = (ContextCallable) srv.getValue();
+		if (val instanceof Req) {
+			Req req = (( Req )val);
+			if (req.getValue() instanceof ContextCallable) {
+				ContextCallable ctx = (ContextCallable) req.getValue();
 				logger.info("class: " + ctx.getClass());
 			}
 		}
