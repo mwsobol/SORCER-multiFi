@@ -15,19 +15,18 @@
  * limitations under the License.
  */
 
-package sorcer.co.tuple;
+package sorcer.core.context.model.ent;
 
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.ArgSet;
 import sorcer.service.Context;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Paths;
 import sorcer.service.Signature;
 
 /**
  * Created by Mike Sobolewski
  */
-public class SignatureEntry extends Entry<Signature> {
+public class Signatory extends Entry<Signature> {
 
     private static final long serialVersionUID = 1L;
 
@@ -41,7 +40,7 @@ public class SignatureEntry extends Entry<Signature> {
 
     private Context context;
 
-    public SignatureEntry(String path, Signature signature) {
+    public Signatory(String path, Signature signature) {
         key = path;
         impl = signature;
         this.args = new ArgSet();
@@ -50,7 +49,7 @@ public class SignatureEntry extends Entry<Signature> {
         }
     }
 
-    public SignatureEntry(String path, Signature signature, Context context) {
+    public Signatory(String path, Signature signature, Context context) {
         this(path, signature);
         this.context = context;
     }

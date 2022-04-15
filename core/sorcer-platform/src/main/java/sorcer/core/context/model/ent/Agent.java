@@ -35,7 +35,7 @@ import java.util.Arrays;
  *
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class Agent<T> extends Prc<T> implements Serializable {
+public class Agent<T> extends Pcr<T> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -100,7 +100,7 @@ public class Agent<T> extends Prc<T> implements Serializable {
 			}
 		} catch (Throwable e) {
 			throw new IllegalArgumentException(
-					"Unable to instantiate prc agent :"
+					"Unable to instantiate pcr agent :"
 							+ e.getClass().getName() + ": "
 							+ e.getLocalizedMessage());
 		}
@@ -125,11 +125,11 @@ public class Agent<T> extends Prc<T> implements Serializable {
 		return (T) invoker;
 	}
 	
-	private Prc[] getPars(Arg... entries) {
-		Prc[] pa = new Prc[entries.length];
+	private Pcr[] getPars(Arg... entries) {
+		Pcr[] pa = new Pcr[entries.length];
 		if (entries.length > 0) {
 			for (int i = 0; i < entries.length; i++)
-				pa[i] = (Prc) entries[i];
+				pa[i] = ( Pcr ) entries[i];
 		}
 		return pa;
 	}

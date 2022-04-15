@@ -69,7 +69,7 @@ import sorcer.service.modeling.mog;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Routine extends Domain, Dependency, Dispatch, Invocation<Object>, Paradigmatic, Serializable, mog {
+public interface Routine extends Domain, Dependency, Dispatcher, Invocation<Object>, Paradigmatic, Serializable, mog {
 
 	/**
 	 * Assigns a dispatch for this exertion.

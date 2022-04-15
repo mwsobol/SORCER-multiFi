@@ -20,7 +20,7 @@ import net.jini.core.transaction.Transaction;
 import sorcer.core.context.Intent;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Developer;
+import sorcer.core.context.model.ent.cntrl.Developer;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.ExecutiveException;

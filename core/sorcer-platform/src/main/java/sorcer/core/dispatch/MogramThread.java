@@ -61,7 +61,7 @@ public class MogramThread implements Runnable {
 				"run: " + job.getName() + " governor: " + dispatcher.getClass().getName());
 		} catch (DispatchException | RemoteException e) {
 			logger.error("exception in governor: " + e);
-			// ignore it, locall prc
+			// ignore it, locall pcr
 		}
 /*			 int COUNT = 1000;
 			 int count = COUNT;

@@ -259,7 +259,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 //			exertion.getControlContext().appendTrace(provider.getProviderName()
 //					+ " governor: " + getClass().getName());
 //		} catch (RemoteException e) {
-//			// ignore it, local prc
+//			// ignore it, local pcr
 //		}
         try {
             updateInputs(exertion);

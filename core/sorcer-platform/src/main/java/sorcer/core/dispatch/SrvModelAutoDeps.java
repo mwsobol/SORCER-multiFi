@@ -21,7 +21,7 @@ import org.codehaus.plexus.util.dag.CycleDetectedException;
 import org.codehaus.plexus.util.dag.DAG;
 import org.codehaus.plexus.util.dag.TopologicalSorter;
 import org.codehaus.plexus.util.dag.Vertex;
-import sorcer.co.tuple.SignatureEntry;
+import sorcer.core.context.model.ent.Signatory;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.req.Req;
@@ -183,8 +183,8 @@ public class SrvModelAutoDeps {
             if (entry instanceof Entry) {
                 Object entryVal = ((Entry)entry).getImpl();
                 Context.Return rp = null;
-                if (entryVal instanceof SignatureEntry) {
-                    Signature signature = (Signature) ((SignatureEntry)entryVal).getImpl();
+                if (entryVal instanceof Signatory) {
+                    Signature signature = (Signature) (( Signatory )entryVal).getImpl();
                     if (signature!=null) rp = (Context.Return)signature.getContextReturn();
                 } else if (entry instanceof Req) {
                     rp = (( Req ) entry).getReturnPath();
@@ -215,8 +215,8 @@ public class SrvModelAutoDeps {
             if (entry instanceof Function) {
                 Context.Return rp = null;
                 Object entryVal = ((Entry)entry).getImpl();
-                if (entryVal instanceof SignatureEntry) {
-                    Signature signature = (Signature) ((SignatureEntry)entryVal).getImpl();
+                if (entryVal instanceof Signatory) {
+                    Signature signature = (Signature) (( Signatory )entryVal).getImpl();
                     rp =  (Context.Return)signature.getContextReturn();
                 } else if (entry instanceof Req) {
                     rp = (( Req )entry).getReturnPath();

@@ -61,7 +61,7 @@ import static sorcer.so.operator.exec;
  * key and its getValue (argument). The association <key, argument> is the definition
  * of an independent or a dependent argument. Arguments that dependent on other
  * arguments are subroutines (evaluators, invokers), so that, each time the
- * subroutine is called, its arguments for that prc can be assigned to
+ * subroutine is called, its arguments for that pcr can be assigned to
  * the corresponding parameters of evaluators and invokers.
  *
  * @author Mike Sobolewski
@@ -84,7 +84,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		super();
 		key = PROC_MODEL;
 		out = new Date();
-		setSubject("prc/model", new Date());
+		setSubject("pcr/model", new Date());
 		isRevaluable = true;
 	}
 
@@ -101,7 +101,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
     public EntryModel(Context context) throws ContextException {
         super(context);
         key = PROC_MODEL;
-        setSubject("prc/model", new Date());
+        setSubject("pcr/model", new Date());
 		isRevaluable = true;
 	}
 
@@ -138,13 +138,13 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 					val = ((UuidObject) val).getObject();
 				}
 				return val;
-			} else if (val instanceof Prc) {
-				if (((Prc) val).isCached()) {
-					return ((Prc) val).getOut();
-				} else if (((Prc) val).isPersistent()) {
-					return ((Prc) val).evaluate();
-				} else if ((((Prc) val).asis() instanceof Function)) {
-					bindEntry((Function) ((Prc) val).asis());
+			} else if (val instanceof Pcr) {
+				if ((( Pcr ) val).isCached()) {
+					return (( Pcr ) val).getOut();
+				} else if ((( Pcr ) val).isPersistent()) {
+					return (( Pcr ) val).evaluate();
+				} else if (((( Pcr ) val).asis() instanceof Function)) {
+					bindEntry((Function) (( Pcr ) val).asis());
 				}
 			}
 
@@ -153,12 +153,12 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			} else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
 				((Scopable) ((Entry)val).asis()).setScope(this);
 			}
-			if (val instanceof Prc) {
+			if (val instanceof Pcr) {
 				Context inCxt = (Context) Arg.selectDomain(args);
 				if (inCxt != null) {
 					isChanged = true;
 				}
-				Object impl = ((Prc)val).getImpl();
+				Object impl = (( Pcr )val).getImpl();
 				if (impl instanceof Mogram) {
 					return exec((Service)impl, args);
 				} else if (impl instanceof Invocation) {
@@ -179,7 +179,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				} else if (impl instanceof Evaluation) {
 					return ((Evaluation) impl).evaluate(args);
 				} else {
-					return ((Prc)val).getValue(args);
+					return (( Pcr )val).getValue(args);
 				}
 			} else if (val instanceof Evaluation) {
 				return ((Evaluation) val).evaluate(args);
@@ -238,8 +238,8 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	public Object putValue(String path, Object value) throws ContextException {
 		isChanged = true;
 		Object obj = get(path);
-		if (obj instanceof Prc) {
-			((Prc) obj).setValue(value);
+		if (obj instanceof Pcr) {
+			(( Pcr ) obj).setValue(value);
 			return value;
 		} else {
 			if (value instanceof Scopable) {
@@ -259,12 +259,12 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		return super.put(path, value);
 	}
 
-	public Prc getCall(String name) throws ContextException {
+	public Pcr getCall(String name) throws ContextException {
 		Object obj = get(name);
-		if (obj instanceof Prc)
-			return (Prc) obj;
+		if (obj instanceof Pcr)
+			return ( Pcr ) obj;
 		else
-			return new Prc(name, asis(name), this);
+			return new Pcr(name, asis(name), this);
 	}
 
 	public Function bindEntry(Function ent) throws ContextException {
@@ -286,7 +286,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	}
 
 	public EntryModel append(Arg... objects) throws ContextException {
-		Prc p = null;
+		Pcr p = null;
 		boolean changed = false;
 		FidelityList pthFis = new FidelityList();
 		for (Arg obj : objects) {
@@ -294,8 +294,8 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				pthFis.add((Fidelity)obj);
 			} else if (obj instanceof Fi) {
 				continue;
-			} else if (obj instanceof Prc) {
-				p = (Prc) obj;
+			} else if (obj instanceof Pcr) {
+				p = ( Pcr ) obj;
 			} else if (obj instanceof Entry) {
 				putValue((String) ((Entry) obj).key(),
 					((Entry) obj).getOut());
@@ -308,7 +308,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 //			}
 
 			if (p != null) {
-				appendPrc(p);
+				appendpcr(p);
 				changed = true;
 			}
 		}
@@ -324,12 +324,12 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 
 	@Override
 	public ContextDomain add(Identifiable... objects) throws ContextException {
-		Prc p = null;
+		Pcr p = null;
 		boolean changed = false;
 		for (Identifiable obj : objects) {
 			String pn = obj.getName();
-			if (obj instanceof Prc) {
-				p = (Prc) obj;
+			if (obj instanceof Pcr) {
+				p = ( Pcr ) obj;
 				if (p.getScope() == null) {
 					p.setScope(this);
 				}
@@ -348,7 +348,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			}
 
 			if (p != null) {
-				addPrc(p);
+				addPcr(p);
 				changed = true;
 			}
 		}
@@ -402,7 +402,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				if (((ServiceContext) context).getExecPath() != null) {
 					Object o = get(((ServiceContext) context).getExecPath()
 							.path());
-					if (o instanceof Prc) {
+					if (o instanceof Pcr) {
 						if (o instanceof Agent) {
 							if (((Agent) o).getScope() == null)
 								((Agent) o).setScope(this);
@@ -410,7 +410,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 								((Agent) o).getScope().append(this);
 							result = ((Agent) o).evaluate(entries);
 						} else {
-							Object i = ((Prc) get(((ServiceContext) context)
+							Object i = (( Pcr ) get(((ServiceContext) context)
 									.getExecPath().path())).asis();
 							if (i instanceof ServiceInvoker) {
 								result = ((ServiceInvoker) i).evaluate(entries);
@@ -484,10 +484,10 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		throw new ContextException("No such variability in context: " + name);
 	}
 
-	private Prc putVar(String path, Functionality value) throws ContextException {
+	private Pcr putVar(String path, Functionality value) throws ContextException {
 		putValue(path, value);
 		markVar(this, path, value);
-		return new Prc(path, value, this);
+		return new Pcr(path, value, this);
 	}
 
 	protected void realizeDependencies(Arg... args) throws RoutineException {

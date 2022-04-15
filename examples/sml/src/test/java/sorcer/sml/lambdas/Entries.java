@@ -108,7 +108,7 @@ public class Entries {
     public void entryAsLambdaInvoker() throws Exception {
 
         Model mo = model(val("x", 10.0), val("y", 20.0),
-                prc(invoker("fxn", (Context<Double> cxt) -> value(cxt, "x")
+                pcr(invoker("fxn", (Context<Double> cxt) -> value(cxt, "x")
                         + value(cxt, "y")
                         + 30, args("x", "y"))));
         logger.info("invoke eval: " + eval(mo, "fxn"));

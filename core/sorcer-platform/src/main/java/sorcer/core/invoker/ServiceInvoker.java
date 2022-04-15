@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Prc;
+import sorcer.core.context.model.ent.Pcr;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Data;
@@ -61,7 +61,7 @@ import java.util.List;
  * object referenced by its contextReturn or returned by a context invoker referenced by
  * its contextReturn inside the context. An ordered list of parameters is usually
  * included in the definition of an invoker, so that, each time the invoker is
- * called, the context arguments for that prc can be assigned to the
+ * called, the context arguments for that pcr can be assigned to the
  * corresponding parameters of the invoker. The context values for all paths
  * inside the context are defined explicitly by corresponding objects or
  * calculated by corresponding invokers. Thus, requesting a eval for a contextReturn in
@@ -130,7 +130,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 			this.name = defaultName + count++;
 		else
 			this.name = name;
-		invokeContext = new EntryModel("model/prc");
+		invokeContext = new EntryModel("model/pcr");
 	}
 
 	public ServiceInvoker(ValueCallable lambda) throws InvocationException {
@@ -165,7 +165,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 		invokeContext = context;
 	}
 	
-	public ServiceInvoker(EntryModel context, Evaluator evaluator, Prc... callEntries) {
+	public ServiceInvoker(EntryModel context, Evaluator evaluator, Pcr... callEntries) {
 		this(context);
 		this.evaluator = evaluator;
 		this.args = new ArgSet(callEntries);
@@ -183,7 +183,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 		this.args = args;
 	}
 	
-	public ServiceInvoker(Evaluator evaluator, Prc... callEntries) {
+	public ServiceInvoker(Evaluator evaluator, Pcr... callEntries) {
 		this(((Identifiable)evaluator).getName());
 		this.evaluator = evaluator;
 		this.args = new ArgSet(callEntries);
@@ -257,8 +257,8 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	}
 	
 	/**
-	 * Adds a new prc to the invoker. This must be done before calling
-	 * {@link #invoke} so the invoker is aware that the new prc may be added to
+	 * Adds a new pcr to the invoker. This must be done before calling
+	 * {@link #invoke} so the invoker is aware that the new pcr may be added to
 	 * the model.
 	 * 
 	 * @param call
@@ -269,12 +269,12 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	 * @throws RemoteException
 	 */
 	public ServiceInvoker addCall(Object call) throws EvaluationException {
-		if (call instanceof Prc) {
-			((ServiceContext)invokeContext).put(((Prc) call).getName(), call);
-			if (((Prc) call).asis() instanceof ServiceInvoker) {
+		if (call instanceof Pcr) {
+			((ServiceContext)invokeContext).put((( Pcr ) call).getName(), call);
+			if ((( Pcr ) call).asis() instanceof ServiceInvoker) {
 				try {
-					((ServiceInvoker) ((Prc) call).evaluate()).addObserver(this);
-					args.add((Prc) call);
+					((ServiceInvoker) (( Pcr ) call).evaluate()).addObserver(this);
+					args.add(( Pcr ) call);
 					value = null;
 					setChanged();
 					notifyObservers(this);
@@ -285,7 +285,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 			}
 		} else if (call instanceof Identifiable) {
 			try {
-				Prc p = new Prc(((Identifiable) call).getName(), call, invokeContext);
+				Pcr p = new Pcr(((Identifiable) call).getName(), call, invokeContext);
 				invokeContext.putValue(p.getName(), p);
 			} catch (ContextException e) {
 				throw new EvaluationException(e);
@@ -300,16 +300,16 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 		}
 	}
 	
-	synchronized public void addPars(List<Prc> callEntryList)
+	synchronized public void addPars(List<Pcr> callEntryList)
 			throws EvaluationException, RemoteException {
-		for (Prc p : callEntryList) {
+		for (Pcr p : callEntryList) {
 			addCall(p);
 		}
 	}
 	
-	synchronized public void addPars(Prc... callEntries) throws EvaluationException,
+	synchronized public void addPars(Pcr... callEntries) throws EvaluationException,
 			RemoteException {
-		for (Prc p : callEntries) {
+		for (Pcr p : callEntries) {
 			addCall(p);
 		}
 	}
@@ -362,7 +362,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 					if (cxt != null) {
 						invokeContext = cxt;
 					} else {
-						invokeContext = new EntryModel("model/prc");
+						invokeContext = new EntryModel("model/pcr");
 					}
 				} else if (cxt != null) {
 					invokeContext.append(cxt);
@@ -421,8 +421,8 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	private void init(ArgSet set){
 		if (set != null) {
 			for (Arg p : set) {
-				if (p instanceof Prc && ((Prc) p).getScope() == null)
-					((Prc) p).setScope(invokeContext);
+				if (p instanceof Pcr && (( Pcr ) p).getScope() == null)
+					(( Pcr ) p).setScope(invokeContext);
 			}
 		}
 	}
@@ -494,7 +494,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	public void clearPars() throws EvaluationException {
 		for (Arg p : args) {
 			try {
-				((Prc) p).setValue(null);
+				(( Pcr ) p).setValue(null);
 			} catch (Exception e) {
 				throw new EvaluationException(e);
 			}
@@ -532,7 +532,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluator#addArgs(sorcer.core.context.model.prc.EntrySet)
+	 * @see sorcer.service.Evaluator#addArgs(sorcer.core.context.model.pcr.EntrySet)
 	 */
 	@Override
 	public void addArgs(ArgSet set) throws EvaluationException {

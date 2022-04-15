@@ -53,7 +53,7 @@ public class SmlOperators {
 
 		// Entries
 		val v1 = val("x2", 10.6);
-		func p1 = prc("x3", ev1);
+		func p1 = pcr("x3", ev1);
 		func n2 = snr("x6", 1.0);
 		func r0 = req(op1);
 		func r1 = srv("s1", args("v1", "f1"));

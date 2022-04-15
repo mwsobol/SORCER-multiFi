@@ -23,7 +23,7 @@ import sorcer.co.tuple.*;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
-import sorcer.core.context.model.ent.Prc;
+import sorcer.core.context.model.ent.Pcr;
 import sorcer.core.context.model.req.Req;
 import sorcer.core.invoker.*;
 import sorcer.core.plexus.FidelityManager;
@@ -86,44 +86,44 @@ public class operator extends Operator {
         return e;
     }
 
-    public static <T> Prc<T> prc(String path, T argument) throws EvaluationException, RemoteException {
-		return new Prc(path, argument);
+    public static <T> Pcr<T> pcr(String path, T argument) throws EvaluationException, RemoteException {
+		return new Pcr(path, argument);
 	}
 
-	public static Prc dbEnt(String path, Object argument) throws EvaluationException, RemoteException {
-		Prc p = new Prc(path, argument);
+	public static Pcr dbEnt(String path, Object argument) throws EvaluationException, RemoteException {
+		Pcr p = new Pcr(path, argument);
 		p.setPersistent(true);
 		p.evaluate();
 		return p;
 	}
 
-	public static Prc prc(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
-		Prc p = new Prc(identifiable.getName(), identifiable);
+	public static Pcr pcr(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
+		Pcr p = new Pcr(identifiable.getName(), identifiable);
 		if (identifiable instanceof Scopable) {
 			((Scopable) identifiable).setScope(context);
 		}
-		p.setType(Functionality.Type.PROC);
+		p.setType(Functionality.Type.PCR);
 		return p;
 	}
 
-	public static Prc prc(Contextion argument, String name, String path) {
-		Prc p = new Prc(argument, name, path);
+	public static Pcr pcr(Contextion argument, String name, String path) {
+		Pcr p = new Pcr(argument, name, path);
 		return p;
 	}
 
-	public static Prc prc(String path, Object argument, Object object) throws ContextException, RemoteException {
-		Prc p = null;
+	public static Pcr pcr(String path, Object argument, Object object) throws ContextException, RemoteException {
+		Pcr p = null;
 		if (object instanceof Context) {
-			p = new Prc(path, argument);
+			p = new Pcr(path, argument);
 			p.setScope(object);
 		} else if (object instanceof Entry) {
-			p = new Prc(path, argument);
+			p = new Pcr(path, argument);
 			p.setScope(context((Entry)object));
 		} else if (object instanceof Args) {
-			p = new Prc(path, argument);
+			p = new Pcr(path, argument);
 			p.setScope(context((Args)object));
 		} else if (object instanceof Service) {
-			p = new Prc(path, argument, object);
+			p = new Pcr(path, argument, object);
 		}
 		return p;
 	}
@@ -163,11 +163,11 @@ public class operator extends Operator {
 		return req(sig);
 	}
 
-	public static SignatureEntry call(Signature signature) {
-		return new SignatureEntry(signature.getName(), signature);
+	public static Signatory call(Signature signature) {
+		return new Signatory(signature.getName(), signature);
 	}
-	public static SignatureEntry call(Signature signature, Context context) {
-		return new SignatureEntry(signature.getName(), signature, context);
+	public static Signatory call(Signature signature, Context context) {
+		return new Signatory(signature.getName(), signature, context);
 	}
 
 	public static Req req(String name, Identifiable item, Context context, Arg... args) {
@@ -178,7 +178,7 @@ public class operator extends Operator {
         }
 		if (item instanceof Signature) {
 			req = new Req(srvName,
-					new SignatureEntry(item.getName(), (Signature) item, context));
+					new Signatory(item.getName(), (Signature) item, context));
 		} else if (item instanceof Mogram) {
 			req = new Req(srvName,
 					new MogramEntry(item.getName(), (Mogram) item));
@@ -212,33 +212,33 @@ public class operator extends Operator {
 		return new Req(path, null, name);
 	}
 
-	public static Prc dPar(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
-		Prc p = new Prc(identifiable.getName(), identifiable);
+	public static Pcr dPar(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
+		Pcr p = new Pcr(identifiable.getName(), identifiable);
 		p.setPersistent(true);
 		p.setScope(context);
 		return p;
 	}
 
-	public static Prc dbEnt(String path, Object argument, Context context) throws EvaluationException, RemoteException {
-		Prc p = new Prc(path, argument);
+	public static Pcr dbEnt(String path, Object argument, Context context) throws EvaluationException, RemoteException {
+		Pcr p = new Pcr(path, argument);
 		p.setPersistent(true);
 		p.setScope(context);
 		return p;
 	}
 
-	public static Prc pipe(Contextion in, String name, String path, Service out) throws ContextException {
-		Prc p = new Prc(name, path, out);
+	public static Pcr pipe(Contextion in, String name, String path, Service out) throws ContextException {
+		Pcr p = new Pcr(name, path, out);
 		add(p, in);
 		return p;
 	}
 
-	public static Prc storeUrl(Prc callEntry, URL url) {
+	public static Pcr storeUrl(Pcr callEntry, URL url) {
 		callEntry.setDbURL(url);
 		return callEntry;
 	}
 
-	public static Prc prc(EntryModel pm, String name) throws ContextException, RemoteException {
-		Prc parameter = new Prc(name, pm.asis(name));
+	public static Pcr pcr(EntryModel pm, String name) throws ContextException, RemoteException {
+		Pcr parameter = new Pcr(name, pm.asis(name));
 		parameter.setScope(pm);
 		return parameter;
 	}
@@ -246,7 +246,7 @@ public class operator extends Operator {
 	public static Invocation invoker(Context mappable, String path)
 			throws ContextException {
 		Object obj = mappable.asis(path);
-		while (obj instanceof Contextion || obj instanceof Prc) {
+		while (obj instanceof Contextion || obj instanceof Pcr) {
 			try {
 				obj = ((Evaluation) obj).asis();
 			} catch (RemoteException e) {
@@ -278,7 +278,7 @@ public class operator extends Operator {
 //	public static Proc put(EntryModel entModel, String name, Object getValue) throws ContextException, RemoteException {
 //		entModel.putValue(name, getValue);
 //		entModel.setContextChanged(true);
-//		return prc(entModel, name);
+//		return pcr(entModel, name);
 //	}
 //
 //	public static EntryModel put(EntryModel entModel, Entry... entries) throws ContextException {
@@ -289,7 +289,7 @@ public class operator extends Operator {
 //		return entModel;
 //	}
 
-	public static Prc add(Prc callEntry, Object to)
+	public static Pcr add(Pcr callEntry, Object to)
 			throws ContextException {
 		if (to instanceof Routine) {
 			((Subroutine)to).addPersister(callEntry);
@@ -298,22 +298,22 @@ public class operator extends Operator {
 		return callEntry;
 	}
 
-	public static Prc connect(Object to, Prc callEntry)
+	public static Pcr connect(Object to, Pcr callEntry)
 			throws ContextException {
 		return add(callEntry, to);
 	}
 
-	public static Prc prc(Object object) throws EvaluationException, RemoteException {
+	public static Pcr pcr(Object object) throws EvaluationException, RemoteException {
 		if (object instanceof String)
-			return new Prc((String)object);
+			return new Pcr((String)object);
 		else if (object instanceof Identifiable)
-			return new Prc(((Identifiable) object).getName(), object);
+			return new Pcr(((Identifiable) object).getName(), object);
 		return null;
 	}
 
-	public static Prc prc() {
+	public static Pcr pcr() {
 		GroovyInvoker gi = new GroovyInvoker();
-		return new Prc(gi.getName(), gi);
+		return new Pcr(gi.getName(), gi);
 	}
 
     public static Pipeline pl(String name, Context context, Opservice... pservices) {
@@ -379,21 +379,21 @@ public class operator extends Operator {
 		return inv;
 	}
 
-    public static Prc mfPrc(Evaluation... evaluators) {
+    public static Pcr mfpcr(Evaluation... evaluators) {
 		MultiFiEvaluator mfEval =  new MultiFiEvaluator(evaluators);
 		// set default fidelity to the first evaluation
-		return new Prc(((Identifiable)evaluators[0]).getName(), mfEval);
+		return new Pcr(((Identifiable)evaluators[0]).getName(), mfEval);
 	}
 
-    public static Prc prc(String expression, Arg... parameters) {
-        return prc(null, expression, null, parameters);
+    public static Pcr pcr(String expression, Arg... parameters) {
+        return pcr(null, expression, null, parameters);
     }
 
-	public static Prc prc(String expression, Context context, Arg... parameters) {
-		return prc(null, expression, context, parameters);
+	public static Pcr pcr(String expression, Context context, Arg... parameters) {
+		return pcr(null, expression, context, parameters);
 	}
 
-	public static Prc prc(String path, String expression, Context context, Arg... parameters) {
+	public static Pcr pcr(String path, String expression, Context context, Arg... parameters) {
 		GroovyInvoker gi = new GroovyInvoker(expression, parameters);
 		if (context != null) {
             gi.setInvokeContext(context);
@@ -402,15 +402,15 @@ public class operator extends Operator {
 		if (path == null) {
 			name = gi.getName();
 		}
-		return new Prc(name, gi);
+		return new Pcr(name, gi);
 	}
 
-	public static Prc prc(Invocation invoker) {
-		return new Prc(((ServiceInvoker)invoker).getName(), invoker);
+	public static Pcr pcr(Invocation invoker) {
+		return new Pcr(((ServiceInvoker)invoker).getName(), invoker);
 	}
 
-	public static Prc prc(String path, Evaluator invoker) {
-		return new Prc(path, invoker);
+	public static Pcr pcr(String path, Evaluator invoker) {
+		return new Pcr(path, invoker);
 	}
 
 	public static Object invoke(Evaluator invoker, Arg... parameters)
@@ -466,9 +466,9 @@ public class operator extends Operator {
 			}
 			if (obj instanceof Agent) {
 				return ((Agent)obj).evaluate(parameters);
-			} else if (obj instanceof Prc
-					&& ((Prc) obj).asis() instanceof Invocation) {
-				Invocation invoker = (Invocation) ((Prc) obj).asis();
+			} else if (obj instanceof Pcr
+					&& (( Pcr ) obj).asis() instanceof Invocation) {
+				Invocation invoker = (Invocation) (( Pcr ) obj).asis();
 				//return invoker.invoke(entModel, parameters);
 				if (scope != null)
 					return invoker.invoke(scope, parameters);
@@ -671,27 +671,27 @@ public class operator extends Operator {
 		return mi;
 	}
 
-	public static RoutineInvoker exertInvoker(String name, Routine exertion, String path, Prc... callEntries) {
+	public static RoutineInvoker exertInvoker(String name, Routine exertion, String path, Pcr... callEntries) {
 		return new RoutineInvoker(name, exertion, path, callEntries);
 	}
 
-	public static RoutineInvoker exertInvoker(Routine exertion, String path, Prc... callEntries) {
+	public static RoutineInvoker exertInvoker(Routine exertion, String path, Pcr... callEntries) {
 		return new RoutineInvoker(exertion, path, callEntries);
 	}
 
-	public static RoutineInvoker exertInvoker(Routine exertion, Prc... callEntries) {
+	public static RoutineInvoker exertInvoker(Routine exertion, Pcr... callEntries) {
 		return new RoutineInvoker(exertion, callEntries);
 	}
 
-	public static CmdInvoker cmdInvoker(String name, String cmd, Prc... callEntries) {
+	public static CmdInvoker cmdInvoker(String name, String cmd, Pcr... callEntries) {
 		return new CmdInvoker(name, cmd, callEntries);
 	}
 
-	public static RunnableInvoker runnableInvoker(String name, Runnable runnable, Prc... callEntries) {
+	public static RunnableInvoker runnableInvoker(String name, Runnable runnable, Pcr... callEntries) {
 		return new RunnableInvoker(name, runnable, callEntries);
 	}
 
-	public static CallableInvoker callableInvoker(String name, Callable callable, Prc... callEntries) {
+	public static CallableInvoker callableInvoker(String name, Callable callable, Pcr... callEntries) {
 		return new CallableInvoker(name, callable, callEntries);
 	}
 
@@ -733,7 +733,7 @@ public class operator extends Operator {
 		return new LoopInvoker(name, condition, target);
 	}
 
-	public static LoopInvoker loop(String name, Condition condition, Prc target)
+	public static LoopInvoker loop(String name, Condition condition, Pcr target)
 			throws EvaluationException, RemoteException {
 		return new LoopInvoker(name, condition, (ServiceInvoker) target.asis());
 	}
@@ -751,11 +751,11 @@ public class operator extends Operator {
 		return new ExecPath(name, invoker);
 	}
 
-	public static ContextDomain scope(Prc callEntry) {
+	public static ContextDomain scope(Pcr callEntry) {
 		return callEntry.getScope();
 	}
 
-	public static Context invokeScope(Prc callEntry) throws EvaluationException,
+	public static Context invokeScope(Pcr callEntry) throws EvaluationException,
 			RemoteException {
 		Object obj = callEntry.asis();
 		if (obj instanceof ServiceInvoker)
@@ -764,7 +764,7 @@ public class operator extends Operator {
 			return null;
 	}
 
-	public static Function prc(Model model, String path) throws ContextException {
+	public static Function pcr(Model model, String path) throws ContextException {
 		try {
 			return new Function(path, model.asis(path));
 		} catch (RemoteException e) {
@@ -872,7 +872,7 @@ public class operator extends Operator {
 			if (((Fi)value).getFiType() == Fi.Type.VAL) {
 				entry = new Value(path, value);
 			} else if (((Fi)value).getFiType() == Fi.Type.PROC) {
-				entry = new Prc(path, value);
+				entry = new Pcr(path, value);
 			} else if (((Fi)value).getFiType() == Fi.Type.ENTRY) {
                 ((Fidelity)value).setName(path);
 				entry = new Entry(path, value);
@@ -893,8 +893,8 @@ public class operator extends Operator {
 			entry = new Value(path, value);
 			entry.setType(Functionality.Type.VAL);
 		}else if (value instanceof Service) {
-			entry = new Prc(path, value);
-			entry.setType(Functionality.Type.PROC);
+			entry = new Pcr(path, value);
+			entry.setType(Functionality.Type.PCR);
 		} else {
 			entry = new Entry(path, value);
 		}
@@ -909,7 +909,7 @@ public class operator extends Operator {
 		}
 		try {
 			// special cases of procedural attachment
-			if (entry instanceof Prc) {
+			if (entry instanceof Pcr) {
 				if (cxt != null) {
 					if (value instanceof ServiceInvoker) {
 						((ServiceInvoker)value).setInvokeContext(cxt);
@@ -919,7 +919,7 @@ public class operator extends Operator {
 				} else if (args.length == 1 && args[0] instanceof Function) {
 					entry.setScope(context(args[0]));
 				} else if (args.length == 1 && args[0] instanceof Service) {
-					entry = new Prc(path, value, args[0]);
+					entry = new Pcr(path, value, args[0]);
 				}
 			}
 		} catch (ContextException e) {
@@ -970,7 +970,7 @@ public class operator extends Operator {
 		return assoc;
 	}
 
-	public static Function prc(String path) {
+	public static Function pcr(String path) {
 		return new Function(path, null);
 	}
 

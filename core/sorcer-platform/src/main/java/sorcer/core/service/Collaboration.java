@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.*;
 import sorcer.core.context.model.OptimizerState;
 import sorcer.core.context.model.ent.*;
+import sorcer.core.context.model.ent.cntrl.Analyzer;
+import sorcer.core.context.model.ent.cntrl.Explorer;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
 import sorcer.service.Node;
@@ -271,7 +273,7 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 					explorerFi = new Fidelity(((Explorer)exploreComponent).getName());
 					explorerFi.addSelect((Explorer) exploreComponent);
 					explorerFi.setSelect((Explorer)exploreComponent);
-					((Analyzer)exploreComponent).setContextion(this);
+					(( Analyzer )exploreComponent).setContextion(this);
 				} else if (exploreComponent instanceof ServiceFidelity
 					&& ((ServiceFidelity) exploreComponent).getFiType().equals(Fi.Type.EXPLORER)) {
 					explorerFi = (Fidelity) exploreComponent;
@@ -466,11 +468,11 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 						(( ServiceContext ) domainCxt).setDomainName(domain.getDomainName());
 					}
 				}
-				Dispatch dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getDomainName());
+				Dispatcher dispatcher = sorcer.mo.operator.getDomainDispatcher(context, domain.getDomainName());
 				Context cxt = null;
 				if (domainCxt != null) {
-					if (domain instanceof Dispatch) {
-						cxt = ((Dispatch) domain).dispatch(domainCxt);
+					if (domain instanceof Dispatcher) {
+						cxt = (( Dispatcher ) domain).dispatch(domainCxt);
 						collabOut.append(cxt);
 					} else if (dispatcher != null && dispatcher instanceof ModelTask) {
 						((ModelTask) dispatcher).setContext(domainCxt);

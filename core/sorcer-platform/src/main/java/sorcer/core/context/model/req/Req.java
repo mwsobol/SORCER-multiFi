@@ -3,7 +3,7 @@ package sorcer.core.context.model.req;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.MogramEntry;
-import sorcer.co.tuple.SignatureEntry;
+import sorcer.core.context.model.ent.Signatory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
@@ -179,17 +179,17 @@ public class Req extends Function<Object> implements Serviceableness,
             substitute(args);
             if (impl instanceof Callable) {
                 return ((Callable) impl).call();
-            } else if (impl instanceof SignatureEntry) {
+            } else if (impl instanceof Signatory) {
                 if (scope != null && scope instanceof RequestModel) {
                     try {
-                        return ((RequestModel) scope).evalSignature((Signature) ((SignatureEntry) impl).getImpl(), getKey());
+                        return ((RequestModel) scope).evalSignature((Signature) (( Signatory ) impl).getImpl(), getKey());
                     } catch (Exception e) {
                         throw new EvaluationException(e);
                     }
-                } else if (((SignatureEntry) impl).getContext() != null) {
+                } else if ((( Signatory ) impl).getContext() != null) {
                     try {
-                        return execSignature((Signature) ((SignatureEntry) impl).getImpl(),
-                                ((SignatureEntry) impl).getContext());
+                        return execSignature((Signature) (( Signatory ) impl).getImpl(),
+                                (( Signatory ) impl).getContext());
                     } catch (MogramException e) {
                         throw new EvaluationException(e);
                     }
@@ -285,8 +285,8 @@ public class Req extends Function<Object> implements Serviceableness,
                 } catch (RemoteException e) {
                     throw new ServiceException(e);
                 }
-            } else if (mod instanceof Context && impl instanceof SignatureEntry) {
-                return ((ServiceContext) mod).execSignature((Signature) ((SignatureEntry) impl).getImpl(), args);
+            } else if (mod instanceof Context && impl instanceof Signatory) {
+                return ((ServiceContext) mod).execSignature((Signature) (( Signatory ) impl).getImpl(), args);
             } else {
                 impl = mod;
                 return evaluate(args);

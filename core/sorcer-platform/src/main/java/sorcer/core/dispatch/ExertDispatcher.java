@@ -158,7 +158,7 @@ abstract public class ExertDispatcher implements Dispatcher {
                             ? provider.getProviderName() + " " : "")
                     + "exertion: " + exertion.getName() + " dispatched: " + getClass().getName());
         } catch (RemoteException e) {
-            logger.warn("Exception on local prc", e);
+            logger.warn("Exception on local pcr", e);
         }
         ((Subroutine) exertion).startExecTime();
         ((ServiceMogram)exertion).setStatus(Exec.RUNNING);

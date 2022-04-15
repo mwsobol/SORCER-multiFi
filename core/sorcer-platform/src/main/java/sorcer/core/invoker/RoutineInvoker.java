@@ -18,11 +18,9 @@ package sorcer.core.invoker;
 
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Prc;
+import sorcer.core.context.model.ent.Pcr;
 import sorcer.core.context.model.ent.Function;
 import sorcer.service.*;
-
-import java.rmi.RemoteException;
 
 /**
  * @author Mike Sobolewski
@@ -41,18 +39,18 @@ public class RoutineInvoker extends ServiceInvoker implements Invocation {
 		defaultName = "xrtInvoker-";
 	}
 	
-	public RoutineInvoker(String name, Routine exertion, String path, Prc... callEntries) {
+	public RoutineInvoker(String name, Routine exertion, String path, Pcr... callEntries) {
 		super(name);
 		this.path = path;
 		this.exertion = exertion;
 		this.args = new ArgSet(callEntries);
 	}
 
-	public RoutineInvoker(Routine exertion, String path, Prc... callEntries) {
+	public RoutineInvoker(Routine exertion, String path, Pcr... callEntries) {
 		this(exertion.getName(), exertion, path, callEntries);
 	}
 	
-	public RoutineInvoker(Routine exertion, Prc... callEntries) {
+	public RoutineInvoker(Routine exertion, Pcr... callEntries) {
 		this(null, exertion, null, callEntries);
 	}
 

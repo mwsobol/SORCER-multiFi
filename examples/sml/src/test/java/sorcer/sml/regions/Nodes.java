@@ -52,7 +52,7 @@ public class Nodes {
             exprOut,
             sigOut);
 
-        setContext(opspl, context("mfprc",
+        setContext(opspl, context("mfpcr",
             inVal("x", 20.0),
             inVal("y", 80.0)));
 
@@ -89,7 +89,7 @@ public class Nodes {
         Node plDis = rnd("pln-nd",
             rndFi("pln-nd", cxtnFi("cxtn1", opspl), dspFi("dspt1", plDispatch)));
 
-        setContext(opspl, context("mfprc",
+        setContext(opspl, context("mfpcr",
             inVal("lambdaOut", 20.0),
             inVal("x", 20.0),
             inVal("y", 80.0)));

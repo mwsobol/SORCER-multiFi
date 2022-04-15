@@ -20,8 +20,8 @@ public class AdderBuilder {
 	public static EntryModel getAdderModel() throws EvaluationException,
 			RemoteException, ContextException {
 
-		EntryModel pm = entModel("prc-model");
-		add(pm, prc("x", 10.0), prc("y", 20.0));
+		EntryModel pm = entModel("pcr-model");
+		add(pm, pcr("x", 10.0), pcr("y", 20.0));
 		add(pm, invoker("add", "x + y", args("x", "y")));
 		return pm;
 	}

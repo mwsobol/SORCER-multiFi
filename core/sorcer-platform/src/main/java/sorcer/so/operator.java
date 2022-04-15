@@ -17,14 +17,14 @@
 package sorcer.so;
 
 import sorcer.Operator;
-import sorcer.co.tuple.SignatureEntry;
+import sorcer.core.context.model.ent.Signatory;
 import sorcer.core.context.ContextSelector;
 import sorcer.core.context.Intent;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.Transmodel;
-import sorcer.core.context.model.ent.Developer;
+import sorcer.core.context.model.ent.cntrl.Developer;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.req.Req;
@@ -95,7 +95,7 @@ public class operator extends Operator {
                 } else if (entry instanceof Routine) {
                     return (T) ((Routine) entry).exert(args).getContext();
                 } else if (entry instanceof Functionality) {
-                    if (entry instanceof Req && entry.getImpl() instanceof SignatureEntry) {
+                    if (entry instanceof Req && entry.getImpl() instanceof Signatory) {
                         return  (T) entry.execute(args);
                     } else {
                         return (T) ((Functionality) entry).getValue(args);
@@ -225,7 +225,7 @@ public class operator extends Operator {
         return ((Routine) node.getOutDispatcher()).getContext();
     }
 
-    public static Dispatch dispatcher(Node node) {
+    public static Dispatcher dispatcher(Node node) {
         return node.getOutDispatcher();
     }
 

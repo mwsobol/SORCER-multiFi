@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.context.model.ent.Prc;
+import sorcer.core.context.model.ent.Pcr;
 import sorcer.ent.operator;
 import sorcer.service.Context;
 import sorcer.service.modeling.*;
@@ -31,13 +31,13 @@ public class ProceduralCalls {
 	private final static Logger logger = LoggerFactory.getLogger(ProceduralCalls.class.getName());
 
 	@Test
-	public void prcScope() throws Exception {
-		// a prc is a variable (entry) evaluated with its own scope (context)
+	public void pcrScope() throws Exception {
+		// a pcr is a variable (entry) evaluated with its own scope (context)
 		Context<Double> cxt = context(val("x", 20.0), val("y", 30.0));
 
-		// prc with its context scope
-		Prc add = prc("add", invoker("x + y", args("x", "y")), cxt);
-		logger.info("prc eval: " + exec(add));
+		// pcr with its context scope
+		Pcr add = pcr("add", invoker("x + y", args("x", "y")), cxt);
+		logger.info("pcr eval: " + exec(add));
 		assertTrue(exec(add).equals(50.0));
 	}
 
@@ -45,10 +45,10 @@ public class ProceduralCalls {
 	@Test
 	public void modelScope() throws Exception {
 
-		Model mdl = model(prc("x", 20.0), prc("y", 30.0));
-		Prc add = prc("add", invoker("x + y", args("x", "y")), mdl);
+		Model mdl = model(pcr("x", 20.0), pcr("y", 30.0));
+		Pcr add = pcr("add", invoker("x + y", args("x", "y")), mdl);
 
-		// adding a prc to the model updates prc's scope
+		// adding a pcr to the model updates pcr's scope
 		add(mdl, add);
 
 		// evaluate entry of the context
@@ -58,8 +58,8 @@ public class ProceduralCalls {
 	}
 
 	@Test
-	public void closingPrcWihEntries() throws Exception {
-		Prc y = prc("y",
+	public void closingpcrWihEntries() throws Exception {
+		Pcr y = pcr("y",
 			invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
 		Object val = exec(y, val("x1", 10.0), val("x2", 50.0), val("x3", 20.0), val("x4", 80.0));
 		// logger.info("y eval: " + val);
@@ -67,23 +67,23 @@ public class ProceduralCalls {
 	}
 
 	@Test
-	public void closingPrcWitScope() throws Exception {
+	public void closingpcrWitScope() throws Exception {
 
 		// invokers use contextual scope of args
-		Prc add = prc("add", invoker("x + y", args("x", "y")));
+		Pcr add = pcr("add", invoker("x + y", args("x", "y")));
 
 		Context<Double> cxt = context(val("x", 10.0), val("y", 20.0));
-		logger.info("prc eval: " + exec(add, cxt));
-		// compute a prc
+		logger.info("pcr eval: " + exec(add, cxt));
+		// compute a pcr
 		assertTrue(exec(add, cxt).equals(30.0));
 
 	}
 
 	@Test
-	public void dbPrcOperator() throws Exception {
+	public void dbpcrOperator() throws Exception {
 
-		Prc<Double> dbp1 = persistent(prc("design/in", 25.0));
-		Prc<String> dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
+		Pcr<Double> dbp1 = persistent(pcr("design/in", 25.0));
+		Pcr<String> dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
 
 		// dbp1 is declared to be persisted
 		assertTrue(dbp1.getOut().equals(25.0));
@@ -118,12 +118,12 @@ public class ProceduralCalls {
 	@Test
 	public void substitutingValuesWithEntFidelities() throws Exception {
 
-		Prc<Double> dbp = dbEnt("shared/eval", 25.0);
+		Pcr<Double> dbp = dbEnt("shared/eval", 25.0);
 
-		Prc multi = prc("multi",
+		Pcr multi = pcr("multi",
 			entFi(val("init/eval"),
 				dbp,
-				prc("invoke", invoker("x + y", args("x", "y")))));
+				pcr("invoke", invoker("x + y", args("x", "y")))));
 
 		Context cxt = context(val("x", 10.0),
 			val("y", 20.0), val("init/eval", 49.0));
@@ -136,14 +136,14 @@ public class ProceduralCalls {
 	}
 
 	@Test
-	public void prcModelOperator() throws Exception {
+	public void pcrModelOperator() throws Exception {
 
-		Model mdl = entModel("prc-model", val("v1", 1.0), val("v2", 2.0));
+		Model mdl = entModel("pcr-model", val("v1", 1.0), val("v2", 2.0));
 		add(mdl, val("x", 10.0), val("y", 20.0));
-		// add an active prc, no scope
-		add(mdl, operator.prc(invoker("add1", "x + y", args("x", "y"))));
-		// add a prc with own scope
-		add(mdl, prc(invoker("add2", "x + y", args("x", "y")),
+		// add an active pcr, no scope
+		add(mdl, operator.pcr(invoker("add1", "x + y", args("x", "y"))));
+		// add a pcr with own scope
+		add(mdl, pcr(invoker("add2", "x + y", args("x", "y")),
 			context(val("x", 30.0), val("y", 40.0))));
 
 		assertEquals(exec(mdl, "add1"), 30.0);

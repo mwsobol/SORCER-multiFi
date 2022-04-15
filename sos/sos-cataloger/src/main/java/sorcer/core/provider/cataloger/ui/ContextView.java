@@ -17,7 +17,7 @@
 
 package sorcer.core.provider.cataloger.ui;
 
-//function prc to model to getValue context.
+//function pcr to model to getValue context.
 //also add buttons to bottom for tree and list view. 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

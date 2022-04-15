@@ -1,6 +1,6 @@
 /*
- * Copyright 2020 the original author or authors.
- * Copyright 2020 SorcerSoft.org.
+ * Copyright 2021 the original author or authors.
+ * Copyright 2021 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,20 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model.ent;
+package sorcer.core.context.model.ent.cntrl;
 
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.signature.LocalSignature;
-import sorcer.service.Analysis;
 import sorcer.service.*;
+import sorcer.service.modeling.ExecutiveException;
 import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
 
 /**
- * Created by Mike Sobolewski on 01/05/20.
+ * Created by Mike Sobolewski on 03/12/20221.
  */
-public class Analyzer extends Entry<Analysis> implements Controller, Analysis {
+public class Hypervisor extends Entry<Analysis> implements Controller, Hypervision {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,19 +36,19 @@ public class Analyzer extends Entry<Analysis> implements Controller, Analysis {
 
     private Signature signature;
 
-    public Analyzer(String name, Analysis mda)  {
+    public Hypervisor(String name, Analysis mda)  {
         this.key = name;
         this.impl = mda;
         this.type = Functionality.Type.MDA;
     }
 
-    public Analyzer(String name, Signature signature) {
+    public Hypervisor(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
         this.type = Functionality.Type.MDA;
     }
 
-    public Analyzer(String name, Analysis mda, Context context) {
+    public Hypervisor(String name, Analysis mda, Context context) {
         this.key = name;
         scope = context;
         this.impl = mda;
@@ -71,22 +72,24 @@ public class Analyzer extends Entry<Analysis> implements Controller, Analysis {
     }
 
     @Override
-    public void analyze(Requestor request, Context context) throws ServiceException {
+    public Context hypervise(Context context, Arg... args) throws ServiceException, ExecutiveException {
+        Context out = null;
         try {
             if (impl != null && impl instanceof Analysis) {
                 if (contextion == null || context == contextion) {
-                    ((Analysis) impl).analyze(request, context);
+                    out = ((Hypervision) impl).hypervise(context, args);
                 } else {
-                    ((Analysis) impl).analyze(contextion, context);
+                    out =  ((Hypervision) impl).hypervise(contextion.evaluate(context));
                 }
             } else if (signature != null) {
                 impl = ((LocalSignature)signature).initInstance();
-                ((Analysis)impl).analyze(request, context);
+                out = ((Hypervision)impl).hypervise(context, args);
             } else if (impl == null) {
                 throw new InvocationException("No MDA analysis available!");
             }
-        } catch (MogramException | AnalysisException | SignatureException | RemoteException e) {
+        } catch (MogramException | SignatureException | RemoteException e) {
             throw new EvaluationException(e);
         }
+        return out;
     }
 }

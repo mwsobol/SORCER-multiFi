@@ -15,43 +15,44 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model.ent;
+package sorcer.core.context.model.ent.cntrl;
 
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
+import sorcer.service.modeling.Finalization;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Initialization;
 
 /**
- * Created by Mike Sobolewski on 02/01/2021.
+ * Created by Mike Sobolewski on 12/19/2020.
  */
-public class Initializer extends Entry<Initialization> implements Controller, Initialization {
+public class Finalizer extends Entry<Finalization> implements Controller, Finalization {
 
     private static final long serialVersionUID = 1L;
 
     private Signature signature;
 
-    public Initializer(String name, Initialization finalizer)  {
+    public Finalizer(String name, Finalization finalizer)  {
         this.key = name;
         this.impl = finalizer;
         this.type = Functionality.Type.FNL;
     }
 
-    public Initializer(String name, Signature signature) {
+    public Finalizer(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
         this.type = Functionality.Type.FNL;
     }
 
-    public Initializer(String name, Initialization finalizer, Context context) {
+    public Finalizer(String name, Finalization finalizer, Context context) {
         this.key = name;
         scope = context;
         this.impl = finalizer;
         this.type = Functionality.Type.FNL;
     }
 
-    public Initialization getFinalizer() {
-        return (Initialization) impl;
+    public Finalization getFinalizer() {
+        return (Finalization) impl;
     }
 
     public Signature getSignature() {
@@ -59,19 +60,18 @@ public class Initializer extends Entry<Initialization> implements Controller, In
     }
 
     @Override
-    public void initialize(Context context, Arg... args) throws ServiceException {
+    public void finalize(Context context, Arg... args) throws ServiceException {
         try {
-            if (impl != null && impl instanceof Initialization) {
-                ((Initialization) impl).initialize(context, args);
+            if (impl != null && impl instanceof Finalization) {
+                ((Finalization) impl).finalize(context, args);
             } else if (signature != null) {
                 impl = ((LocalSignature)signature).initInstance();
-                ((Initialization)impl).initialize(context, args);
+                ((Finalization)impl).finalize(context, args);
             } else if (impl == null) {
-                throw new InvocationException("No Initializer available!");
+                throw new InvocationException("No Finalizer available!");
             }
         } catch (ContextException | SignatureException e) {
             throw new ServiceException(e);
         }
     }
-
 }

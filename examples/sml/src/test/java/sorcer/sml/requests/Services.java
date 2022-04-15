@@ -46,7 +46,7 @@ public class Services {
         assertEquals(10.0, exec(x0));
         assertTrue(direction(x0) == null);
 
-        Function x1 = prc("arg/x1", 100.0);
+        Function x1 = pcr("arg/x1", 100.0);
         assertEquals(100.0, exec(x1));
         assertTrue(direction(x1) == null);
 
@@ -77,8 +77,8 @@ public class Services {
 	@Test
 	public void expressionEntry() throws Exception {
 
-		Function z1 = prc("z1", expr("x1 + 4 * x2 + 30",
-					context(prc("x1", 10.0), prc("x2", 20.0)),
+		Function z1 = pcr("z1", expr("x1 + 4 * x2 + 30",
+					context(pcr("x1", 10.0), pcr("x2", 20.0)),
                     args("x1", "x2")));
 
 		assertEquals(120.0, exec(z1));
@@ -87,7 +87,7 @@ public class Services {
 	@Test
 	public void bindingEntryArgs() throws Exception {
 
-		Function y = prc("y", expr("x1 + x2", args("x1", "x2")));
+		Function y = pcr("y", expr("x1 + x2", args("x1", "x2")));
 
 		assertTrue(exec(y, val("x1", 10.0), val("x2", 20.0)).equals(30.0));
 	}
@@ -99,7 +99,7 @@ public class Services {
         public Double invoke(Context<Double> cxt, Arg... args) throws RemoteException, ContextException {
             Entry<Double> x = val("x", 20.0);
             Entry<Double> y = val("y", 30.0);
-            Entry<Double> z = prc("z", invoker("x - y", x, y));
+            Entry<Double> z = pcr("z", invoker("x - y", x, y));
 
             if (value(cxt, "x") != null)
                 setValue(x, value(cxt, "x"));
@@ -124,12 +124,12 @@ public class Services {
         Object obj = new Doer();
 
         // no scope for invocation
-        Entry m1 = prc("m1", methodInvoker("invoke", obj));
+        Entry m1 = pcr("m1", methodInvoker("invoke", obj));
         assertEquals(exec(m1), 40.0);
 
         // method invocation with a scope
         Context scope = context(val("x", 200.0), val("y", 300.0));
-        m1 = prc("m1", methodInvoker("invoke", obj, scope));
+        m1 = pcr("m1", methodInvoker("invoke", obj, scope));
         assertEquals(exec(m1), 400.0);
     }
 
@@ -140,12 +140,12 @@ public class Services {
         Object obj = new Doer();
 
         // no scope for invocation
-        Entry m1 = prc("m1", methodInvoker("invoke", obj));
+        Entry m1 = pcr("m1", methodInvoker("invoke", obj));
         assertEquals(exec(m1), 40.0);
 
         // method invocation with a scope
         Context scope = context(val("x", 200.0), val("y", 300.0));
-        m1 = prc("m1", methodInvoker("invoke", obj, scope));
+        m1 = pcr("m1", methodInvoker("invoke", obj, scope));
         assertEquals(exec(m1), 400.0);
     }
 
@@ -158,7 +158,7 @@ public class Services {
             args = args("cmd",  "/C", "echo %USERNAME%");
         }
 
-        Function cmd = prc("cmd", invoker(args));
+        Function cmd = pcr("cmd", invoker(args));
 
         CmdResult result = (CmdResult) exec(cmd);
         logger.info("result: " + result);
@@ -208,7 +208,7 @@ public class Services {
 	@Test
 	public void getConditionalCallValueContextScope() throws Exception {
 
-		func y1 = prc("y1", alt(opt(condition((Context<Double> cxt)
+		func y1 = pcr("y1", alt(opt(condition((Context<Double> cxt)
                         -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
 			opt(condition((Context<Double> cxt) -> value(cxt, "x1")
                     <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))),
@@ -221,11 +221,11 @@ public class Services {
     @Test
     public void getConditionalCallValueModelScopel() throws Exception {
 
-        func y1 = prc("y1", alt(opt(condition((Context<Double> cxt)
+        func y1 = pcr("y1", alt(opt(condition((Context<Double> cxt)
                         -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
                 opt(condition((Context<Double> cxt) -> value(cxt, "x1")
                         <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))),
-                model(prc("x1", 10.0), prc("x2", 20.0)));
+                model(pcr("x1", 10.0), pcr("x2", 20.0)));
 
 //        logger.info("out eval: {}", eval(y1));
         assertEquals(30.0,  exec(y1));
@@ -234,11 +234,11 @@ public class Services {
 	@Test
 	public void getConditionalCall2Value() throws Exception {
 
-		func y1 = prc("y1", alt(opt(condition((Context<Double> cxt)
+		func y1 = pcr("y1", alt(opt(condition((Context<Double> cxt)
                         -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
 			opt(condition((Context<Double> cxt) -> v(cxt, "x1")
                     <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))),
-			model(prc("x1", 20.0), prc("x2", 10.0)));
+			model(pcr("x1", 20.0), pcr("x2", 10.0)));
 
 //        logger.info("out eval: {}", eval(y1));
 		assertEquals(200.0,  exec(y1));
@@ -247,10 +247,10 @@ public class Services {
 	@Test
 	public void getConditionalCall3Value() throws Exception {
 
-		func y1 = prc("y1", alt(opt(condition((Context<Double> cxt)
+		func y1 = pcr("y1", alt(opt(condition((Context<Double> cxt)
                         -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
 			opt(30.0)),
-			model(prc("x1", 10.0), prc("x2", 20.0)));
+			model(pcr("x1", 10.0), pcr("x2", 20.0)));
 
 //        logger.info("out eval: {}", eval(y1));
 		assertEquals(30.0,  exec(y1));
@@ -261,7 +261,7 @@ public class Services {
 
 		Model mdl = model(
 			val("x1", 10.0), val("x2", 20.0),
-			prc("y1", alt(opt(condition((Context<Double> cxt)
+			pcr("y1", alt(opt(condition((Context<Double> cxt)
                             -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
 				opt(condition((Context<Double> cxt)
                         -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))))));
@@ -273,7 +273,7 @@ public class Services {
     @Test
     public void getConditionalBlockSrvValue() throws Exception {
 
-        Function y1 = req("y1", block(context(prc("x1", 10.0), prc("x2", 20.0)),
+        Function y1 = req("y1", block(context(pcr("x1", 10.0), pcr("x2", 20.0)),
             alt(opt(condition((Context<Double> cxt)
                             -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))),
                 opt(condition((Context<Double> cxt)
@@ -318,7 +318,7 @@ public class Services {
 	@Test
 	public void getConditionalLoopSrvValue() throws Exception {
 
-		func y1 = prc("y1",
+		func y1 = pcr("y1",
 			loop(condition((Context<Double> cxt) -> v(cxt, "x1") < v(cxt, "x2")),
 				invoker("fxn",
                         (Context<Double> cxt) -> { putValue(cxt, "x1", v(cxt, "x1") + 1.0);
@@ -335,7 +335,7 @@ public class Services {
 
 		Model mdl = model(
 			val("x1", 10.0), val("x2", 20.0), val("x3", 40.0),
-			prc("y1",
+			pcr("y1",
 				loop(condition((Context<Double> cxt) -> v(cxt, "x1") < v(cxt, "x2")),
 					invoker("fxn",
 						(Context<Double> cxt) -> { putValue(cxt, "x1", v(cxt, "x1") + 1.0);

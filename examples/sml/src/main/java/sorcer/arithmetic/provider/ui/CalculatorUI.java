@@ -40,8 +40,8 @@ public class CalculatorUI extends JPanel implements ActionListener {
 			buttonAdd, // This button operate addition
 			buttonSub, // This button operate subtraction
 			buttonAss, // This button return result
-			buttonOpar, // This button prc open parentheses
-			buttonCpar, // This button prc close parentheses
+			buttonOpar, // This button pcr open parentheses
+			buttonCpar, // This button pcr close parentheses
 			buttonPoint, // This button to pass . to panel
 			buttonClear; // This button clearSessions panel
 

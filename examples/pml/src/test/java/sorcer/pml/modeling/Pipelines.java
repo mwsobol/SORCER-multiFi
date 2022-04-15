@@ -54,7 +54,7 @@ public class Pipelines {
                 exprOut,
                 sigOut);
 
-        setContext(opspl, context("mfprc",
+        setContext(opspl, context("mfpcr",
                 inVal("x", 20.0),
                 inVal("y", 80.0)));
 
@@ -69,7 +69,7 @@ public class Pipelines {
 	@Test
 	public void n2Pipeline() throws Exception {
 
-		Context data = context("mfprc",
+		Context data = context("mfpcr",
 				inVal("x", 20.0),
 				inVal("y", 80.0));
 

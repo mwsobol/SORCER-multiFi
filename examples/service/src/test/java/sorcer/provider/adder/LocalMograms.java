@@ -121,7 +121,7 @@ public class LocalMograms {
         out = context(exert(t6));
         logger.info("out: " + out);
         assertTrue(value(out, "result/y").equals(100.0));
-        // session from the previous prc
+        // session from the previous pcr
         assertTrue(value(out, "bean/session").equals(cid));
 
         Task t7 = task("t7", sig("nothing", AdderImpl.class, provider),
@@ -131,7 +131,7 @@ public class LocalMograms {
         out = context(exert(t7));
         logger.info("out: " + out);
         assertTrue(value(out, "result/y").equals(100.0));
-        // session from the previous prc
+        // session from the previous pcr
         assertTrue(value(out, "bean/session").equals(cid));
     }
 

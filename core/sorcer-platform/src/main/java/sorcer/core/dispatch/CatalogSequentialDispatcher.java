@@ -59,7 +59,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                 dispatchers.remove(xrt.getId());
                 throw fe;
             } catch (RemoteException e) {
-                logger.warn("Error during local prc", e);
+                logger.warn("Error during local pcr", e);
             }
         }
 
@@ -133,7 +133,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                 dispatchers.remove(xrt.getId());
                 throw fe;
             } catch (RemoteException e) {
-                logger.warn("Exception during local prc");
+                logger.warn("Exception during local pcr");
             }
         } else if (se.getStatus() == SUSPENDED
                 || xrt.getControlContext().isReview(se)) {

@@ -18,7 +18,6 @@
 package sorcer.core.context.model.ent;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ContextSelection;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
@@ -88,7 +87,7 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 
 	@Override
 	public String getName() {
-		if (type.equals(Functionality.Type.PROC) && domain != null) {
+		if (type.equals(Functionality.Type.PCR) && domain != null) {
 			//used for procedural attchemnt with entry names name$domain
 			return name + "$" + domain;
 		} else {

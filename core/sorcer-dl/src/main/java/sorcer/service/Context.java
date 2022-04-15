@@ -351,9 +351,9 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 
 	public Object addValue(Identifiable value) throws ContextException;
 
-	public Arg addPrc(Arg value) throws ContextException;
+	public Arg addPcr(Arg value) throws ContextException;
 
-	public Arg addPrc(String path, Object value) throws ContextException;
+	public Arg addPcr(String path, Object value) throws ContextException;
 
 	public Arg getCall(String path) throws ContextException, RemoteException;
 

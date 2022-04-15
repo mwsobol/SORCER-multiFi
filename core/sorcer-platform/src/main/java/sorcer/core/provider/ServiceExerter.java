@@ -599,18 +599,18 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 
 	/**
 	 * This method spawns a separate thread to destroy this provider after 1
-	 * sec, should make a reasonable attempt to let this remote prc return
+	 * sec, should make a reasonable attempt to let this remote pcr return
 	 * successfully.
 	 */
 	private class Destroyer implements Runnable {
 		public void run() {
 			try {
 				// allow for remaining cleanup
-				logger.info("going to prc System.exit() real soon...");
+				logger.info("going to pcr System.exit() real soon...");
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 			} finally {
-				logger.info("going to prc System.exit() NOW...");
+				logger.info("going to pcr System.exit() NOW...");
 				System.exit(0);
 			}
 		}
@@ -1292,7 +1292,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 		String msg = "host = " + host + " "
 				   + "\ntotal service op calls = " + numCalls + " "
 				   + "\nnumber of service op calls running = "	+ numThreads + " "
-				   + "\nservice op prc ids running = " + threadIds + " "
+				   + "\nservice op pcr ids running = " + threadIds + " "
 		           + "\naverage execEnt time [s]       = " + avgExecTime;
         return msg;
 	}
@@ -1302,18 +1302,18 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 		if (serviceIdString == null) {
 			numCalls++;
 			numThreads++;
-			prefix = "adding service op prc";
+			prefix = "adding service op pcr";
 			serviceIdString = Integer.toString(numCalls);
 			threadIds.add(serviceIdString);
 		} else {
 			numThreads--;
-			prefix = "subtracting service op prc";
+			prefix = "subtracting service op pcr";
 			threadIds.remove(serviceIdString);
 		}
 		logger.info("\n\n***provider class = " + this.getClass()
 				+ "\n***" + prefix + ": total service op calls = " + numCalls
 				+ "\n***" + prefix + ": number of service op calls running = "
-				+ numThreads + "\n***" + prefix + ": service op prc ids running = "
+				+ numThreads + "\n***" + prefix + ": service op pcr ids running = "
 				+ threadIds + "\n");
 
 		return serviceIdString;
@@ -1446,7 +1446,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 	 */
     public Routine doExertion(final Routine exertion, Transaction txn) throws RoutineException {
         logger.debug("service: {}", exertion.getName());
-        // create an instance of the ControlFlowManager and prc on the
+        // create an instance of the ControlFlowManager and pcr on the
         // compute method, returns an Routine
         Routine out;
         try {
@@ -1722,7 +1722,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 	}
 
 	/**
-	 * MonitorManagers prc suspend a MonitorableService. Once suspend is
+	 * MonitorManagers pcr suspend a MonitorableService. Once suspend is
 	 * called, the monitorables must suspend immediatly and return the suspended
 	 * state of the context.
 	 *

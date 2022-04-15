@@ -30,6 +30,8 @@ import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.QueueStrategy;
 import sorcer.core.context.model.ent.*;
+import sorcer.core.context.model.ent.cntrl.Analyzer;
+import sorcer.core.context.model.ent.cntrl.Explorer;
 import sorcer.core.context.model.req.RequestModel;
 import sorcer.core.context.model.req.Req;
 import sorcer.core.deploy.ServiceDeployment;
@@ -178,7 +180,7 @@ operator extends Operator {
         return exertion;
     }
 
-    public static Prc setContext(Prc procedure, Context context) {
+    public static Pcr setContext(Pcr procedure, Context context) {
         procedure.setScope(context);
         return procedure;
     }
@@ -890,7 +892,7 @@ operator extends Operator {
                     }
                 }
             } else if (ent instanceof Entry) {
-                if (ent instanceof Prc && ent.getImpl() instanceof Invocation) {
+                if (ent instanceof Pcr && ent.getImpl() instanceof Invocation) {
                     ((ServiceInvoker)ent.getImpl()).setInvokeContext(pcxt);
                 }
                 if (ent.isPersistent()) {
@@ -977,8 +979,8 @@ operator extends Operator {
         throws ContextException {
         try {
             Object val = ((ServiceContext)context).get(path);
-            if (val instanceof Prc && ((Prc)val).isPersistent())
-                val = ((Prc)val).asis();
+            if (val instanceof Pcr && (( Pcr )val).isPersistent())
+                val = (( Pcr )val).asis();
             if (SdbUtil.isSosURL(val)) {
                 SdbUtil.update((URL) val, value);
             } else {
@@ -1070,7 +1072,7 @@ operator extends Operator {
 
     protected static void setProc(PositionalContext pcxt, Entry entry, int i)
         throws ContextException {
-        Prc p = new Prc(entry.getName(), entry.getImpl());
+        Pcr p = new Pcr(entry.getName(), entry.getImpl());
         p.setPersistent(true);
         if (entry instanceof InputValue)
             pcxt.putInValueAt(entry.getName(), p, i + 1);
@@ -1084,7 +1086,7 @@ operator extends Operator {
 
     protected static void setProc(Context cxt, Entry entry)
         throws ContextException {
-        Prc p = new Prc(entry.getName(), entry.getImpl());
+        Pcr p = new Pcr(entry.getName(), entry.getImpl());
         p.setPersistent(true);
         if (entry instanceof InputValue)
             cxt.putInValue(entry.getName(), p);
@@ -1807,7 +1809,7 @@ operator extends Operator {
                                           Context.Return requestPath) {
         EvaluationSignature sig;
         if (evaluator instanceof Scopable) {
-            sig = new EvaluationSignature(new Prc(evaluator));
+            sig = new EvaluationSignature(new Pcr(evaluator));
         } else {
             sig = new EvaluationSignature(evaluator);
         }
@@ -3696,7 +3698,7 @@ operator extends Operator {
                     Path p = paths.getPath(args[i].toString());
                     if (p != null && p.type.equals(Type.PROC)) {
                         sub.setDomain((p.domain));
-                        sub.setType(Functionality.Type.PROC);
+                        sub.setType(Functionality.Type.PCR);
                     }
                 }
                 as[i] = sub;
@@ -3712,7 +3714,7 @@ operator extends Operator {
                     Path p = paths.getPath(args[i].toString());
                     if (p != null && p.type.equals(Type.PROC)) {
                         sub.setDomain((p.domain));
-                        sub.setType(Functionality.Type.PROC);
+                        sub.setType(Functionality.Type.PCR);
                     }
                 }
                 as.add(sub);
@@ -3755,7 +3757,7 @@ operator extends Operator {
         String outComponentPath;
         String inComponentPath;
 
-        Prc callEntry;
+        Pcr callEntry;
 
         Pipe(Routine out, String outPath, Contextion in, String inPath) {
             this.out = out;
@@ -3764,7 +3766,7 @@ operator extends Operator {
             this.inPath = inPath;
             if ((in instanceof Routine) && (out instanceof Routine)) {
                 try {
-                    callEntry = new Prc(outPath, inPath, in);
+                    callEntry = new Pcr(outPath, inPath, in);
                 } catch (ContextException e) {
                     e.printStackTrace();
                 }
@@ -3782,7 +3784,7 @@ operator extends Operator {
 
             if ((in instanceof Routine) && (out instanceof Routine)) {
                 try {
-                    callEntry = new Prc(outPath, inPath, in);
+                    callEntry = new Pcr(outPath, inPath, in);
                 } catch (ContextException e) {
                     e.printStackTrace();
                 }
@@ -3795,7 +3797,7 @@ operator extends Operator {
         }
     }
 
-    public static Prc persistent(Pipe pipe) {
+    public static Pcr persistent(Pipe pipe) {
         pipe.callEntry.setPersistent(true);
         return pipe.callEntry;
     }
@@ -4024,7 +4026,7 @@ operator extends Operator {
     public static Routine xrt(Contextion mappable, String path)
         throws ContextException {
         Object obj = ((ServiceContext) mappable).asis(path);
-        while (obj instanceof Contextion || obj instanceof Prc) {
+        while (obj instanceof Contextion || obj instanceof Pcr) {
             try {
                 obj = ((Evaluation) obj).asis();
             } catch (RemoteException e) {
@@ -4398,9 +4400,9 @@ operator extends Operator {
                     }
                 } else if (e instanceof EvaluationTask) {
                     e.setScope(pm.getScope());
-                    if (((EvaluationTask)e).getEvaluation() instanceof Prc) {
-                        Prc p = (Prc)((EvaluationTask)e).getEvaluation();
-                        pm.getScope().addPrc(p);
+                    if (((EvaluationTask)e).getEvaluation() instanceof Pcr) {
+                        Pcr p = ( Pcr )((EvaluationTask)e).getEvaluation();
+                        pm.getScope().addPcr(p);
                     }
                 } else if (e instanceof Routine) {
                     ((ServiceMogram)e).getDataContext().setScope(pm.getScope());

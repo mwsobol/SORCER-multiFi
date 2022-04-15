@@ -1069,8 +1069,8 @@ public class operator extends Operator {
 
 	public static void dbURL(Object object, URL dbUrl)
 			throws MalformedURLException {
-		if (object instanceof Prc)
-			((Prc) object).setDbURL(dbUrl);
+		if (object instanceof Pcr)
+			(( Pcr ) object).setDbURL(dbUrl);
 		else if (object instanceof ServiceContext)
 			((ServiceContext) object).setDbUrl("" + dbUrl);
 		else
@@ -1078,8 +1078,8 @@ public class operator extends Operator {
 	}
 
 	public static URL dbURL(Object object) throws MalformedURLException {
-		if (object instanceof Prc)
-			return ((Prc) object).getDbURL();
+		if (object instanceof Pcr)
+			return (( Pcr ) object).getDbURL();
 		else if (object instanceof ServiceContext)
 			return new URL(((ServiceContext) object).getDbUrl());
 		return null;
@@ -1141,13 +1141,13 @@ public class operator extends Operator {
 	}
 
 	public static <T> Entry<T> dbVal(String path) {
-		Entry<T> e = new Prc<T>(path);
+		Entry<T> e = new Pcr<T>(path);
 		e.setPersistent(true);
 		return e;
 	}
 
 	public static <T> Entry<T> dbVal(String path, T value) throws EvaluationException {
-		Prc<T> e = new Prc<T>(path, value);
+		Pcr<T> e = new Pcr<T>(path, value);
 		e.setPersistent(true);
 		if (SdbUtil.isSosURL(value)) {
 			e.setImpl(value);
@@ -1357,8 +1357,8 @@ public class operator extends Operator {
 
     public static Entry setValue(Entry entry, Object value) throws ContextException {
 		entry.setValue(value);
-        if (entry instanceof Prc) {
-            Prc callEntry = (Prc)entry;
+        if (entry instanceof Pcr) {
+            Pcr callEntry = ( Pcr )entry;
             if (callEntry.getScope() != null) {
                 callEntry.getScope().putValue(callEntry.getName(), value);
             }

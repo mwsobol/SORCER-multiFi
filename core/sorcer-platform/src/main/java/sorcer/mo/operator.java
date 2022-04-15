@@ -23,6 +23,8 @@ import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
 import sorcer.core.context.*;
 import sorcer.core.context.model.Transmodel;
+import sorcer.core.context.model.ent.cntrl.*;
+import sorcer.core.context.model.ent.cntrl.Dispatch;
 import sorcer.core.context.model.req.RequestTransmodel;
 import sorcer.core.context.model.req.Req;
 import sorcer.core.plexus.ContextFidelityManager;
@@ -177,8 +179,8 @@ public class operator {
                     out = ( T ) obj;
                 } else if (obj instanceof Valuation) {
                     out = ( T ) (( Valuation ) obj).valuate(args);
-                } else if (obj instanceof Prc) {
-                    out = ( T ) (( Prc ) obj).evaluate(args);
+                } else if (obj instanceof Pcr) {
+                    out = ( T ) (( Pcr ) obj).evaluate(args);
                 } else if (SdbUtil.isSosURL(obj)) {
                     out = ( T ) (( URL ) obj).getContent();
                 } else if (obj instanceof Entry) {
@@ -265,8 +267,8 @@ public class operator {
                 (( Entry ) entry).setValue(value);
             } else if (entry instanceof Setter) {
                 (( Setter ) entry).setValue(value);
-            } else if (entry instanceof Prc) {
-                Prc call = ( Prc ) entry;
+            } else if (entry instanceof Pcr) {
+                Pcr call = ( Pcr ) entry;
                 if (call.getScope() != null)
                     call.getScope().putValue(call.getName(), value);
             } else {
@@ -723,7 +725,7 @@ public class operator {
             } else if (i instanceof Entry) {
                 try {
                     hasEntry = true;
-                    if (i instanceof Prc)
+                    if (i instanceof Pcr)
                         procType = true;
                     else if (i instanceof Req || i instanceof Snr) {
                         srvType = true;
@@ -993,8 +995,8 @@ public class operator {
     public static Object get(EntryModel pm, String parname, Arg... parametrs)
         throws ContextException {
         Object obj = pm.asis(parname);
-        if (obj instanceof Prc)
-            obj = (( Prc ) obj).evaluate(parametrs);
+        if (obj instanceof Pcr)
+            obj = (( Pcr ) obj).evaluate(parametrs);
         return obj;
     }
 
@@ -1957,7 +1959,7 @@ public class operator {
         if (context instanceof ServiceContext) {
             Object domainDispatchers = (( ServiceContext ) context).get(Context.COMPONENT_DISPATCHER_PATH);
             if (domainDispatchers instanceof DispatcherList && (( DispatcherList ) domainDispatchers).size() > 0) {
-                return (( DispatcherList ) domainDispatchers).select(domain);
+                return ( Dispatch ) (( DispatcherList ) domainDispatchers).select(domain);
             }
         }
         return null;
@@ -1969,8 +1971,8 @@ public class operator {
         return cxt;
     }
 
-    public static Dispatch addDomainDispatcher(Context context, Dispatch domainDispatcher, String domainName) throws ContextException {
-        Dispatch disp = addDomainDispatcher(context, domainDispatcher);
+    public static Dispatcher addDomainDispatcher(Context context, Dispatcher domainDispatcher, String domainName) throws ContextException {
+        Dispatcher disp = addDomainDispatcher(context, domainDispatcher);
         (( Mogram ) disp).setName(domainName);
         return disp;
     }
@@ -1990,7 +1992,7 @@ public class operator {
         return null;
     }
 
-    public static Dispatch addDomainDispatcher(Context context, Dispatch domainDispatcher) {
+    public static Dispatcher addDomainDispatcher(Context context, Dispatcher domainDispatcher) {
         if (context instanceof ServiceContext) {
             Object domainDispatchers = (( ServiceContext ) context).get(Context.COMPONENT_DISPATCHER_PATH);
             if (domainDispatchers == null) {
@@ -2033,7 +2035,7 @@ public class operator {
         return null;
     }
 
-    public static Dispatch setDomainDispatcher(Context context, Dispatch domainDispatcher) {
+    public static Dispatcher setDomainDispatcher(Context context, Dispatch domainDispatcher) {
         if (context instanceof ServiceContext) {
             Object domainDispatchers = (( ServiceContext ) context).get(Context.COMPONENT_DISPATCHER_PATH);
             if (domainDispatchers == null) {

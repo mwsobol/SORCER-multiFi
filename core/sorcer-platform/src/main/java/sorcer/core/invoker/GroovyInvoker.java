@@ -19,7 +19,7 @@ package sorcer.core.invoker;
 
 import groovy.lang.GroovyShell;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Prc;
+import sorcer.core.context.model.ent.Pcr;
 import sorcer.service.*;
 
 import java.io.*;
@@ -87,7 +87,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		this(name, expression, new ArgSet(parameters));
 	}
 
-	public GroovyInvoker(File scriptFile, Prc... parameters) {
+	public GroovyInvoker(File scriptFile, Pcr... parameters) {
 		this();
 		this.scriptFile = scriptFile;
 		this.args = new ArgSet(parameters);

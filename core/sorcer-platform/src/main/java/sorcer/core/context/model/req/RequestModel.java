@@ -22,7 +22,7 @@ import net.jini.core.transaction.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.MogramEntry;
-import sorcer.co.tuple.SignatureEntry;
+import sorcer.core.context.model.ent.Signatory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.*;
@@ -123,7 +123,7 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
         return getReqValue(path, args);
     }
 
-    // calls from VarModels to prc Req args of Vars
+    // calls from VarModels to pcr Req args of Vars
     public Object getReqValue(String path, Req req, Arg... args) throws ContextException {
         try {
             putValue(path, req);
@@ -169,11 +169,11 @@ public class RequestModel extends EntryModel implements Invocation<Object> {
                 Object carrier = (( Req ) val).getImpl();
                 if (carrier instanceof Signature) {
                         return evalSignature((Signature) carrier, path, args);
-                } else if (carrier instanceof SignatureEntry){
+                } else if (carrier instanceof Signatory){
                     if ((( Req ) val).getOut() != null && (( Req ) val).isValueCurrent() && !isChanged())
                         return (( Req ) val).getOut();
                     else {
-                        Signature sig = (Signature) ((SignatureEntry)carrier).getImpl();
+                        Signature sig = (Signature) (( Signatory )carrier).getImpl();
                         val = evalSignature(sig, path, args);
                     }
                 } else if (carrier instanceof ServiceFidelity) {
