@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 05/12/21.
  */
-public class Developer extends Entry<Development> implements Controller, Development {
+public class Developer extends Entry<Development> implements Controlling, Development {
 
     private static final long serialVersionUID = 1L;
 

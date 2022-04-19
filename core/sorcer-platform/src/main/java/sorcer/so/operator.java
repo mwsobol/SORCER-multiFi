@@ -452,8 +452,8 @@ public class operator extends Operator {
             }
         }
         Context out = null;
-        Morpher inMorpher = design.getInMorpher();
-        Morpher outMorpher = design.getMorpher();
+        Morpheus inMorpher = design.getInMorpher();
+        Morpheus outMorpher = design.getMorpher();
         if (developerFi != null) {
             Development developer = ( Development ) developerFi.getSelect();
             if (design.getDesignIntent() != null) {

@@ -1,7 +1,6 @@
 package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
-import sorcer.core.context.ServiceContext;
 import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
@@ -157,7 +156,7 @@ public class FreeContextion implements FreeService, Contextion, Arg {
 	}
 
 	@Override
-	public Morpher getMorpher() {
+	public Morpheus getMorpher() {
 		return null;
 	}
 

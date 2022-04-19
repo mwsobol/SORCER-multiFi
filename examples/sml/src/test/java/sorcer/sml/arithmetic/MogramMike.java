@@ -41,7 +41,7 @@ import static sorcer.so.operator.*;
 @ProjectContext("examples/sml")
 public class MogramMike {
 	private final static Logger logger = LoggerFactory.getLogger(MogramMike.class);
-	private Morpher mFi1Morpher;
+	private Morpheus mFi1Morpher;
 
 	@Test
 	public void evaluatorEntryModel() throws Exception {
@@ -390,7 +390,7 @@ public class MogramMike {
 	@Test
 	public void amorphousModel() throws Exception {
 
-		Morpher mFi1Morpher =  (mgr, mFi, value) -> {
+		Morpheus mFi1Morpher =  (mgr, mFi, value) -> {
 			Fidelity fi =  mFi.getFidelity();
 			if (fi.getSelectName().equals("add")) {
 				if (((Double) value) <= 200.0) {
@@ -403,7 +403,7 @@ public class MogramMike {
 			}
 		};
 
-		Morpher mFi2Morpher = (mgr, mFi, value) -> {
+		Morpheus mFi2Morpher = (mgr, mFi, value) -> {
 			Fidelity<Signature> fi =  mFi.getFidelity();
 			if (fi.getSelectName().equals("divide")) {
 				if (((Double) value) <= 9.0) {

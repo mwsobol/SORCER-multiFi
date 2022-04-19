@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 01/05/20.
  */
-public class Analyzer extends Entry<Analysis> implements Controller, Analysis {
+public class Analyzer extends Entry<Analysis> implements Controlling, Analysis {
 
     private static final long serialVersionUID = 1L;
 

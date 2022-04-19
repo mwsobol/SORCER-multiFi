@@ -112,7 +112,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 
 	protected Fi multiFi;
 
-	protected Morpher morpher;
+	protected Morpheus morpher;
 
 	// default instance new Return(Context.RETURN);
 	protected Context.Return contextReturn;
@@ -651,7 +651,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	}
 
 	@Override
-	public Morpher getMorpher() {
+	public Morpheus getMorpher() {
 		return morpher;
 	}
 

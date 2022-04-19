@@ -29,7 +29,7 @@ abstract public class Invoker<T> implements Invocation<T>, Exertion, Scopable, O
 
     protected Fi multiFi;
 
-    protected Morpher morpher;
+    protected Morpheus morpher;
 
     @Override
     public Fi getMultiFi() {
@@ -37,7 +37,7 @@ abstract public class Invoker<T> implements Invocation<T>, Exertion, Scopable, O
     }
 
     @Override
-    public Morpher getMorpher() {
+    public Morpheus getMorpher() {
         return morpher;
     }
 

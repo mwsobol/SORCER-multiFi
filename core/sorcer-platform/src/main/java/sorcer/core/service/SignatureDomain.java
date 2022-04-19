@@ -567,7 +567,7 @@ public class SignatureDomain implements Domain {
     }
 
     @Override
-    public Morpher getMorpher() {
+    public Morpheus getMorpher() {
         return domain.getMorpher();
     }
 

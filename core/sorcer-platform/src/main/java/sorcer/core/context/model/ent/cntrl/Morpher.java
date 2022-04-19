@@ -17,7 +17,6 @@
 
 package sorcer.core.context.model.ent.cntrl;
 
-import sorcer.core.context.Connector;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
@@ -28,50 +27,50 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 09/30/20.
  */
-public class Morpheus extends Entry<Morpher> implements Controller, Morpher {
+public class Morpher extends Entry<Morpheus> implements Controlling, Morpheus {
 
     private static final long serialVersionUID = 1L;
 
     private Signature signature;
 
-    private Morpher.Dir direction = Morpher.Dir.OUT;
+    private Morpheus.Dir direction = Morpheus.Dir.OUT;
 
-    public Morpheus(String name, Morpher morpher)  {
+    public Morpher(String name, Morpheus morpher)  {
         this.key = name;
         this.impl = morpher;
         this.type = Functionality.Type.MRPH;
     }
 
-    public Morpheus(String name, Morpher morpher,  Morpher.Dir direction)  {
+    public Morpher(String name, Morpheus morpher, Morpheus.Dir direction)  {
         this(name, morpher);
         this.direction = direction;
     }
 
-    public Morpheus(String name, Signature signature) {
+    public Morpher(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
         this.type = Functionality.Type.MRPH;
     }
 
-    public Morpheus(String name, Morpher mda, Context context) {
+    public Morpher(String name, Morpheus mda, Context context) {
         this.key = name;
         scope = context;
         this.impl = mda;
         this.type = Functionality.Type.MRPH;
     }
 
-    public Morpher getMorpher() {
-        return (Morpher) impl;
+    public Morpheus getMorpher() {
+        return ( Morpheus ) impl;
     }
 
     @Override
     public void morph(FidelityManagement manager, Fi<Service> mFi, Object value) throws ServiceException {
         try {
-            if (impl != null && impl instanceof Morpher) {
-                ((Morpher) impl).morph(manager, mFi, value);
+            if (impl != null && impl instanceof Morpheus) {
+                (( Morpheus ) impl).morph(manager, mFi, value);
             } else if (signature != null) {
                 impl = ((LocalSignature)signature).initInstance();
-                ((Morpher)impl).morph(manager, mFi, value);
+                (( Morpheus )impl).morph(manager, mFi, value);
             } else if (impl == null) {
                 throw new InvocationException("No morpher available!: " + key);
             }
@@ -80,7 +79,7 @@ public class Morpheus extends Entry<Morpher> implements Controller, Morpher {
         }
     }
 
-    public Morpher.Dir getDirection() {
+    public Morpheus.Dir getDirection() {
         return direction;
     }
 }

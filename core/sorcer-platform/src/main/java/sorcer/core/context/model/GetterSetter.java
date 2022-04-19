@@ -43,7 +43,7 @@ public class GetterSetter implements Getter {
     }
 
     @Override
-    public Morpher getMorpher() {
+    public Morpheus getMorpher() {
         return getter.getMorpher();
     }
 

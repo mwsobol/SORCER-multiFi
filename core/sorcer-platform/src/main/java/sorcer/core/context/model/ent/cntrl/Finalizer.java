@@ -26,7 +26,7 @@ import sorcer.service.modeling.Functionality;
 /**
  * Created by Mike Sobolewski on 12/19/2020.
  */
-public class Finalizer extends Entry<Finalization> implements Controller, Finalization {
+public class Finalizer extends Entry<Finalization> implements Controlling, Finalization {
 
     private static final long serialVersionUID = 1L;
 

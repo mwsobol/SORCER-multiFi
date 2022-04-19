@@ -57,7 +57,7 @@ public class DesignDevelopment {
             sig("add", AdderImpl.class,
                 result("result/y", inPaths("arg/x1", "arg/x2"))));
 
-        Morpher morpher1 = (mgr, mFi, value) -> {
+        Morpheus morpher1 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();
             if (fi.getSelectName().equals("add")) {
                 if (((Double) value) <= 200.0) {
@@ -70,7 +70,7 @@ public class DesignDevelopment {
             }
         };
 
-        Morpher morpher2 = (mgr, mFi, value) -> {
+        Morpheus morpher2 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
@@ -81,7 +81,7 @@ public class DesignDevelopment {
             }
         };
 
-        Morpher morpher3 = (mgr, mFi, value) -> {
+        Morpheus morpher3 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();
             Double val = (Double) value;
             if (fi.getSelectName().equals("t5")) {
@@ -95,7 +95,7 @@ public class DesignDevelopment {
             }
         };
 
-        Morpher morpher4 = (mgr, mFi, value) -> {
+        Morpheus morpher4 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
@@ -162,10 +162,10 @@ public class DesignDevelopment {
     @Test
     public void developingDesign() throws Exception {
 
-        Morpher dznMorpher = mfr("dznMorpher", (mgr, mFi, value) -> {
+        Morpheus dznMorpher = mfr("dznMorpher", (mgr, mFi, value) -> {
             if (mFi instanceof MorphFidelity) {
                 Fidelity fi = mFi.getFidelity();
-                Morpher morpher = (( MorphFidelity ) mFi).getMorpher();
+                Morpheus morpher = (( MorphFidelity ) mFi).getMorpher();
                 logger.info("mFi name: " + mFi.getName());
             }});
 

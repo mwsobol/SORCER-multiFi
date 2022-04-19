@@ -38,13 +38,13 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
     protected Fi multiFi;
     // morphing fidelities
     protected ServiceFidelity morpherFi;
-    protected Morpher morpher;
+    protected Morpheus morpher;
     protected ServiceFidelity inMorpherFi;
-    protected Morpher inMorpher;
+    protected Morpheus inMorpher;
     protected FidelityManagement fiManager;
 
     // a pool of all controllers available for bindig free controllers
-    protected Map<String, Controller>  controllers = new HashMap<>();
+    protected Map<String, Controlling>  controllers = new HashMap<>();
 
     protected Object annotation;
 
@@ -188,29 +188,29 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
         }
     }
 
-    public Morpher getMorpher() {
+    public Morpheus getMorpher() {
         if (morpherFi != null) {
-            morpher = ( Morpher ) morpherFi.getSelect();
+            morpher = ( Morpheus ) morpherFi.getSelect();
             return morpher;
         } else {
             return morpher;
         }
     }
 
-    public void setMorpher(Morpher morpher) {
+    public void setMorpher(Morpheus morpher) {
         this.morpher = morpher;
     }
 
-    public Morpher getInMorpher() {
+    public Morpheus getInMorpher() {
         if (inMorpherFi != null) {
-            inMorpher = ( Morpher ) inMorpherFi.getSelect();
+            inMorpher = ( Morpheus ) inMorpherFi.getSelect();
             return inMorpher;
         } else {
             return inMorpher;
         }
     }
 
-    public void setInMorpher(Morpher inMorpher) {
+    public void setInMorpher(Morpheus inMorpher) {
         this.inMorpher = inMorpher;
     }
 
@@ -322,19 +322,19 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
         status = value;
     }
 
-    public Map<String, Controller> getControllers() {
+    public Map<String, Controlling> getControllers() {
         return controllers;
     }
 
-    public void setControllers(Map<String, Controller> controllers) {
+    public void setControllers(Map<String, Controlling> controllers) {
         this.controllers = controllers;
     }
 
-    public Controller getController(String name) {
+    public Controlling getController(String name) {
         return controllers.get(name);
     }
 
-    public Controller putController(String name, Controller controller) {
+    public Controlling putController(String name, Controlling controller) {
         return controllers.put(name, controller);
     }
 

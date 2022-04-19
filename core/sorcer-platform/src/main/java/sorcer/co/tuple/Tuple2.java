@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 @SuppressWarnings("unchecked")
-public class Tuple2<T1, T2>  implements Valuation<T2>, Serializable, Tuple, Arg {
+public class Tuple2<T1, T2> extends Slot<T1, T2> implements Valuation<T2>, Serializable, Tuple, Arg {
 
 	private  static final long serialVersionUID = -6519678282532888568L;
 
@@ -38,7 +38,9 @@ public class Tuple2<T1, T2>  implements Valuation<T2>, Serializable, Tuple, Arg 
 
 	public Tuple2(T1 x1, T2 x2) {
 		_1 = x1;
+		key = x1;
 		_2 = x2;
+		out = x2;
 	}
 
 	public T1 key() {
@@ -51,6 +53,7 @@ public class Tuple2<T1, T2>  implements Valuation<T2>, Serializable, Tuple, Arg 
 
 	public void setValue(T2 val) {
 		_2 = val;
+		out = val;
 	}
 
     @Override

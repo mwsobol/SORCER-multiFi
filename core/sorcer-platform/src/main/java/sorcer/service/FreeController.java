@@ -16,22 +16,19 @@
  */
 package sorcer.service;
 
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.signature.LocalSignature;
-import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Model;
 
 /**
  * A free controller is an instance of Controller that has a name only to be bound at runtime.
  *
- * @see Controller
+ * @see Controlling
  *
  * @author Mike Sobolewski
  */
-public class FreeController implements Controller,  FreeService {
+public class FreeController implements Controlling,  FreeService {
 
     private String name;
-    private Controller controller;
+    private Controlling controller;
     private boolean isValid = false;
     private MultiFiSlot taraget;
     private Signature builder;
@@ -43,11 +40,11 @@ public class FreeController implements Controller,  FreeService {
 
     @Override
     public void bind(Object object) throws ConfigurationException {
-        if (object instanceof Controller) {
-            controller = (Controller ) object;
+        if (object instanceof Controlling) {
+            controller = ( Controlling ) object;
         } else if (object instanceof LocalSignature) {
             try {
-                controller = (Controller) ((LocalSignature) object).build();
+                controller = ( Controlling ) ((LocalSignature) object).build();
                 builder = (Signature) object;
                 name = builder.getName();
             } catch (SignatureException e) {
@@ -59,7 +56,7 @@ public class FreeController implements Controller,  FreeService {
         }
     }
 
-    public Controller getController() {
+    public Controlling getController() {
         if (isValid) {
             return controller;
         } else {

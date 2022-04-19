@@ -235,7 +235,7 @@ public class Governance extends Realm implements Dependency {
 	}
 
 	@Override
-	public Morpher getMorpher() {
+	public Morpheus getMorpher() {
 		return morpher;
 	}
 

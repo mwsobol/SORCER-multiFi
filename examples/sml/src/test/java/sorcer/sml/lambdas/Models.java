@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.service.Morpher;
+import sorcer.service.Morpheus;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
@@ -311,7 +311,7 @@ public class Models {
     @Test
     public void amorphousModel() throws Exception {
 
-		Morpher mFi1Morpher = (mgr, mFi, value) -> {
+		Morpheus mFi1Morpher = (mgr, mFi, value) -> {
 			Fidelity<Signature> fi =  mFi.getFidelity();
 			if (fi.getSelectName().equals("add")) {
 				if (((Double) value) <= 200.0) {
@@ -324,7 +324,7 @@ public class Models {
 			}
 		};
 
-        Morpher mFi2Morpher = (mgr, mFi, value) -> {
+        Morpheus mFi2Morpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {

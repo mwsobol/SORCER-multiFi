@@ -26,7 +26,7 @@ import sorcer.service.modeling.Initialization;
 /**
  * Created by Mike Sobolewski on 02/01/2021.
  */
-public class Initializer extends Entry<Initialization> implements Controller, Initialization {
+public class Initializer extends Entry<Initialization> implements Controlling, Initialization {
 
     private static final long serialVersionUID = 1L;
 

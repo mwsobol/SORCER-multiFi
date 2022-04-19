@@ -6,7 +6,6 @@ import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
-import java.util.List;
 
 public class ContextFidelityManager extends FidelityManager {
 
@@ -48,7 +47,7 @@ public class ContextFidelityManager extends FidelityManager {
         Projection prj = null;
         if (fiNames == null || fiNames.length == 0) {
             try {
-                Morpher cxtMorpher = null;
+                Morpheus cxtMorpher = null;
                 if (mogram instanceof Model) {
                     cxtMorpher = dataContext.getMorpher();
                 } else {

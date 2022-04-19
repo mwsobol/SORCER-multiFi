@@ -238,7 +238,7 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 	}
 
 	@Override
-	public Morpher getMorpher() {
+	public Morpheus getMorpher() {
 		return morpher;
 	}
 
