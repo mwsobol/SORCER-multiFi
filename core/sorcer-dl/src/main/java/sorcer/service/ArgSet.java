@@ -81,7 +81,9 @@ public class ArgSet extends LinkedHashSet<Arg> {
 		}
 		if (paths != null && paths.size() > 0) {
 			for (Path p : paths) {
-				p.domain = domainName;
+				if (p.domain == null) {
+					p.domain = domainName;
+				}
 			}
 		}
 	}
