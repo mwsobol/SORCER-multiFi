@@ -37,7 +37,7 @@ public class ConditionalTaskTest {
 	@Test
 	public void arithmeticTaskTest() throws Exception {
 		// to test tracing of execution enable Subroutine.debug
-		EntryModel pm = new EntryModel("prc-model");
+		EntryModel pm = new EntryModel("pcr-model");
 
 		Task task = task(
 				"add",
@@ -68,7 +68,7 @@ public class ConditionalTaskTest {
 
 	@Test
 	public void altExertionTest() throws Exception {
-		EntryModel pm = entModel("prc-model");
+		EntryModel pm = entModel("pcr-model");
 		pm.putValue("x1", 30.0);
 		pm.putValue("y1", 20.0);
 		pm.putValue("x2", 50.0);
@@ -123,7 +123,7 @@ public class ConditionalTaskTest {
 
 	@Test
 	public void loopExertionTest() throws RemoteException, ContextException {
-//		final EntryModel pm = model("prc-model");
+//		final EntryModel pm = model("pcr-model");
 //		final Var<Double> x = var("x", 1.0);
 //		Var y = var("y", groovy("x + 1", x));
 //		add(pm, x);

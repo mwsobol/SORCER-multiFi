@@ -18,7 +18,7 @@
 package sorcer.co.tuple;
 
 import sorcer.core.context.model.ent.Function;
-import sorcer.service.Conditional;
+import sorcer.service.modeling.Conditional;
 import sorcer.service.Evaluation;
 import sorcer.service.Path;
 import sorcer.service.Paths;

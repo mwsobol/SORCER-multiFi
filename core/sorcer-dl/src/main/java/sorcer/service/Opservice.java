@@ -28,5 +28,5 @@ public interface Opservice extends Service {
     /**
      * Returns a morpher updating at runtime multi-fidelities of this service.
      */
-    Morpher getMorpher();
+    Morpheus getMorpher();
 }

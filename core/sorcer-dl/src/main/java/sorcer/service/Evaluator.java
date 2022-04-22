@@ -48,7 +48,7 @@ public interface Evaluator <T> extends Opservice, Exertion, Provider, Evaluation
 	boolean isChanged();
 
 	enum SPI {
-		JEP, GROOVY, METHOD, EXERTION, OBJECT, PROXY, INDEPENDENT, DEPENDENT, SOA, NULL
+		JEP, GROOVY, METHOD, EXERTION, OBJECT, PROXY, INDEPENDENT, DEPENDENT, SOA, MATRIX, NULL
 	}
 	/**
 	 * Returns a Context.Return to the return execute by this signature.

@@ -1,12 +1,11 @@
 package sorcer.core.context;
 
-import sorcer.core.Dispatcher;
-import sorcer.service.Dispatch;
+import sorcer.service.Dispatcher;
 import sorcer.service.Identifiable;
 
 import java.util.ArrayList;
 
-public class DispatcherList extends ArrayList<Dispatch> {
+public class DispatcherList extends ArrayList<Dispatcher> {
 
 	public enum Type { MODEL, ROuTINE, TRANS, MADO };
 
@@ -17,8 +16,8 @@ public class DispatcherList extends ArrayList<Dispatch> {
 	public DispatcherList() {
 
 	}
-	public DispatcherList(Dispatch... dispatchers) {
-		for(Dispatch disp : dispatchers) {
+	public DispatcherList(Dispatcher... dispatchers) {
+		for(Dispatcher disp : dispatchers) {
 			add(disp);
 		}
 	}
@@ -39,8 +38,8 @@ public class DispatcherList extends ArrayList<Dispatch> {
 		this.type = type;
 	}
 
-	public Dispatch select(String domain) {
-		for (Dispatch disp : this) {
+	public Dispatcher select(String domain) {
+		for (Dispatcher disp : this) {
 			if (((Identifiable)disp).getName().equals(domain)) {
 				return disp;
 			}
@@ -48,8 +47,8 @@ public class DispatcherList extends ArrayList<Dispatch> {
 		return null;
 	}
 
-	public Dispatch set(Dispatch domainDispatcher) {
-		Dispatch existing = select(((Identifiable)domainDispatcher).getName());
+	public Dispatcher set(Dispatcher domainDispatcher) {
+		Dispatcher existing = select(((Identifiable)domainDispatcher).getName());
 		if (existing != null) {
 			remove(existing);
 		}
@@ -58,7 +57,7 @@ public class DispatcherList extends ArrayList<Dispatch> {
 	}
 
 	public void remove(String domain) {
-		Dispatch existing = select(domain);
+		Dispatcher existing = select(domain);
 		if (existing != null) {
 			remove(existing);
 		}

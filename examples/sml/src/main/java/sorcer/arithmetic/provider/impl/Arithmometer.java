@@ -196,11 +196,11 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			Signature sig = context.getMogram().getProcessSignature();
 			if (sig != null)
 				cxt.putValue("task/signature", sig);
-			ServiceFidelity fi = (ServiceFidelity) context.getMogram().getSelectedFidelity();
+			ServiceFidelity fi = (ServiceFidelity) ((ServiceMogram)context.getMogram()).getSelectedFidelity();
 			if (fi != null)
 				cxt.putValue("task/fidelity", fi);
 		} catch (Exception ex) {
-			context.reportException(ex);
+			((ServiceContext)context).reportException(ex);
 			throw new ContextException(selector + " calculate exception", ex);
 		}
 		return context;
@@ -295,7 +295,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			Signature sig = context.getMogram().getProcessSignature();
 			if (sig != null)
 				cxt.putValue("task/signature", sig);
-			ServiceFidelity fi = (ServiceFidelity) context.getMogram().getSelectedFidelity();
+			ServiceFidelity fi = (ServiceFidelity) ((ServiceMogram)context.getMogram()).getSelectedFidelity();
 			if (fi != null)
 				cxt.putValue("task/fidelity", fi);
 		} catch (Exception ex) {
@@ -343,7 +343,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			context.reportException(ex);
+			((ServiceMogram)context).reportException(ex);
 			throw new ContextException("calculate expression", ex);
 		}
 		return context;

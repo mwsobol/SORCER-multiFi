@@ -21,7 +21,7 @@ import org.codehaus.plexus.util.dag.CycleDetectedException;
 import org.codehaus.plexus.util.dag.DAG;
 import org.codehaus.plexus.util.dag.TopologicalSorter;
 import org.codehaus.plexus.util.dag.Vertex;
-import sorcer.co.tuple.SignatureEntry;
+import sorcer.core.context.model.ent.Signatory;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.req.Req;
@@ -31,6 +31,7 @@ import sorcer.core.dispatch.graph.DirectedGraphRenderer;
 import sorcer.core.dispatch.graph.GraphNodeRenderer;
 import sorcer.service.*;
 
+import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.co.operator.dep;
@@ -72,7 +73,7 @@ public class SrvModelAutoDeps {
                 sortedData.add((String) i.next());
             }
             addDependsOn(this.srvModel, Collections.unmodifiableList(sortedData));
-        } catch (CycleDetectedException ce) {
+        } catch (CycleDetectedException | RemoteException ce) {
             throw new SortingException(ce.getMessage());
         }
     }
@@ -125,7 +126,7 @@ public class SrvModelAutoDeps {
      * @throws CycleDetectedException
      * @throws ContextException
      */
-    private void addDependsOn(RequestModel srvModel, List<String> sortedEntries) throws ContextException {
+    private void addDependsOn(RequestModel srvModel, List<String> sortedEntries) throws ContextException, RemoteException {
         for (String entryName : sortedEntries) {
             // Only those that are args in the reqModel
             if (!srvModel.getData().keySet().contains(entryName)) continue;
@@ -182,11 +183,11 @@ public class SrvModelAutoDeps {
             if (entry instanceof Entry) {
                 Object entryVal = ((Entry)entry).getImpl();
                 Context.Return rp = null;
-                if (entryVal instanceof SignatureEntry) {
-                    Signature signature = (Signature) ((SignatureEntry)entryVal).getImpl();
+                if (entryVal instanceof Signatory) {
+                    Signature signature = (Signature) (( Signatory )entryVal).getImpl();
                     if (signature!=null) rp = (Context.Return)signature.getContextReturn();
                 } else if (entry instanceof Req) {
-                    rp = ((Req) entry).getReturnPath();
+                    rp = (( Req ) entry).getReturnPath();
                 }
                 if (rp!=null) {
                     dag.addVertex(rp.getName());
@@ -214,11 +215,11 @@ public class SrvModelAutoDeps {
             if (entry instanceof Function) {
                 Context.Return rp = null;
                 Object entryVal = ((Entry)entry).getImpl();
-                if (entryVal instanceof SignatureEntry) {
-                    Signature signature = (Signature) ((SignatureEntry)entryVal).getImpl();
+                if (entryVal instanceof Signatory) {
+                    Signature signature = (Signature) (( Signatory )entryVal).getImpl();
                     rp =  (Context.Return)signature.getContextReturn();
                 } else if (entry instanceof Req) {
-                    rp = ((Req)entry).getReturnPath();
+                    rp = (( Req )entry).getReturnPath();
                 }
                 if (rp!=null) {
                     dag.addEdge(rp.getName(), entryName);

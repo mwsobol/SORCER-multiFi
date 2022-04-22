@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.service.Morpher;
+import sorcer.service.Morpheus;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -40,11 +40,11 @@ public class ContextFidelity {
 			ent(pthFis("a-z3", "add/x1"), 20.0), ent(pthFis("a-z4", "add/x2"), 80.0));
 
 		Model mdl = model(
-			fxn("add", (Context<Double> model) ->
+			srv("add", (Context<Double> model) ->
 				v(model, "add/x1") + v(model, "add/x2")),
-			fxn("multiply", (Context<Double> model) ->
+			srv("multiply", (Context<Double> model) ->
 				v(model, "multiply/x1") * v(model, "multiply/x2")),
-			fxn("subtract", (Context<Double> model) ->
+			srv("subtract", (Context<Double> model) ->
 				v(model, "multiply") - v(model, "add")),
 
 			cxtFis(cxt1, cxt2, cxt3),
@@ -110,7 +110,7 @@ public class ContextFidelity {
 			ent(pthFis("m-z1", "multiply/x1"), 10.0), ent(pthFis("m-z2", "multiply/x2"), 50.0),
 			ent(pthFis("a-z3", "add/x1"), 20.0), ent(pthFis("a-z4", "add/x2"), 80.0));
 
-		Morpher morpher = (mgr, mFi, value) -> {
+		Morpheus morpher = (mgr, mFi, value) -> {
 			String prjName = mFi.getName();
 			Model mdl = (Model) value;
 			if (!mdl.isValid() && prjName.equals("cxtPrj1")) {
@@ -123,11 +123,11 @@ public class ContextFidelity {
 		};
 
 		Model mdl = model(
-			fxn("add", (Context<Double> model) ->
+			srv("add", (Context<Double> model) ->
 				v(model, "add/x1") + v(model, "add/x2")),
-			fxn("multiply", (Context<Double> model) ->
+			srv("multiply", (Context<Double> model) ->
 				v(model, "multiply/x1") * v(model, "multiply/x2")),
-			fxn("subtract", (Context<Double> model) ->
+			srv("subtract", (Context<Double> model) ->
 				v(model, "multiply") - v(model, "add")),
 
 			cxtFis(morpher, cxt1, cxt2, cxt3),

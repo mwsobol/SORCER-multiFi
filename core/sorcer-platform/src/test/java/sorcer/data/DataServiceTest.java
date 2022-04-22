@@ -36,11 +36,13 @@ import java.util.concurrent.FutureTask;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.data.DataService.DATA_DIR;
+import static sorcer.data.DataService.DATA_PORT;
 
 public class DataServiceTest {
     @Before
     public void reset() throws Exception {
         System.clearProperty(DATA_DIR);
+        System.clearProperty(DATA_PORT);
         SecureEnv.setup();
     }
 
@@ -71,6 +73,19 @@ public class DataServiceTest {
         try {
             dataService.start();
             assertTrue(verify(dataService.getDataURL(new File(System.getProperty("user.dir")))));
+        } finally {
+            dataService.stop();
+        }
+    }
+
+    @Test
+    public void testStartUsingPortProperty() {
+        System.setProperty(DATA_PORT, "8180");
+        DataService dataService = new DataService(System.getProperty("user.dir"));
+        try {
+            dataService.start();
+            String dataUrl = dataService.getDataUrl();
+            assertTrue(dataUrl.contains("8180"));
         } finally {
             dataService.stop();
         }

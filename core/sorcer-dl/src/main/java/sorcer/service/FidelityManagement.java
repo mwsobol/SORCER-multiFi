@@ -30,23 +30,27 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-public interface FidelityManagement<T extends Service> extends RemoteEventListener, Serializable {
+public interface FidelityManagement extends RemoteEventListener, Serializable {
 
     Map<String, Fidelity> getFidelities() throws RemoteException;
 
      Map<String, MetaFi> getMetafidelities() throws RemoteException;
 
+    // for metafidelities
     void morph(String... fiNames) throws EvaluationException, RemoteException;
+
+    // for projections
+    void project(String... fiNames) throws EvaluationException, RemoteException;
 
     void reconfigure(String... fiNames) throws EvaluationException, RemoteException, ConfigurationException;
 
-    void reconfigure(Fidelity... fidelities) throws EvaluationException, RemoteException, ConfigurationException;
+    void reconfigure(Fi... fidelities) throws EvaluationException, RemoteException, ConfigurationException;
 
-    List<Fidelity> getDefaultFidelities() throws RemoteException;
+    List<Fi> getDefaultFidelities() throws RemoteException;
 
     Contextion getMogram() throws RemoteException;
 
-    List<Fidelity> getFiTrace() throws RemoteException;
+    List<Fi> getFiTrace() throws RemoteException;
 
     void addTrace(ServiceFidelity fi);
 

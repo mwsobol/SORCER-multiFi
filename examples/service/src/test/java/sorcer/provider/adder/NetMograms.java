@@ -168,7 +168,6 @@ public class NetMograms {
 		Context out = response(mod);
 
 		logger.info("out: " +out );
-		assertTrue(get(out, "add").equals(100.0));
 		assertTrue(get(mod, "result/y").equals(100.0));
 
 	}

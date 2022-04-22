@@ -1,10 +1,9 @@
 package sorcer.core.context.model.req;
 
-import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.MogramEntry;
-import sorcer.co.tuple.SignatureEntry;
+import sorcer.core.context.model.ent.Signatory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
@@ -24,7 +23,9 @@ import java.util.concurrent.Callable;
 import static sorcer.eo.operator.task;
 
 /**
- * Created by Mike Sobolewski on 4/14/15.
+ * A service request function <code>Req</code> is a functional entry <code>Entry</code> which
+ * is dependent on its encapsulated requst service (requestor).
+ * Created by Mike Sobolewski
  */
 public class Req extends Function<Object> implements Serviceableness,
         Comparable<Object>, Reactive<Object>, Serializable, func<Object> {
@@ -119,11 +120,6 @@ public class Req extends Function<Object> implements Serviceableness,
     }
 
     @Override
-    public ArgSet getArgs() {
-        return null;
-    }
-
-    @Override
     public void addArgs(ArgSet set) throws EvaluationException {
 
     }
@@ -143,7 +139,7 @@ public class Req extends Function<Object> implements Serviceableness,
         out = obj;
     }
 
-    public Mogram exert(Mogram mogram) throws MogramException {
+    public Mogram exert(Mogram mogram) throws ServiceException {
         return exert(mogram, null);
     }
 
@@ -183,25 +179,31 @@ public class Req extends Function<Object> implements Serviceableness,
             substitute(args);
             if (impl instanceof Callable) {
                 return ((Callable) impl).call();
-            } else if (impl instanceof SignatureEntry) {
+            } else if (impl instanceof Signatory) {
                 if (scope != null && scope instanceof RequestModel) {
                     try {
-                        return ((RequestModel) scope).evalSignature((Signature) ((SignatureEntry) impl).getImpl(), getKey());
+                        return ((RequestModel) scope).evalSignature((Signature) (( Signatory ) impl).getImpl(), getKey());
                     } catch (Exception e) {
                         throw new EvaluationException(e);
                     }
-                } else if (((SignatureEntry) impl).getContext() != null) {
+                } else if ((( Signatory ) impl).getContext() != null) {
                     try {
-                        return execSignature((Signature) ((SignatureEntry) impl).getImpl(),
-                                ((SignatureEntry) impl).getContext());
+                        return execSignature((Signature) (( Signatory ) impl).getImpl(),
+                                (( Signatory ) impl).getContext());
                     } catch (MogramException e) {
                         throw new EvaluationException(e);
                     }
                 }
                 throw new EvaluationException("No model available for entry: " + this);
             } else if (impl instanceof MogramEntry) {
-                Context cxt = ((MogramEntry) impl).getValue().exert(args).getContext();
-                Object val = cxt.getValue(Context.RETURN);
+                Object val = null;
+                Context cxt = null;
+                if (impl instanceof Exertion) {
+                    cxt = (( MogramEntry ) impl).getValue().exert(args).getContext();
+                    val = cxt.getValue(Context.RETURN);
+                } else {
+                    val = (( MogramEntry ) impl).getValue();
+                }
                 if (val != null) {
                     return val;
                 } else {
@@ -280,7 +282,7 @@ public class Req extends Function<Object> implements Serviceableness,
     }
 
     @Override
-    public Object execute(Arg... args) throws ServiceException {
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
         ContextDomain mod = Arg.selectDomain(args);
         if (mod != null) {
             if (mod instanceof EntryModel && impl instanceof ValueCallable) {
@@ -289,8 +291,8 @@ public class Req extends Function<Object> implements Serviceableness,
                 } catch (RemoteException e) {
                     throw new ServiceException(e);
                 }
-            } else if (mod instanceof Context && impl instanceof SignatureEntry) {
-                return ((ServiceContext) mod).execSignature((Signature) ((SignatureEntry) impl).getImpl(), args);
+            } else if (mod instanceof Context && impl instanceof Signatory) {
+                return ((ServiceContext) mod).execSignature((Signature) (( Signatory ) impl).getImpl(), args);
             } else {
                 impl = mod;
                 return evaluate(args);

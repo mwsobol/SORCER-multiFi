@@ -23,6 +23,8 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
 
     protected Projection outPathProjection;
 
+    protected Contextion parent;
+
     public Pipeline(Opservice... opservices) {
         this(null, opservices);
     }
@@ -167,6 +169,11 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
     }
 
     @Override
+    public <T extends Contextion> T exert(Arg... args) throws ServiceException, RemoteException {
+        return (T) evaluate(args);
+    }
+
+    @Override
     public String getDomainName() {
         return name;
     }
@@ -225,7 +232,7 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
             if (rp.outPaths != null && rp.outPaths.size() > 0) {
                 out = invokeContext.getDirectionalSubcontext(rp.outPaths);
                 if (rp.outPaths.size() == 1) {
-                    out.setReturnValue(invokeContext.get(rp.outPaths.get(0).getName()));
+                    out.setReturnValue(((ServiceContext)invokeContext).get(rp.outPaths.get(0).getName()));
                 } else {
                     out.setReturnValue(invokeContext);
                 }
@@ -300,7 +307,22 @@ public class Pipeline extends ServiceInvoker<Context> implements Contextion, cxt
     }
 
     @Override
-    public void selectFidelity(Fidelity fi) throws ConfigurationException {
+    public FidelityManagement getFidelityManager() throws RemoteException {
+        return null;
+    }
 
+    @Override
+    public void selectFidelity(Fi fi) throws ConfigurationException {
+
+    }
+
+    @Override
+    public void setParent(Contextion parent) {
+        this.parent  = parent;
+    }
+
+    @Override
+    public Contextion getParent() {
+        return parent;
     }
 }

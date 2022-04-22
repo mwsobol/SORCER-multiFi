@@ -32,6 +32,7 @@ import sorcer.core.provider.DatabaseStorer.Store;
 import sorcer.core.provider.ProviderRuntime;
 import sorcer.service.Context;
 import sorcer.service.Routine;
+import sorcer.service.ServiceMogram;
 import sorcer.service.Subroutine;
 import sorcer.util.DataTable;
 import sorcer.util.ModelTable;
@@ -202,7 +203,7 @@ public class SorcerDatabaseViews {
 		 * Create the stored key from the entity.
 		 */
 		public Object objectToKey(Object object) {
-			UuidKey key = new UuidKey(((Routine)object).getId());
+			UuidKey key = new UuidKey(((ServiceMogram)object).getId());
 			return key;
 		}
 
@@ -325,7 +326,7 @@ public class SorcerDatabaseViews {
 		 */
 		@Override
 		public Object objectToKey(Object object) {
-			return new UuidKey(((Context)object).getId());
+			return new UuidKey(((ServiceMogram)object).getId());
 		}
 	}
 	

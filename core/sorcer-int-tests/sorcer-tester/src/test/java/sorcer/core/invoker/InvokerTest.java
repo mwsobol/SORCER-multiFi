@@ -9,7 +9,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.volume.Volume;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.core.context.model.ent.Prc;
+import sorcer.core.context.model.ent.Pcr;
 import sorcer.ent.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -17,7 +17,6 @@ import sorcer.util.Sorcer;
 import sorcer.util.exec.ExecUtils.CmdResult;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
 import java.rmi.RemoteException;
 import java.util.Properties;
@@ -45,9 +44,9 @@ public class InvokerTest {
 	private final static Logger logger = LoggerFactory.getLogger(InvokerTest.class);
 
 	private EntryModel pm;
-	private Prc x;
-	private Prc y;
-	private Prc z;
+	private Pcr x;
+	private Pcr y;
+	private Pcr z;
 
 	/// member subclass of Updater with Context parameter used below with
 	// contextMethodAttachmentWithArgs()
@@ -69,9 +68,9 @@ public class InvokerTest {
 	@Before
 	public void initProcModel() throws Exception {
 		pm = new EntryModel();
-		x = prc("x", 10.0);
-		y = prc("y", 20.0);
-		z = prc("z", invoker("x - y", x, y));
+		x = pcr("x", 10.0);
+		y = pcr("y", 20.0);
+		z = pcr("z", invoker("x - y", x, y));
 	}
 
 	@Test
@@ -97,14 +96,14 @@ public class InvokerTest {
 		Context in = context(val("x", 20.0), val("y", 30.0));
 		Context arg = context(val("x", 200.0), val("y", 300.0));
 		add(pm, methodInvoker("update", new ContextUpdater(in), arg));
-		logger.info("prc eval:" + invoke(pm, "update"));
+		logger.info("pcr eval:" + invoke(pm, "update"));
 		assertEquals(exec(pm, "update"), 400.0);
 	}
 
 	@Test
 	public void groovyInvokerTest() throws Exception {
-		EntryModel pm = entModel("prc-model");
-		add(pm, prc("x", 10.0), prc("y", 20.0));
+		EntryModel pm = entModel("pcr-model");
+		add(pm, pcr("x", 10.0), pcr("y", 20.0));
 		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
 		logger.info("invoke eval: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
@@ -115,7 +114,7 @@ public class InvokerTest {
 	@Test
 	public void lambdaInvokerTest() throws Exception {
 		EntryModel pm = entModel("model");
-		add(pm, prc("x", 10.0), prc("y", 20.0));
+		add(pm, pcr("x", 10.0), pcr("y", 20.0));
 		add(pm, invoker("fxn", cxt -> (double)value(cxt, "x") + (double)value(cxt, "y") + 30));
 		logger.info("invoke eval: " + invoke(pm, "fxn"));
 		assertEquals(invoke(pm, "fxn"), 60.0);
@@ -126,8 +125,8 @@ public class InvokerTest {
 	@Test
 	public void lambdaInvokerTest2() throws Exception {
 
-		Model mo = model(prc("x", 10.0), prc("y", 20.0),
-				operator.prc(invoker("fxn", cxt -> (double) value(cxt, "x")
+		Model mo = model(pcr("x", 10.0), pcr("y", 20.0),
+				operator.pcr(invoker("fxn", cxt -> (double) value(cxt, "x")
 									+ (double) value(cxt, "y")
 									+ 30)));
 		logger.info("invoke eval: " + eval(mo, "fxn"));
@@ -138,10 +137,10 @@ public class InvokerTest {
 	public void lambdaInvokerTest3() throws Exception {
 
 
-		Context scope = context(prc("x1", 20.0), prc("y1", 40.0));
+		Context scope = context(pcr("x1", 20.0), pcr("y1", 40.0));
 
-		Model mo = model(prc("x", 10.0), prc("y", 20.0),
-			operator.prc(invoker("fxn", (cxt) -> {
+		Model mo = model(pcr("x", 10.0), pcr("y", 20.0),
+			operator.pcr(invoker("fxn", (cxt) -> {
 						return (double) value(cxt, "x")
 								+ (double) value(cxt, "y")
 								+ (double) value(cxt, "y1")
@@ -156,19 +155,19 @@ public class InvokerTest {
 	@Test
 	public void invokeProcTest() throws Exception{
 
-		Prc x1 = prc("x1", 1.0);
+		Pcr x1 = pcr("x1", 1.0);
 		// logger.info("invoke eval:" + invoke(x1));
 		assertEquals(exec(x1), 1.0);
 	}
 
 	@Test
 	public void invokeProcArgTest() throws Exception {
-		Prc x1, x2, y;
-		x1 = prc("x1", 1.0);
-		x2 = prc("x2", 2.0);
-		y = prc("y", invoker("x1 + x2", args("x1", "x2")));
+		Pcr x1, x2, y;
+		x1 = pcr("x1", 1.0);
+		x2 = pcr("x2", 2.0);
+		y = pcr("y", invoker("x1 + x2", args("x1", "x2")));
 
-		Object out = exec(y, prc("x1", 10.0), prc("x2", 20.0));
+		Object out = exec(y, pcr("x1", 10.0), pcr("x2", 20.0));
 //		logger.info("y: " + out);
 		assertTrue(out.equals(30.0));
 	}
@@ -193,7 +192,7 @@ public class InvokerTest {
 		ServiceInvoker cmd = cmdInvoker("volume",
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
 
-		EntryModel pm = entModel(operator.prc(cmd),
+		EntryModel pm = entModel(operator.pcr(cmd),
 				ent("x", 10.0), ent("y"),
 				ent("multiply", invoker("x * y", args("x", "y"))),
 				ent("add", invoker("x + y", args("x", "y"))));
@@ -214,7 +213,7 @@ public class InvokerTest {
 
 	@Test
 	public void conditionalInvoker() throws Exception {
-		final EntryModel pm = new EntryModel("prc-model");
+		final EntryModel pm = new EntryModel("pcr-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
         pm.putValue("condition", invoker("x > y", args("x", "y")));
@@ -263,7 +262,7 @@ public class InvokerTest {
 
 	@Test
 	public void optInvokerTest1() throws Exception {
-		EntryModel pm = new EntryModel("prc-model");
+		EntryModel pm = new EntryModel("pcr-model");
 
 		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
 				"{ x, y -> x > y }", "x", "y"), invoker("x + y",
@@ -284,7 +283,7 @@ public class InvokerTest {
 	@Test
 	public void optInvokerTest2() throws Exception {
 		// Java 8 lambdas style
-		EntryModel pm = new EntryModel("prc-model");
+		EntryModel pm = new EntryModel("pcr-model");
 
 		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
 				cxt -> (double)v(cxt, "x") > (double)v(cxt, "y")), invoker("x + y",
@@ -304,7 +303,7 @@ public class InvokerTest {
 
 	@Test
 	public void smlOptInvokerTest() throws Exception {
-		EntryModel pm = entModel("prc-model");
+		EntryModel pm = entModel("pcr-model");
 		add(pm,
 				val("x", 10.0),
 				val("y", 20.0),
@@ -321,7 +320,7 @@ public class InvokerTest {
 
 	@Test
 	public void altInvokerTest() throws Exception {
-		EntryModel pm = new EntryModel("prc-model");
+		EntryModel pm = new EntryModel("pcr-model");
 		pm.putValue("x", 30.0);
 		pm.putValue("y", 20.0);
 		pm.putValue("x2", 50.0);
@@ -381,9 +380,9 @@ public class InvokerTest {
 
 	@Test
 	public void multiOptAltInvokerTest() throws Exception {
-		EntryModel pm = entModel("prc-model");
-		// add(pm, entry("x", 10.0), entry("y", 20.0), prc("x2", 50.0),
-		// prc("y2", 40.0), prc("x3", 50.0), prc("y3", 60.0));
+		EntryModel pm = entModel("pcr-model");
+		// add(pm, entry("x", 10.0), entry("y", 20.0), pcr("x2", 50.0),
+		// pcr("y2", 40.0), pcr("x3", 50.0), pcr("y3", 60.0));
 		add(pm, val("x", 10.0), val("y", 20.0), val("x2", 50.0),
 				val("y2", 40.0), val("x3", 50.0), val("y3", 60.0));
 
@@ -423,10 +422,10 @@ public class InvokerTest {
 	@Test
 	public void invokerLoopTest() throws Exception {
 
-		EntryModel pm = entModel("prc-model");
-		add(pm, prc("x", 1));
-		add(pm, prc("y", invoker("x + 1", args("x"))));
-		add(pm, prc("z", inc(invoker(pm, "y"), 2)));
+		EntryModel pm = entModel("pcr-model");
+		add(pm, pcr("x", 1));
+		add(pm, pcr("y", invoker("x + 1", args("x"))));
+		add(pm, pcr("z", inc(invoker(pm, "y"), 2)));
 		Invocation z2 = invoker(pm, "z");
 
 		ServiceInvoker iloop = loop("iloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
@@ -437,10 +436,10 @@ public class InvokerTest {
 
 	@Test
 	public void incrementorBy1Test() throws Exception {
-		EntryModel pm = entModel("prc-model");
-		add(pm, prc("x", 1));
-		add(pm, prc("y", invoker("x + 1", args("x"))));
-		add(pm, prc("z", inc(invoker(pm, "y"))));
+		EntryModel pm = entModel("pcr-model");
+		add(pm, pcr("x", 1));
+		add(pm, pcr("y", invoker("x + 1", args("x"))));
+		add(pm, pcr("z", inc(invoker(pm, "y"))));
 
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + eval(pm, "z"));
@@ -450,10 +449,10 @@ public class InvokerTest {
 
 	@Test
 	public void incrementorBy2Test() throws Exception {
-		EntryModel pm = entModel("prc-model");
-		add(pm, prc("x", 1));
-		add(pm, prc("y", invoker("x + 1", args("x"))));
-		add(pm, prc("z", inc(invoker(pm, "y"), 2)));
+		EntryModel pm = entModel("pcr-model");
+		add(pm, pcr("x", 1));
+		add(pm, pcr("y", invoker("x + 1", args("x"))));
+		add(pm, pcr("z", inc(invoker(pm, "y"), 2)));
 
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + eval(pm, "z"));

@@ -17,8 +17,8 @@ package sorcer.data;
 
 import org.rioproject.config.Constants;
 import org.rioproject.net.HostUtil;
-import org.rioproject.tools.jetty.Jetty;
 import org.rioproject.web.WebsterService;
+import org.rioproject.web.WebsterServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.tools.webster.Webster;
@@ -51,6 +51,7 @@ public class DataService implements FileURLHandler {
     private static final Logger logger = LoggerFactory.getLogger(DataService.class.getName());
     public static final String DATA_DIR = "sorcer.data.dir";
     public static final String DATA_URL = "sorcer.data.url";
+    public static final String DATA_PORT = "sorcer.data.port";
 
     /**
      * Get the DataService that is bound to the platform code server.
@@ -84,7 +85,7 @@ public class DataService implements FileURLHandler {
      * @param roots The roots to provide access to.
      */
     public DataService(final String... roots) {
-        this(0, roots);
+        this(Integer.parseInt(System.getProperty(DATA_PORT, "0")), roots);
     }
 
     /**
@@ -141,7 +142,8 @@ public class DataService implements FileURLHandler {
             try {
                 WebsterService websterService;
                 if (SorcerEnv.useHttps()) {
-                    websterService = new Jetty().setPort(port).setRoots(roots).setPutDir(getDataDir());
+                    websterService = WebsterServiceFactory.createJetty(port, getDataDir(), roots);
+                    //websterService = new Jetty().setPort(port).setRoots(roots).setPutDir(getDataDir());
                     websterService.startSecure();
                 } else {
                     websterService = new Webster(port, websterRoots.toString(), getDataDir());

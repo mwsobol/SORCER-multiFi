@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model.ent;
+package sorcer.core.context.model.ent.cntrl;
 
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.service.Collaboration;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
@@ -27,7 +28,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 01/05/20.
  */
-public class DispatchEntry extends Entry<Dispatch> implements Dispatch {
+public class Dispatch extends Entry<Dispatcher> implements Dispatcher {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,27 +36,27 @@ public class DispatchEntry extends Entry<Dispatch> implements Dispatch {
 
     private Signature signature;
 
-    public DispatchEntry(String name, Dispatch dispatcher)  {
+    public Dispatch(String name, Dispatcher dispatcher)  {
         this.key = name;
         this.impl = dispatcher;
         this.type = Functionality.Type.DISPATCH;
     }
 
-    public DispatchEntry(String name, Signature signature) {
+    public Dispatch(String name, Signature signature) {
         this.key = name;
         this.signature = signature;
         this.type = Functionality.Type.DISPATCH;
     }
 
-    public DispatchEntry(String name, Dispatch dispatcher, Context context) {
+    public Dispatch(String name, Dispatcher dispatcher, Context context) {
         this.key = name;
         scope = context;
         this.impl = dispatcher;
         this.type = Functionality.Type.DISPATCH;
     }
 
-    public Dispatch getDispatcher() {
-        return (Dispatch) impl;
+    public Dispatcher getDispatcher() {
+        return ( Dispatcher ) impl;
     }
 
     public Contextion getContextion() {
@@ -76,13 +77,13 @@ public class DispatchEntry extends Entry<Dispatch> implements Dispatch {
         try {
             if (impl != null && impl instanceof Analysis) {
                 if (contextion == null) {
-                    out = ((Dispatch) impl).dispatch(context, args);
+                    out = (( Dispatcher ) impl).dispatch(context, args);
                 } else {
-                    out = ((Dispatch) impl).dispatch(context, args);
+                    out = (( Dispatcher ) impl).dispatch(context, args);
                 }
             } else if (signature != null) {
                 impl = ((LocalSignature) signature).initInstance();
-                out = ((Dispatch) impl).dispatch(context);
+                out = (( Dispatcher ) impl).dispatch(context);
             } else if (impl == null) {
                 throw new InvocationException("No dispatcher available!");
             }

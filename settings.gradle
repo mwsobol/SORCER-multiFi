@@ -13,7 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+pluginManagement {
+    repositories {
+        mavenLocal()
+	gradlePluginPortal()
+	maven { url "http://10.131.7.138:7001" }	
+   }
+}
 include 'sorcer-dl'
 project(":sorcer-dl").projectDir = file("core/sorcer-dl")
 include 'sorcer-platform'

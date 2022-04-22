@@ -17,6 +17,8 @@
 
 package sorcer.core.context.model.ent;
 
+import sorcer.service.Context;
+import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
 import sorcer.service.modeling.Functionality;
 
@@ -144,6 +146,21 @@ public class EntryList extends ArrayList<Entry> {
 		List<Object> values = new ArrayList<Object>(size());
 		for (int i = 0; i < size(); i++) {
 			values.add(get(i).getImpl());
+		}
+		return values;
+	}
+
+	public List<Object> getValues(Context model) throws EvaluationException, RemoteException {
+		List<java.lang.Object> values = new ArrayList<>(size());
+		Entry eval = null;
+		for (int i = 0; i < size(); i++) {
+			try {
+				eval = (Entry) get(i).getValue();
+				eval.setScope(model);
+				values.add(eval.getValue());
+			} catch (ContextException e) {
+				throw new EvaluationException(e);
+			}
 		}
 		return values;
 	}

@@ -34,8 +34,10 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
 
     // fidelity of fidelities that are observable
     private Fidelity<T> fidelity;
-
-    private Morpher morpher;
+    private ServiceFidelity morpherFi;
+    private Morpheus morpher;
+    private ServiceFidelity inMorpherFi;
+    private Morpheus inMorpher;
 
     private String path;
 
@@ -54,7 +56,7 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
         for (Object srv : fidelity.getSelects()) {
             if (srv instanceof Fidelity) {
                 morpherFidelity = (Fidelity) srv;
-                morpher = (Morpher) ((Entry)((Fidelity) srv).getSelects().get(0)).getImpl();
+                morpher = ( Morpheus ) ((Entry)((Fidelity) srv).getSelects().get(0)).getImpl();
                 morpherFisSet = true;
             }
         }
@@ -95,7 +97,7 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
     public void setMorpherSelect(String name) throws ConfigurationException {
         if (morpherFidelity != null) {
             morpherFidelity.selectSelect(name);
-            morpher = (Morpher) ((Entry)morpherFidelity.getSelect()).getImpl();
+            morpher = ( Morpheus ) ((Entry)morpherFidelity.getSelect()).getImpl();
         }
     }
 
@@ -121,6 +123,10 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
     @Override
     public Type getFiType() {
         return fidelity.getFiType();
+    }
+
+    public void setFiType(Type type) {
+        fidelity.setType(type);
     }
 
     @Override
@@ -162,6 +168,21 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
         path = fidelityPath;
     }
 
+    public ServiceFidelity getMorpherFi() {
+        return morpherFi;
+    }
+
+    public void setMorpherFi(ServiceFidelity morpherFi) {
+        this.morpherFi = morpherFi;
+    }
+
+    public ServiceFidelity getInMorpherFi() {
+        return inMorpherFi;
+    }
+
+    public void setInMorpherFi(ServiceFidelity inMorpherFi) {
+        this.inMorpherFi = inMorpherFi;
+    }
 
     @Override
     public Object getId() {
@@ -176,18 +197,37 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
         fidelity.setName(name);
     }
 
-    public Morpher getMorpher() {
-        if (morpher == null && fidelity.getSelect() instanceof Fidelity) {
+    public Morpheus getInMorpher() {
+        if (morpherFi != null) {
+            inMorpher = ( Morpheus ) ((Entry)inMorpherFi.getSelect()).getImpl();
+        } else if (inMorpher == null && fidelity.getSelect() instanceof Fidelity) {
             // the case of selectable morphers
             Object ent = ((Fidelity)fidelity.getSelect()).getSelect();
             if (ent instanceof Entry && ((Entry) ent).getType().equals(Functionality.Type.LAMBDA)) {
-                morpher = (Morpher) ((Entry) ent).getImpl();
+                inMorpher = ( Morpheus ) ((Entry) ent).getImpl();
+            }
+        }
+        return inMorpher;
+    }
+
+    public Morpheus getMorpher() {
+        if (morpherFi != null) {
+            morpher = ( Morpheus ) ((Entry)morpherFi.getSelect()).getImpl();
+        } else if (morpher == null && fidelity.getSelect() instanceof Fidelity) {
+            // the case of selectable morphers
+            Object ent = ((Fidelity)fidelity.getSelect()).getSelect();
+            if (ent instanceof Entry && ((Entry) ent).getType().equals(Functionality.Type.LAMBDA)) {
+                morpher = ( Morpheus ) ((Entry) ent).getImpl();
             }
         }
         return morpher;
     }
 
-    public void setMorpher(Morpher morpher) {
+    public void setInMorpher(Morpheus inMorpher) {
+        this.inMorpher = inMorpher;
+    }
+
+    public void setMorpher(Morpheus morpher) {
         this.morpher = morpher;
     }
 

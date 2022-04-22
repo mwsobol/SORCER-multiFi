@@ -64,7 +64,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         super.doExec(args);
 		try {
 			Condition.cleanupScripts(xrt);
-		} catch (ContextException e) {
+		} catch (ContextException | RemoteException e) {
 			throw new RoutineException(e);
 		}
 	}
@@ -195,7 +195,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 			if (outPaths != null && outPaths.size() > 0) {
 				for (Path path : outPaths) {
 					Object obj = null;
-					obj = exertion.getDataContext().get(path.getName());
+					obj = ((ServiceMogram)exertion.getDataContext()).get(path.getName());
 					if (obj != null)
 						cxt.put(path.getName(), obj);
 				}
@@ -215,7 +215,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 			exertion.getDataContext().setScope(null);
 	}
 
-    protected List<Discipline> getInputExertions() {
+    protected List<Contextion> getInputExertions() {
         return xrt.getMograms();
 	}
 

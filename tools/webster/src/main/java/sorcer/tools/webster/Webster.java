@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.*;
+import java.nio.file.NotDirectoryException;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -58,7 +59,7 @@ public class Webster implements WebsterService, Runnable {
     private ServerSocket ss;
     private int port;
     private volatile boolean run = true;
-    private static Properties MimeTypes = new Properties();
+    private static final Properties MimeTypes = new Properties();
     private String[] websterRoot;
     private ThreadPoolExecutor pool;
     private int minThreads = DEFAULT_MIN_THREADS;
@@ -75,6 +76,8 @@ public class Webster implements WebsterService, Runnable {
     // Shared class server (webster) 
     private static Webster webster;
     private InetAddress addr;
+    private boolean started;
+    private final List<String> expandedRoots = new LinkedList<>();
 
     /**
      * Create a new Webster. The port is determined by the
@@ -558,6 +561,8 @@ public class Webster implements WebsterService, Runnable {
 
     @Override
     public void start() throws Exception {
+        if (started)
+            return;
         if (port == 0) {
             port = getPortAvailable();
             startPort = port;
@@ -571,6 +576,7 @@ public class Webster implements WebsterService, Runnable {
 
         for (int i = startPort; i <= endPort; i++) {
             start(i, addr);
+            started = true;
             return;
         }
     }
@@ -763,7 +769,7 @@ public class Webster implements WebsterService, Runnable {
     }
 
     // load the properties file
-    void loadMimes() throws IOException {
+    void loadMimes() {
         if (debug)
             System.out.println("Loading mimetypes ... ");
         if (logger.isDebugEnabled())
@@ -813,7 +819,7 @@ public class Webster implements WebsterService, Runnable {
         }
     } // end of loadMimes
 
-    protected File parseFileName(String filename) {
+    protected File parseFileName(String filename) throws IOException {
         StringBuilder fn = new StringBuilder(filename);
         for (int i = 0; i < fn.length(); i++) {
             if (fn.charAt(i) == '/')
@@ -832,58 +838,41 @@ public class Webster implements WebsterService, Runnable {
         return (f);
     }
 
-    protected String[] expandRoots() {
-        List<String> expandedRoots = new LinkedList<String>();
-        if (hasWildcard()) {
-            String[] rawRoots = websterRoot;
-            for (String root : rawRoots) {
-                int wildcard;
-                if ((wildcard = root.indexOf('*')) != -1) {
-                    String prefix = root.substring(0, wildcard);
-                    File prefixFile = new File(prefix);
-                    if (prefixFile.exists()) {
-                        String suffix =
-                                (wildcard < (root.length() - 1)) ?
-                                        root.substring(wildcard + 1) : "";
-                        String[] children = prefixFile.list();
-                        for (String aChildren : children) {
-                            expandedRoots.add(prefix + aChildren + suffix);
-                        }
-                    } else {
-                        // Eat the root entry if it's wildcarded and doesn't
-                        // exist
-                    }
-                } else {
-                    expandedRoots.add(root);
-                }
-            }
-        }
-        String[] roots;
-        if (expandedRoots.size() > 0) {
-            roots = expandedRoots.toArray(new String[expandedRoots.size()]);
-        } else {
-            roots = websterRoot;
-        }
-        return (roots);
+    private boolean isAmbiguous(File f) {
+        String name = f.getName();
+        return name.contains("/.");
     }
 
-    /*
-     * See if the root is using a wildcard
-     */
-    boolean hasWildcard() {
-        boolean wildcarded = false;
-        for (String root : websterRoot) {
-            if ((root.indexOf('*')) != -1) {
-                wildcarded = true;
-                break;
+    private boolean isGoodRequest(File f) throws IOException {
+        String path = f.getCanonicalPath();
+        String[] roots = expandRoots();
+        for (String root : roots) {
+            if (path.startsWith(root)) {
+                return true;
             }
         }
-        return (wildcarded);
+        return false;
+    }
+
+    protected String[] expandRoots() throws IOException {
+        if (expandedRoots.isEmpty()) {
+            for (String root : websterRoot) {
+                File f = new File(root);
+                if (!f.exists()) {
+                    throw new FileNotFoundException(f.getPath());
+                }
+                if (!f.isDirectory()) {
+                    throw new NotDirectoryException(f.getPath());
+                }
+                expandedRoots.add(f.getCanonicalPath());
+            }
+        }
+        return expandedRoots.toArray(new String[0]);
     }
 
     class Head implements Runnable {
-        private Socket client;
-        private String fileName;
+        private final Socket client;
+        private final String fileName;
 
         Head(Socket s, String fileName) {
             client = s;
@@ -895,14 +884,16 @@ public class Webster implements WebsterService, Runnable {
             StringBuilder logData = new StringBuilder();
             try {
                 File getFile = parseFileName(fileName);
-                logData.append("Do HEAD: input=")
-                       .append(fileName)
-                       .append(", " + "parsed=")
-                       .append(getFile)
-                       .append(", ");
+                logData.append("Do HEAD: input=").append(fileName).append(", parsed=").append(getFile).append(", ");
                 int fileLength;
                 String header;
-                if (getFile.isDirectory()) {
+                if (!isGoodRequest(getFile)) {
+                    header = "HTTP/1.1 400 Bad Request\r\n\r\n";
+                    logData.append("bad request");
+                } else if(isAmbiguous(getFile)) {
+                    header = "HTTP/1.1 400 Ambiguous segment in URI\r\n\r\n";
+                    logData.append("ambiguous segment");
+                } else if (getFile.isDirectory()) {
                     logData.append("directory located");
                     String files[] = getFile.list();
                     for (String file : files) {
@@ -934,8 +925,7 @@ public class Webster implements WebsterService, Runnable {
                             new BufferedInputStream(new FileInputStream(getFile)));
                     fileLength = requestedFile.available();
                     String fileType =
-                            fileName.substring(fileName.lastIndexOf(".") + 1,
-                                               fileName.length());
+                            fileName.substring(fileName.lastIndexOf(".") + 1);
                     fileType = MimeTypes.getProperty(fileType);
                     logData.append("file size: [").append(fileLength).append("]");
                     header = "HTTP/1.0 200 OK\n"
@@ -978,8 +968,8 @@ public class Webster implements WebsterService, Runnable {
     }
 
     class GetFile implements Runnable {
-        private Socket client;
-        private String fileName;
+        private final Socket client;
+        private final String fileName;
         private DataInputStream requestedFile;
         private int fileLength;
 
@@ -993,15 +983,18 @@ public class Webster implements WebsterService, Runnable {
             StringBuilder logData = new StringBuilder();
             try {
                 File getFile = parseFileName(fileName);
-                logData.append("Do GET: input=")
-                       .append(fileName)
-                       .append(", " + "parsed=")
-                       .append(getFile)
-                       .append(", ");
+                logData.append("Do GET: input=").append(fileName).append(", parsed=").append(getFile).append(", ");
                 String header;
-                if (getFile.isDirectory()) {
+                boolean goodRequest = isGoodRequest(getFile);
+                if (!goodRequest) {
+                    header = "HTTP/1.1 400 Bad Request\r\n\r\n";
+                } else if(isAmbiguous(getFile)) {
+                    header = "HTTP/1.1 400 Ambiguous segment in URI\r\n\r\n";
+                    logData.append("ambiguous segment");
+                    goodRequest = false;
+                } else if (getFile.isDirectory()) {
                     logData.append("directory located");
-                    String files[] = getFile.list();
+                    String[] files = getFile.list();
                     for (String file : files) {
                         File f = new File(getFile, file);
                         dirData.append(f.toString().substring(
@@ -1031,57 +1024,46 @@ public class Webster implements WebsterService, Runnable {
                             + fileLength
                             + "\r\n\r\n";
                 } else if (getFile.exists()) {
-                    requestedFile =
-                            new DataInputStream(
-                                    new BufferedInputStream(new FileInputStream(getFile)));
+                    requestedFile = new DataInputStream( new BufferedInputStream(new FileInputStream(getFile)));
                     fileLength = requestedFile.available();
-                    String fileType =
-                            fileName.substring(fileName.lastIndexOf(".") + 1,
-                                               fileName.length());
+                    String fileType = fileName.substring(fileName.lastIndexOf(".") + 1);
                     fileType = MimeTypes.getProperty(fileType);
                     header = "HTTP/1.0 200 OK\n"
                             + "Allow: GET\nMIME-Version: 1.0\n"
                             + "Server: " + SERVER_DESCRIPTION + "\n"
-                            + "Content-Type: "
-                            + fileType
-                            + "\n"
-                            + "Content-Length: "
-                            + fileLength
-                            + "\r\n\r\n";
+                            + "Content-Type: " + fileType + "\n"
+                            + "Content-Length: " + fileLength + "\r\n\r\n";
                 } else {
                     header = "HTTP/1.0 404 Not Found\r\n\r\n";
                 }
-                DataOutputStream clientStream =
-                        new DataOutputStream(
-                                new BufferedOutputStream(client.getOutputStream()));
+                DataOutputStream clientStream = new DataOutputStream( new BufferedOutputStream(client.getOutputStream()));
                 clientStream.writeBytes(header);
 
-                if (getFile.isDirectory()) {
-                    clientStream.writeBytes(dirData.toString());
-                } else if (getFile.exists()) {
-                    byte[] buffer = new byte[fileLength];
-                    requestedFile.readFully(buffer);
-                    logData.append("file size: [").append(fileLength).append("]");
-                    try {
-                        clientStream.write(buffer);
-                    } catch (Exception e) {
-                        String s = "Sending [" +
-                                getFile.getAbsolutePath() + "], " +
-                                "size [" + fileLength + "], " +
-                                "to client at " +
-                                "[" +
-                                client.getInetAddress().getHostAddress() +
-                                "]";
-                        if (logger.isDebugEnabled())
-                            logger.debug(s, e);
-                        if (debug) {
-                            System.out.println(s);
-                            e.printStackTrace();
+                if (goodRequest) {
+                    if (getFile.isDirectory()) {
+                        clientStream.writeBytes(dirData.toString());
+                    } else if (getFile.exists()) {
+                        byte[] buffer = new byte[fileLength];
+                        requestedFile.readFully(buffer);
+                        logData.append("file size: [").append(fileLength).append("]");
+                        try {
+                            clientStream.write(buffer);
+                        } catch (Exception e) {
+                            String s = String.format("Sending [%s], size[%s], to client at [%s]",
+                                                     getFile.getAbsolutePath(),
+                                                     fileLength,
+                                                     client.getInetAddress().getHostAddress());
+                            if (logger.isDebugEnabled())
+                                logger.debug(s, e);
+                            if (debug) {
+                                System.out.println(s);
+                                e.printStackTrace();
+                            }
                         }
+                        requestedFile.close();
+                    } else {
+                        logData.append("not found");
                     }
-                    requestedFile.close();
-                } else {
-                    logData.append("not found");
                 }
                 if (debug)
                     System.out.println(logData.toString());
@@ -1104,10 +1086,10 @@ public class Webster implements WebsterService, Runnable {
     }
 
     class PutFile implements Runnable {
-        private Socket client;
-        private String fileName;
-        private Properties rheader;
-        private InputStream inputStream;
+        private final Socket client;
+        private final String fileName;
+        private final Properties rheader;
+        private final InputStream inputStream;
         final int BUFFER_SIZE = 4096;
 
         PutFile(Socket s, String fileName, Properties header, InputStream fromClient) {
@@ -1144,12 +1126,7 @@ public class Webster implements WebsterService, Runnable {
                         putFile = parseFileName(fileName);
                     }
                     if (debug)
-                        logger.info("tempDir: " +
-                                           tempDir +
-                                           ", fileName: " +
-                                           fileName +
-                                           ", putFile: " +
-                                           putFile.getPath());
+                        logger.info("tempDir: " + tempDir + ", fileName: " + fileName + ", putFile: " + putFile.getPath());
 
                     if (putFile.exists()) {
                         header = "HTTP/1.0 200 OK\n"
@@ -1239,8 +1216,8 @@ public class Webster implements WebsterService, Runnable {
     } // end of PutFile
 
     class DelFile implements Runnable {
-        private Socket client;
-        private String fileName;
+        private final Socket client;
+        private final String fileName;
 
         DelFile(Socket s, String fileName) {
             client = s;
@@ -1249,31 +1226,33 @@ public class Webster implements WebsterService, Runnable {
 
         public void run() {
             try {
-                File putFile = parseFileName(fileName);
+                File delFile = parseFileName(fileName);
                 String header;
-                if (!putFile.exists()) {
+                if (!isGoodRequest(delFile)) {
+                    header = "HTTP/1.1 400 Bad Request\r\n\r\n";
+                } else if(isAmbiguous(delFile)) {
+                    header = "HTTP/1.1 400 Ambiguous segment in URI\r\n\r\n";
+                } else if (!delFile.exists()) {
                     header = "HTTP/1.0 404 File not found\n"
-                            + "Allow: GET\n"
+                            + "Allow: DELETE\n"
                             + "MIME-Version: 1.0\n"
                             + "Server: " + SERVER_DESCRIPTION + "\n"
                             + "\n\n <H1>404 File not Found</H1>\n"
                             + "<BR>";
-                } else if (putFile.delete()) {
+                } else if (delFile.delete()) {
                     header = "HTTP/1.0 200 OK\n"
-                            + "Allow: PUT\n"
+                            + "Allow: DELETE\n"
                             + "MIME-Version: 1.0\n"
                             + "Server: " + SERVER_DESCRIPTION + "\n"
                             + "\n\n <H1>200 File succesfully deleted</H1>\n";
                 } else {
                     header = "HTTP/1.0 500 Internal Server Error\n"
-                            + "Allow: PUT\n"
+                            + "Allow: DELETE\n"
                             + "MIME-Version: 1.0\n"
                             + "Server: " + SERVER_DESCRIPTION + "\n"
                             + "\n\n <H1>500 File could not be deleted</H1>\n";
                 }
-                DataOutputStream clientStream =
-                        new DataOutputStream(
-                                new BufferedOutputStream(client.getOutputStream()));
+                DataOutputStream clientStream = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()));
                 clientStream.writeBytes(header);
                 clientStream.flush();
                 clientStream.close();
@@ -1283,9 +1262,7 @@ public class Webster implements WebsterService, Runnable {
                 try {
                     client.close();
                 } catch (IOException e2) {
-                    logger.warn(
-                               "Closing incoming socket",
-                               e2);
+                    logger.warn("Closing incoming socket", e2);
                 }
             }
         }

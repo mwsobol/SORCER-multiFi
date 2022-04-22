@@ -21,12 +21,13 @@ import groovy.lang.Closure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Prc;
+import sorcer.core.context.model.ent.Pcr;
 import sorcer.core.exertion.AltTask;
 import sorcer.core.exertion.LoopTask;
 import sorcer.core.exertion.OptTask;
 import sorcer.core.invoker.GroovyInvoker;
 import sorcer.core.invoker.ServiceInvoker;
+import sorcer.service.modeling.Conditional;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -156,7 +157,7 @@ import java.util.Map;
 			} else if (closureExpression != null && conditionalContext != null) {
 				ArgSet ps = new ArgSet();
 				for (String name : pars) {
-					ps.add(new Prc(name));
+					ps.add(new Pcr(name));
 				}
 				ServiceInvoker invoker = new GroovyInvoker(closureExpression, ps.toArray());
 				invoker.setInvokeContext(conditionalContext);
@@ -293,16 +294,24 @@ import java.util.Map;
 	public void setConditionalContext(Context conditionaContext) {
 		this.conditionalContext = conditionaContext;
 	}
-	
+
+	public String getEvaluationPath() {
+		return evaluationPath;
+	}
+
+	public void setEvaluationPath(String evaluationPath) {
+		this.evaluationPath = evaluationPath;
+	}
+
 	public String getClosureExpression() {
 		return closureExpression;
 	}
 	
-	static public void cleanupScripts(Routine exertion) throws ContextException {
+	static public void cleanupScripts(Routine exertion) throws ContextException, RemoteException {
 		if (exertion == null)
 			return;
 		clenupContextScripts(exertion.getContext());
-		for (Discipline e : exertion.getMograms()) {
+		for (Contextion e : exertion.getMograms()) {
 			if (e instanceof Routine) {
 				clenupContextScripts(e.getContext());
 				clenupExertionScripts((Routine) e);
@@ -319,10 +328,10 @@ import java.util.Map;
 			if (entry.getValue() instanceof ServiceInvoker) {
 				clenupContextScripts(((ServiceInvoker) entry.getValue())
 						.getInvokeContext());
-			} else if (entry.getValue() instanceof Prc) {
-				Context cxt =  ((Prc) entry.getValue()).getScope();
+			} else if (entry.getValue() instanceof Pcr) {
+				Context cxt =  (( Pcr ) entry.getValue()).getScope();
 				if (cxt != null) cxt.remove(Condition._closure_);
-				cxt = ((Prc)entry.getValue()).getScope();
+				cxt = (( Pcr )entry.getValue()).getScope();
 				if (cxt != null) cxt.remove(Condition._closure_);
 			} else if (entry.getValue() instanceof ServiceContext) {
 				ServiceContext cxt = (ServiceContext)entry.getValue();
@@ -335,7 +344,7 @@ import java.util.Map;
 	}
 
 	public static void clenupExertionScripts(Routine exertion)
-			throws ContextException {
+		throws ContextException, RemoteException {
 		if (exertion instanceof ConditionalTask) {
 			List<Conditional> cs = ((ConditionalTask) exertion)
 					.getConditions();

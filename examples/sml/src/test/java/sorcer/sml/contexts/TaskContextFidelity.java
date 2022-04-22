@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 
-import static sorcer.ent.operator.fxn;
+import static sorcer.ent.operator.srv;
 import static sorcer.so.operator.eval;
 import static sorcer.so.operator.exec;
 import org.slf4j.LoggerFactory;
@@ -12,6 +12,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.ent.operator;
 import sorcer.service.Projection;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -37,7 +38,7 @@ public class TaskContextFidelity {
 
         // the model execute a fxn lambda expression with no model state altered
         Model mdl = model(ent(pthFis("x1", "arg/x1"), 10.0), ent(pthFis("x2", "arg/x2"), 20.0),
-            fxn(pthFis("x3", "arg/x3"),
+            operator.srv(pthFis("x3", "arg/x3"),
                 (Model model) ->
                     ent("x5", (double)exec(model, "arg/x2") + 100.0)));
 
@@ -211,7 +212,7 @@ public class TaskContextFidelity {
             inVal(pthFis("arg/x1", "arg/y1"), 30.0),
             inVal(pthFis("arg/x2", "arg/y2"), 90.0));
 
-        Morpher morpher = (mgr, mFi, value) -> {
+        Morpheus morpher = (mgr, mFi, value) -> {
             Context cxt = (Context) mFi.getSelect();
             Task task = (Task) value;
             if (task.isValid() && task.getContext().getName().equals("cxt1")) {
@@ -259,7 +260,7 @@ public class TaskContextFidelity {
             inVal(pthFis("x1", "arg/x1", "arg/y1"), 30.0),
             inVal(pthFis("x2", "arg/x2", "arg/y2"), 90.0));
 
-        Morpher morpher = (mgr, mFi, value) -> {
+        Morpheus morpher = (mgr, mFi, value) -> {
             Context cxt = (Context) mFi.getSelect();
             Task task = (Task) value;
             if (task.isValid() && task.getContext().getName().equals("cxt1")) {

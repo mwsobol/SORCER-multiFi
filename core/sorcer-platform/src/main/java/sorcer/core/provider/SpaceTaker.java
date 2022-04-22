@@ -334,7 +334,7 @@ public class SpaceTaker implements Runnable {
 	protected boolean isAbandoned(Routine exertion) {
 		if (space != null) {
 			ExertionEnvelop ee = new ExertionEnvelop();
-			ee.parentID = exertion.getParentId();
+			ee.parentID = ((ServiceMogram)exertion).getParentId();
 			ee.state = Exec.POISONED;
 			try {
 				if (space.readIfExists(ee, null, JavaSpace.NO_WAIT) != null) {
@@ -498,12 +498,12 @@ public class SpaceTaker implements Runnable {
 				logger.debug("doEnvelope", th);
 				if (th instanceof Exception) {
 					ee.state = Exec.FAILED;
-					ee.exertion.setStatus(Exec.FAILED);
+					((ServiceMogram)ee.exertion).setStatus(Exec.FAILED);
 				} else if (th instanceof Error) {
 					ee.state = Exec.ERROR;
-					ee.exertion.setStatus(Exec.ERROR);
+					((ServiceMogram)ee.exertion).setStatus(Exec.ERROR);
 				}
-				ee.exertion.reportException(th);
+				((ServiceMogram)ee.exertion).reportException(th);
 			}
 			return ee;
 		}

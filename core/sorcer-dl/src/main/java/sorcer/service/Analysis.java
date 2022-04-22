@@ -25,6 +25,6 @@ import java.rmi.RemoteException;
 @FunctionalInterface
 public interface Analysis {
 
-    void analyze(Request request, Context context) throws ServiceException, AnalysisException, RemoteException;
+    void analyze(Requestor request, Context context) throws ServiceException, AnalysisException, RemoteException;
 
 }

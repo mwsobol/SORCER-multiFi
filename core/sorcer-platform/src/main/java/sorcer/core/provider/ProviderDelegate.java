@@ -253,7 +253,7 @@ public class ProviderDelegate {
 	 * complements its functionality by invoking remote calls on the inner proxy
 	 * server. Thus, inner proxy can make remote calls on another service
 	 * provider, for example {@code Provider.service(Routine)), while the
-	 * outer proxy still can prc directly on the originating service provider.
+	 * outer proxy still can pcr directly on the originating service provider.
 	 */
 	private Remote innerProxy = null;
 
@@ -262,7 +262,7 @@ public class ProviderDelegate {
 	 * by service requestors if provider's smart proxy is absent. At least
 	 * two generic Remote interface: {@link Service} and {@link Exerter} are
 	 * implemented by outer proxies of all SORCER service providers. Each SORCER
-	 * provider uses outer proxy to actually prc directly its provider and make
+	 * provider uses outer proxy to actually pcr directly its provider and make
 	 * redirected calls using its inner proxy (redirected remote invocations).
 	 * Any method of not Remote interface implemented by a SORCER service
 	 * provider can be invoked via the Service remote interface,
@@ -561,7 +561,7 @@ public class ProviderDelegate {
 		boolean matchOnOpSys;
 		try {
 			matchOnOpSys = (Boolean)jconfig.getEntry(ServiceExerter.COMPONENT,
-													  MATCH_ON_OPSYS, Boolean.class, false);
+													  MATCH_ON_OPSYS, boolean.class, false);
 
 		} catch (Exception e) {
 			logger.warn("Problem getting {}.{}", ServiceExerter.COMPONENT, MATCH_ON_OPSYS, e);
@@ -1013,7 +1013,7 @@ public class ProviderDelegate {
 			Contexts.putOutValue(task.getContext(), TASK_PROVIDER, pn + "@"
 				+ hostName + ":" + hostAddress);
 		} catch (ContextException ex) {
-			// ignore ocall prc
+			// ignore ocall pcr
 		}
 	}
 
@@ -1892,7 +1892,7 @@ public class ProviderDelegate {
 	public boolean isValidTask(Routine servicetask) throws RoutineException, ContextException {
 
 		if (servicetask.getContext() == null) {
-			servicetask.getContext().reportException(
+			((ServiceMogram)servicetask.getContext()).reportException(
 				new RoutineException(getProviderName()
 					+ " no service context in task: "
 					+ servicetask.getClass().getName()));
@@ -1911,7 +1911,7 @@ public class ProviderDelegate {
 		String pn = task.getProcessSignature().getProviderName().getName();
 		if (pn != null && !matchInterfaceOnly) {
 			if (!pn.equals(getProviderName())) {
-				servicetask.getContext().reportException(
+				((ServiceMogram)servicetask.getContext()).reportException(
 					new RoutineException(
 						"Not valid task for service provider: "
 							+ config.getProviderName() + " for:" + pn));
@@ -1920,7 +1920,7 @@ public class ProviderDelegate {
 		}
 		Class<?> st = task.getProcessSignature().getServiceType();
 		if (publishedServiceTypes == null) {
-			servicetask.getContext().reportException(
+			((ServiceMogram)servicetask.getContext()).reportException(
 				new RoutineException("No published interfaces defined by: "+ getProviderName()));
 			return false;
 		} else {
@@ -1930,7 +1930,7 @@ public class ProviderDelegate {
 				}
 			}
 		}
-		servicetask.getContext().reportException(
+		((ServiceMogram)servicetask.getContext()).reportException(
 			new RoutineException("Not valid task for published service types: \n"
 				+ Arrays.toString(publishedServiceTypes)
 				+ "\nwith Signature: \n"
@@ -1960,7 +1960,7 @@ public class ProviderDelegate {
 			MsgRef mr;
 			SorcerNotifier notifier = Accessor.get().getService(null, SorcerNotifier.class);
 
-			mr = new MsgRef(task.getId(), notificationType,
+			mr = new MsgRef(((ServiceMogram)task).getId(), notificationType,
 				config.getProviderName(), message,
 				((Subroutine) task).getSessionId());
 			// Util.debug(this, "::notify() RUNTIME SESSION ID:" +

@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import sorcer.core.context.model.ent.Prc;
+import sorcer.core.context.model.ent.Pcr;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;
@@ -54,13 +54,13 @@ public class CallableInvoker<T> extends ServiceInvoker<T> {
 		super(context);
 	}
 	
-	public CallableInvoker(EntryModel context, Callable callable, Prc... callEntries) {
+	public CallableInvoker(EntryModel context, Callable callable, Pcr... callEntries) {
 		super(context);
 		this.callable = callable;
 		this.args = new ArgSet(callEntries);
 	}
 
-	public CallableInvoker(String name, Callable callable, Prc... callEntries) {
+	public CallableInvoker(String name, Callable callable, Pcr... callEntries) {
 		super(name);
 		this.callable = callable;
 		this.args = new ArgSet(callEntries);

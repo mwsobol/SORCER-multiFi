@@ -69,7 +69,7 @@ public class JobberAccessor {
         Jobber jobber = cache.get(Jobber.class.getName());
 
         try {
-            if (Accessor.isAlive((Exerter) jobber)) {
+            if (Accessor.isAlive(jobber)) {
                 log.info(">>>returned cached Jobber ({}) by {}",
                          ((Exerter) jobber).getProviderID(), Accessor.get().getClass().getName());
             } else {

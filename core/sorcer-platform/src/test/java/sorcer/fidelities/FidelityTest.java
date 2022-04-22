@@ -174,21 +174,21 @@ public class FidelityTest {
 		Projection p3 = prj(sFi3);
 		logger.info("projection: " + p3);
 
-		List<Fidelity> job1Fis1 = p1.getFidelities("job1");
+		List<Fi> job1Fis1 = p1.getFidelities("job1");
 		logger.info("job1Fis1: " + job1Fis1);
 
-		List<Fidelity> job1Fis2 = p2.getFidelities("job2");
+		List<Fi> job1Fis2 = p2.getFidelities("job2");
 		logger.info("job1Fis2: " + job1Fis2);
 		assertTrue(job1Fis1.equals(job1Fis2));
 
-		List<Fidelity> job1Fis3 = p3.getFidelities("job3");
+		List<Fi> job1Fis3 = p3.getFidelities("job3");
 		logger.info("job1Fis3: " + job1Fis3);
 		assertTrue(job1Fis1.equals(job1Fis3));
 
-		List<Fidelity> job2Fis2 = p2.getFidelities("job2");
+		List<Fi> job2Fis2 = p2.getFidelities("job2");
 		logger.info("job2Fis2: " + job2Fis2);
 
-		List<Fidelity> job2Fis3 = p3.getFidelities("job2");
+		List<Fi> job2Fis3 = p3.getFidelities("job2");
 		logger.info("job2Fis3: " + job2Fis3);
 		assertTrue(job2Fis2.equals(job2Fis3));
 	}

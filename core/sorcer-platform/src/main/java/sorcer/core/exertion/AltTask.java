@@ -21,7 +21,9 @@ import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.service.*;
+import sorcer.service.modeling.Conditional;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,7 +68,7 @@ public class AltTask extends ConditionalTask {
 					Context cxt = opt.getCondition().getConditionalContext();
 					if (cxt != null) {
 						Condition.clenupContextScripts(cxt);
-						((Mogram)opt.getTarget()).getDataContext().updateEntries(cxt);
+						((ServiceMogram)opt.getTarget()).getDataContext().updateEntries(cxt);
 					}
 					// pass te scope to the option task
 //					opt.setContextScope(cxt);
@@ -129,7 +131,7 @@ public class AltTask extends ConditionalTask {
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Conditional#getConditions()
+	 * @see sorcer.service.modeling.Conditional#getConditions()
 	 */
 	@Override
 	public List<Conditional> getConditions() {
@@ -140,7 +142,7 @@ public class AltTask extends ConditionalTask {
 	}
 
 	@Override
-	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) {
+	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) throws RemoteException {
 		for (Routine ext : optExertions) {
 			exceptions.addAll(((Subroutine)ext).getExceptions(exceptions));
 		}
@@ -154,15 +156,15 @@ public class AltTask extends ConditionalTask {
 	 * @see sorcer.service.Routine#getMograms()
 	 */
 	@Override
-	public List<Discipline> getMograms() {
-		ArrayList<Discipline> list = new ArrayList<Discipline>(1);
+	public List<Contextion> getMograms() {
+		ArrayList<Contextion> list = new ArrayList<Contextion>(1);
 		list.addAll(optExertions);
 		return list;
 	}
 	
-	public List<Discipline> getMograms(List<Discipline> exs) {
+	public List<Contextion> getMograms(List<Contextion> exs) {
 		for (Routine e : optExertions) {
-			e.getMograms(exs);
+			((ServiceMogram)e).getMograms(exs);
 		}
 		exs.add(this);
 		return exs;

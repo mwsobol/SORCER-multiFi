@@ -17,6 +17,8 @@
 
 package sorcer.service;
 
+import java.rmi.RemoteException;
+
 public interface Identifiable {
 
 	public Object getId();

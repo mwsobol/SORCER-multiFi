@@ -42,7 +42,7 @@ public class RequestModels {
     public void lambdaInvoker() throws Exception {
 
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                prc(invoker("fxn", cxt -> (double) value(cxt, "x")
+                pcr(invoker("fxn", cxt -> (double) value(cxt, "x")
                         + (double) value(cxt, "y")
                         + 30, args("x", "y"))));
         logger.info("invoke eval: " + eval(mo, "fxn"));
@@ -55,7 +55,7 @@ public class RequestModels {
         Context scope = context(val("x1", 20.0), val("y1", 40.0));
 
         Model mdl = model(ent("x", 10.0), ent("y", 20.0),
-            prc(invoker("fxn", (cxt) -> {
+            pcr(invoker("fxn", (cxt) -> {
                     return (double) value(cxt, "x")
                         + (double) value(cxt, "y")
                         + (double) value(cxt, "y1")
@@ -172,7 +172,7 @@ public class RequestModels {
         System.out.println("responses: " + response(model));
 
         assertTrue(response(model).equals(context(ent("add", 4.0), ent("multiply", 20.0))));
-//                context(prc("add", 4.0), prc("multiply", 20.0), prc("result/eval", 3.0))));
+//                context(pcr("add", 4.0), pcr("multiply", 20.0), pcr("result/eval", 3.0))));
 
     }
 

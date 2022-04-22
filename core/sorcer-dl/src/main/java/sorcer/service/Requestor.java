@@ -17,19 +17,16 @@
 
 package sorcer.service;
 
-import sorcer.service.modeling.Data;
-
-import java.rmi.RemoteException;
-
 /**
- * An top-level common interface for all request service in SORCER.
- * Request services are frontend services created by users. Standalone
- * request services associated with executables are elementary request
- * services and aggregated request services are called mograms.
+ * An top-level common interface for all request service (requestors) in SORCER.
+ * Request services are frontend services created by users. Services
+ * associated directly with executable codes are called operation services that
+ * used by elementary request services that in turn are aggregated into various
+ * types of combined services like domains and disciplines.
  *
  * @author Mike Sobolewski
  */
-public interface Request extends Service, Identifiable {
+public interface Requestor extends Service, Identifiable {
 
     public void setName(String name);
 
@@ -41,6 +38,6 @@ public interface Request extends Service, Identifiable {
     /**
      * Returns a morpher updating at runtime multi-fidelities of this request.
      */
-    public Morpher getMorpher();
+    public Morpheus getMorpher();
 
 }

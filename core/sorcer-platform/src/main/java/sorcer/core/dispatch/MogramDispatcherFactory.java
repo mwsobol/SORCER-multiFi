@@ -34,6 +34,7 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
+import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -72,57 +73,56 @@ public class MogramDispatcherFactory implements DispatcherFactory {
                                        Exerter provider) throws DispatchException {
         Dispatcher dispatcher = null;
         ProvisionManager provisionManager = null;
-        if (mogram instanceof Routine) {
-            List<ServiceDeployment> deployments = ((Subroutine) mogram).getDeployments();
-            if (deployments.size() > 0 && (((ServiceSignature) mogram.getProcessSignature()).isProvisionable()
-                    || ((Routine)mogram).isProvisionable()))
-                provisionManager = new ProvisionManager((Routine)mogram);
-        }
-
         try {
+            if (mogram instanceof Routine) {
+                List<ServiceDeployment> deployments = ((Subroutine) mogram).getDeployments();
+                if (deployments.size() > 0 && (((ServiceSignature) ((ServiceMogram)mogram).getProcessSignature()).isProvisionable()
+                    || ((Routine)mogram).isProvisionable()))
+                    provisionManager = new ProvisionManager((Routine)mogram);
+            }
             if(mogram instanceof Job)
                 mogram = new ExertionSorter((Job)mogram).getSortedJob();
 
             if ( mogram instanceof Block && Mograms.isCatalogBlock((Routine)mogram)) {
                 logger.info("Running Catalog Block Dispatch...");
                 dispatcher = new CatalogBlockDispatcher((Block)mogram,
-                                                        sharedContexts,
-                                                        isSpawned,
-                                                        provider,
-                                                        provisionManager);
+                    sharedContexts,
+                    isSpawned,
+                    provider,
+                    provisionManager);
             } else if (isSpaceSequential(mogram)) {
                 logger.info("Running Space Sequential Dispatch...");
                 dispatcher = new SpaceSequentialDispatcher((Routine)mogram,
-                                                           sharedContexts,
-                                                           isSpawned,
-                                                           loki,
-                                                           provider,
-                                                           provisionManager);
+                    sharedContexts,
+                    isSpawned,
+                    loki,
+                    provider,
+                    provisionManager);
             }
             if (dispatcher==null && mogram instanceof Job) {
                 Job job = (Job) mogram;
                 if (Mograms.isSpaceParallel(job)) {
                     logger.info("Running Space Parallel Dispatch...");
                     dispatcher = new SpaceParallelDispatcher(job,
-                                                             sharedContexts,
-                                                             isSpawned,
-                                                             loki,
-                                                             provider,
-                                                             provisionManager);
+                        sharedContexts,
+                        isSpawned,
+                        loki,
+                        provider,
+                        provisionManager);
                 } else if (Mograms.isCatalogParallel(job)) {
                     logger.info("Running Catalog Parallel Dispatch...");
                     dispatcher = new CatalogParallelDispatcher(job,
-                                                               sharedContexts,
-                                                               isSpawned,
-                                                               provider,
-                                                               provisionManager);
+                        sharedContexts,
+                        isSpawned,
+                        provider,
+                        provisionManager);
                 } else if (Mograms.isCatalogSequential(job)) {
                     logger.info("Running Catalog Sequential Dispatch...");
                     dispatcher = new CatalogSequentialDispatcher(job,
-                                                                 sharedContexts,
-                                                                 isSpawned,
-                                                                 provider,
-                                                                 provisionManager);
+                        sharedContexts,
+                        isSpawned,
+                        provider,
+                        provisionManager);
                 }
             }
             assert dispatcher != null;
@@ -131,8 +131,8 @@ public class MogramDispatcherFactory implements DispatcherFactory {
                 logger.debug("Initializing monitor session for : " + mogram.getName());
                 if (!(monSession.getState()==Exec.INSPACE)) {
                     monSession.init((Monitorable) provider.getProxy(),
-                                    DEFAULT_LEASE_PERIOD,
-                                    DEFAULT_TIMEOUT_PERIOD);
+                        DEFAULT_LEASE_PERIOD,
+                        DEFAULT_TIMEOUT_PERIOD);
                 } else {
                     monSession.init((Monitorable)provider.getProxy());
                 }
@@ -140,11 +140,11 @@ public class MogramDispatcherFactory implements DispatcherFactory {
                 lrm.renewUntil(monSession.getLease(), Lease.FOREVER, LEASE_RENEWAL_PERIOD, null);
                 dispatcher.setLrm(lrm);
 
-                logger.debug("Routine state: " + Exec.State.name(mogram.getStatus()));
+                logger.debug("Routine state: " + Exec.State.name(((ServiceMogram)mogram).getStatus()));
                 logger.debug("Session for the mogram = " + monSession);
                 logger.debug("Lease to be renewed for duration = " +
-                        (monSession.getLease().getExpiration() - System
-                                .currentTimeMillis()));
+                    (monSession.getLease().getExpiration() - System
+                        .currentTimeMillis()));
             }
 
             logger.info("*** tally of used dispatchers: " + ExertDispatcher.getDispatchers().size());
@@ -154,7 +154,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
         return dispatcher;
     }
 
-    protected boolean isSpaceSequential(Mogram mogram) {
+    protected boolean isSpaceSequential(Mogram mogram) throws RemoteException {
         if(mogram instanceof Job) {
             Job job = (Job) mogram;
             return Mograms.isSpaceSingleton(job) || Mograms.isSpaceSequential(job);
@@ -183,18 +183,18 @@ public class MogramDispatcherFactory implements DispatcherFactory {
     @Override
     public SpaceTaskDispatcher createDispatcher(Task task, Exerter provider, String... config) throws DispatchException {
         ProvisionManager provisionManager = null;
-        List<ServiceDeployment> deployments = task.getDeployments();
-        if (deployments.size() > 0)
-            provisionManager = new ProvisionManager(task);
-
-        logger.info("Running Space Task Dispatch...");
         try {
+            List<ServiceDeployment> deployments = task.getDeployments();
+            if (deployments.size() > 0) {
+                provisionManager = new ProvisionManager(task);
+            }
+            logger.info("Running Space Task Dispatch...");
             return new SpaceTaskDispatcher(task,
-				Collections.synchronizedSet(new HashSet<Context>()),
-				false,
-				loki,
-				provisionManager);
-        } catch (ContextException | RoutineException e) {
+                Collections.synchronizedSet(new HashSet<Context>()),
+                false,
+                loki,
+                provisionManager);
+        } catch (ContextException | RoutineException | RemoteException e) {
             throw new DispatchException(e);
         }
     }

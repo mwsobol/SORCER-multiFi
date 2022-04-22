@@ -68,7 +68,6 @@ public class EmxCmd extends ShellCmd {
 				+ "\n  -cc   print the control context of selected exertion"
 				+ "\n  -ccc   print both data and control contexts of selected exertion"
 				+ "\n  -s   save the selected exertion in a given file ";
-
 	}
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -262,8 +261,6 @@ public class EmxCmd extends ShellCmd {
 		}
 		Map<Uuid, ExertionInfo> all;
 		if (selectedMonitor >= 0) {
-
-
             out.println(ansi().render("From EMX @|bold " + AttributesUtil
                     .getProviderName(emxMonitors[selectedMonitor].attributeSets) + "|@ at: @|bold "
                     + AttributesUtil.getHostName(emxMonitors[selectedMonitor].attributeSets) + "|@"));
@@ -333,7 +330,7 @@ public class EmxCmd extends ShellCmd {
             info.append("\ncreated at: ").append("@|yellow ").append((exertionInfos[i].getCreationDate() != null) ? sdf.format(exertionInfos[i].getCreationDate()) : "").append("|@");
             info.append(",  last updated at: ").append(exertionInfos[i].getLastUpdateDate());
             info.append("\nsignature: ").append("@|bold ").append(exertionInfos[i].getSignature()).append("|@");
-            if (exertionInfos[i].getTrace().size()>0) info.append("\ntrace: ").append("@|bold,red ").append(exertionInfos[i].getTrace()).append("|@");
+            if (exertionInfos[i].getTrace() != null && exertionInfos[i].getTrace().size()>0) info.append("\ntrace: ").append("@|bold,red ").append(exertionInfos[i].getTrace()).append("|@");
             out.println(ansi().render(info.toString()));
 		}
 	}

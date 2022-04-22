@@ -11,7 +11,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.core.context.model.ent.Prc;
+import sorcer.core.context.model.ent.Pcr;
 import sorcer.core.invoker.*;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
@@ -68,8 +68,8 @@ public class Invokers {
 	public void initEntModel() throws Exception {
 		em = new EntryModel();
 		//force for x and y procedural entries
-		x = prc("x", 10.0);
-		y = prc("y", 20.0);
+		x = pcr("x", 10.0);
+		y = pcr("y", 20.0);
 		z = ent("z", invoker("x - y", args("x", "y")));
 	}
 
@@ -114,7 +114,7 @@ public class Invokers {
 
 	@Test
 	public void serviceNeurons() throws Exception {
-		Model nm = aneModel("neural-model");
+		Model nm = snrModel("neural-model");
 		add(nm, snr("x1", 10.0), snr("x2", 20.0));
 		add(nm, snr("x3", weights(val("x1", 2.0), val("x2", 10.0)), signals("x1", "x2")));
 
@@ -159,7 +159,7 @@ public class Invokers {
                         args("x", "y")),
                 invoker("expr", "x - y", args("x", "y")));
 
-        setContext(mfeval, context("mfprc",
+        setContext(mfeval, context("mfpcr",
                 inVal("x", 20.0),
                 inVal("y", 80.0),
                 result("result/z")));
@@ -173,7 +173,7 @@ public class Invokers {
     }
 
     @Test
-    public void execPrc() throws Exception {
+    public void execpcr() throws Exception {
 
 	    // constant entry
         ent x1 = ent("x1", 1.0);
@@ -182,12 +182,12 @@ public class Invokers {
         // procedural entry
         Context cxt = context(val("x", 10.0), val("y", 20.0));
 
-        Prc p1 = prc(invoker("expr", "x + y + 30", args("x", "y")));
+        Pcr p1 = pcr(invoker("expr", "x + y + 30", args("x", "y")));
 //        logger.info("expr: " + exec(p1, cxt));
         assertEquals(exec(p1, cxt), 60.0);
 
         // invoke for a given state
-        p1 = prc(invoker("expr", "x + y + 30", args("x", "y")));
+        p1 = pcr(invoker("expr", "x + y + 30", args("x", "y")));
         setContext(p1, cxt);
         assertEquals(exec(p1), 60.0);
     }
@@ -195,23 +195,23 @@ public class Invokers {
 	@Test
 	public void multiFiProcedure() throws Exception {
 
-		Prc mfprc = mfPrc(
+		Pcr mfpcr = mfpcr(
 			invoker("fxn",
 				(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
 				args("x", "y")),
 			invoker("expr", "x - y", args("x", "y")));
 
-        Context data = context("mfprc",
+        Context data = context("mfpcr",
                 inVal("x", 20.0),
                 inVal("y", 80.0),
                 result("result/z"));
 
-//		setContext(mfprc, data);
+//		setContext(mfpcr, data);
 
-		assertEquals(130.0, exec(mfprc, data));
+		assertEquals(130.0, exec(mfpcr, data));
 		// invalidate output and change signature fidelity
-		invalid(mfprc);
-        assertEquals(-60.0, exec(mfprc, fi("expr")));
+		invalid(mfpcr);
+        assertEquals(-60.0, exec(mfpcr, fi("expr")));
 	}
 
 	@Test

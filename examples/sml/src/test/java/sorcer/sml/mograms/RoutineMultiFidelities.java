@@ -1,6 +1,5 @@
 package sorcer.sml.mograms;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -13,7 +12,7 @@ import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.service.Morpher;
+import sorcer.service.Morpheus;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Context;
@@ -114,7 +113,7 @@ public class RoutineMultiFidelities {
 	@Test
 	public void morphFiTask() throws Exception {
 
-		Morpher t4mrp = (mgr, mFi, context) -> {
+		Morpheus t4mrp = (mgr, mFi, context) -> {
 			if (mFi.getPath().equals("t4")) {
 				if (((Double) value((Context)context, "result/y")) >= 200.0) {
 					putValue((Context)context, "result/y", 300.0);
@@ -139,7 +138,7 @@ public class RoutineMultiFidelities {
 
     private Job getMorphFiJob() throws Exception {
 
-		Morpher t4mrp = (mgr, mFi, context) -> {
+		Morpheus t4mrp = (mgr, mFi, context) -> {
 			if (mFi.getPath().equals("t4")) {
 				if (((Double) value((Context)context, "result/y")) >= 200.0) {
 					mgr.reconfigure(fi("object2", "t4"));
@@ -147,7 +146,7 @@ public class RoutineMultiFidelities {
 			}
 		};
 
-		Morpher t5mrp = (mgr, mFi, context) -> {
+		Morpheus t5mrp = (mgr, mFi, context) -> {
 			if (mFi.getPath().equals("t5")) {
 				if (((Double) value((Context)context, "result/y")) <= 200.0) {
 					mgr.reconfigure(fi("object2", "t5"));

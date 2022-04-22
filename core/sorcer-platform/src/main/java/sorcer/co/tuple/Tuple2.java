@@ -18,12 +18,13 @@
 package sorcer.co.tuple;
 
 import sorcer.service.*;
+import sorcer.service.modeling.Valuation;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
 @SuppressWarnings("unchecked")
-public class Tuple2<T1, T2>  implements Serializable, Tuple, Arg {
+public class Tuple2<T1, T2> extends Slot<T1, T2> implements Valuation<T2>, Serializable, Tuple, Arg {
 
 	private  static final long serialVersionUID = -6519678282532888568L;
 
@@ -37,7 +38,9 @@ public class Tuple2<T1, T2>  implements Serializable, Tuple, Arg {
 
 	public Tuple2(T1 x1, T2 x2) {
 		_1 = x1;
+		key = x1;
 		_2 = x2;
+		out = x2;
 	}
 
 	public T1 key() {
@@ -50,6 +53,7 @@ public class Tuple2<T1, T2>  implements Serializable, Tuple, Arg {
 
 	public void setValue(T2 val) {
 		_2 = val;
+		out = val;
 	}
 
     @Override
@@ -74,6 +78,24 @@ public class Tuple2<T1, T2>  implements Serializable, Tuple, Arg {
 
 	@Override
 	public Object execute(Arg... args) throws ServiceException, RemoteException {
-		return this;
+		return _2;
 	}
+
+	@Override
+	public T2 valuate(Arg... args) throws ContextException {
+		if (_2 instanceof Evaluation) {
+			try {
+				((Evaluation)_2).evaluate(args);
+			} catch (RemoteException e) {
+				throw new ContextException(e);
+			}
+		}
+		return _2;
+	}
+
+	@Override
+	public void set(Object value) {
+		_2 = (T2) value;
+	}
+
 }

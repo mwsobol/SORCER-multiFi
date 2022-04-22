@@ -17,8 +17,12 @@ package sorcer.service;
  * limitations under the License.
  */
 
+import sorcer.core.Tag;
+import sorcer.service.modeling.Functionality;
+
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * @author Mike Sobolewski
@@ -68,7 +72,22 @@ public class ArgSet extends LinkedHashSet<Arg> {
 		if (arg == null)
 			throw new ArgException("No such Arg in the list: " + argName);
 	}
-	
+
+	public void setDomain(String domainName) {
+		for (Arg arg : this) {
+			if (arg instanceof Slot) {
+				(( Slot ) arg).setDomain(domainName);
+			}
+		}
+		if (paths != null && paths.size() > 0) {
+			for (Path p : paths) {
+				if (p.domain == null) {
+					p.domain = domainName;
+				}
+			}
+		}
+	}
+
 	public ArgSet selectArgs(String... argnames) {
 		List<String> vnames = Arrays.asList(argnames);
 		ArgSet out = new ArgSet();
@@ -134,7 +153,14 @@ public class ArgSet extends LinkedHashSet<Arg> {
 		 Arg[] va = new Arg[size()];
 		 return toArray(va);
 	 }
-			
+
+	public static ArgSet asSet(Object[] array) {
+		ArgSet vl = new ArgSet();
+		for (Object v : array)
+			vl.add(new Tag(v.toString()));
+		return vl;
+	}
+
 	public static ArgSet asSet(Arg[] array) {
 		ArgSet vl = new ArgSet();
 		for (Arg v : array)
@@ -152,5 +178,13 @@ public class ArgSet extends LinkedHashSet<Arg> {
 				} 
 		}
 	}
-	
+
+	@Override
+	public int size() {
+		if (super.size() == 0 && paths != null) {
+			return paths.size();
+		} else {
+			return super.size();
+		}
+	}
 }

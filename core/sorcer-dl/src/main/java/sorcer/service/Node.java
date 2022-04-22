@@ -45,7 +45,7 @@ public interface Node extends Discipline, Dependency, cxtn {
      * @return a dispatcher of this discipline
      * @throws RoutineException
      */
-    Dispatch getDispatcher() throws RoutineException;
+    Dispatcher getDispatcher() throws RoutineException;
 
     /**
      * Returns an executed dispatcherof this discipline
@@ -53,7 +53,7 @@ public interface Node extends Discipline, Dependency, cxtn {
      * @return an executed dispatcher of this discipline
      * @throws RoutineException
      */
-    Dispatch getOutDispatcher();
+    Dispatcher getOutDispatcher();
 
     /**
      * Returns a discipline input context.

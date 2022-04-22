@@ -16,6 +16,10 @@
  */
 package sorcer.service;
 
+import java.rmi.RemoteException;
+import java.util.List;
+
 public interface Discipline extends Contextion {
 
+    public List<Signature> getAllSignatures() throws RemoteException;
 }

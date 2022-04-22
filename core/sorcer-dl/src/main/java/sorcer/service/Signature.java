@@ -222,7 +222,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 * Returns an access types to a provider, synchronous (PUSH) or asynchronous (PULL);
 	 */
 	Strategy.Access getAccessType();
-	
+
 	/**
 	 * There are four types of {@link Signature} operations that can be
 	 * associated with signatures: <code>PRE</code> (preprocess),
@@ -236,7 +236,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 	 * context.
 	 */
 	enum Type implements Arg {
-		PRO, PRE, POST, SRV, APD_DATA, APD_CONTROL, BUILDER, CONTROLLER;
+		PRO, PRE, POST, SRV, APD_DATA, APD_CONTROL, BUILDER, CONTROLLER, DISPATCH;
 
 		/* (non-Javadoc)
          * @see sorcer.service.Arg#getName()
@@ -274,7 +274,7 @@ public interface Signature extends Opservice, Exertion, Comparable, Dependency, 
 		CONTEXT, DESIGN, TASKER, JOBBER, SPACER, DISPATCHER, OPTIMIZER, EXPLORER, SOLVER, DRIVER, MODEL, DISCIPLINE, MODEL_MANAGER;*/
 	enum Kind implements Arg {
 		CONTEXT, CONTEXTION, DESIGN, TASKER, JOBBER, SPACER, DISPATCHER, OPTIMIZER,
-		EXPLORER, SOLVER, DRIVER, MODEL, DISCIPLINE, MODEL_MANAGER;
+		EXPLORER, SOLVER, DRIVER, MORPHER, MODEL, DISCIPLINE, MODEL_MANAGER, PROVIDER;
 
 		/* (non-Javadoc)
 		 * @see sorcer.service.Arg#getName()

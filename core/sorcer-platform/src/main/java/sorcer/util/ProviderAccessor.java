@@ -249,7 +249,7 @@ public class ProviderAccessor extends ServiceAccessor {
     protected Cataloger getCataloger(String serviceName) {
         boolean catIsOk;
 		try {
-            catIsOk = Accessor.isAlive((Exerter) cataloger);
+            catIsOk = Accessor.isAlive(cataloger);
             if (catIsOk) {
 				return cataloger;
 			} else {
@@ -258,7 +258,7 @@ public class ProviderAccessor extends ServiceAccessor {
                                                              1,
                                                              Filters.any());
                 cataloger = serviceItems.length == 0 ? null : (Cataloger) serviceItems[0].service;
-                if (Accessor.isAlive((Exerter)cataloger))
+                if (Accessor.isAlive(cataloger))
                     return cataloger;
                 else
                     return null;
@@ -287,7 +287,7 @@ public class ProviderAccessor extends ServiceAccessor {
 		try {
 			// check if the cataloger is alive then return a requested service
 			// provider
-			if (Accessor.isAlive((Exerter) cataloger))
+			if (Accessor.isAlive(cataloger))
 				return cataloger.lookup(providerName, primaryInterface);
 			else {
 				// try to getValue a new cataloger and lookup again

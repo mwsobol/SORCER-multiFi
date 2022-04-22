@@ -1,9 +1,6 @@
 package sorcer.service;
 
-import sorcer.service.modeling.Data;
-import sorcer.service.modeling.Getter;
-import sorcer.service.modeling.slot;
-import sorcer.service.modeling.val;
+import sorcer.service.modeling.*;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -13,6 +10,8 @@ public class Slot<K, O> implements Identifiable, Data<O>, Arg, slot<O>, net.jini
     protected K key;
 
     protected O out;
+
+    protected String domain;
 
     public Slot() {
     }
@@ -46,6 +45,8 @@ public class Slot<K, O> implements Identifiable, Data<O>, Arg, slot<O>, net.jini
         return out;
     }
 
+    protected Signature builder;
+
     public void setOut(O out) {
         this.out = out;
     }
@@ -60,14 +61,6 @@ public class Slot<K, O> implements Identifiable, Data<O>, Arg, slot<O>, net.jini
 
     public Object asis() throws EvaluationException {
         return out;
-    }
-
-    public O valuate(Arg... args) throws ContextException {
-        return out;
-    }
-
-    public void set(O value) {
-        this.out = value;
     }
 
     @Override
@@ -103,13 +96,29 @@ public class Slot<K, O> implements Identifiable, Data<O>, Arg, slot<O>, net.jini
         return false;
     }
 
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
     @Override
     public O getData(Arg... args) throws ContextException {
         return out;
     }
 
     @Override
-    public Object execute(Arg... args) throws ServiceException {
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
         return out;
+    }
+
+    public Signature getBuilder(Arg... args)  {
+        return builder;
+    }
+
+    public void setBuilder(Signature builder) {
+        this.builder = builder;
     }
 }

@@ -280,7 +280,7 @@ public class ContextTree extends JPanel {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-						} else // child is another returnPath node, recursivly prc
+						} else // child is another returnPath node, recursivly pcr
 						// this function on that node
 						{
 
@@ -290,7 +290,7 @@ public class ContextTree extends JPanel {
 							tempPath += cnt.getValue(); // update the returnPath
 							// System.out.println(" not data node "+i+" tp="+tempPath+" curr");
 
-							// prc on the child node
+							// pcr on the child node
 							theContext = doRootGenerateContext(theContext,
 									treeModel.getChild(current, i), tempPath);
 						}

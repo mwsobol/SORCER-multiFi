@@ -26,10 +26,10 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.model.Transmodel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.req.AnalysisModel;
+import sorcer.core.context.model.req.RequestTransmodel;
 import sorcer.service.Context;
 import sorcer.service.Evaluator;
-import sorcer.service.Request;
+import sorcer.service.Requestor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -86,7 +86,7 @@ public class Transmodels {
     @Test
     public void testArithmeticTransmodel() throws Exception {
 
-        AnalysisModel mdl = (AnalysisModel)instance(sig(Transmodels.class, "getArithmeticTransmodel"));
+        RequestTransmodel mdl = ( RequestTransmodel )instance(sig(Transmodels.class, "getArithmeticTransmodel"));
 
         logger.info("y1: " + get(mdl, "z1"));
         Entry z1 = (Entry) get(mdl, "z1");
@@ -102,7 +102,7 @@ public class Transmodels {
     @Test
     public void evalArithmeticTransmodel() throws Exception {
 
-        AnalysisModel mdl = (AnalysisModel) instance(sig(Transmodels.class, "getArithmeticTransmodel"));
+        RequestTransmodel mdl = ( RequestTransmodel ) instance(sig(Transmodels.class, "getArithmeticTransmodel"));
 
         Context rc = eval(mdl);
 
@@ -121,7 +121,7 @@ public class Transmodels {
         // the explicit input context with MDA
         Context mdaCxt = context(mdaFi("arithmeticMdaFi",
             mda("analyzer",
-                (Request req, Context cxt) -> {
+                (Requestor req, Context cxt) -> {
                     double x1, x2, x3;
                     String dmnName = dmnName(cxt);
                     if (dmnName.equals("model1")) {
@@ -139,7 +139,7 @@ public class Transmodels {
                 }))
         );
 
-        Transmodel mdl = (AnalysisModel) instance(sig(Transmodels.class, "getArithmeticTransmodel"));
+        Transmodel mdl = ( RequestTransmodel ) instance(sig(Transmodels.class, "getArithmeticTransmodel"));
 
         Context rc = eval(mdl, mdaCxt);
 

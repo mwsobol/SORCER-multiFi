@@ -20,6 +20,7 @@ package sorcer.core.dispatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.model.ent.EntryModel;
+import sorcer.core.exertion.EvaluationTask;
 import sorcer.core.exertion.Mograms;
 import sorcer.service.Exerter;
 import sorcer.service.*;
@@ -59,13 +60,13 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                 dispatchers.remove(xrt.getId());
                 throw fe;
             } catch (RemoteException e) {
-                logger.warn("Error during local prc", e);
+                logger.warn("Error during local pcr", e);
             }
         }
 
         xrt.startExecTime();
         Context previous = null;
-        for (Discipline mogram: inputXrts) {
+        for (Contextion mogram: inputXrts) {
             if (xrt.isBlock()) {
                 try {
                     if (mogram.getScope() != null)
@@ -83,8 +84,11 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                     Subroutine se = (Subroutine) mogram;
                     // support for continuous pre and post execution of task
                     // signatures
-                    if (previous != null && se.isTask() && ((Task) se).isContinous())
+                    if (previous != null && se.isTask() && ((Task) se).isContinous()) {
                         se.setContext(previous);
+                    } else if (se instanceof EvaluationTask){
+                        se.setDataContext(xrt.getDataContext());
+                    }
                     dispatchExertion(se, args);
                     previous = se.getContext();
                     if (mogram instanceof Block) {
@@ -133,7 +137,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                 dispatchers.remove(xrt.getId());
                 throw fe;
             } catch (RemoteException e) {
-                logger.warn("Exception during local prc");
+                logger.warn("Exception during local pcr");
             }
         } else if (se.getStatus() == SUSPENDED
                 || xrt.getControlContext().isReview(se)) {
@@ -146,7 +150,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         }
     }
 
-    protected List<Discipline> getInputExertions() throws ContextException {
+    protected List<Contextion> getInputExertions() throws ContextException {
         return Mograms.getInputExertions(((Job) xrt));
     }
 

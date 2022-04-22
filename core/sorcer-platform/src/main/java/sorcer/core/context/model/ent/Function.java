@@ -18,7 +18,6 @@
 package sorcer.core.context.model.ent;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ContextSelection;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
@@ -48,8 +47,6 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 	protected String name;
 
 	protected boolean isValueCurrent;
-
-	protected ArgSet args;
 
 	// dependency management for this Entry
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
@@ -90,7 +87,7 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 
 	@Override
 	public String getName() {
-		if (type.equals(Functionality.Type.PROC) && domain != null) {
+		if (type.equals(Functionality.Type.PCR) && domain != null) {
 			//used for procedural attchemnt with entry names name$domain
 			return name + "$" + domain;
 		} else {
@@ -289,7 +286,7 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 		this.isPersistent = isPersistant;
 	}
 
-	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws MogramException {
+	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws ServiceException {
 		Context cxt;
 		Context out = new ServiceContext();
 		try {
@@ -324,7 +321,7 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 							 cxt.getValue(key));
 			}
 		} catch (RemoteException e) {
-			throw new MogramException(e);
+			throw new ServiceException(e);
 		}
 		return out;
 	}

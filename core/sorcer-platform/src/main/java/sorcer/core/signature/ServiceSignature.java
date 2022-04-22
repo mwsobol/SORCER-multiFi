@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.eo.operator.*;
@@ -57,6 +58,8 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	protected String ownerID;
 
 	protected Context scope;
+
+	protected Slot[] initSlots;
 
 	protected Context.Return contextReturn;
 
@@ -108,7 +111,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 
 	protected Fi multiFi;
 
-	protected Morpher morpher;
+	protected Morpheus morpher;
 
 	/**
 	 * a context template to define the context appended from a provider
@@ -600,7 +603,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	@Override
-	public Context exert(Contextion mogram, Transaction txn, Arg... args) throws MogramException {
+	public Context exert(Contextion mogram, Transaction txn, Arg... args) throws ServiceException, RemoteException {
 		Context cxt;
 		if (mogram instanceof Context) {
 			cxt = (Context)mogram;
@@ -617,7 +620,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		}
 	}
 
-	public Context exert(Contextion mogram) throws MogramException {
+	public Context exert(Contextion mogram) throws ServiceException, RemoteException {
 		return exert(mogram, null);
 	}
 
@@ -664,6 +667,14 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		return operation.accessType;
 	}
 
+	public void setInitSlots(Slot[] slots) {
+		initSlots = slots;
+	}
+
+	public Slot[]  getInitSlots(Slot[] slots) {
+		return slots;
+	}
+
 	public void setAccessType(Strategy.Access accessType) {
 		this.operation.accessType = accessType;
 	}
@@ -686,11 +697,11 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	@Override
-	public Object execute(Arg... args) throws MogramException {
+	public Object execute(Arg... args) throws MogramException, ServiceException, RemoteException {
 		throw new MogramException("Signature service exec should be implemented in subclasses");
 	}
 	
-	public Entry act(Arg... args) throws ServiceException {
+	public Entry act(Arg... args) throws ServiceException, RemoteException {
 		Object result = this.execute(args);
 		if (result instanceof Entry) {
 			return (Entry)result;
@@ -699,7 +710,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		}
 	}
 
-	public Data act(String entryName, Arg... args) throws ServiceException {
+	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
 		Object result = this.execute(args);
 		if (result instanceof Entry) {
 			return (Entry)result;
@@ -718,7 +729,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	@Override
-	public Morpher getMorpher() {
+	public Morpheus getMorpher() {
 		return morpher;
 	}
 

@@ -17,6 +17,7 @@
 
 package sorcer.core.invoker;
 
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Value;
 import sorcer.eo.operator;
@@ -109,8 +110,8 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
         }
         double sum = 0.0;
         for (String name : args.getNames()) {
-            double in = (double) ((Entry)invokeContext.get(name)).getOut();
-            double wt = (double) weights.get(name);
+            double in = (double) ((Entry)((ServiceContext)invokeContext).get(name)).getOut();
+            double wt = (double) ((ServiceContext)weights).get(name);
             sum = sum + (in * wt);
         }
         sum = sum + bias;

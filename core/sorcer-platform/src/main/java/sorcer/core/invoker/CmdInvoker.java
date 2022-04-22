@@ -26,7 +26,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 
-import sorcer.core.context.model.ent.Prc;
+import sorcer.core.context.model.ent.Pcr;
 import sorcer.core.context.model.ent.Function;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;
@@ -68,7 +68,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 		this.cmdarray = (String[]) list.toArray();
 	}
 	
-	public CmdInvoker(String name, String cmd, Prc... callEntries) {
+	public CmdInvoker(String name, String cmd, Pcr... callEntries) {
 		super(name);
 		this.cmd = cmd;
 		this.args = new ArgSet(callEntries);
@@ -80,7 +80,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	}
 
 	public CmdInvoker(String shcmd, File scriptFile, boolean background,
-			File logFile, Prc... callEntries) throws EvaluationException {
+			File logFile, Pcr... callEntries) throws EvaluationException {
 		cmd = shcmd;
 		this.scriptFile = scriptFile;
 		this.logFile = logFile;
@@ -108,7 +108,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	 * @throws EvaluationException
 	 */
 	public CmdInvoker(String argarray[], File script, boolean background,
-			InputStream stdin, File logFile, Prc... callEntries) {
+			InputStream stdin, File logFile, Pcr... callEntries) {
 		cmdarray = new String[argarray.length + 1];
 		this.scriptFile = script;
 		this.args = new ArgSet(callEntries);

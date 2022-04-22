@@ -27,8 +27,10 @@ import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 import sorcer.service.modeling.Modeling;
 import sorcer.service.modeling.sig;
+import sorcer.util.Builder;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.rmi.RemoteException;
@@ -100,7 +102,8 @@ public class LocalSignature extends ServiceSignature implements sig {
 		} else {
 			target = object;
 		}
-
+		// default name
+		name = selector;
 		setSelector(selector);
 		setInitSelector(initSelector);
 
@@ -270,12 +273,33 @@ public class LocalSignature extends ServiceSignature implements sig {
 		try {
 			if(operation.selector!=null) {
 				try {
+					if (scope != null && Builder.class.isAssignableFrom(multitype.providerType)) {
+						Field initCxt = multitype.providerType.getField("initData");
+						if (initCxt != null) {
+							initCxt.setAccessible(true);
+							initCxt.set(null, scope);
+						}
+					}
+					if (initSlots != null && Builder.class.isAssignableFrom(multitype.providerType)) {
+						for (Slot slot : initSlots) {
+							try {
+								Field initField = multitype.providerType.getDeclaredField(slot.getName());
+								if (initField != null) {
+									initField.setAccessible(true);
+									initField.set(null, slot.getOut());
+								}
+							} catch (Exception e) {
+								logger.warn(e.getMessage());
+							}
+						}
+					}
 					Method selectorMethod = multitype.providerType.getDeclaredMethod(operation.selector, argTypes);
 					if(Modifier.isStatic(selectorMethod.getModifiers())) {
 						return  selectorMethod.invoke(null, args);
 					}
 				} catch (NoSuchMethodException e) {
-					//skip;
+					// skip it
+//					throw new SignatureException(e);
 				}
 			}
 			if ((initSelector == null || initSelector.equals("new")) && args == null) {
@@ -360,15 +384,15 @@ public class LocalSignature extends ServiceSignature implements sig {
 				((Modeling)obj).isolateModel(inContext);
 				((Modeling)obj).setContext(inContext);
 				((Modeling)obj).initializeBuilder();
-			} catch (ContextException e) {
+			} catch (ContextException | RemoteException e) {
 				logger.error("instance creation failed", e);
 				throw new SignatureException("Build isolation failed", this, e);
 			}
 		}
-		if (inContext != null && obj instanceof ServiceMogram && inContext.get(Context.SRV_PROJECTION) != null) {
+		if (inContext != null && obj instanceof ServiceMogram && ((ServiceContext)inContext).get(Context.SRV_PROJECTION) != null) {
 			try {
 				// morph new service mogram with a given projection
-				((ServiceMogram)obj).morph((String[])inContext.get(Context.SRV_PROJECTION));
+				((ServiceMogram)obj).project((String[])((ServiceContext)inContext).get(Context.SRV_PROJECTION));
 			} catch (ConfigurationException e) {
 				throw new SignatureException(e);
 			}
@@ -377,12 +401,12 @@ public class LocalSignature extends ServiceSignature implements sig {
 	}
 
 	@Override
-	public Context exert(Contextion mogram) throws MogramException {
+	public Context exert(Contextion mogram) throws ServiceException {
 		return exert(mogram, null);
 	}
 
 	@Override
-	public Context exert(Contextion mogram, Transaction txn, Arg... args) throws MogramException {
+	public Context exert(Contextion mogram, Transaction txn, Arg... args) throws ServiceException {
 		Context cxt;
 		ObjectTask task;
 		if (mogram instanceof Context) {
@@ -399,7 +423,7 @@ public class LocalSignature extends ServiceSignature implements sig {
 	}
 
 	@Override
-	public Object execute(Arg... args) throws MogramException {
+	public Object execute(Arg... args) throws ServiceException, RemoteException {
 		Mogram mog = Arg.selectMogram(args);
 		if (mog == null && contextReturn != null) {
 			mog = contextReturn.getDataContext();

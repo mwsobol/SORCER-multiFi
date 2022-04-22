@@ -17,11 +17,16 @@
  */
 package sorcer.core.monitor;
 
+import net.jini.id.Uuid;
+import sorcer.service.Exec;
+import sorcer.service.MonitorException;
 import sorcer.service.Monitorable;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.security.Principal;
+import java.util.Map;
 
 public interface MonitoringManagement extends Monitorable, MonitorManagement,
 		MonitorSessionManagement, MonitorUIManagement, Remote {
-
 }

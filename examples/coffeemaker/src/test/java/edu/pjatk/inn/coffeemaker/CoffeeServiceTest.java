@@ -6,6 +6,7 @@ import edu.pjatk.inn.coffeemaker.impl.Recipe;
 import edu.pjatk.inn.requestor.CoffeemakerConsumer;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -22,12 +23,11 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.get;
 import static sorcer.co.operator.inVal;
+import static sorcer.ent.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.result;
-import static sorcer.ent.operator.ent;
-import static sorcer.ent.operator.invoker;
 import static sorcer.so.operator.*;
 
 /**
@@ -136,9 +136,9 @@ public class CoffeeServiceTest {
 			val("location", "PJATK"),
 			val("room", "101"),
 
-			ent(sig("makeCoffee", CoffeeService.class,
+			srv(sig("makeCoffee", CoffeeService.class,
 				result("coffee$", inPaths("recipe/key")))),
-			ent(sig("deliver", Delivery.class,
+			srv(sig("deliver", Delivery.class,
 				result("delivery$", inPaths("location", "room")))));
 //				ent("change$", invoker("paid$ - (coffee$ + delivery$)", args("paid$", "coffee$", "delivery$"))));
 

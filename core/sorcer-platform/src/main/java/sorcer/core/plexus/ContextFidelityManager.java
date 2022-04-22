@@ -6,9 +6,8 @@ import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
-import java.util.List;
 
-public class ContextFidelityManager extends FidelityManager<Context> {
+public class ContextFidelityManager extends FidelityManager {
 
     private Context dataContext;
 
@@ -22,12 +21,12 @@ public class ContextFidelityManager extends FidelityManager<Context> {
     }
 
     @Override
-    public void reconfigure(Fidelity... fidelities) throws  ConfigurationException {
+    public void reconfigure(Fi... fidelities) throws  ConfigurationException {
         if (fidelities == null || fidelities.length == 0) {
             return;
         }
 
-        for (Fidelity fi : fidelities) {
+        for (Fi fi : fidelities) {
             if (fi.getFiType().equals((Fi.Type.CONTEXT))) {
                 try {
                     ((ServiceMogram) mogram).getDataContext().selectFidelity(fi.getName());
@@ -48,7 +47,7 @@ public class ContextFidelityManager extends FidelityManager<Context> {
         Projection prj = null;
         if (fiNames == null || fiNames.length == 0) {
             try {
-                Morpher cxtMorpher = null;
+                Morpheus cxtMorpher = null;
                 if (mogram instanceof Model) {
                     cxtMorpher = dataContext.getMorpher();
                 } else {
@@ -86,7 +85,7 @@ public class ContextFidelityManager extends FidelityManager<Context> {
                 if (cxtFi != null) {
                     try {
                         if (mogram instanceof RequestModel) {
-                            dataContext.selectFidelity(cxtFi.getName());
+                            ((ServiceMogram)dataContext).selectFidelity(cxtFi.getName());
                             ((ServiceContext) mogram).append((Context) dataContext.getMultiFi().getSelect());
                         } else {
                             ((ServiceMogram) mogram).getDataContext().selectFidelity(cxtFi.getName());

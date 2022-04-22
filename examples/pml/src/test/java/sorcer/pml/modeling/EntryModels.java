@@ -41,24 +41,24 @@ public class EntryModels {
 	private final static Logger logger = LoggerFactory.getLogger(EntryModels.class.getName());
 
 	private EntryModel em;
-	private Prc<Double> x;
-	private Prc<Double> y;
+	private Pcr<Double> x;
+	private Pcr<Double> y;
 
 
 	@Before
 	public void initEntModel() throws Exception {
 
 		em = new EntryModel();
-		x = prc("x", 10.0);
-		y = prc("y", 20.0);
+		x = pcr("x", 10.0);
+		y = pcr("y", 20.0);
 
 	}
 
 	@Test
 	public void closingEntScope() throws Exception {
 
-		// a prc is a variable (entry) evaluated in its own scope (context)
-		Prc y = prc("y",
+		// a pcr is a variable (entry) evaluated in its own scope (context)
+		Pcr y = pcr("y",
 				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
 		Object val = exec(y, val("x1", 10.0), val("x2", 50.0),
                 val("x3", 20.0), val("x4", 80.0));
@@ -70,8 +70,8 @@ public class EntryModels {
 	@Test
 	public void closingExprScope() throws Exception {
 
-		// a prc is a variable (entry) evaluated in its own scope (context)
-		Prc y = prc("y",
+		// a pcr is a variable (entry) evaluated in its own scope (context)
+		Pcr y = pcr("y",
 				expr("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
 		Object val = exec(y, val("x1", 10.0), val("x2", 50.0),
 				val("x3", 20.0), val("x4", 80.0));
@@ -89,22 +89,22 @@ public class EntryModels {
 				val("x1"), val("x2"), val("x3", 20.0),
 				val("x4", 80.0),
 				// outputs
-				prc("t4", invoker("x1 * x2", args("x1", "x2"))),
-				prc("t5", invoker("x3 + x4", args("x3", "x4"))),
-				prc("j1", invoker("t4 - t5", args("t4", "t5"))));
+				pcr("t4", invoker("x1 * x2", args("x1", "x2"))),
+				pcr("t5", invoker("x3 + x4", args("x3", "x4"))),
+				pcr("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		assertTrue(exec(model, "t5").equals(100.0));
 
 		assertEquals(exec(model, "j1"), null);
 
-		eval(model, "j1", prc("x1", 10.0), prc("x2", 50.0)).equals(400.0);
+		eval(model, "j1", pcr("x1", 10.0), pcr("x2", 50.0)).equals(400.0);
 
 		assertTrue(exec(model, "j1", val("x1", 10.0), val("x2", 50.0)).equals(400.0));
 
 		assertTrue(exec(model, "j1").equals(400.0));
 
 		// getValue model response
-		Row mr = (Row) query(model, //prc("x1", 10.0), prc("x2", 50.0),
+		Row mr = (Row) query(model, //pcr("x1", 10.0), pcr("x2", 50.0),
 				result("y", operator.outPaths("t4", "t5", "j1")));
 		assertTrue(names(mr).equals(list("t4", "t5", "j1")));
 		assertTrue(values(mr).equals(list(500.0, 100.0, 400.0)));
@@ -118,12 +118,12 @@ public class EntryModels {
 			// inputs
 			val("x1"), val("x2"), val("x3", 20.0), val("x4"),
 			// outputs
-			prc("t4", invoker("x1 * x2", args("x1", "x2"))),
-			prc("t5",
+			pcr("t4", invoker("x1 * x2", args("x1", "x2"))),
+			pcr("t5",
 				task(sig("add", AdderImpl.class),
 					cxt("add", inVal("x3"), inVal("x4"),
 						result("result/y")))),
-			prc("j1", invoker("t4 - t5", args("t4", "t5"))));
+			pcr("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		setValues(vm, val("x1", 10.0), val("x2", 50.0),
 			val("x4", 80.0));
@@ -134,10 +134,10 @@ public class EntryModels {
     @Test
 	public void callInvoker() throws Exception {
 
-		EntryModel pm = new EntryModel("prc-model");
-		add(pm, prc("x", 10.0));
-		add(pm, prc("y", 20.0));
-		add(pm, prc("add", invoker("x + y", args("x", "y"))));
+		EntryModel pm = new EntryModel("pcr-model");
+		add(pm, pcr("x", 10.0));
+		add(pm, pcr("y", 20.0));
+		add(pm, pcr("add", invoker("x + y", args("x", "y"))));
 
 		assertTrue(exec(pm, "x").equals(10.0));
 		assertTrue(exec(pm, "y").equals(20.0));
@@ -160,8 +160,8 @@ public class EntryModels {
 
 	@Test
 	public void callModelTest() throws Exception {
-		EntryModel pm = entModel(prc("x", 10.0), prc("y", 20.0),
-				prc("add", invoker("x + y", args("x", "y"))));
+		EntryModel pm = entModel(pcr("x", 10.0), pcr("y", 20.0),
+				pcr("add", invoker("x + y", args("x", "y"))));
 
 		assertTrue(exec(pm, "x").equals(10.0));
 		assertTrue(exec(pm, "y").equals(20.0));
@@ -175,11 +175,11 @@ public class EntryModels {
 
 	@Test
 	public void expendingCallModelTest() throws Exception {
-		EntryModel pm = entModel(prc("x", 10.0), prc("y", 20.0),
-				prc("add", invoker("x + y", args("x", "y"))));
+		EntryModel pm = entModel(pcr("x", 10.0), pcr("y", 20.0),
+				pcr("add", invoker("x + y", args("x", "y"))));
 
-		Prc x = prc(pm, "x");
-		logger.info("prc x: " + x);
+		Pcr x = pcr(pm, "x");
+		logger.info("pcr x: " + x);
 		setValue(x, 20.0);
 		logger.info("val x: " + exec(x));
 		logger.info("val x: " + eval(pm, "x"));
@@ -193,7 +193,7 @@ public class EntryModels {
         responseUp(pm, "add");
 		assertEquals(value(eval(pm), "add"), 60.0);
 
-		add(pm, prc("x", 10.0), prc("y", 20.0));
+		add(pm, pcr("x", 10.0), pcr("y", 20.0));
 		assertTrue(exec(pm, "x").equals(10.0));
 		assertTrue(exec(pm, "y").equals(20.0));
 
@@ -204,9 +204,9 @@ public class EntryModels {
 		assertTrue(value(eval(pm), "add").equals(30.0));
 
 		// with new arguments, closure
-		assertTrue(value(eval(pm, prc("x", 20.0), prc("y", 30.0)), "add").equals(50.0));
+		assertTrue(value(eval(pm, pcr("x", 20.0), pcr("y", 30.0)), "add").equals(50.0));
 
-		add(pm, prc("z", invoker("(x * y) + add", args("x", "y", "add"))));
+		add(pm, pcr("z", invoker("(x * y) + add", args("x", "y", "add"))));
 		logger.info("z eval: " + eval(pm, "z"));
 		assertTrue(exec(pm, "z").equals(650.0));
 
@@ -217,9 +217,9 @@ public class EntryModels {
 	public void callInvokers() throws Exception {
 
 		// all var parameters (x1, y1, y2) are not initialized
-		Prc y3 = prc("y3", invoker("x + y2", args("x", "y2")));
-		Prc y2 = prc("y2", invoker("x * y1", args("x", "y1")));
-		Prc y1 = prc("y1", invoker("x1 * 5", args("x1")));
+		Pcr y3 = pcr("y3", invoker("x + y2", args("x", "y2")));
+		Pcr y2 = pcr("y2", invoker("x * y1", args("x", "y1")));
+		Pcr y1 = pcr("y1", invoker("x1 * 5", args("x1")));
 
 		EntryModel pc = entModel(y1, y2, y3);
 		// any dependent values or args can be updated or added any time
@@ -241,9 +241,9 @@ public class EntryModels {
         assertEquals(value(cxt, "arg/x1"), 10.0);
         assertEquals(value(cxt, "arg/x2"), 50.0);
 
-        assertTrue(asis(cxt, "arg/x0") instanceof Prc);
-        assertTrue(asis(cxt, "arg/x1") instanceof Prc);
-        assertTrue(asis(cxt, "arg/x2") instanceof Prc);
+        assertTrue(asis(cxt, "arg/x0") instanceof Pcr);
+        assertTrue(asis(cxt, "arg/x1") instanceof Pcr);
+        assertTrue(asis(cxt, "arg/x2") instanceof Pcr);
 
         put(cxt, "arg/x0", 11.0);
         put(cxt, "arg/x1", 110.0);
@@ -253,9 +253,9 @@ public class EntryModels {
         assertEquals(value(cxt, "arg/x1"), 110.0);
         assertEquals(value(cxt, "arg/x2"), 150.0);
 
-        assertTrue(asis(cxt, "arg/x0") instanceof Prc);
-        assertTrue(asis(cxt, "arg/x1") instanceof Prc);
-        assertTrue(asis(cxt, "arg/x2") instanceof Prc);
+        assertTrue(asis(cxt, "arg/x0") instanceof Pcr);
+        assertTrue(asis(cxt, "arg/x1") instanceof Pcr);
+        assertTrue(asis(cxt, "arg/x2") instanceof Pcr);
     }
 
 
@@ -263,9 +263,9 @@ public class EntryModels {
 	public void argVsEntPersistence() throws Exception {
 
 		// persistable just indicates that argument is persistent,
-		// for example when eval(prc) is invoked
-		Prc dbp1 = persistent(prc("design/in", 25.0));
-		Prc dbp2 = dbEnt("url", "myUrl1");
+		// for example when eval(pcr) is invoked
+		Pcr dbp1 = persistent(pcr("design/in", 25.0));
+		Pcr dbp2 = dbEnt("url", "myUrl1");
 
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
@@ -276,10 +276,10 @@ public class EntryModels {
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 
-		// store prc args in the data store
+		// store pcr args in the data store
 		URL sUrl = new URL("http://sorcersoft.org");
-		Prc p1 = prc("design/in", 30.0);
-		Prc p2 = prc("url", sUrl);
+		Pcr p1 = pcr("design/in", 30.0);
+		Pcr p2 = pcr("url", sUrl);
 		URL url1 = storeVal(p1);
 		URL url2 = storeVal(p2);
 
@@ -292,8 +292,8 @@ public class EntryModels {
 		assertEquals(exec(p2), sUrl);
 
 		// store args in the data store
-		p1 = prc("design/in", 30.0);
-		p2 = prc("url", sUrl);
+		p1 = pcr("design/in", 30.0);
+		p2 = pcr("url", sUrl);
 		store(p1);
 		store(p2);
 
@@ -309,7 +309,7 @@ public class EntryModels {
 	@Test
 	public void entModelConditions() throws Exception {
 
-		final EntryModel pm = new EntryModel("prc-model");
+		final EntryModel pm = new EntryModel("pcr-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
 
@@ -331,7 +331,7 @@ public class EntryModels {
 	@Test
 	public void closingConditions() throws Exception {
 
-		EntryModel pm = new EntryModel("prc-model");
+		EntryModel pm = new EntryModel("pcr-model");
 		pm.putValue(Condition._closure_, new ServiceInvoker(pm));
 		// free variables, no args for the invoker
 		((ServiceInvoker) pm.get(Condition._closure_))
@@ -378,10 +378,10 @@ public class EntryModels {
 	@Test
 	public void invokerLoopTest() throws Exception {
 
-		EntryModel pm = entModel("prc-model");
-		add(pm, prc("x", 1));
-		add(pm, prc("y", invoker("x + 1", args("x"))));
-		add(pm, prc("z", inc(invoker(pm, "y"), 2)));
+		EntryModel pm = entModel("pcr-model");
+		add(pm, pcr("x", 1));
+		add(pm, pcr("y", invoker("x + 1", args("x"))));
+		add(pm, pcr("z", inc(invoker(pm, "y"), 2)));
 		Invocation z2 = invoker(pm, "z");
 
 		ServiceInvoker iloop = loop("iloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
@@ -395,9 +395,9 @@ public class EntryModels {
 	public void callableAttachment() throws Exception {
 
 		final EntryModel pm = entModel();
-		final Prc<Double> x = prc("x", 10.0);
-		final Prc<Double> y = prc("y", 20.0);
-		Prc z = prc("z", invoker("x + y", x, y));
+		final Pcr<Double> x = pcr("x", 10.0);
+		final Pcr<Double> y = pcr("y", 20.0);
+		Pcr z = pcr("z", invoker("x + y", x, y));
 		add(pm, x, y, z);
 
 		// update vars x and y that loop condition (var z) depends on
@@ -409,8 +409,8 @@ public class EntryModels {
 			return exec(x) + exec(y) + (Double)exec(pm, "z");
 		};
 
-		add(pm, callableInvoker("prc", update));
-		assertEquals(invoke(pm, "prc"), 260.0);
+		add(pm, callableInvoker("pcr", update));
+		assertEquals(invoke(pm, "pcr"), 260.0);
 
 	}
 
@@ -419,10 +419,10 @@ public class EntryModels {
 	public void callableAttachmentWithArgs() throws Exception {
 
 		final EntryModel pm = entModel();
-		final Prc<Double> x = prc("x", 10.0);
-		final Prc<Double> y = prc("y", 20.0);
-		Prc z = prc("z", invoker("x + y", x, y));
-		add(pm, x, y, z, prc("limit", 60.0));
+		final Pcr<Double> x = pcr("x", 10.0);
+		final Pcr<Double> y = pcr("y", 20.0);
+		Pcr z = pcr("z", invoker("x + y", x, y));
+		add(pm, x, y, z, pcr("limit", 60.0));
 
 		// anonymous local class implementing Callable interface
 		Callable update = new Callable() {
@@ -435,8 +435,8 @@ public class EntryModels {
 			}
 		};
 
-		add(pm, callableInvoker("prc", update));
-		assertEquals(invoke(pm, "prc", context(prc("limit", 100.0))), 420.0);
+		add(pm, callableInvoker("pcr", update));
+		assertEquals(invoke(pm, "pcr", context(pcr("limit", 100.0))), 420.0);
 	}
 
 
@@ -460,11 +460,11 @@ public class EntryModels {
 	@Test
 	public void attachMethodInvokerWithContext() throws Exception {
 
-		Prc z = prc("z", invoker("x + y", x, y));
+		Pcr z = pcr("z", invoker("x + y", x, y));
 		add(em, x, y, z, val("limit", 60.0));
 
 		add(em, methodInvoker("call", new Config()));
-//		logger.info("prc eval:" + invoke(em, "prc"));
+//		logger.info("pcr eval:" + invoke(em, "pcr"));
 		assertEquals(invoke(em, "call", context(val("limit", 100.0))), 420.0);
 
 	}
@@ -477,7 +477,7 @@ public class EntryModels {
 
 		// set the sphere/radius in the model
 		put(em, "sphere/radius", 20.0);
-		// attach the agent to the prc-model and invoke
+		// attach the agent to the pcr-model and invoke
         add(em, agent("getSphereVolume",
                 Volume.class.getName(), new URL(Sorcer
                         .getWebsterUrl() + "/pml-" + sorcerVersion+".jar")));

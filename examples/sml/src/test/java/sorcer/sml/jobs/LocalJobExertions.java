@@ -388,7 +388,7 @@ public class LocalJobExertions implements SorcerConstants {
 	public void arithmeticLocalJobExerter() throws Exception {
 
 		// exertion used as as service provider
-		Job exerter = ArithmeticUtil.createLocalJob();
+		Exertion exerter = ArithmeticUtil.createLocalJob();
 
 		Context out  = exert(exerter, context(ent("j1/t3/result/y")));
 		logger.info("j1/t3/result/y: " + value(out, "j1/t3/result/y"));

@@ -23,7 +23,7 @@ import static sorcer.so.operator.*;
  */
 public class CollabBuilder {
 	private final static Logger logger = LoggerFactory.getLogger(CollabBuilder.class);
-	private Morpher mFi1Morpher;
+	private Morpheus mFi1Morpher;
 
 	public static Model getEntryModel() throws Exception {
 
@@ -62,7 +62,7 @@ public class CollabBuilder {
 
 	public static Model getAmorphousModel() throws Exception {
 
-		Morpher mFi1Morpher =  (mgr, mFi, value) -> {
+		Morpheus mFi1Morpher =  (mgr, mFi, value) -> {
 			Fidelity fi =  mFi.getFidelity();
 			if (fi.getSelectName().equals("add")) {
 				if (((Double) value) <= 200.0) {
@@ -75,7 +75,7 @@ public class CollabBuilder {
 			}
 		};
 
-		Morpher mFi2Morpher = (mgr, mFi, value) -> {
+		Morpheus mFi2Morpher = (mgr, mFi, value) -> {
 			Fidelity<Signature> fi =  mFi.getFidelity();
 			if (fi.getSelectName().equals("divide")) {
 				if (((Double) value) <= 9.0) {
@@ -145,7 +145,7 @@ public class CollabBuilder {
 				})),
 			mdaFi("analyzer",
 				(mda("analyzer1",
-					(Request collab, Context cxt) -> {
+					(Requestor collab, Context cxt) -> {
 						double y1, y2, y3;
 						String dmnName = dmnName(cxt);
 						if (dmnName.equals("srvBlock")) {

@@ -15,18 +15,16 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model.ent;
+package sorcer.core.context.model.ent.cntrl;
 
-import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.signature.LocalSignature;
 import sorcer.core.service.Collaboration;
 import sorcer.service.*;
 import sorcer.service.modeling.Exploration;
-import sorcer.service.modeling.ExploreException;
 import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
-import java.util.Map;
 
 import static sorcer.mo.operator.mdaFi;
 import static sorcer.so.operator.exec;
@@ -35,7 +33,7 @@ import static sorcer.so.operator.response;
 /**
  * Created by Mike Sobolewski on 01/05/20.
  */
-public class Explorer extends Entry<Exploration> implements Controller, Exploration {
+public class Explorer extends Entry<Exploration> implements Controlling, Exploration {
 
     private static final long serialVersionUID = 1L;
 
@@ -99,7 +97,7 @@ public class Explorer extends Entry<Exploration> implements Controller, Explorat
     }
 
     @Override
-    public Context explore(Context context) throws ServiceException, ExploreException, RemoteException {
+    public Context explore(Context context) throws ContextException, RemoteException {
         // use output for explorer after collaboration
         Context output = null;
         try {

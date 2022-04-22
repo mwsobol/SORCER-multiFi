@@ -67,7 +67,7 @@ public class MuiltidisciplinaryBuilder {
 			sig("add", AdderImpl.class,
 				result("result/y", inPaths("arg/x1", "arg/x2"))));
 
-		Morpher morpher1 = (mgr, mFi, value) -> {
+		Morpheus morpher1 = (mgr, mFi, value) -> {
 			Fidelity<Signature> fi = mFi.getFidelity();
 			if (fi.getSelectName().equals("add")) {
 				if (((Double) value) <= 200.0) {
@@ -80,7 +80,7 @@ public class MuiltidisciplinaryBuilder {
 			}
 		};
 
-		Morpher morpher2 = (mgr, mFi, value) -> {
+		Morpheus morpher2 = (mgr, mFi, value) -> {
 			Fidelity<Signature> fi = mFi.getFidelity();
 			if (fi.getSelectName().equals("divide")) {
 				if (((Double) value) <= 9.0) {
@@ -91,7 +91,7 @@ public class MuiltidisciplinaryBuilder {
 			}
 		};
 
-		Morpher morpher3 = (mgr, mFi, value) -> {
+		Morpheus morpher3 = (mgr, mFi, value) -> {
 			Fidelity<Signature> fi = mFi.getFidelity();
 			Double val = (Double) value;
 			if (fi.getSelectName().equals("t5")) {
@@ -105,7 +105,7 @@ public class MuiltidisciplinaryBuilder {
 			}
 		};
 
-		Morpher morpher4 = (mgr, mFi, value) -> {
+		Morpheus morpher4 = (mgr, mFi, value) -> {
 			Fidelity<Signature> fi = mFi.getFidelity();
 			if (fi.getSelectName().equals("divide")) {
 				if (((Double) value) <= 9.0) {
@@ -226,7 +226,7 @@ public class MuiltidisciplinaryBuilder {
 
 		Context govcCxt = context(mdaFi("multidiscMdaFi",
 			mda("analyzer",
-				(Request gov, Context cxt) -> {
+				(Requestor gov, Context cxt) -> {
 					double x1, x2, x3;
 					String discName = rgnn(cxt);
 					if (discName.equals("morphModelDisc")) {

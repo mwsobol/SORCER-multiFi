@@ -19,6 +19,6 @@ public interface MorphFi<T> extends Fi<T> {
 
     public Fidelity getFidelity();
 
-    public Morpher getMorpher();
+    public Morpheus getMorpher();
 
 }

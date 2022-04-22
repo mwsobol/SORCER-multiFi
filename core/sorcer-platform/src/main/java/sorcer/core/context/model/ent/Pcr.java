@@ -40,35 +40,35 @@ import static sorcer.so.operator.eval;
 import static sorcer.so.operator.exec;
 
 /**
- * In service-based modeling, a procedure (for short a prc) is an implementation of
+ * In service-based modeling, a procedure (for short a pcr) is an implementation of
  * a function call, used in a service models to refer to a specific type of Entry.
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Prc<T> extends Function<T> implements Invocation<T>,
+public class Pcr<T> extends Function<T> implements Invocation<T>,
 	Setter, Scopable, Comparable<T>, Reactive<T>, func<T> {
 
 	private static final long serialVersionUID = 7495489980319169695L;
 	 
-	private static Logger logger = LoggerFactory.getLogger(Prc.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(Pcr.class.getName());
 	
 	private Principal principal;
 
-	// data store URL for this prc
+	// data store URL for this pcr
 	private URL dbURL;
 
-	public Prc(String name) {
+	public Pcr(String name) {
 		super(name);
 		this.name = name;
-		type = Functionality.Type.PROC;
+		type = Functionality.Type.PCR;
 	}
 	
-	public Prc(Identifiable identifiable) {
+	public Pcr(Identifiable identifiable) {
 		this(identifiable.getName());
 		impl = (T)identifiable;
 	}
 
-	public Prc(String path, Object entity) {
+	public Pcr(String path, Object entity) {
 		super(path);
 		name = path;
 		if (entity instanceof  Number || entity instanceof  String || entity instanceof  Date
@@ -96,7 +96,7 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
 		isValid = true;
 	}
 
-	public Prc(String path, Object entity, Object scope)
+	public Pcr(String path, Object entity, Object scope)
 			throws ContextException {
 		this(path);
         if (entity instanceof  Number || entity instanceof  String || entity instanceof  Date
@@ -118,7 +118,7 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
 		isValid = true;
 	}
 	
-	public Prc(Contextion map, String name, String path) {
+	public Pcr(Contextion map, String name, String path) {
 		this(name);
 		impl =  path;
 	}
@@ -171,9 +171,15 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
 			return out;
 		} else if (out instanceof Number &&  isValid && impl == null && !isPersistent) {
 			return (T) out;
-		} else if (impl instanceof Incrementor || ((impl instanceof ServiceInvoker) &&
-			scope != null && scope.isChanged())) {
-			isValid = false;
+		} else {
+			try {
+				if (impl instanceof Incrementor || ((impl instanceof ServiceInvoker) &&
+					scope != null && scope.isChanged())) {
+					isValid = false;
+				}
+			} catch (ContextException | RemoteException e) {
+				throw new EvaluationException(e);
+			}
 		}
 
 		Object val = null;
@@ -197,8 +203,8 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
 			} else {
 				val = out;
 			}
-			if (val instanceof Prc && ((Prc)val).asis() == null && out == null) {
-				logger.warn("undefined prc: " + val);
+			if (val instanceof Pcr && (( Pcr )val).asis() == null && out == null) {
+				logger.warn("undefined pcr: " + val);
 				return null;
 			}
 			// direct scope
@@ -329,8 +335,8 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
 	public int compareTo(T o) {
 		if (o == null)
 			throw new NullPointerException();
-		if (o instanceof Prc<?>)
-			return name.compareTo(((Prc<?>) o).getName());
+		if (o instanceof Pcr<?>)
+			return name.compareTo((( Pcr<?> ) o).getName());
 		else
 			return -1;
 	}
@@ -350,7 +356,7 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
             ps = "" + out;
         }
 
-        return "prc [key: " + name + ", eval: " + ps + ", path: " + key + "]";
+        return "pcr [key: " + name + ", eval: " + ps + ", path: " + key + "]";
     }
 
 	/* (non-Javadoc)
@@ -513,7 +519,7 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
 	public void addArgs(ArgSet set) throws EvaluationException {
 		Iterator<Arg> i = set.iterator();
 		while (i.hasNext()) {
-			Prc callEntry = (Prc)i.next();
+			Pcr callEntry = ( Pcr )i.next();
 			try {
 				putValue(callEntry.getName(), callEntry.asis());
 			} catch (Exception e) {
@@ -531,8 +537,8 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
 	
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof Prc
-				&& ((Prc) object).name.equals(name))
+		if (object instanceof Pcr
+				&& (( Pcr ) object).name.equals(name))
 			return true;
 		else
 			return false;

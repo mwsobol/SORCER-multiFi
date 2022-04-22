@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model.ent;
+package sorcer.core.context.model.ent.cntrl;
 
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.ExecutiveException;
@@ -27,7 +28,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 03/12/20221.
  */
-public class Hypervisor extends Entry<Analysis> implements Controller, Hypervision {
+public class Hypervisor extends Entry<Analysis> implements Controlling, Hypervision {
 
     private static final long serialVersionUID = 1L;
 

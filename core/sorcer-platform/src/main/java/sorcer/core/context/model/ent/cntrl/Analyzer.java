@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model.ent;
+package sorcer.core.context.model.ent.cntrl;
 
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.Analysis;
 import sorcer.service.*;
@@ -27,7 +28,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 01/05/20.
  */
-public class Analyzer extends Entry<Analysis> implements Controller, Analysis {
+public class Analyzer extends Entry<Analysis> implements Controlling, Analysis {
 
     private static final long serialVersionUID = 1L;
 
@@ -71,7 +72,7 @@ public class Analyzer extends Entry<Analysis> implements Controller, Analysis {
     }
 
     @Override
-    public void analyze(Request request, Context context) throws ServiceException {
+    public void analyze(Requestor request, Context context) throws ServiceException {
         try {
             if (impl != null && impl instanceof Analysis) {
                 if (contextion == null || context == contextion) {

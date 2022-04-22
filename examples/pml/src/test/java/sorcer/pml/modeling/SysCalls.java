@@ -1,5 +1,6 @@
 package sorcer.pml.modeling;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.*;
 import static sorcer.ent.operator.*;
 import static sorcer.so.operator.*;
+import static sorcer.util.Builder.*;
 
 /**
  * @author Mike Sobolewski
@@ -57,10 +59,10 @@ public class SysCalls {
 		ServiceInvoker cmd = cmdInvoker("volume",
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
 
-		EntryModel pm = entModel(operator.prc(cmd),
+		EntryModel pm = entModel(operator.pcr(cmd),
 				val("x", 10.0), val("y"),
-				prc("multiply", invoker("x * y", args("x", "y"))),
-				prc("add", invoker("x + y", args("x", "y"))));
+				pcr("multiply", invoker("x * y", args("x", "y"))),
+				pcr("add", invoker("x + y", args("x", "y"))));
 
 		CmdResult result = (CmdResult) invoke(pm, "volume");
 		// getValue from the result the volume of cylinder and assign to y parameter
@@ -96,8 +98,8 @@ public class SysCalls {
                 + Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
         Model pm = entModel(val("x", 10.0), args("y"),
-				prc("multiply", invoker("x * y", args("x", "y"))),
-				prc("add", invoker("x + y", args("x", "y"))));
+				pcr("multiply", invoker("x * y", args("x", "y"))),
+				pcr("add", invoker("x + y", args("x", "y"))));
 
         SysCall caller = sysCall("volume", cxt(val("cmd", "java -cp  " + cp + Volume.class.getName()),
                 inVal("cylinder"), outVal("cylinder/volume"), outVal("cylinder/radius"),
@@ -165,8 +167,8 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
 		Model sm = reqModel(val("x", 10.0), val("y"),
-				prc("multiply", invoker("x * y", args("x", "y"))),
-				prc("add", invoker("x + y", args("x", "y"))),
+				pcr("multiply", invoker("x * y", args("x", "y"))),
+				pcr("add", invoker("x + y", args("x", "y"))),
 				result("cylinder/volume"),
 				req("volume", sig("exec", SysCaller.class,
 //				fxn("volume", sig("exec", SysCallerProvider.class,
@@ -223,7 +225,7 @@ public class SysCalls {
 		assertTrue(exec(sm, "cylinder/radius").equals(2.0));
 		assertTrue(exec(sm, "cylinder/volume").equals(37.69911184307752));
 
-		// use values fro system prc in the model sm
+		// use values fro system pcr in the model sm
 		setValue(sm, "y", volume);
 		logger.info("multiply eval:" + eval(sm, "add"));
 		assertTrue(exec(sm, "add").equals(47.69911184307752));
