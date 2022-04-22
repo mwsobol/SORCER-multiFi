@@ -196,8 +196,14 @@ public class Req extends Function<Object> implements Serviceableness,
                 }
                 throw new EvaluationException("No model available for entry: " + this);
             } else if (impl instanceof MogramEntry) {
-                Context cxt = ((MogramEntry) impl).getValue().exert(args).getContext();
-                Object val = cxt.getValue(Context.RETURN);
+                Object val = null;
+                Context cxt = null;
+                if (impl instanceof Exertion) {
+                    cxt = (( MogramEntry ) impl).getValue().exert(args).getContext();
+                    val = cxt.getValue(Context.RETURN);
+                } else {
+                    val = (( MogramEntry ) impl).getValue();
+                }
                 if (val != null) {
                     return val;
                 } else {

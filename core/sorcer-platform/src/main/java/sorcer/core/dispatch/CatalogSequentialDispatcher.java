@@ -20,6 +20,7 @@ package sorcer.core.dispatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.model.ent.EntryModel;
+import sorcer.core.exertion.EvaluationTask;
 import sorcer.core.exertion.Mograms;
 import sorcer.service.Exerter;
 import sorcer.service.*;
@@ -83,8 +84,11 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                     Subroutine se = (Subroutine) mogram;
                     // support for continuous pre and post execution of task
                     // signatures
-                    if (previous != null && se.isTask() && ((Task) se).isContinous())
+                    if (previous != null && se.isTask() && ((Task) se).isContinous()) {
                         se.setContext(previous);
+                    } else if (se instanceof EvaluationTask){
+                        se.setDataContext(xrt.getDataContext());
+                    }
                     dispatchExertion(se, args);
                     previous = se.getContext();
                     if (mogram instanceof Block) {

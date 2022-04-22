@@ -134,7 +134,8 @@ public class EvaluationTask extends Task {
 							}
 						}
 				}
-			} else if (evaluator instanceof Entry && (( Entry) evaluator).getImpl() != null) {
+			} else if (evaluator instanceof Entry) {
+//			} else if (evaluator instanceof Entry && (( Entry) evaluator).getImpl() != null) {
 				Object impl = (( Entry) evaluator).getImpl();
 				if (impl != null && impl instanceof Evaluation) {
 					(( Evaluation) impl).setScope(dataContext);
@@ -164,7 +165,7 @@ public class EvaluationTask extends Task {
 			if (getProcessSignature().getContextReturn() != null)
 				dataContext.setContextReturn(getProcessSignature().getContextReturn());
 			dataContext.setReturnValue(result);
-			if (evaluator instanceof Scopable && ((Scopable)evaluator).getScope() != null) {
+			if (evaluator instanceof Scopable && evaluator.getScope() != null) {
 				(((Scopable)evaluator).getScope()).putValue(dataContext.getContextReturn().returnPath, result);
 			}
 			if (evaluator instanceof Req && dataContext.getScope() != null)
@@ -177,7 +178,7 @@ public class EvaluationTask extends Task {
 		return this;
 	}
 
-	private Object handleSrvEntry(Req evaluator, Arg... args) throws ServiceException, RemoteException, TransactionException {
+	private Object handleSrvEntry(Req evaluator, Arg... args) throws ServiceException, RemoteException {
 		Object out = null;
 		Object val = null;
 
