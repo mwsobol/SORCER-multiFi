@@ -978,23 +978,23 @@ public class operator extends Operator {
 		return new TagEntry(path, value, association);
 	}
 
-	public static Arg[] ents(String... entries)
-			throws ContextException {
-		ArgSet as = new ArgSet();
-		for (String name : entries) {
-			as.add(new Function(name, Context.none));
-		}
-		return as.toArray();
-	}
+//	public static Arg[] ents(String... entries)
+//			throws ContextException {
+//		ArgSet as = new ArgSet();
+//		for (String name : entries) {
+//			as.add(new Function(name, Context.none));
+//		}
+//		return as.toArray();
+//	}
 
-	public static Arg[] ents(Function... entries)
-			throws ContextException {
-		ArgSet as = new ArgSet();
-		for (Function e : entries) {
-			as.add(e);
-		}
-		return as.toArray();
-	}
+//	public static Arg[] ents(Function... entries)
+//			throws ContextException {
+//		ArgSet as = new ArgSet();
+//		for (Function e : entries) {
+//			as.add(e);
+//		}
+//		return as.toArray();
+//	}
 
 	public static Function inout(Function entry) {
 		entry.setType(Functionality.Type.INOUT);

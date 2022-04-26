@@ -791,9 +791,27 @@ public class operator extends Operator {
 		}
 	}
 
+	public static Paths tasks(String... tasks) {
+		Paths paths = new Paths(tasks);
+		paths.type = Type.ROUTINE;
+		return paths;
+	}
+
+	public static Paths routines(String... routines) {
+		Paths paths = new Paths(routines);
+		paths.type = Type.ROUTINE;
+		return paths;
+	}
+
 	public static Paths disciplines(String... disciplines) {
 		Paths paths = new Paths(disciplines);
 		paths.type = Type.DISCIPLINE;
+		return paths;
+	}
+
+	public static Paths ents(String... argnames) {
+		Paths paths = new Paths(argnames);
+		paths.type = Type.ENT;
 		return paths;
 	}
 
@@ -825,9 +843,9 @@ public class operator extends Operator {
         return de;
 	}
 
-	public static ExecDependency idfDep(String fiName, List<Path> paths) {
+	public static ExecDependency  par(String fiName, List<Path> paths) {
 		ExecDependency de =  new ExecDependency(fiName, paths);
-		de.setType(Type.IDF);
+		de.setType(Type.PAR);
 		return de;
 	}
 
@@ -1668,8 +1686,8 @@ public class operator extends Operator {
 		}
 	}
 
-    public static Copier copier(ContextDomain fromContext, Arg[] fromEntries,
-                                ContextDomain toContext, Arg[] toEntries) throws EvaluationException {
+    public static Copier copier(ContextDomain fromContext, sorcer.eo.operator.Args fromEntries,
+                                ContextDomain toContext, sorcer.eo.operator.Args toEntries) throws EvaluationException {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 
