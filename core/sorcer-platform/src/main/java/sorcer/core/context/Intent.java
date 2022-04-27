@@ -97,6 +97,7 @@ public class Intent extends ServiceContext<Object> {
     public void setDiscipline(Discipline discipline) {
         this.discipline = discipline;
     }
+    
     public ServiceFidelity getDisciplineFi() {
         return disciplineFi;
     }

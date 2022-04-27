@@ -359,7 +359,7 @@ operator extends Operator {
         itemList.add(0, Context.Type.DESIGN);
         Object[] cxtItems = new Object[itemList.size()];
         itemList.toArray(cxtItems);
-        Intent dCxt = (Intent) domainContext(cxtItems);
+        Intent dCxt = (Intent) contextDomain(cxtItems);
         dCxt.setContextType(Context.Type.DESIGN);
         dCxt.setIntentType(Context.IntentType.DEVELOP);
 
@@ -387,14 +387,14 @@ operator extends Operator {
             }
         }
         try {
-            return (ServiceContext)domainContext(items);
+            return (ServiceContext) contextDomain(items);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public static ContextDomain domainContext(Object... entries) throws ContextException, RemoteException {
+    public static ContextDomain contextDomain(Object... entries) throws ContextException, RemoteException {
         // do not create a context from Context, jut return
         if (entries == null || entries.length == 0) {
             return new ServiceContext();
@@ -4055,6 +4055,21 @@ operator extends Operator {
             Kind.DESIGN,
             Kind.MODEL,
             Kind.TASKER);
+        return signature;
+    }
+
+    public static Signature diffSig(Class<?> serviceType) {
+        return differentiatorSig(serviceType);
+    }
+
+    public static Signature differentiatorSig(Class<?> serviceType) {
+        Signature signature = null;
+        try {
+            signature = sig(serviceType);
+        } catch (SignatureException e) {
+            throw new RuntimeException("invalid signature: " + serviceType);
+        }
+        ((ServiceSignature)signature).addRank(Kind.DIFFERENTIATOR);
         return signature;
     }
 

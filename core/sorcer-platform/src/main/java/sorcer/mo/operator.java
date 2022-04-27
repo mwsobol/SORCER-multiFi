@@ -1112,9 +1112,9 @@ public class operator {
             Object[] dest = new Object[items.length + 1];
             System.arraycopy(items, 0, dest, 1, items.length);
             dest[0] = model;
-            return ( Model ) domainContext(dest);
+            return ( Model ) contextDomain(dest);
         }
-        return ( Model ) domainContext(items);
+        return ( Model ) contextDomain(items);
     }
 
     public static void update(Mogram mogram, Setup... entries) throws ContextException {
