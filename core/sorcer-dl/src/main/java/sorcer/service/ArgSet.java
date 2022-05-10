@@ -3,7 +3,7 @@ package sorcer.service;
 /*
  * Copyright 2013 the original author or authors.
  * Copyright 2013 SorcerSoft.org.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,7 +29,7 @@ import java.util.function.Function;
  */
 @SuppressWarnings("rawtypes")
 public class ArgSet extends LinkedHashSet<Arg> {
-	
+
 	private static final long serialVersionUID = -4662755904016297879L;
 
 	// paths of a model as inputs in a service context used
@@ -39,13 +39,13 @@ public class ArgSet extends LinkedHashSet<Arg> {
 	public ArgSet() {
 		super();
 	}
-	
+
 	public ArgSet(Arg...  args) {
 		for (Arg arg : args) {
 			add(arg);
 		}
 	}
-	
+
 	public Arg getArg(String argName) {
 		for (Arg v : this) {
 			if (v.getName().equals(argName))
@@ -53,9 +53,9 @@ public class ArgSet extends LinkedHashSet<Arg> {
 		}
 		return null;
 	}
-	
+
 	public void setValue(String argName, Object value)
-			throws EvaluationException {
+		throws EvaluationException {
 		Arg arg = null;
 		for (Arg a : this) {
 			if (a.getName().equals(argName)) {
@@ -65,7 +65,7 @@ public class ArgSet extends LinkedHashSet<Arg> {
 						((Setter) arg).setValue(value);
 					} catch (Exception e) {
 						throw new EvaluationException();
-					} 
+					}
 				break;
 			}
 		}
@@ -111,7 +111,7 @@ public class ArgSet extends LinkedHashSet<Arg> {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean remove(Object obj) {
 		if (obj == null || !(obj instanceof Arg)) {
@@ -127,32 +127,36 @@ public class ArgSet extends LinkedHashSet<Arg> {
 		return false;
 	}
 
-	 public List<String> getNames() {
-		 List<String> names = new ArrayList<String>(size());
-		 Iterator<Arg> i = iterator();
-		 while (i.hasNext()) {
-			 names.add(i.next().getName());
-		 }
-		 return names;
-	 }
-	 
-	 public List<Object> getValues() throws ContextException, RemoteException {
-		 List<Object> values = new ArrayList<Object>(size());
-		 Iterator<Arg> i = iterator();
-		 while (i.hasNext()) {
-			 Object val = i.next();
-			 if (val instanceof Evaluation) {
-				 values.add(((Evaluation)val).evaluate());
-			 } else
-				 values.add(null);
-		 }
-		 return values;
-	 }
-	 
-	 public Arg[] toArray() {
-		 Arg[] va = new Arg[size()];
-		 return toArray(va);
-	 }
+	public List<String> getPathNames() {
+		return paths.getPathNames();
+	}
+
+	public List<String> getNames() {
+		List<String> names = new ArrayList<String>(size());
+		Iterator<Arg> i = iterator();
+		while (i.hasNext()) {
+			names.add(i.next().getName());
+		}
+		return names;
+	}
+
+	public List<Object> getValues() throws ContextException, RemoteException {
+		List<Object> values = new ArrayList<Object>(size());
+		Iterator<Arg> i = iterator();
+		while (i.hasNext()) {
+			Object val = i.next();
+			if (val instanceof Evaluation) {
+				values.add(((Evaluation)val).evaluate());
+			} else
+				values.add(null);
+		}
+		return values;
+	}
+
+	public Arg[] toArray() {
+		Arg[] va = new Arg[size()];
+		return toArray(va);
+	}
 
 	public static ArgSet asSet(Object[] array) {
 		ArgSet vl = new ArgSet();
@@ -175,7 +179,7 @@ public class ArgSet extends LinkedHashSet<Arg> {
 					((Setter) p).setValue(null);
 				} catch (Exception e) {
 					throw new EvaluationException();
-				} 
+				}
 		}
 	}
 

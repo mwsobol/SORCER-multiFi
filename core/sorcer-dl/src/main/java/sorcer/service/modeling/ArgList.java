@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 
-package sorcer.service;
+package sorcer.service.modeling;
 
 import sorcer.core.Tag;
-import sorcer.core.context.model.ent.EntException;
-import sorcer.service.modeling.Functionality;
+import sorcer.service.*;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -70,7 +69,7 @@ public class ArgList extends ArrayList<Arg> {
 		}
 	}
 
-	public Arg getArg(String parName) throws EntException {
+	public Arg getArg(String parName) {
 		for (Arg p : this) {
 			if (p.getName().equals(parName)) {
 				return p;
@@ -102,8 +101,6 @@ public class ArgList extends ArrayList<Arg> {
 				break;
 			}
 		}
-		if (par == null)
-			throw new EntException("No such Arg in the list: " + parName);
 	}
 	
 	public ArgList selectArgs(List<String>... names) {

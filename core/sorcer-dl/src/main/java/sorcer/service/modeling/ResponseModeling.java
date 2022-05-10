@@ -52,10 +52,10 @@ public interface ResponseModeling extends Modeling, Configurable, Remote {
 			RemoteException;
 
 	public double[] getPartialDerivativeGradient(String varname,
-                                                 List<String> wrt) throws EvaluationException, RemoteException;
+                                                 Wrt wrt) throws EvaluationException, RemoteException;
 
 	public double[][] getPartialDerivativeMatrix(List<String> varnames,
-                                                 List<String> wrt) throws EvaluationException, RemoteException;
+                                                 Wrt wrt) throws EvaluationException, RemoteException;
 
 	public ModelTable getPartialDerivativeTable(String varname)
 			throws EvaluationException, RemoteException;
@@ -73,11 +73,11 @@ public interface ResponseModeling extends Modeling, Configurable, Remote {
                                      String evaluationName, String wrt) throws EvaluationException,
 			RemoteException;
 
-	public double[] getTotalDerivativeGradient(String varname, List<String> wrt)
+	public double[] getTotalDerivativeGradient(String varname, Wrt wrt)
 			throws EvaluationException, RemoteException;
 
 	public double[][] getTotalDerivativeMatrix(List<String> varnames,
-                                               List<String> wrt) throws EvaluationException, RemoteException;
+                                               Wrt wrt) throws EvaluationException, RemoteException;
 
 	public ModelTable getTotalDerivativeTable(String varname)
 			throws EvaluationException, RemoteException;
