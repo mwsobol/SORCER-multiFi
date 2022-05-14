@@ -13,10 +13,7 @@ import sorcer.util.url.sos.SdbUtil;
 
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Entry<V> extends MultiFiSlot<String, V>
         implements Identifiable, ElementaryRequestor, Evaluation<V>, Activity, Callable<V>, Setter, Reactive<V>, ent<V> {
@@ -28,6 +25,8 @@ public class Entry<V> extends MultiFiSlot<String, V>
     protected Uuid id = UuidFactory.generate();
 
     protected ArgSet args = new ArgSet();
+
+    protected Set<Functionality.Type> kind = new HashSet<Functionality.Type>();
 
     protected String domain;
 
@@ -251,6 +250,32 @@ public class Entry<V> extends MultiFiSlot<String, V>
     public Entry<V> setReactive(boolean isReactive) {
         this.isReactive = isReactive;
         return this;
+    }
+
+    public Set<Functionality.Type> getKind() {
+        return kind;
+    }
+
+    public void removeKind(Functionality.Type type) {
+        kind.remove(type);
+    }
+
+    public void addKind(Functionality.Type... types) {
+        for (Functionality.Type t : types) {
+            kind.add(t);
+        }
+    }
+
+    public void addKind(List<Functionality.Type> types) {
+        kind.addAll(types);
+    }
+
+    public void addKind(Set<Functionality.Type> types) {
+        kind.addAll(types);
+    }
+
+    public boolean isKindOf(Functionality.Type type) {
+        return kind.contains(type);
     }
 
     public boolean isPersistent() {

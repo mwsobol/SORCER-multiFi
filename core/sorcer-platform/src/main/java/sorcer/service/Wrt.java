@@ -16,11 +16,12 @@
 package sorcer.service;
 
 import sorcer.core.Tag;
+import sorcer.service.modeling.SupportComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Wrt extends ArrayList<String> {
+public class Wrt extends ArrayList<String> implements SupportComponent {
 
 	static final long serialVersionUID = 3305090121860355856L;
 

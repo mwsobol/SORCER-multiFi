@@ -3543,12 +3543,16 @@ operator extends Operator {
     }
 
     public static EntryList inputs(Value...  entries) {
-        return designInputs(entries);
+        EntryList el = new EntryList(entries);
+        el.setType(Functionality.Type.INITIAL_DESIGN);
+        return el;
     }
 
     public static EntryList designInputs(Value...  entries) {
-        EntryList el = new EntryList(entries);
-        el.setType(Functionality.Type.INITIAL_DESIGN);
+        EntryList el = inputs(entries);
+        for (Entry ent : el) {
+            ent.addKind(Functionality.Type.DESIGN_INPUT);
+        }
         return el;
     }
 

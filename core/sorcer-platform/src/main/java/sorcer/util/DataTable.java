@@ -1422,8 +1422,7 @@ public class DataTable implements ModelTable, Response, rsp {
 	 */
 	public void setRowIdentifiers(String col1Name) {
 		rowIdentifiers = new ArrayList<Object>();
-		for (int i = 0; i < getRowCount(); i++)
-			rowIdentifiers.add(getValue(i, col1Name));
+		rowIdentifiers.add(col1Name);
 	}
 
 	/**
