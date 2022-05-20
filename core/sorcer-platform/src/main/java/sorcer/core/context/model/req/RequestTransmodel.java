@@ -208,6 +208,11 @@ public class RequestTransmodel extends RequestModel implements Transmodel, Confi
         }
     }
 
+    @Override
+    public Context superevaluate(Context context, Arg... args) throws ServiceException, RemoteException {
+        return evaluate(context, args);
+    }
+
     public void execDependencies(String path, Context inContext, Arg... args) throws ServiceException, RemoteException {
         Map<String, List<ExecDependency>> dpm = ((ModelStrategy) domainStrategy).getDependentDomains();
         if (dpm != null && dpm.get(path) != null) {

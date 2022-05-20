@@ -39,4 +39,15 @@ public interface Transdiscipline extends Discipline, disc, cxtn {
     public Context explore(Context context, Arg... args)
         throws ContextException, RemoteException;
 
+    /**
+     * Returns the context of parent evaluation of this contextion.
+     * The current context can be the existing one with no need
+     * to evaluate it if is still valid.
+     *
+     * @return the current execute of this evaluation
+     * @throws MogramException
+     * @throws RemoteException
+     */
+    public Context superevaluate(Context context, Arg... args) throws ServiceException, RemoteException;
+
 }

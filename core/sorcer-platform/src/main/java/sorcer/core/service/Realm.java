@@ -21,6 +21,8 @@ import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.service.*;
 
+import java.rmi.RemoteException;
+
 /**
  * @author Mike Sobolewski
  */
@@ -32,4 +34,10 @@ abstract public class Realm extends MultiFiSlot implements Transdiscipline {
     public Object getId() {
         return id;
     }
+
+    @Override
+    public Context superevaluate(Context context, Arg... args) throws ServiceException, RemoteException {
+        return evaluate(context, args);
+    }
+
 }

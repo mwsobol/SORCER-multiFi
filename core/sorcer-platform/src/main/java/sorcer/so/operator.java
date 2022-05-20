@@ -165,6 +165,28 @@ public class operator extends Operator {
         return collab.evaluateDomain(domainName, context);
     }
 
+    public static ServiceContext anal(Requestor request, Context context) throws ContextException {
+        Context rc;
+        try {
+            if (request instanceof Transdomain) {
+                rc = ((Transdomain) request).analyze(context);
+            } else {
+                try {
+                    if (context == null) {
+                        rc = (Context) request.execute(new Arg[0]);
+                    } else {
+                        rc = (Context) request.execute(new Arg[]{context});
+                    }
+                } catch (ServiceException e) {
+                    throw new ContextException(e);
+                }
+            }
+        } catch (RemoteException | ServiceException e) {
+            throw new ContextException(e);
+        }
+        return (ServiceContext)rc;
+    }
+
     public static ServiceContext eval(Requestor request, Context context) throws ContextException {
         Context rc;
         try {
@@ -183,6 +205,18 @@ public class operator extends Operator {
             }
         } catch (RemoteException | ServiceException e) {
             throw new ContextException(e);
+        }
+        return (ServiceContext)rc;
+    }
+
+    public static ServiceContext supereval(Requestor request, Context context) throws ContextException {
+        Context rc = eval(request, context);
+        if (request instanceof Transdiscipline) {
+            try {
+                rc = ((Transdiscipline)request).superevaluate(context);
+            } catch (ServiceException | RemoteException e) {
+                throw new ContextException(e);
+            }
         }
         return (ServiceContext)rc;
     }

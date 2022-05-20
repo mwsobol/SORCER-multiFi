@@ -252,5 +252,8 @@ abstract public class Transroutine extends Subroutine implements Transdomain, dm
 		this.analyzerFi = analyzerFi;
 	}
 
-
+	@Override
+	public Context superevaluate(Context context, Arg... args) throws ServiceException, RemoteException {
+		return evaluate(context, args);
+	}
 }
