@@ -2350,6 +2350,31 @@ operator extends Operator {
         return pr;
     }
 
+    public static Projection dscPrj(String path$domain, Fidelity... fidelities) {
+        String path = null;
+        String domain = null;
+        if (path$domain.indexOf("$") > 0) {
+            int ind = path$domain.indexOf("$");
+            path = path$domain.substring(0, ind);
+            domain = path$domain.substring(ind + 1);
+        } else if (path$domain != null) {
+            path = path$domain;
+        }
+        Projection pr = new Projection(fidelities);
+        pr.setName(path);
+        pr.setDomain(domain);
+        pr.setType(Fi.Type.DISCIPLINE);
+        return pr;
+    }
+
+    public static Projection dscPrj(String name, String domain, Fidelity... fidelities) {
+        Projection pr = new Projection(fidelities);
+        pr.setName(name);
+        pr.setDomain(domain);
+        pr.setType(Fi.Type.DISCIPLINE);
+        return pr;
+    }
+
     public static Projection cxtPrj(Fidelity... fidelities) {
         Projection pr = new Projection(fidelities);
         pr.setType(Fi.Type.CXT_PRJ);
@@ -2365,6 +2390,25 @@ operator extends Operator {
         Projection p = new Projection(fidelity);
         p.setName(name);
         return p;
+    }
+
+    public static Fi dscPrj(String path$domain, List<Path> paths, String gradient) {
+        String path = null;
+        String domain = null;
+        if (path$domain.indexOf("$") > 0) {
+            int ind = path$domain.indexOf("$");
+            path = path$domain.substring(0, ind);
+            domain = path$domain.substring(ind + 1);
+        } else if (path$domain != null) {
+            path = path$domain;
+        }
+        FidelityList  fl = new FidelityList(paths.size());
+        for (Path p : paths) {
+            fl.add(gFi(path, p.getName(), gradient));
+        }
+        Projection prj = new Projection(fl);
+        prj.setType(Fi.Type.DISCIPLINE);
+        return prj;
     }
 
     public static Fi prj(String fidelity, List<Path> paths, String gradient) {
