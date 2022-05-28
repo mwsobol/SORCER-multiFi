@@ -339,10 +339,6 @@ public class operator extends Operator {
         return new Pipeline(pservices);
     }
 
-	public static Pipeline n2(String name, Context data, Opservice... pservices) {
-		return new Pipeline(name, data, pservices);
-	}
-
 	public static <T> Evaluator<T>  mfEval(Evaluator<T>... evaluators) {
 		return (Evaluator<T>) new MultiFiEvaluator(evaluators);
 	}

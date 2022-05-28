@@ -173,7 +173,7 @@ public class Invokers {
     }
 
     @Test
-    public void execpcr() throws Exception {
+    public void execProcedure() throws Exception {
 
 	    // constant entry
         ent x1 = ent("x1", 1.0);
@@ -220,6 +220,34 @@ public class Invokers {
 		Object val = exec(y, context(val("x1", 10.0), val("x2", 20.0)));
 		logger.info("y: " + val);
 		assertTrue(val.equals(30.0));
+	}
+
+	@Test
+	public void invokerDoublesDecimals() throws Exception {
+		y = ent("y", invoker("x1 + x2", args("x1", "x2")));
+		Object val = exec(y, context(val("x1", 10.0), val("x2", 20.0)));
+		logger.info("y: " + val);
+		assertTrue(val.equals(30.0));
+
+		z = ent("z", invoker("x1 = 10.0d; x2 = 20.0d; x1 + x2"));
+		val = exec(z);
+		logger.info("z: " + val);
+		assertTrue(val.equals(30.0));
+	}
+
+	@Test
+	public void invokerOfInvokers() throws Exception {
+
+		y = ent("y", invoker("import sorcer.core.context.model.ent.Entry;"
+			+ " import static sorcer.so.operator.exec;"
+
+			+ " Entry z = ent(invoker('x0 = x1 = 10.0d; x2 = 20.0d; x1 + x2'));"
+			+ " def zv = exec(z);"
+			+ " zv + 10.0d"));
+
+		Object val = exec(y);
+		logger.info("y: " + val);
+		assertTrue(val.equals(40.0));
 	}
 
 	@Test
