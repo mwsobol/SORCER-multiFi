@@ -37,6 +37,7 @@ import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.Functionality;
 import sorcer.util.Checkpoint;
 
+import java.io.File;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Date;
@@ -585,6 +586,10 @@ public class operator extends Operator {
 
 	public static ServiceInvoker invoker(String expression) {
 		return new GroovyInvoker(expression);
+	}
+
+	public static ServiceInvoker invoker(File script, Pcr... parameters) {
+		return new GroovyInvoker(script);
 	}
 
 	public static ServiceInvoker invoker(Routine exertion) {

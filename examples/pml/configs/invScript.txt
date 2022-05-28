@@ -1,0 +1,10 @@
+import sorcer.core.context.model.ent.*;
+import static sorcer.so.operator.exec;
+
+    def x1 = 10.0d;
+    def x2 = 20.0d;
+    Entry z = ent(invoker("x1 + x2",
+        cxt(ent("x1", x1), ent("x2", x2)),
+        args("x1", "x2")));
+    def zv = exec(z);
+    zv + 10.0d;

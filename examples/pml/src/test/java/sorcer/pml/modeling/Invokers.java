@@ -18,6 +18,8 @@ import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ent;
 
+import java.io.File;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
@@ -241,9 +243,18 @@ public class Invokers {
 		y = ent("y", invoker("import sorcer.core.context.model.ent.Entry;"
 			+ " import static sorcer.so.operator.exec;"
 
-			+ " Entry z = ent(invoker('x0 = x1 = 10.0d; x2 = 20.0d; x1 + x2'));"
+			+ " Entry z = ent(invoker('x1 = 10.0d; x2 = 20.0d; x1 + x2'));"
 			+ " def zv = exec(z);"
 			+ " zv + 10.0d"));
+
+		Object val = exec(y);
+		logger.info("y: " + val);
+		assertTrue(val.equals(40.0));
+	}
+
+	@Test
+	public void invokerOfInvokersScript() throws Exception {
+		y = ent("y", invoker(new File("configs/invScript.txt")));
 
 		Object val = exec(y);
 		logger.info("y: " + val);
@@ -254,8 +265,8 @@ public class Invokers {
 	public void substituteInvokeArgs() throws Exception {
 		ent x1, x2, y;
 
-		x1 = ent("x1", 1.0);
-		x2 = ent("x2", 2.0);
+		x1 = val("x1", 1.0);
+		x2 = val("x2", 2.0);
 		y = ent("y", invoker("x1 + x2", x1, x2));
 		
 		logger.info("y: " + exec(y));
