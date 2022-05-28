@@ -25,9 +25,7 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.ent.operator.*;
 import static sorcer.ent.operator.mfEval;
-import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.pipe;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.add;
 import static sorcer.so.operator.*;
@@ -76,7 +74,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void lambdaInvoker() throws Exception {
+	public void lambdaModelInvoker() throws Exception {
 
 		Model mo = model(val("x", 10.0), val("y", 20.0),
 				ent(invoker("fxn",
@@ -235,6 +233,21 @@ public class Invokers {
 		val = exec(z);
 		logger.info("z: " + val);
 		assertTrue(val.equals(30.0));
+	}
+
+	@Test
+	public void lambdaInvoker() throws ServiceException {
+
+		Evaluator linv = invoker("lambda",
+			(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
+			args("x", "y"));
+
+		Context lcxt = context(
+			val("x", 20.0),
+			val("y", 80.0));
+
+		logger.info("linv: " + exec(linv, lcxt));
+		assertEquals(130.0, exec(linv));
 	}
 
 	@Test
