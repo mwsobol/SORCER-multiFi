@@ -2407,6 +2407,7 @@ operator extends Operator {
             fl.add(gFi(path, p.getName(), gradient));
         }
         Projection prj = new Projection(fl);
+        prj.setDomain(domain);
         prj.setType(Fi.Type.DISCIPLINE);
         return prj;
     }
