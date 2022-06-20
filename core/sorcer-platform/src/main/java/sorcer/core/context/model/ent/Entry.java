@@ -48,6 +48,8 @@ public class Entry<V> extends MultiFiSlot<String, V>
 
     protected String supername;
 
+    protected Evaluation evaluator;
+
     public Entry() {
     }
 
@@ -70,6 +72,10 @@ public class Entry<V> extends MultiFiSlot<String, V>
     @Override
     public Uuid getId() {
         return id;
+    }
+
+    public Evaluation getEvaluator() {
+        return evaluator;
     }
 
     public Object selectImpl() {
