@@ -1241,13 +1241,14 @@ operator extends Operator {
         return signature.getSelector();
     }
 
-    public static Signature sig(String operation, Object provider, Object... args) {
+    public static Signature sig(String operation, Object provider, Object... objects) {
         LocalSignature sig = new LocalSignature();
         sig.setName(operation);
         sig.setSelector(operation);
         sig.setTarget(provider);
-        if (args.length > 0) {
-            for (Object o : args) {
+        Args args = null;
+        if (objects.length > 0) {
+            for (Object o : objects) {
                 if (o instanceof Type) {
                     sig.setType((Type) o);
                 } else if (o instanceof Operating) {
@@ -1259,8 +1260,13 @@ operator extends Operator {
                 } else if (o instanceof ServiceDeployment) {
                     sig.setProvisionable(true);
                     sig.setDeployment((ServiceDeployment) o);
+                } else if (o instanceof Args) {
+                    args = (Args) o;
                 }
             }
+        }
+        if (args != null) {
+            sig.setArgs(args.args);
         }
         return sig;
     }
@@ -3688,7 +3694,9 @@ operator extends Operator {
                 // a contextReturn in args is used as dependent entry
                 // and also as a  contextReturn in context
                 // as all args are appended to context defined by a Paths
-                if (o instanceof Path) {
+                if (o instanceof Args) {
+                    objs.add(o);
+                } else if (o instanceof Path) {
                     ps.add((Path) o);
                     objs.add(((Path) o).path);
                 } else {
