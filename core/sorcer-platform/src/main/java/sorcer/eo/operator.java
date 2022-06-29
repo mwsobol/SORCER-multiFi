@@ -1230,8 +1230,7 @@ operator extends Operator {
     public static Signature sig(String operation, Class<?> serviceType,
                                 String initSelector) throws SignatureException {
         try {
-            return new LocalSignature(operation, serviceType, initSelector,
-                (Class<?>[]) null, (Object[]) null);
+            return new LocalSignature(operation, serviceType, initSelector, null, (Object[]) null);
          } catch (Exception e) {
             throw new SignatureException(e);
         }
@@ -1265,8 +1264,8 @@ operator extends Operator {
                 }
             }
         }
-        if (args != null) {
-            sig.setArgs(args.args);
+        if (args != null && args instanceof  Args) {
+            sig.setArgs(new Object[] { args });
         }
         return sig;
     }
@@ -1538,8 +1537,8 @@ operator extends Operator {
                     ((LocalSignature)sig).setTarget(provider);
                 }
                 sig.setProviderName(providerName);
-                if (args != null) {
-                    ((LocalSignature)sig).setArgs(args.args);
+                if (args != null && args instanceof Args) {
+                    ((LocalSignature)sig).setArgs(new Object[] { args });
                 }
             }
         }
