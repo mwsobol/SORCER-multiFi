@@ -1264,8 +1264,9 @@ operator extends Operator {
                 }
             }
         }
-        if (args != null && args instanceof  Args) {
-            sig.setArgs(new Object[] { args });
+        if (args != null) {
+            sig.setArgs(args.args);
+//            sig.setArgs(new Object[] { args });
         }
         return sig;
     }
@@ -1537,8 +1538,9 @@ operator extends Operator {
                     ((LocalSignature)sig).setTarget(provider);
                 }
                 sig.setProviderName(providerName);
-                if (args != null && args instanceof Args) {
-                    ((LocalSignature)sig).setArgs(new Object[] { args });
+                if (args != null) {
+                    ((LocalSignature)sig).setArgs(args.args);
+//                    ((LocalSignature)sig).setArgs(new Object[] { args });
                 }
             }
         }
