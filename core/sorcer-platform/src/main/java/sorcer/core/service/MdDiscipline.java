@@ -24,7 +24,7 @@ import sorcer.service.*;
 /**
  * @author Mike Sobolewski
  */
-abstract public class Realm extends MultiFiSlot implements Transdiscipline {
+abstract public class MdDiscipline extends MultiFiSlot implements Transdiscipline {
 
     protected Uuid id = UuidFactory.generate();
 

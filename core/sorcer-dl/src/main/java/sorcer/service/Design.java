@@ -24,13 +24,13 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
- * An top-level common interface for all design services in SORCER.
+ * A top-level common interface for all design services in SORCER.
  * Design services are frontend services created by multidisciplinary
  * designers. Standalone design services that are multidisciplinary
  * services comprise design intents that refer to target disciplines
  * (mostly transdisciplines), and development controllers (developers).
  *
- * @author Mike Sobolewski, 05/23/2021
+ * @author Mike Sobolewski, 11/17/2022
  */
 public interface Design extends Requestor, Contextion, Remote {
 

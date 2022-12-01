@@ -31,7 +31,7 @@ import sorcer.core.context.model.req.Req;
 import sorcer.core.plexus.*;
 import sorcer.core.service.Collaboration;
 import sorcer.core.service.Governance;
-import sorcer.core.service.Transdesign;
+import sorcer.core.service.MdDesign;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.Exertion;
 import sorcer.core.provider.exerter.ServiceShell;
@@ -359,17 +359,17 @@ public class operator extends Operator {
         }
     }
 
-    public static Transdesign dzn(String name) throws ServiceException {
-        return new Transdesign(name);
+    public static MdDesign dzn(String name) throws ServiceException {
+        return new MdDesign(name);
     }
 
-    public static Transdesign dzn(Intent designIntent) throws ServiceException {
+    public static MdDesign dzn(Intent designIntent) throws ServiceException {
         return dzn(null, designIntent);
     }
 
-    public static Transdesign dzn(String name, Intent designIntent) throws ServiceException {
+    public static MdDesign dzn(String name, Intent designIntent) throws ServiceException {
         try {
-            Transdesign design = new Transdesign(name, designIntent);
+            MdDesign design = new MdDesign(name, designIntent);
             FidelityManager fiManger = new DesignFidelityManager(design);
             design.setFidelityManager(fiManger);
             designIntent.setSubject(design.getName(),design);
@@ -379,12 +379,12 @@ public class operator extends Operator {
         }
     }
 
-    public static Transdesign dzn(String name, Discipline discipline, Context discContext, Development developer) throws ServiceException {
-        return new Transdesign(name, discipline, discContext, developer);
+    public static MdDesign dzn(String name, Discipline discipline, Context discContext, Development developer) throws ServiceException {
+        return new MdDesign(name, discipline, discContext, developer);
     }
 
-    public static Transdesign dzn(Discipline discipline, Context discContext, Development developer) throws ServiceException {
-        return new Transdesign(null, discipline, discContext, developer);
+    public static MdDesign dzn(Discipline discipline, Context discContext, Development developer) throws ServiceException {
+        return new MdDesign(null, discipline, discContext, developer);
     }
 
     public static ServiceContext dvlp(Requestor request, Object... items) throws ServiceException {
@@ -410,7 +410,7 @@ public class operator extends Operator {
             if (request instanceof Mogram) {
                 out = response((Mogram)request, items);
             } else if (request instanceof Design) {
-                return morphDesign(( Transdesign ) request, items);
+                return morphDesign(( MdDesign ) request, items);
             }else if (request instanceof Node) {
                 Arg[] args = new Arg[items.length];
                 System.arraycopy(items, 0, args, 0, items.length);
@@ -432,7 +432,7 @@ public class operator extends Operator {
         return (ServiceContext)out;
     }
 
-    public static ServiceContext morphDesign(Transdesign design, Object... items)
+    public static ServiceContext morphDesign(MdDesign design, Object... items)
         throws ServiceException, RemoteException, ExecutiveException, ConfigurationException {
         if (design.getDevelopmentFi() == null) {
             design.setDeveloperFi(design.getDesignIntent());
