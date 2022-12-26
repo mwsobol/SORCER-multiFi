@@ -226,7 +226,7 @@ public class MuiltidisciplinaryBuilder {
 
 		Context govcCxt = context(mdaFi("multidiscMdaFi",
 			mda("analyzer",
-				(Requestor gov, Context cxt) -> {
+				(Request gov, Context cxt) -> {
 					double x1, x2, x3;
 					String discName = rgnn(cxt);
 					if (discName.equals("morphModelDisc")) {

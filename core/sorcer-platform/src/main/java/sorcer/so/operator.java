@@ -157,7 +157,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Context evalDomain(Collaboration collab, Requestor request, Context context) throws ServiceException {
+    public static Context evalDomain(Collaboration collab, Request request, Context context) throws ServiceException {
         return collab.evaluateDomain(request, context);
     }
 
@@ -165,7 +165,7 @@ public class operator extends Operator {
         return collab.evaluateDomain(domainName, context);
     }
 
-    public static ServiceContext eval(Requestor request, Context context) throws ContextException {
+    public static ServiceContext eval(Request request, Context context) throws ContextException {
         Context rc;
         try {
             if (request instanceof Contextion) {
@@ -266,7 +266,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Object exec(Requestor request, String path$domain) throws ServiceException {
+    public static Object exec(Request request, String path$domain) throws ServiceException {
         if (request instanceof DataContext) {
             return value((Context)request, path$domain);
         } else {
@@ -387,7 +387,7 @@ public class operator extends Operator {
         return new MdDesign(null, discipline, discContext, developer);
     }
 
-    public static ServiceContext dvlp(Requestor request, Object... items) throws ServiceException {
+    public static ServiceContext dvlp(Request request, Object... items) throws ServiceException {
         return eval(request, items);
     }
 
@@ -404,7 +404,7 @@ public class operator extends Operator {
         }
     }
 
-    public static ServiceContext eval(Requestor request, Object... items) throws ServiceException {
+    public static ServiceContext eval(Request request, Object... items) throws ServiceException {
         Context out = null;
         try {
             if (request instanceof Mogram) {
@@ -512,7 +512,7 @@ public class operator extends Operator {
     }
 
     public static ServiceContext developDsign(Intent designIntent, Object... items) throws ContextException {
-        Development developer = (Development) designIntent.getDeveloperFi().getSelect();
+        Development developer = (Development) designIntent.getControllingFi().getSelect();
         Discipline discipline = null;
         try {
             if (designIntent.getDisciplineSignature() != null) {
@@ -680,7 +680,7 @@ public class operator extends Operator {
         return context;
     }
 
-    public static Object execItem(Requestor item, Arg... args) throws ServiceException {
+    public static Object execItem(Request item, Arg... args) throws ServiceException {
         try {
             return item.execute(args);
         } catch (RemoteException e) {

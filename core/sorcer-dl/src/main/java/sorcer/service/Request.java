@@ -18,7 +18,7 @@
 package sorcer.service;
 
 /**
- * An top-level common interface for all request service (requestors) in SORCER.
+ * An top-level common interface for all request service in SORCER.
  * Request services are frontend services created by users. Services
  * associated directly with executable codes are called operation services that
  * used by elementary request services that in turn are aggregated into various
@@ -26,7 +26,7 @@ package sorcer.service;
  *
  * @author Mike Sobolewski
  */
-public interface Requestor extends Service, Identifiable {
+public interface Request extends Service, Identifiable {
 
     public void setName(String name);
 

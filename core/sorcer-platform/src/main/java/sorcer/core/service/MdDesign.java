@@ -84,7 +84,7 @@ public class MdDesign extends MultiFiSlot implements Design {
         } else {
             disciplineIntent = dznCxt.getDisciplineIntent();
         }
-        developmentFi = dznCxt.getDeveloperFi();
+        developmentFi = dznCxt.getControllingFi();
         if (developmentFi == null) {
             setDeveloperFi(designIntent);
         }

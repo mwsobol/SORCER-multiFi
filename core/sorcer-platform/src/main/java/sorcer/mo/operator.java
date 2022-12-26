@@ -138,7 +138,7 @@ public class operator {
         return entValue(context, path);
     }
 
-    public static Object value(Requestor request, String path, Arg... args) {
+    public static Object value(Request request, String path, Arg... args) {
         if (request instanceof Governance) {
             return (( ServiceContext ) (( Governance ) request).getOutput()).get(path);
         }
@@ -1175,14 +1175,14 @@ public class operator {
         }
     }
 
-    public static Context dmnCxt(Requestor request, String domainName) {
+    public static Context dmnCxt(Request request, String domainName) {
         if (request instanceof Context) {
             return getDomainContext(( Context ) request, domainName);
         }
         return null;
     }
 
-    public static Context setDmnCxt(Requestor request, String domainName, Context context) {
+    public static Context setDmnCxt(Request request, String domainName, Context context) {
         if (request instanceof Context) {
             try {
                 return addDomainContext(( Context ) request, context, domainName);
@@ -1197,7 +1197,7 @@ public class operator {
         return context;
     }
 
-    public static Context dmnIn(Requestor request, String domainName) {
+    public static Context dmnIn(Request request, String domainName) {
         if (request instanceof Collaboration) {
             return (( Collaboration ) request).getChildrenContexts().get(domainName);
         } else {
@@ -1205,7 +1205,7 @@ public class operator {
         }
     }
 
-    public static Context dmnOut(Requestor request, String domainName) {
+    public static Context dmnOut(Request request, String domainName) {
         if (request instanceof Collaboration) {
             ContextList outs = (( Collaboration ) request).getOutputs();
             if (outs != null) {
@@ -1227,7 +1227,7 @@ public class operator {
         }
     }
 
-    public static void setDmnOut(Requestor request, Context context) {
+    public static void setDmnOut(Request request, Context context) {
         if (request instanceof Collaboration) {
             (( Collaboration ) request).getOutputs().set(context);
         }

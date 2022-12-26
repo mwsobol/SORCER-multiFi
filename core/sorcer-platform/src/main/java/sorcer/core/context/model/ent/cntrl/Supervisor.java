@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 01/05/20.
  */
-public class Supervisor extends Entry<Supervision> implements Controlling, Supervision {
+public class Supervisor extends Entry<Supervision> implements Driver, Supervision {
 
     private static final long serialVersionUID = 1L;
 

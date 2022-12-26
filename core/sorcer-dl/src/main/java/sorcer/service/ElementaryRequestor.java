@@ -16,5 +16,5 @@
  */
 package sorcer.service;
 
-public interface ElementaryRequestor extends Requestor {
+public interface ElementaryRequestor extends Request {
 }

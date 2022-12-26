@@ -370,7 +370,7 @@ operator extends Operator {
             dCxt.setDisciplineFi(disciplineFi);
         }
         if (devFi != null) {
-            dCxt.setDeveloperFi(devFi);
+            dCxt.setControllingFi(devFi);
         }
         if (mfrFi != null) {
             dCxt.setMorpherFi(mfrFi);

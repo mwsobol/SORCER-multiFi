@@ -1,10 +1,6 @@
 package sorcer.core.service;
 
-import sorcer.service.Contextion;
 import sorcer.service.Design;
-import sorcer.service.Requestor;
-
-import java.rmi.Remote;
 
 /**
  * A transdesign is a design class holding its multiple multidisciplinary designs.

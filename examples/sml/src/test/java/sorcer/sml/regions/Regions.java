@@ -56,7 +56,7 @@ public class Regions {
                 })),
             mdaFi("analyzer",
                 (mda("analyzer1",
-                    (Requestor rgn, Context cxt) -> {
+                    (Request rgn, Context cxt) -> {
                         String dmnName = dmnName(cxt);
                         if (dmnName.equals("plDisc")) {
                             setValue(cxt, "pl1", value(cxt, "lambdaOut"));
@@ -89,7 +89,7 @@ public class Regions {
         // the explicit input context with MDA
         Context govCxt = context(mdaFi("multidiscMdaFi",
             mda("analyzer",
-                (Requestor gov, Context cxt) -> {
+                (Request gov, Context cxt) -> {
                     double x1, x2, x3;
                     String discName = rgnn(cxt);
                     if (discName.equals("morphModelDisc")) {

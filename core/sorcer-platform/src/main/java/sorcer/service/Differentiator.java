@@ -21,7 +21,7 @@ package sorcer.service;
 import sorcer.service.modeling.Functionality;
 import sorcer.util.DataTable;
 
-public interface Differentiator extends Directive {
+public interface Differentiator extends Controlling {
 
 	public Functionality.Type getType();
 

@@ -356,7 +356,7 @@ public class Collaboration extends MdDiscipline implements Dependency, cxtn {
 		return evaluateDomain(children.get(domainName), context);
 	}
 
-	public Context evaluateDomain(Requestor request, Context context) throws ServiceException {
+	public Context evaluateDomain(Request request, Context context) throws ServiceException {
 			return response((Mogram) request, context);
 	}
 
