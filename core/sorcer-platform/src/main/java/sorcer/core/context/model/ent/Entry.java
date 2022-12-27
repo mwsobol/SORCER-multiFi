@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 public class Entry<V> extends MultiFiSlot<String, V>
-        implements Identifiable, ElementaryRequestor, Evaluation<V>, Activity, Callable<V>, Setter, Reactive<V>, ent<V> {
+        implements Identifiable, ElementaryRequest, Evaluation<V>, Activity, Callable<V>, Setter, Reactive<V>, ent<V> {
 
     private static final long serialVersionUID = 1L;
 

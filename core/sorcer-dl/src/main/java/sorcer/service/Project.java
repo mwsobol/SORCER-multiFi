@@ -22,7 +22,7 @@ import sorcer.service.modeling.Finalization;
 import java.rmi.RemoteException;
 import java.util.Map;
 
-public interface Project {
+public interface Project extends Request {
 
     public Map<String, Design> getChildren();
 
