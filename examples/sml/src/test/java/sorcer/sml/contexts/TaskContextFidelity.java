@@ -212,7 +212,7 @@ public class TaskContextFidelity {
             inVal(pthFis("arg/x1", "arg/y1"), 30.0),
             inVal(pthFis("arg/x2", "arg/y2"), 90.0));
 
-        Morpheus morpher = (mgr, mFi, value) -> {
+        Morpher morpher = (mgr, mFi, value) -> {
             Context cxt = (Context) mFi.getSelect();
             Task task = (Task) value;
             if (task.isValid() && task.getContext().getName().equals("cxt1")) {
@@ -260,7 +260,7 @@ public class TaskContextFidelity {
             inVal(pthFis("x1", "arg/x1", "arg/y1"), 30.0),
             inVal(pthFis("x2", "arg/x2", "arg/y2"), 90.0));
 
-        Morpheus morpher = (mgr, mFi, value) -> {
+        Morpher morpher = (mgr, mFi, value) -> {
             Context cxt = (Context) mFi.getSelect();
             Task task = (Task) value;
             if (task.isValid() && task.getContext().getName().equals("cxt1")) {

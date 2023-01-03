@@ -47,7 +47,7 @@ public class ContextFidelityManager extends FidelityManager {
         Projection prj = null;
         if (fiNames == null || fiNames.length == 0) {
             try {
-                Morpheus cxtMorpher = null;
+                Morpher cxtMorpher = null;
                 if (mogram instanceof Model) {
                     cxtMorpher = dataContext.getMorpher();
                 } else {

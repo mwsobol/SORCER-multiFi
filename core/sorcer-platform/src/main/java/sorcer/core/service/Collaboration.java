@@ -238,7 +238,7 @@ public class Collaboration extends MdDiscipline implements Dependency, cxtn {
 	}
 
 	@Override
-	public Morpheus getMorpher() {
+	public Morpher getMorpher() {
 		return morpher;
 	}
 

@@ -515,7 +515,7 @@ public class FidelityManager implements Service, FidelityManagement, Observer, I
            morphFi.addObserver(this);
             if (morphFi.getMorpherFidelity() != null) {
                 // set the default morpher
-                morphFi.setMorpher(( Morpheus ) (( Entry ) morphFi.getMorpherFidelity().get(0)).getValue());
+                morphFi.setMorpher(( Morpher ) (( Entry ) morphFi.getMorpherFidelity().get(0)).getValue());
             }
         } catch (ContextException e) {
             e.printStackTrace();
@@ -527,7 +527,7 @@ public class FidelityManager implements Service, FidelityManagement, Observer, I
         // implement in subclasses and use the morphers provided by MorphedFidelities (observables)
 
         MorphFidelity mFi = (MorphFidelity)observable;
-        Morpheus morpher = null;
+        Morpher morpher = null;
         if (mFi.getFiType().equals(Fi.Type.IN)) {
             morpher = mFi.getInMorpher();
         } else {

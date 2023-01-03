@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.service.Morpheus;
+import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -110,7 +110,7 @@ public class ContextFidelity {
 			ent(pthFis("m-z1", "multiply/x1"), 10.0), ent(pthFis("m-z2", "multiply/x2"), 50.0),
 			ent(pthFis("a-z3", "add/x1"), 20.0), ent(pthFis("a-z4", "add/x2"), 80.0));
 
-		Morpheus morpher = (mgr, mFi, value) -> {
+		Morpher morpher = (mgr, mFi, value) -> {
 			String prjName = mFi.getName();
 			Model mdl = (Model) value;
 			if (!mdl.isValid() && prjName.equals("cxtPrj1")) {

@@ -2010,7 +2010,7 @@ operator extends Operator {
         return  cxtFis((String)null,  contexts);
     }
 
-    public static Context cxtFis(Morpheus morpher, Context... contexts) {
+    public static Context cxtFis(Morpher morpher, Context... contexts) {
         Context cxt = cxtFis((String)null,  contexts);
         ((ServiceContext)cxt).setMorpher(morpher);
         return cxt;
@@ -2089,11 +2089,11 @@ operator extends Operator {
         return exertion.getMultiFi();
     }
 
-    public static MorphFidelity mphFi(Morpheus morpher, Service... services) {
+    public static MorphFidelity mphFi(Morpher morpher, Service... services) {
         return mphFi(null, morpher, services);
     }
 
-    public static MorphFidelity mphFi(String name, Morpheus morpher, Service... services) {
+    public static MorphFidelity mphFi(String name, Morpher morpher, Service... services) {
         MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
         morphFi.setMorpher(morpher);
         if (name != null) {
@@ -2102,7 +2102,7 @@ operator extends Operator {
         return morphFi;
     }
 
-    public static MorphFidelity mphFi(String name, Morpheus inMorpher, Morpheus outMorpher, Service... services) {
+    public static MorphFidelity mphFi(String name, Morpher inMorpher, Morpher outMorpher, Service... services) {
         MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
         morphFi.setInMorpher(inMorpher);
         morphFi.setMorpher(outMorpher);
@@ -2154,7 +2154,7 @@ operator extends Operator {
         return new MorphMogram(fidelity.getName(), fidelity);
     }
 
-    public static MorphMogram fiMog(Morpheus morpher, Service... mograms) {
+    public static MorphMogram fiMog(Morpher morpher, Service... mograms) {
         MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(mograms));
         morphFi.setMorpher(morpher);
         return new MorphMogram(morphFi.getName(), morphFi);
@@ -2948,7 +2948,7 @@ operator extends Operator {
                 if (mFi.getMorpherFidelity() != null) {
                     // set the default morpher
                     try {
-                        mFi.setMorpher(( Morpheus ) ((Entry) mFi.getMorpherFidelity().get(0)).getValue());
+                        mFi.setMorpher(( Morpher ) ((Entry) mFi.getMorpherFidelity().get(0)).getValue());
                     } catch (ContextException e) {
                         throw new EvaluationException(e);
                     }
@@ -3210,7 +3210,7 @@ operator extends Operator {
                 mFi.addObserver(fiManager);
                 if (mFi.getMorpherFidelity() != null) {
                     // set the default morpher
-                    mFi.setMorpher(( Morpheus ) ((Entry) mFi.getMorpherFidelity().get(0)).getValue());
+                    mFi.setMorpher(( Morpher ) ((Entry) mFi.getMorpherFidelity().get(0)).getValue());
                 }
             }
         }

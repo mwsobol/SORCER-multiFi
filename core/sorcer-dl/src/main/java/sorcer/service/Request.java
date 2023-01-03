@@ -38,6 +38,6 @@ public interface Request extends Service, Identifiable {
     /**
      * Returns a morpher updating at runtime multi-fidelities of this request.
      */
-    public Morpheus getMorpher();
+    public Morpher getMorpher();
 
 }

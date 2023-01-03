@@ -235,7 +235,7 @@ public class Governance extends MdDiscipline implements Dependency {
 	}
 
 	@Override
-	public Morpheus getMorpher() {
+	public Morpher getMorpher() {
 		return morpher;
 	}
 

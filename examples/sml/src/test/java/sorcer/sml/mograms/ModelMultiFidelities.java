@@ -336,7 +336,7 @@ public class ModelMultiFidelities {
     @Test
     public void morphingMultiFidelityModel() throws Exception {
 
-        Morpheus morpher1 = (mgr, mFi, value) -> {
+        Morpher morpher1 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("add")) {
                 if (((Double) value) <= 200.0) {
@@ -349,7 +349,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        Morpheus morpher2 = (mgr, mFi, value) -> {
+        Morpher morpher2 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
@@ -429,7 +429,7 @@ public class ModelMultiFidelities {
         Entry e2 = ent("x2", 6.0);
         Entry e3 = ent("x3", 7.0);
 
-        Morpheus morpher = (mgr, mFi, value) -> {
+        Morpher morpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("x1")) {
                 if (((double)value) <= 5.0) {
@@ -476,7 +476,7 @@ public class ModelMultiFidelities {
         Signature ms = sig("multiply", MultiplierImpl.class);
         Signature as = sig("add", AdderImpl.class);
 
-        Morpheus morpher = (mgr, mFi, value) -> {
+        Morpher morpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("multiply")) {
                 if (((Double) value(context(value), "result/y")) >= 500.0) {
@@ -503,7 +503,7 @@ public class ModelMultiFidelities {
         Signature ms = sig("multiply", MultiplierImpl.class);
         Signature as = sig("add", AdderImpl.class);
 
-        Morpheus inMorpher = (mgr, mFi, value) -> {
+        Morpher inMorpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             Fi.Type type = mFi.getFidelity().getFiType();
             if (fi.getSelectName().equals("multiply")) {
@@ -512,7 +512,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        Morpheus outMorpher = (mgr, mFi, value) -> {
+        Morpher outMorpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             Fi.Type type = mFi.getFidelity().getFiType();
             if (fi.getSelectName().equals("multiply")) {
@@ -541,7 +541,7 @@ public class ModelMultiFidelities {
         Signature ms = sig("multiply", MultiplierImpl.class);
         Signature as = sig("add", AdderImpl.class);
 
-        Morpheus morpher = (mgr, mFi, value) -> {
+        Morpher morpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             Fi.Type type = mFi.getFidelity().getFiType();
             if (type == Fi.Type.IN) {
@@ -608,7 +608,7 @@ public class ModelMultiFidelities {
                         outVal("result/y")));
 
 
-        Morpheus morpher = (mgr, mFi, value) -> {
+        Morpher morpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("t5")) {
                 if (((Double) value(context(value), "result/y")) <= 200.0) {
@@ -648,7 +648,7 @@ public class ModelMultiFidelities {
             sig("add", AdderImpl.class,
                 result("result/y", inPaths("arg/x1", "arg/x2"))));
 
-        Morpheus morpher1 = (mgr, mFi, value) -> {
+        Morpher morpher1 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();
             if (fi.getSelectName().equals("add")) {
                 if (((Double) value) <= 200.0) {
@@ -661,7 +661,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        Morpheus morpher2 = (mgr, mFi, value) -> {
+        Morpher morpher2 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
@@ -672,7 +672,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        Morpheus morpher3 = (mgr, mFi, value) -> {
+        Morpher morpher3 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();
             Double val = (Double) value;
             if (fi.getSelectName().equals("t5")) {
@@ -686,7 +686,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        Morpheus morpher4 = (mgr, mFi, value) -> {
+        Morpher morpher4 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
@@ -752,7 +752,7 @@ public class ModelMultiFidelities {
     @Test
     public void morphingModelDefaultFidelities() throws Exception {
 
-        Morpheus mdlMorpher = (mgr, mFi, value) -> {
+        Morpher mdlMorpher = (mgr, mFi, value) -> {
             // model mFi not set
             Double x1 = (Double) exec(((Model)value), "arg/x1");
             Double x2 = (Double) exec(((Model)value), "arg/x2");
