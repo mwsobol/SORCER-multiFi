@@ -2207,6 +2207,12 @@ operator extends Operator {
         return multiFi;
     }
 
+    public static ServiceFidelity opFi(Opservice... opservices) {
+        ServiceFidelity fi = new ServiceFidelity(opservices);
+        fi.fiType = Fi.Type.OPSRV;
+        return fi;
+    }
+
     public static ServiceFidelity sigFi(Signature... signatures) {
         ServiceFidelity fi = new ServiceFidelity(signatures);
         fi.fiType = Fi.Type.SIG;
@@ -2926,7 +2932,6 @@ operator extends Operator {
             }
             task.setMultiFi((ServiceFidelity) mFi.getFidelity());
             task.setServiceMorphFidelity(mFi);
-            task.setSelectedFidelity(first);
             task.setSelectedFidelity(first);
         }
 

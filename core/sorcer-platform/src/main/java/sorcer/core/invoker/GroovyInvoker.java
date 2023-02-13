@@ -20,6 +20,7 @@ package sorcer.core.invoker;
 import groovy.lang.GroovyShell;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Pcr;
+import sorcer.eo.operator;
 import sorcer.service.*;
 
 import java.io.*;
@@ -72,11 +73,15 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	}
 
 	public GroovyInvoker(String name, String expression, ArgSet parameters) {
+		this(name,  expression);
+		this.args = parameters;
+	}
+
+	public GroovyInvoker(String name, String expression) {
 		this();
 		if (name != null && name.length() > 0)
 			this.name = name;
 		this.expression = expression;
-		this.args = parameters;
 	}
 
 	public GroovyInvoker(String expression, Arg... parameters) {
@@ -84,7 +89,18 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	}
 
 	public GroovyInvoker(String name, String expression, Arg... parameters) {
-		this(name, expression, new ArgSet(parameters));
+		this(name, expression);
+		ArgSet argSet = new ArgSet();
+		for (Arg arg : parameters) {
+			if (arg instanceof Context.Return) {
+				contextReturn = ( Context.Return ) arg;
+			} else if (arg instanceof operator.Args) {
+				argSet.addAll(((operator.Args)arg).argSet());
+			} else {
+				argSet.add(arg);
+			}
+		}
+		args = argSet;
 	}
 
 	public GroovyInvoker(File scriptFile, Pcr... parameters) {

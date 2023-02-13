@@ -57,6 +57,7 @@ public class ArithmeticMograms {
 		assertTrue(get(out, "y2").equals(100.0));
 	}
 
+	// The pattern recommended for INN HA4 assignment
 	@Test
 	public void arithmeticStructuredBlock() throws Exception {
 
@@ -257,6 +258,7 @@ public class ArithmeticMograms {
 		assertEquals(get(batch3, "result/y"), 400.0);
 	}
 
+	// The pattern recommended for INN HA4 assignment
 	@Test
 	public void arithmeticBlock() throws Exception {
 
@@ -280,6 +282,7 @@ public class ArithmeticMograms {
 		assertEquals(value(context(result), "block/result"), 400.00);
 	}
 
+	// The pattern recommended for INN HA4 assignment
 	@Test
 	public void altBlock() throws Exception {
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),

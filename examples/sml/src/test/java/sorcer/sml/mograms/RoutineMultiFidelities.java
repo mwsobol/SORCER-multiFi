@@ -18,10 +18,14 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Context;
 import sorcer.service.Job;
 import sorcer.service.Task;
+import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.get;
+import static sorcer.ent.operator.ent;
+import static sorcer.ent.operator.invoker;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.*;
 import static sorcer.so.operator.*;
@@ -135,6 +139,48 @@ public class RoutineMultiFidelities {
 		assertTrue(value(out, "result/y").equals(300.0));
 	}
 
+	@Test
+	public void morphOpFiTask() throws Exception {
+
+		Morpher t4mrp = (mgr, mFi, context) -> {
+			if (mFi.getPath().equals("t4")) {
+				if (((Double) value((Context)context, "result/y")) >= 200.0) {
+					putValue((Context)context, "result/y", 300.0);
+				}
+			}
+		};
+
+		Task t4 = task("t4",
+			mphFi(t4mrp,
+				sigFi(sig(invoker("multiply", "x1 * x2", args("x1", "x2"), result("result/y")))),
+				sigFi("object", sig("multiply", MultiplierImpl.class)),
+				sigFi("net", sig("multiply", Multiplier.class))),
+			context("multiply", inVal("x1", 10.0), inVal("x2", 50.0),
+				outVal("result/y")));
+
+//		assertEquals("object", fiName(t4));
+		assertEquals("multiply", fiName(t4));
+
+		t4 = exert(t4);
+		Context out = context(t4);
+		logger.info("out: " + out);
+		assertTrue(value(out, "result/y").equals(500.0));
+	}
+
+	@Test
+	public void opserviceMultiFidelityModel() throws Exception {
+
+		// three entry model
+		Model mod = model(inVal("x1", 10.0), inVal("x2", 90.0),
+			ent("mFi", opFi(sig("add", AdderImpl.class, result("result/y", inPaths("x1", "x2"))),
+				invoker("multiply", "x1 * x2", args("x1", "x2"), result("result/y")))),
+			response("mFi", "x1", "x2"));
+
+		Context out = response(mod, fi("add", "mFi"));
+		logger.info("out: " + out);
+		assertTrue(get(out, "mFi").equals(100.0));
+		assertTrue(get(mod, "result/y").equals(100.0));
+	}
 
     private Job getMorphFiJob() throws Exception {
 

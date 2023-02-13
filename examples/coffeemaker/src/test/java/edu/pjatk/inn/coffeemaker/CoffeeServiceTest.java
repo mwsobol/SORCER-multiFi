@@ -125,7 +125,7 @@ public class CoffeeServiceTest {
 
 	@Test
 	public void deliverCoffee() throws Exception {
-		// make sure that the CoffeMaker knows the recipe
+		// make sure that the CoffeeMaker knows the recipe
 		Routine cmt = task(sig("addRecipe", CoffeeService.class), espresso);
 		exert(cmt);
 
@@ -211,6 +211,7 @@ public class CoffeeServiceTest {
 		assertEquals(value(out, "jcd/td/change$"), 10);
 	}
 
+	// The pattern recommended for INN HA4 assignment
 	@Test
 	public void getCoffeeLocalBlock() throws Exception {
 
@@ -236,6 +237,7 @@ public class CoffeeServiceTest {
 		assertEquals(value(out, "change$"), 10);
 	}
 
+	// The pattern recommended for INN HA4 assignment
 	@Test
 	public void getCoffeeRemoteBlock() throws Exception {
 
