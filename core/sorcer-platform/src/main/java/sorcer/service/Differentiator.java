@@ -19,6 +19,7 @@ package sorcer.service;
 
 
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.Wrt;
 import sorcer.util.DataTable;
 
 public interface Differentiator extends Controlling {

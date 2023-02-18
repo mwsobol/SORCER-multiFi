@@ -56,10 +56,19 @@ public class Paths extends ArrayList<Path> implements Arg {
         }
     }
 
-    public List<String> toStringList() {
+    public List<String> getPathNames() {
         List<String> paths = new ArrayList<>();
         for (int i = 0; i < size(); i++) {
             paths.add(get(i).path);
+        }
+
+        return paths;
+    }
+
+    public List<String> getPathDomainNames() {
+        List<String> paths = new ArrayList<>();
+        for (int i = 0; i < size(); i++) {
+            paths.add(get(i).getDomainName());
         }
 
         return paths;
@@ -70,7 +79,14 @@ public class Paths extends ArrayList<Path> implements Arg {
         for (int i = 0; i < size(); i++) {
             paths[i] = get(i).path;
         }
+        return paths;
+    }
 
+    public String[] toDomainStringArray() {
+        String[] paths = new String[size()];
+        for (int i = 0; i < size(); i++) {
+            paths[i] = get(i).getDomainName();
+        }
         return paths;
     }
 

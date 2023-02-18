@@ -1482,7 +1482,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		List<String> inpaths;
 		if (contextReturn != null && contextReturn.inPaths != null) {
 			// input paths specified by this context signature
-			inpaths = contextReturn.inPaths.toStringList();
+			inpaths = contextReturn.inPaths.getPathNames();
 		} else {
 			// input paths of input entries
 			inpaths = Contexts.getInPaths(this);
