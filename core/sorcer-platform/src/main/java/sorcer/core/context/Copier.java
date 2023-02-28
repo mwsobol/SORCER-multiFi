@@ -17,7 +17,9 @@
 
 package sorcer.core.context;
 
+import sorcer.eo.operator;
 import sorcer.service.*;
+import sorcer.eo.operator.Args;
 import sorcer.service.ContextDomain;
 import sorcer.service.modeling.Data;
 
@@ -29,18 +31,18 @@ import java.rmi.RemoteException;
 public class  Copier implements Evaluation<Context>, Scopable, Activity, Identifiable {
 	private String name;
 	private Context fromContext;
-	private Arg[] fromEntries;
+	private Args fromEntries;
 	private Context toContext;
-	private Arg[] toEntries;
+	private Args toEntries;
 	// default instance new Return(Context.RETURN);
 	protected Context.Return contextReturn;
 
-	public Copier(ContextDomain fromContext, Arg[] fromEntries, ContextDomain toContext, Arg[] toEntries) throws EvaluationException {
+	public Copier(ContextDomain fromContext, Args fromEntries, ContextDomain toContext, Args toEntries) throws EvaluationException {
 		this.fromContext = (Context)fromContext;
 		this.fromEntries = fromEntries;
 		this.toContext = (Context)toContext;
 		this.toEntries = toEntries;
-		if (fromEntries.length != toEntries.length)
+		if (fromEntries.size() != toEntries.size())
 			throw new EvaluationException("Sizes of from and to arguments do not match");
 	}
 
@@ -62,8 +64,8 @@ public class  Copier implements Evaluation<Context>, Scopable, Activity, Identif
 	@Override
 	public Context evaluate(Arg... entries) throws EvaluationException, RemoteException {
 		try {
-			for (int i = 0; i < fromEntries.length; i++) {
-				toContext.putValue(toEntries[i].getName(), fromContext.getValue(fromEntries[i].getName()));
+			for (Arg arg : fromEntries.args()) {
+				toContext.putValue(arg.getName(), fromContext.getValue(arg.getName()));
 			}
             ((ServiceContext)toContext).substitute(entries);
 		} catch (Exception e) {

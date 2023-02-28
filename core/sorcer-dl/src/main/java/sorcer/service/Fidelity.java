@@ -21,6 +21,8 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, fi<T> {
 
     protected String fiName;
 
+	protected String domain;
+
 	protected String path = "";
 
 	protected Object option = "";
@@ -282,6 +284,14 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, fi<T> {
 		return false;
 	}
 
+	public String getDomain() {
+		return domain;
+	}
+
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+
 	@Override
 	public boolean isValid() {
 		//reimplement in subclasses
@@ -352,4 +362,5 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, fi<T> {
 		Service srv = (Service)select;
 		return new Slot(entryName, srv.execute(args));
 	}
+
 }

@@ -17,14 +17,14 @@
 
 package sorcer.core.context;
 
-import com.oracle.jrockit.jfr.EventInfo;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
 
 public class Intent extends ServiceContext<Object> {
 
-    private Fi developerFi;
+    // defines mutiFi controlling, using for example morphers, or drivers as developers, supervisors, hypervisors
+    private Fi controllingFi;
 
     private Discipline discipline;
 
@@ -54,12 +54,12 @@ public class Intent extends ServiceContext<Object> {
     }
 
     @Override
-    public Fi getDeveloperFi() {
-        return developerFi;
+    public Fi getControllingFi() {
+        return controllingFi;
     }
 
-    public void setDeveloperFi(Fi developerFi) {
-        this.developerFi = developerFi;
+    public void setControllingFi(Fi controllingFi) {
+        this.controllingFi = controllingFi;
     }
 
     public Context getDisciplineIntent() {
@@ -97,6 +97,7 @@ public class Intent extends ServiceContext<Object> {
     public void setDiscipline(Discipline discipline) {
         this.discipline = discipline;
     }
+    
     public ServiceFidelity getDisciplineFi() {
         return disciplineFi;
     }

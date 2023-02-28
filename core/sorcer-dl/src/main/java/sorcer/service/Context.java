@@ -206,6 +206,8 @@ public interface Context<T> extends ContextDomain, Selfable, Response, Serializa
 
 	final static String CHECKPOINT_ITERATION = "checkpoint" + SorcerConstants.CPS + "iteration";
 
+	final static String DERIVATIVE_MATRIX = "total/derivative/matrix";
+
 	/**
 	 * An object to specify no context execute.
 	 */

@@ -30,8 +30,9 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.req.Req;
 import sorcer.core.plexus.*;
 import sorcer.core.service.Collaboration;
+import sorcer.core.service.DesignProject;
 import sorcer.core.service.Governance;
-import sorcer.core.service.Transdesign;
+import sorcer.core.service.ServiceDesign;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.Exertion;
 import sorcer.core.provider.exerter.ServiceShell;
@@ -157,7 +158,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Context evalDomain(Collaboration collab, Requestor request, Context context) throws ServiceException {
+    public static Context evalDomain(Collaboration collab, Request request, Context context) throws ServiceException {
         return collab.evaluateDomain(request, context);
     }
 
@@ -165,7 +166,7 @@ public class operator extends Operator {
         return collab.evaluateDomain(domainName, context);
     }
 
-    public static ServiceContext eval(Requestor request, Context context) throws ContextException {
+    public static ServiceContext eval(Request request, Context context) throws ContextException {
         Context rc;
         try {
             if (request instanceof Contextion) {
@@ -266,7 +267,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Object exec(Requestor request, String path$domain) throws ServiceException {
+    public static Object exec(Request request, String path$domain) throws ServiceException {
         if (request instanceof DataContext) {
             return value((Context)request, path$domain);
         } else {
@@ -359,17 +360,17 @@ public class operator extends Operator {
         }
     }
 
-    public static Transdesign dzn(String name) throws ServiceException {
-        return new Transdesign(name);
+    public static ServiceDesign dzn(String name) throws ServiceException {
+        return new ServiceDesign(name);
     }
 
-    public static Transdesign dzn(Intent designIntent) throws ServiceException {
+    public static ServiceDesign dzn(Intent designIntent) throws ServiceException {
         return dzn(null, designIntent);
     }
 
-    public static Transdesign dzn(String name, Intent designIntent) throws ServiceException {
+    public static ServiceDesign dzn(String name, Intent designIntent) throws ServiceException {
         try {
-            Transdesign design = new Transdesign(name, designIntent);
+            ServiceDesign design = new ServiceDesign(name, designIntent);
             FidelityManager fiManger = new DesignFidelityManager(design);
             design.setFidelityManager(fiManger);
             designIntent.setSubject(design.getName(),design);
@@ -379,15 +380,25 @@ public class operator extends Operator {
         }
     }
 
-    public static Transdesign dzn(String name, Discipline discipline, Context discContext, Development developer) throws ServiceException {
-        return new Transdesign(name, discipline, discContext, developer);
+    public static Project proj(Design design) {
+        return new DesignProject(design);
     }
 
-    public static Transdesign dzn(Discipline discipline, Context discContext, Development developer) throws ServiceException {
-        return new Transdesign(null, discipline, discContext, developer);
+    public static Project proj(String name, Design design) {
+        Project project = new DesignProject(design);
+        project.setName(name);
+        return project;
     }
 
-    public static ServiceContext dvlp(Requestor request, Object... items) throws ServiceException {
+    public static ServiceDesign dzn(String name, Discipline discipline, Context discContext, Development developer) throws ServiceException {
+        return new ServiceDesign(name, discipline, discContext, developer);
+    }
+
+    public static ServiceDesign dzn(Discipline discipline, Context discContext, Development developer) throws ServiceException {
+        return new ServiceDesign(null, discipline, discContext, developer);
+    }
+
+    public static ServiceContext dvlp(Request request, Object... items) throws ServiceException {
         return eval(request, items);
     }
 
@@ -404,14 +415,16 @@ public class operator extends Operator {
         }
     }
 
-    public static ServiceContext eval(Requestor request, Object... items) throws ServiceException {
+    public static ServiceContext eval(Request request, Object... items) throws ServiceException {
         Context out = null;
         try {
             if (request instanceof Mogram) {
                 out = response((Mogram)request, items);
+            } else if (request instanceof DesignProject) {
+                return morphDesign(( ServiceDesign ) ((DesignProject)request).getDesign(), items);
             } else if (request instanceof Design) {
-                return morphDesign(( Transdesign ) request, items);
-            }else if (request instanceof Node) {
+                return morphDesign(( ServiceDesign ) request, items);
+            } else if (request instanceof Node) {
                 Arg[] args = new Arg[items.length];
                 System.arraycopy(items, 0, args, 0, items.length);
                 return (ServiceContext) request.execute(args);
@@ -432,7 +445,7 @@ public class operator extends Operator {
         return (ServiceContext)out;
     }
 
-    public static ServiceContext morphDesign(Transdesign design, Object... items)
+    public static ServiceContext morphDesign(ServiceDesign design, Object... items)
         throws ServiceException, RemoteException, ExecutiveException, ConfigurationException {
         if (design.getDevelopmentFi() == null) {
             design.setDeveloperFi(design.getDesignIntent());
@@ -452,8 +465,8 @@ public class operator extends Operator {
             }
         }
         Context out = null;
-        Morpheus inMorpher = design.getInMorpher();
-        Morpheus outMorpher = design.getMorpher();
+        Morpher inMorpher = design.getInMorpher();
+        Morpher outMorpher = design.getMorpher();
         if (developerFi != null) {
             Development developer = ( Development ) developerFi.getSelect();
             if (design.getDesignIntent() != null) {
@@ -512,7 +525,7 @@ public class operator extends Operator {
     }
 
     public static ServiceContext developDsign(Intent designIntent, Object... items) throws ContextException {
-        Development developer = (Development) designIntent.getDeveloperFi().getSelect();
+        Development developer = (Development) designIntent.getControllingFi().getSelect();
         Discipline discipline = null;
         try {
             if (designIntent.getDisciplineSignature() != null) {
@@ -680,7 +693,7 @@ public class operator extends Operator {
         return context;
     }
 
-    public static Object execItem(Requestor item, Arg... args) throws ServiceException {
+    public static Object execItem(Request item, Arg... args) throws ServiceException {
         try {
             return item.execute(args);
         } catch (RemoteException e) {

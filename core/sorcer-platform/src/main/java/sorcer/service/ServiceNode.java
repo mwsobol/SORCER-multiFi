@@ -61,7 +61,7 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
 
     protected Signature builder;
 
-    protected Morpheus morpher;
+    protected Morpher morpher;
 
     protected Contextion parent;
 
@@ -315,11 +315,11 @@ public class ServiceNode extends MultiFiSlot<String, Object> implements Node, Ge
         this.name = name;
     }
 
-    public Morpheus getMorpher() {
+    public Morpher getMorpher() {
         return morpher;
     }
 
-    public void setMorpher(Morpheus morpher) {
+    public void setMorpher(Morpher morpher) {
         this.morpher = morpher;
     }
 

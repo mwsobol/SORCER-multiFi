@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 03/12/20221.
  */
-public class Hypervisor extends Entry<Analysis> implements Controlling, Hypervision {
+public class Hypervisor extends Entry<Analysis> implements Driver, Hypervision {
 
     private static final long serialVersionUID = 1L;
 

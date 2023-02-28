@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Governance extends Realm implements Dependency {
+public class Governance extends ServiceDiscipline implements Dependency {
 
 	private static final long serialVersionUID = 1L;
 
@@ -235,7 +235,7 @@ public class Governance extends Realm implements Dependency {
 	}
 
 	@Override
-	public Morpheus getMorpher() {
+	public Morpher getMorpher() {
 		return morpher;
 	}
 

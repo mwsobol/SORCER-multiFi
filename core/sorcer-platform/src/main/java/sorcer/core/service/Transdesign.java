@@ -1,170 +1,68 @@
-/*
- * Copyright 2021 the original author or authors.
- * Copyright 2021 SorcerSoft.org.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package sorcer.core.service;
 
 import net.jini.core.transaction.Transaction;
-import sorcer.core.context.Intent;
-import sorcer.core.context.ModelStrategy;
-import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.cntrl.Developer;
-import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
-import sorcer.service.modeling.ExecutiveException;
 import sorcer.service.modeling.Finalization;
 import sorcer.service.modeling.Initialization;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * A top-level interface for disciplinary transdesigns.
+ * A transdesign is a design class holding its multiple component designs.
+ * Each transdesign manges its own component design.
  *
- * @author Mike Sobolewski 05/24/2021
+ * @author Mike Sobolewski 02/27/2023
  */
-public class Transdesign extends MultiFiSlot implements Design {
 
-    // transdiscipline
-    private Contextion discipline;
-    private Context disciplineIntent;
+public class Transdesign implements Design {
 
-    private Context developmentIntent;
-    private Fi developmentFi;
+    protected Map<String, Design> children;
 
-    private Context designIntent;
-    private Map<String, Projection> projections;
-
-    // the output of this collaboration
-    protected Context output;
-
-    protected Fidelity<Finalization> finalizerFi;
-
-    protected Fidelity<Initialization> initializerFi;
-
-    public void setDevelopmentFi(ServiceFidelity developmentFi) {
-        this.developmentFi = developmentFi;
+    public Map<String, Design> getChildren() {
+        return children;
     }
 
-    protected ServiceStrategy serviceStrategy;
-
-    private static int count = 0;
-
-    public Transdesign(String name) {
-        if (name == null) {
-            this.key = getClass().getSimpleName() + "-" + count++;
-        } else {
-            this.key = name;
-        }
-        serviceStrategy = new ModelStrategy(this);
+    public Transdesign(Map<String, Design> children) {
+        this. children =children;
     }
 
-    public Transdesign(String name, Context designIntent) throws SignatureException {
-        this(name);
-        this.designIntent = designIntent;
-        Intent dznCxt = (Intent)designIntent;
-        discipline = dznCxt.getDiscipline();
-        Signature discIntentSig = dznCxt.getDisciplineIntentSignature();
-        if (discIntentSig != null) {
-            disciplineIntent = (Context) ((LocalSignature)discIntentSig).initInstance();
-        } else {
-            disciplineIntent = dznCxt.getDisciplineIntent();
-        }
-        developmentFi = dznCxt.getDeveloperFi();
-        if (developmentFi == null) {
-            setDeveloperFi(designIntent);
-        }
-        developmentIntent = dznCxt.getDevelopmentIntent();
-    }
-
-    public Transdesign(String name, Discipline discipline, Context disciplineIntent, Development developer ) {
-        this(name);
-        this.discipline = discipline;
-        this.disciplineIntent = disciplineIntent;
-        developmentFi = new ServiceFidelity(name);
-        developmentFi.addSelect((Developer)developer);
-        developmentFi.setSelect((Developer)developer);
-        ((Developer)developer).setDiscipline(discipline);
-    }
-
-    public Fi setDeveloperFi(Context context) {
-        if(developmentFi == null) {
-            Object devComponent = ((ServiceContext)context).get(Context.DEV_PATH);
-            if (devComponent != null) {
-                if (devComponent instanceof Development) {
-                    developmentFi = new ServiceFidelity(((Developer)devComponent).getName());
-                    developmentFi.addSelect((Developer) devComponent);
-                    developmentFi.setSelect((Developer)devComponent);
-                    ((Developer)devComponent).setDiscipline(discipline);
-                } else if (devComponent instanceof ServiceFidelity
-                    && ((ServiceFidelity) devComponent).getFiType().equals(Fi.Type.DEV)) {
-                    developmentFi = (ServiceFidelity) devComponent;
-                    ((Developer) developmentFi.getSelect()).setDiscipline(discipline);
-                }
+    public Transdesign(List<Request> requests ) {
+        if (requests.get(0) instanceof  Design) {
+            if (this.children == null) {
+                this.children = new HashMap<>(requests.size());
+            }
+            for (Request req : requests) {
+                this.children.put(req.getName(), ( Design ) req);
+            }
+        } else if (requests.get(0) instanceof  Discipline) {
+            if (this.children == null) {
+                this.children = new HashMap<>(requests.size());
+            }
+            for (Request req : requests) {
+                this.children.put(req.getName(),new ServiceDesign(( Discipline ) req));
             }
         }
-        ((ServiceContext)context).getDomainStrategy().setExecState(Exec.State.INITIAL);
-        if (output == null) {
-            output = new ServiceContext(getName());
-        }
-        return developmentFi;
     }
 
-    // get a discipline intent from the designIntent for a given select fidelity in itens
-    public Object getIntentContext(Fidelity fi) throws ConfigurationException {
-        Object obj = null;
-        // select intFi fidelity intFi(fidelity, multiFiIntent, "designIntent")
-        if (((Fidelity)fi).getFiType().equals(Fi.Type.INTENT)) {
-            obj = ((ServiceFidelity)designIntent.getMultiFi()).selectSelect((String) fi.getSelect());
-            if (obj instanceof Fidelity && fi.getFiType().equals(Fi.Type.INTENT)) {
-                obj = ((ServiceFidelity)obj).selectSelect(fi.getPath());
-            }
-            if (obj instanceof Fidelity && fi.getFiType().equals(Fi.Type.INTENT)) {
-                obj = ((Fidelity)obj).getSelect();
-            }
-            if (obj instanceof ServiceContext && ((ServiceContext)obj).getMultiFi().size()>0) {
-                obj = ((ServiceContext)obj).getMultiFi().selectSelect(fi.getName());
-            }
-            if (obj instanceof Fidelity && fi.getFiType().equals(Fi.Type.INTENT)) {
-                obj = ((Fidelity)obj).getSelect();
-            }
-        }
-
-        return obj;
+    public Transdesign(Request... requests ) {
+        this(Arrays.asList(requests));
     }
 
-    public Map<String, Projection> getProjections() {
-        return projections;
+    public void setChildren(Map<String, Design> children) {
+        this.children = children;
     }
 
-    public void setProjections(Map<String, Projection> projections) {
-        this.projections = projections;
-    }
-
-    public Context getDesignIntent() {
-        return designIntent;
-    }
-
-    public void setDesignIntent(Context designIntent) {
-        this.designIntent = designIntent;
+    public Design getChild(String name) {
+        return children.get(name);
     }
 
     @Override
     public Context evaluate(Context context, Arg... args) throws ServiceException, RemoteException {
-        return discipline.evaluate(context, args);
+        return null;
     }
 
     @Override
@@ -174,40 +72,32 @@ public class Transdesign extends MultiFiSlot implements Design {
 
     @Override
     public <T extends Contextion> T exert(Transaction txn, Arg... args) throws ServiceException, RemoteException {
-         return (T) discipline.evaluate(disciplineIntent, args);
+        return null;
     }
 
     @Override
-    public String getDomainName() {
-        return (String) key;
+    public String getDomainName() throws RemoteException {
+        return null;
     }
 
     @Override
-    public Context getOutput(Arg... args) throws ContextException {
-        return output;
-    }
-
-    public Context getDisciplineIntent() {
-        return disciplineIntent;
-    }
-
-    public void setDisciplineIntent(Context disciplineIntent) {
-        this.disciplineIntent = disciplineIntent;
+    public Context getOutput(Arg... args) throws ContextException, RemoteException {
+        return null;
     }
 
     @Override
-    public void setContext(Context input) throws ContextException {
-        developmentIntent = input;
+    public void setContext(Context input) throws ContextException, RemoteException {
+
     }
 
     @Override
     public Context appendContext(Context context) throws ContextException, RemoteException {
-        return developmentIntent;
+        return null;
     }
 
     @Override
     public Context getDomainData() throws ContextException, RemoteException {
-        return disciplineIntent;
+        return null;
     }
 
     @Override
@@ -226,29 +116,43 @@ public class Transdesign extends MultiFiSlot implements Design {
     }
 
     @Override
-    public boolean isExec() {
+    public boolean isExec() throws RemoteException {
         return false;
     }
 
     @Override
-    public ServiceStrategy getDomainStrategy() {
+    public Context.Return getContextReturn() throws RemoteException {
         return null;
     }
 
     @Override
-    public Projection getInPathProjection() {
+    public ServiceStrategy getDomainStrategy() throws RemoteException {
         return null;
     }
 
     @Override
-    public Projection getOutPathProjection() {
+    public Projection getInPathProjection() throws RemoteException {
         return null;
     }
 
     @Override
-    public List<Contextion> getContextions(List<Contextion> contextionList) {
-        contextionList.add(discipline);
-        return contextionList;
+    public Projection getOutPathProjection() throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public List<Contextion> getContextions(List<Contextion> contextionList) throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public FidelityManagement getFidelityManager() throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public void selectFidelity(Fi fi) throws ConfigurationException, RemoteException {
+
     }
 
     @Override
@@ -263,45 +167,71 @@ public class Transdesign extends MultiFiSlot implements Design {
 
     @Override
     public Context getContext() throws ContextException {
-        return developmentIntent;
+        return null;
     }
 
     @Override
     public Contextion getDiscipline() throws RemoteException {
-        return discipline;
-    }
-
-    public void setDiscipline(Discipline discipline) {
-        this.discipline = discipline;
+        return null;
     }
 
     @Override
     public Fi getDevelopmentFi() throws RemoteException {
-        return developmentFi;
+        return null;
     }
 
     @Override
     public Context design(Discipline discipline, Context context) throws DesignException, RemoteException {
-       this.discipline = discipline;
-        try {
-            return ((Development) developmentFi.getSelect()).develop(discipline, developmentIntent);
-        } catch (ServiceException | ExecutiveException e) {
-            throw new DesignException(e);
-        }
+        return null;
     }
 
     @Override
     public Fidelity<Initialization> getInitializerFi() {
-        return initializerFi;
+        return null;
     }
 
     @Override
     public Fidelity<Finalization> getFinalizerFi() {
-        return finalizerFi;
+        return null;
+    }
+
+    @Override
+    public Object getId() {
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        return null;
     }
 
     @Override
     public void setName(String name) {
-        key = name;
+
+    }
+
+    @Override
+    public Fi getMultiFi() {
+        return null;
+    }
+
+    @Override
+    public Morpher getMorpher() {
+        return null;
+    }
+
+    @Override
+    public Context getScope() {
+        return null;
+    }
+
+    @Override
+    public void setScope(Context scope) {
+
+    }
+
+    @Override
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
+        return null;
     }
 }

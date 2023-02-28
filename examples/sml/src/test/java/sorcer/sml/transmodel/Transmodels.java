@@ -29,7 +29,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.req.RequestTransmodel;
 import sorcer.service.Context;
 import sorcer.service.Evaluator;
-import sorcer.service.Requestor;
+import sorcer.service.Request;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -121,7 +121,7 @@ public class Transmodels {
         // the explicit input context with MDA
         Context mdaCxt = context(mdaFi("arithmeticMdaFi",
             mda("analyzer",
-                (Requestor req, Context cxt) -> {
+                (Request req, Context cxt) -> {
                     double x1, x2, x3;
                     String dmnName = dmnName(cxt);
                     if (dmnName.equals("model1")) {

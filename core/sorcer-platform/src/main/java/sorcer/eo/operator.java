@@ -359,7 +359,7 @@ operator extends Operator {
         itemList.add(0, Context.Type.DESIGN);
         Object[] cxtItems = new Object[itemList.size()];
         itemList.toArray(cxtItems);
-        Intent dCxt = (Intent) domainContext(cxtItems);
+        Intent dCxt = (Intent) contextDomain(cxtItems);
         dCxt.setContextType(Context.Type.DESIGN);
         dCxt.setIntentType(Context.IntentType.DEVELOP);
 
@@ -370,7 +370,7 @@ operator extends Operator {
             dCxt.setDisciplineFi(disciplineFi);
         }
         if (devFi != null) {
-            dCxt.setDeveloperFi(devFi);
+            dCxt.setControllingFi(devFi);
         }
         if (mfrFi != null) {
             dCxt.setMorpherFi(mfrFi);
@@ -387,14 +387,14 @@ operator extends Operator {
             }
         }
         try {
-            return (ServiceContext)domainContext(items);
+            return (ServiceContext) contextDomain(items);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public static ContextDomain domainContext(Object... entries) throws ContextException, RemoteException {
+    public static ContextDomain contextDomain(Object... entries) throws ContextException, RemoteException {
         // do not create a context from Context, jut return
         if (entries == null || entries.length == 0) {
             return new ServiceContext();
@@ -1230,8 +1230,7 @@ operator extends Operator {
     public static Signature sig(String operation, Class<?> serviceType,
                                 String initSelector) throws SignatureException {
         try {
-            return new LocalSignature(operation, serviceType, initSelector,
-                (Class<?>[]) null, (Object[]) null);
+            return new LocalSignature(operation, serviceType, initSelector, null, (Object[]) null);
          } catch (Exception e) {
             throw new SignatureException(e);
         }
@@ -1241,13 +1240,14 @@ operator extends Operator {
         return signature.getSelector();
     }
 
-    public static Signature sig(String operation, Object provider, Object... args) {
+    public static Signature sig(String operation, Object provider, Object... objects) {
         LocalSignature sig = new LocalSignature();
         sig.setName(operation);
         sig.setSelector(operation);
         sig.setTarget(provider);
-        if (args.length > 0) {
-            for (Object o : args) {
+        Args args = null;
+        if (objects.length > 0) {
+            for (Object o : objects) {
                 if (o instanceof Type) {
                     sig.setType((Type) o);
                 } else if (o instanceof Operating) {
@@ -1259,8 +1259,14 @@ operator extends Operator {
                 } else if (o instanceof ServiceDeployment) {
                     sig.setProvisionable(true);
                     sig.setDeployment((ServiceDeployment) o);
+                } else if (o instanceof Args) {
+                    args = (Args) o;
                 }
             }
+        }
+        if (args != null) {
+            sig.setArgs(args.args);
+//            sig.setArgs(new Object[] { args });
         }
         return sig;
     }
@@ -1534,6 +1540,7 @@ operator extends Operator {
                 sig.setProviderName(providerName);
                 if (args != null) {
                     ((LocalSignature)sig).setArgs(args.args);
+//                    ((LocalSignature)sig).setArgs(new Object[] { args });
                 }
             }
         }
@@ -2003,7 +2010,7 @@ operator extends Operator {
         return  cxtFis((String)null,  contexts);
     }
 
-    public static Context cxtFis(Morpheus morpher, Context... contexts) {
+    public static Context cxtFis(Morpher morpher, Context... contexts) {
         Context cxt = cxtFis((String)null,  contexts);
         ((ServiceContext)cxt).setMorpher(morpher);
         return cxt;
@@ -2082,11 +2089,11 @@ operator extends Operator {
         return exertion.getMultiFi();
     }
 
-    public static MorphFidelity mphFi(Morpheus morpher, Service... services) {
+    public static MorphFidelity mphFi(Morpher morpher, Service... services) {
         return mphFi(null, morpher, services);
     }
 
-    public static MorphFidelity mphFi(String name, Morpheus morpher, Service... services) {
+    public static MorphFidelity mphFi(String name, Morpher morpher, Service... services) {
         MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
         morphFi.setMorpher(morpher);
         if (name != null) {
@@ -2095,7 +2102,7 @@ operator extends Operator {
         return morphFi;
     }
 
-    public static MorphFidelity mphFi(String name, Morpheus inMorpher, Morpheus outMorpher, Service... services) {
+    public static MorphFidelity mphFi(String name, Morpher inMorpher, Morpher outMorpher, Service... services) {
         MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
         morphFi.setInMorpher(inMorpher);
         morphFi.setMorpher(outMorpher);
@@ -2147,7 +2154,7 @@ operator extends Operator {
         return new MorphMogram(fidelity.getName(), fidelity);
     }
 
-    public static MorphMogram fiMog(Morpheus morpher, Service... mograms) {
+    public static MorphMogram fiMog(Morpher morpher, Service... mograms) {
         MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(mograms));
         morphFi.setMorpher(morpher);
         return new MorphMogram(morphFi.getName(), morphFi);
@@ -2198,6 +2205,12 @@ operator extends Operator {
     public static MorphFidelity mrphFi(Signature... signatures) {
         MorphFidelity multiFi = new MorphFidelity(new ServiceFidelity(signatures));
         return multiFi;
+    }
+
+    public static ServiceFidelity opFi(Opservice... opservices) {
+        ServiceFidelity fi = new ServiceFidelity(opservices);
+        fi.fiType = Fi.Type.OPSRV;
+        return fi;
     }
 
     public static ServiceFidelity sigFi(Signature... signatures) {
@@ -2350,6 +2363,31 @@ operator extends Operator {
         return pr;
     }
 
+    public static Projection dscPrj(String path$domain, Fidelity... fidelities) {
+        String path = null;
+        String domain = null;
+        if (path$domain.indexOf("$") > 0) {
+            int ind = path$domain.indexOf("$");
+            path = path$domain.substring(0, ind);
+            domain = path$domain.substring(ind + 1);
+        } else if (path$domain != null) {
+            path = path$domain;
+        }
+        Projection pr = new Projection(fidelities);
+        pr.setName(path);
+        pr.setDomain(domain);
+        pr.setType(Fi.Type.DISCIPLINE);
+        return pr;
+    }
+
+    public static Projection dscPrj(String name, String domain, Fidelity... fidelities) {
+        Projection pr = new Projection(fidelities);
+        pr.setName(name);
+        pr.setDomain(domain);
+        pr.setType(Fi.Type.DISCIPLINE);
+        return pr;
+    }
+
     public static Projection cxtPrj(Fidelity... fidelities) {
         Projection pr = new Projection(fidelities);
         pr.setType(Fi.Type.CXT_PRJ);
@@ -2365,6 +2403,26 @@ operator extends Operator {
         Projection p = new Projection(fidelity);
         p.setName(name);
         return p;
+    }
+
+    public static Fi dscPrj(String path$domain, List<Path> paths, String gradient) {
+        String path = null;
+        String domain = null;
+        if (path$domain.indexOf("$") > 0) {
+            int ind = path$domain.indexOf("$");
+            path = path$domain.substring(0, ind);
+            domain = path$domain.substring(ind + 1);
+        } else if (path$domain != null) {
+            path = path$domain;
+        }
+        FidelityList  fl = new FidelityList(paths.size());
+        for (Path p : paths) {
+            fl.add(gFi(path, p.getName(), gradient));
+        }
+        Projection prj = new Projection(fl);
+        prj.setDomain(domain);
+        prj.setType(Fi.Type.DISCIPLINE);
+        return prj;
     }
 
     public static Fi prj(String fidelity, List<Path> paths, String gradient) {
@@ -2875,7 +2933,6 @@ operator extends Operator {
             task.setMultiFi((ServiceFidelity) mFi.getFidelity());
             task.setServiceMorphFidelity(mFi);
             task.setSelectedFidelity(first);
-            task.setSelectedFidelity(first);
         }
 
         if (fm == Strategy.FidelityManagement.YES && task.getFidelityManager() == null
@@ -2896,7 +2953,7 @@ operator extends Operator {
                 if (mFi.getMorpherFidelity() != null) {
                     // set the default morpher
                     try {
-                        mFi.setMorpher(( Morpheus ) ((Entry) mFi.getMorpherFidelity().get(0)).getValue());
+                        mFi.setMorpher(( Morpher ) ((Entry) mFi.getMorpherFidelity().get(0)).getValue());
                     } catch (ContextException e) {
                         throw new EvaluationException(e);
                     }
@@ -3158,7 +3215,7 @@ operator extends Operator {
                 mFi.addObserver(fiManager);
                 if (mFi.getMorpherFidelity() != null) {
                     // set the default morpher
-                    mFi.setMorpher(( Morpheus ) ((Entry) mFi.getMorpherFidelity().get(0)).getValue());
+                    mFi.setMorpher(( Morpher ) ((Entry) mFi.getMorpherFidelity().get(0)).getValue());
                 }
             }
         }
@@ -3543,12 +3600,16 @@ operator extends Operator {
     }
 
     public static EntryList inputs(Value...  entries) {
-        return designInputs(entries);
+        EntryList el = new EntryList(entries);
+        el.setType(Functionality.Type.INITIAL_DESIGN);
+        return el;
     }
 
     public static EntryList designInputs(Value...  entries) {
-        EntryList el = new EntryList(entries);
-        el.setType(Functionality.Type.INITIAL_DESIGN);
+        EntryList el = inputs(entries);
+        for (Entry ent : el) {
+            ent.addKind(Functionality.Type.DESIGN_INPUT);
+        }
         return el;
     }
 
@@ -3639,7 +3700,9 @@ operator extends Operator {
                 // a contextReturn in args is used as dependent entry
                 // and also as a  contextReturn in context
                 // as all args are appended to context defined by a Paths
-                if (o instanceof Path) {
+                if (o instanceof Args) {
+                    objs.add(o);
+                } else if (o instanceof Path) {
                     ps.add((Path) o);
                     objs.add(((Path) o).path);
                 } else {
@@ -4055,6 +4118,21 @@ operator extends Operator {
             Kind.DESIGN,
             Kind.MODEL,
             Kind.TASKER);
+        return signature;
+    }
+
+    public static Signature diffSig(Class<?> serviceType) {
+        return differentiatorSig(serviceType);
+    }
+
+    public static Signature differentiatorSig(Class<?> serviceType) {
+        Signature signature = null;
+        try {
+            signature = sig(serviceType);
+        } catch (SignatureException e) {
+            throw new RuntimeException("invalid signature: " + serviceType);
+        }
+        ((ServiceSignature)signature).addRank(Kind.DIFFERENTIATOR);
         return signature;
     }
 

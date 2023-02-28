@@ -21,9 +21,11 @@ import net.jini.core.transaction.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.exertion.EvaluationTask;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.provider.ControlFlowManager;
+import sorcer.core.signature.EvaluationSignature;
 import sorcer.core.signature.LocalSignature;
 import sorcer.core.signature.RemoteSignature;
 import sorcer.core.signature.ServiceSignature;
@@ -50,7 +52,7 @@ import java.util.Set;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class Task extends Subroutine implements ElementaryRequestor {
+public class Task extends Subroutine implements ElementaryRequest {
 
 	private static final long serialVersionUID = 5179772214884L;
 
@@ -127,7 +129,7 @@ public class Task extends Subroutine implements ElementaryRequestor {
 	public void initDelegate() throws MogramException {
 		if (delegate != null && multiFi.getSelect() != delegate.getMultiFi().getSelect()) {
 			delegate = null;
-			dataContext.clearReturnPath();
+//			dataContext.clearReturnPath();
 		}
 
 		try {
@@ -139,6 +141,9 @@ public class Task extends Subroutine implements ElementaryRequestor {
 				}
 				if (ts instanceof RemoteSignature) {
 					delegate = new NetTask(key, ts);
+				} else if (ts instanceof EvaluationSignature) {
+					delegate = new EvaluationTask(key, ( EvaluationSignature ) ts, dataContext);
+					ts.setContextReturn( ((EvaluationSignature )ts).getEvaluator().getContextReturn());
 				} else {
 					delegate = new ObjectTask(key, ts);
 				}

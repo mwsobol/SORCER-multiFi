@@ -10,7 +10,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.ServiceContext;
 import sorcer.mo.operator;
-import sorcer.service.Morpheus;
+import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
 import sorcer.util.Checkpoint;
@@ -138,7 +138,7 @@ public class SmlOperators {
 	@Test
 	public void morphingMultiFidelityModel() throws Exception {
 
-		Morpheus morpher1 = (mgr, mFi, value) -> {
+		Morpher morpher1 = (mgr, mFi, value) -> {
 			Fidelity<Signature> fi =  mFi.getFidelity();
 			if (fi.getSelectName().equals("add")) {
 				if (((Double) value) <= 200.0) {
@@ -151,7 +151,7 @@ public class SmlOperators {
 			}
 		};
 
-		Morpheus morpher2 = (mgr, mFi, value) -> {
+		Morpher morpher2 = (mgr, mFi, value) -> {
 			Fidelity<Signature> fi =  mFi.getFidelity();
 			if (fi.getSelectName().equals("divide")) {
 				if (((Double) value) <= 9.0) {

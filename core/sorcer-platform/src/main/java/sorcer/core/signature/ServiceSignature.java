@@ -111,7 +111,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 
 	protected Fi multiFi;
 
-	protected Morpheus morpher;
+	protected Morpher morpher;
 
 	/**
 	 * a context template to define the context appended from a provider
@@ -729,7 +729,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	@Override
-	public Morpheus getMorpher() {
+	public Morpher getMorpher() {
 		return morpher;
 	}
 

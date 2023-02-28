@@ -43,9 +43,9 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
-                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
-                response("mFi", "arg/x1", "arg/x2"));
+            ent("mFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
+            response("mFi", "arg/x1", "arg/x2"));
 
         Context out = eval(mod, fi("multiply", "mFi"));
         logger.info("out: " + out);
@@ -58,11 +58,11 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mdl = model(
-                ent("arg/x1", entFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
-                ent("arg/x2", entFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
-                ent("mFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
-                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
-                response("mFi", "arg/x1", "arg/x2"));
+            ent("arg/x1", entFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
+            ent("arg/x2", entFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
+            ent("mFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
+            response("mFi", "arg/x1", "arg/x2"));
 
         logger.info("DEPS: " + printDeps(mdl));
 
@@ -79,11 +79,11 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mdl = model(
-                ent("arg/x1", entFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
-                ent("arg/x2", entFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
-                ent("sigFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
-                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
-                response("sigFi", "arg/x1", "arg/x2"));
+            ent("arg/x1", entFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
+            ent("arg/x2", entFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
+            ent("sigFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
+            response("sigFi", "arg/x1", "arg/x2"));
 
         logger.info("DEPS: " + printDeps(mdl));
 
@@ -102,9 +102,9 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
-                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
-                response("mFi", "arg/x1", "arg/x2"));
+            ent("mFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
+            response("mFi", "arg/x1", "arg/x2"));
 
         Context out = response(mod, fi("add", "mFi"));
         logger.info("out: " + out);
@@ -139,10 +139,10 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = reqModel(inVal("x1", 10.0), inVal("x2", 90.0),
-                ent("eval1", invoker("add", "x1 + x2", args("x1", "x2"))),
-                ent("eval2", invoker("multiply", "x1 * x2", args("x1", "x2"))),
-                ent("mFi", entFi(ref("eval1"), ref("eval2"))),
-                response("mFi", "x1", "x2"));
+            ent("eval1", invoker("add", "x1 + x2", args("x1", "x2"))),
+            ent("eval2", invoker("multiply", "x1 * x2", args("x1", "x2"))),
+            ent("mFi", entFi(ref("eval1"), ref("eval2"))),
+            response("mFi", "x1", "x2"));
 
         Context out = response(mod, fi("eval1", "mFi"));
         logger.info("out: " + out);
@@ -151,6 +151,21 @@ public class ModelMultiFidelities {
         out = response(mod, fi("eval2", "mFi"));
         logger.info("out2: " + out);
         assertTrue(get(out, "mFi").equals(900.0));
+    }
+
+    @Test
+    public void opserviceMultiFidelityModel() throws Exception {
+
+        // three entry model
+        Model mod = model(inVal("x1", 10.0), inVal("x2", 90.0),
+            ent("mFi", opFi(sig("add", AdderImpl.class, result("result/y", inPaths("x1", "x2"))),
+                invoker("multiply", "x1 * x2", args("x1", "x2"), result("result/y")))),
+        response("mFi", "x1", "x2"));
+
+        Context out = response(mod, fi("add", "mFi"));
+        logger.info("out: " + out);
+        assertTrue(get(out, "mFi").equals(100.0));
+        assertTrue(get(mod, "result/y").equals(100.0));
     }
 
     @Test
@@ -336,7 +351,7 @@ public class ModelMultiFidelities {
     @Test
     public void morphingMultiFidelityModel() throws Exception {
 
-        Morpheus morpher1 = (mgr, mFi, value) -> {
+        Morpher morpher1 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("add")) {
                 if (((Double) value) <= 200.0) {
@@ -349,7 +364,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        Morpheus morpher2 = (mgr, mFi, value) -> {
+        Morpher morpher2 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
@@ -429,7 +444,7 @@ public class ModelMultiFidelities {
         Entry e2 = ent("x2", 6.0);
         Entry e3 = ent("x3", 7.0);
 
-        Morpheus morpher = (mgr, mFi, value) -> {
+        Morpher morpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("x1")) {
                 if (((double)value) <= 5.0) {
@@ -476,7 +491,7 @@ public class ModelMultiFidelities {
         Signature ms = sig("multiply", MultiplierImpl.class);
         Signature as = sig("add", AdderImpl.class);
 
-        Morpheus morpher = (mgr, mFi, value) -> {
+        Morpher morpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("multiply")) {
                 if (((Double) value(context(value), "result/y")) >= 500.0) {
@@ -503,7 +518,7 @@ public class ModelMultiFidelities {
         Signature ms = sig("multiply", MultiplierImpl.class);
         Signature as = sig("add", AdderImpl.class);
 
-        Morpheus inMorpher = (mgr, mFi, value) -> {
+        Morpher inMorpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             Fi.Type type = mFi.getFidelity().getFiType();
             if (fi.getSelectName().equals("multiply")) {
@@ -512,7 +527,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        Morpheus outMorpher = (mgr, mFi, value) -> {
+        Morpher outMorpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             Fi.Type type = mFi.getFidelity().getFiType();
             if (fi.getSelectName().equals("multiply")) {
@@ -541,7 +556,7 @@ public class ModelMultiFidelities {
         Signature ms = sig("multiply", MultiplierImpl.class);
         Signature as = sig("add", AdderImpl.class);
 
-        Morpheus morpher = (mgr, mFi, value) -> {
+        Morpher morpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             Fi.Type type = mFi.getFidelity().getFiType();
             if (type == Fi.Type.IN) {
@@ -608,7 +623,7 @@ public class ModelMultiFidelities {
                         outVal("result/y")));
 
 
-        Morpheus morpher = (mgr, mFi, value) -> {
+        Morpher morpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("t5")) {
                 if (((Double) value(context(value), "result/y")) <= 200.0) {
@@ -648,7 +663,7 @@ public class ModelMultiFidelities {
             sig("add", AdderImpl.class,
                 result("result/y", inPaths("arg/x1", "arg/x2"))));
 
-        Morpheus morpher1 = (mgr, mFi, value) -> {
+        Morpher morpher1 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();
             if (fi.getSelectName().equals("add")) {
                 if (((Double) value) <= 200.0) {
@@ -661,7 +676,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        Morpheus morpher2 = (mgr, mFi, value) -> {
+        Morpher morpher2 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
@@ -672,7 +687,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        Morpheus morpher3 = (mgr, mFi, value) -> {
+        Morpher morpher3 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();
             Double val = (Double) value;
             if (fi.getSelectName().equals("t5")) {
@@ -686,7 +701,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        Morpheus morpher4 = (mgr, mFi, value) -> {
+        Morpher morpher4 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
@@ -752,7 +767,7 @@ public class ModelMultiFidelities {
     @Test
     public void morphingModelDefaultFidelities() throws Exception {
 
-        Morpheus mdlMorpher = (mgr, mFi, value) -> {
+        Morpher mdlMorpher = (mgr, mFi, value) -> {
             // model mFi not set
             Double x1 = (Double) exec(((Model)value), "arg/x1");
             Double x2 = (Double) exec(((Model)value), "arg/x2");

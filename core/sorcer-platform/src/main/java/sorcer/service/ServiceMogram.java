@@ -1299,7 +1299,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return null;
     }
 
-    public Fi getDeveloperFi() {
+    public Fi getControllingFi() {
         return developerFi;
     }
 

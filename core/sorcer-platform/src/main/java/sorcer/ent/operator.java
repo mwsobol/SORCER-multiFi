@@ -37,6 +37,7 @@ import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.Functionality;
 import sorcer.util.Checkpoint;
 
+import java.io.File;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Date;
@@ -339,10 +340,6 @@ public class operator extends Operator {
         return new Pipeline(pservices);
     }
 
-	public static Pipeline n2(String name, Context data, Opservice... pservices) {
-		return new Pipeline(name, data, pservices);
-	}
-
 	public static <T> Evaluator<T>  mfEval(Evaluator<T>... evaluators) {
 		return (Evaluator<T>) new MultiFiEvaluator(evaluators);
 	}
@@ -589,6 +586,10 @@ public class operator extends Operator {
 
 	public static ServiceInvoker invoker(String expression) {
 		return new GroovyInvoker(expression);
+	}
+
+	public static ServiceInvoker invoker(File script, Pcr... parameters) {
+		return new GroovyInvoker(script);
 	}
 
 	public static ServiceInvoker invoker(Routine exertion) {
@@ -978,23 +979,23 @@ public class operator extends Operator {
 		return new TagEntry(path, value, association);
 	}
 
-	public static Arg[] ents(String... entries)
-			throws ContextException {
-		ArgSet as = new ArgSet();
-		for (String name : entries) {
-			as.add(new Function(name, Context.none));
-		}
-		return as.toArray();
-	}
+//	public static Arg[] ents(String... entries)
+//			throws ContextException {
+//		ArgSet as = new ArgSet();
+//		for (String name : entries) {
+//			as.add(new Function(name, Context.none));
+//		}
+//		return as.toArray();
+//	}
 
-	public static Arg[] ents(Function... entries)
-			throws ContextException {
-		ArgSet as = new ArgSet();
-		for (Function e : entries) {
-			as.add(e);
-		}
-		return as.toArray();
-	}
+//	public static Arg[] ents(Function... entries)
+//			throws ContextException {
+//		ArgSet as = new ArgSet();
+//		for (Function e : entries) {
+//			as.add(e);
+//		}
+//		return as.toArray();
+//	}
 
 	public static Function inout(Function entry) {
 		entry.setType(Functionality.Type.INOUT);

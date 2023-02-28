@@ -40,7 +40,7 @@ import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.service.Morpheus;
+import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.ContextDomain;
 import sorcer.service.modeling.*;
@@ -138,7 +138,7 @@ public class operator {
         return entValue(context, path);
     }
 
-    public static Object value(Requestor request, String path, Arg... args) {
+    public static Object value(Request request, String path, Arg... args) {
         if (request instanceof Governance) {
             return (( ServiceContext ) (( Governance ) request).getOutput()).get(path);
         }
@@ -633,20 +633,20 @@ public class operator {
         return mogram;
     }
 
-    public static void setInOutMorpher(Contextion contextion, Morpheus inMorpher, Morpheus outMorpher) {
+    public static void setInOutMorpher(Contextion contextion, Morpher inMorpher, Morpher outMorpher) {
         (( MultiFiSlot ) contextion).setInMorpher(inMorpher);
         (( MultiFiSlot ) contextion).setMorpher(outMorpher);
     }
 
-    public static void setOutMorpher(Contextion contextion, Morpheus mdlMorpher) {
+    public static void setOutMorpher(Contextion contextion, Morpher mdlMorpher) {
         (( MultiFiSlot ) contextion).setMorpher(mdlMorpher);
     }
 
-    public static void setMorpher(Contextion contextion, Morpheus mdlMorpher) {
+    public static void setMorpher(Contextion contextion, Morpher mdlMorpher) {
         (( MultiFiSlot ) contextion).setMorpher(mdlMorpher);
     }
 
-    public static void setInMorpher(Contextion contextion, Morpheus mdlMorpher) {
+    public static void setInMorpher(Contextion contextion, Morpher mdlMorpher) {
         (( MultiFiSlot ) contextion).setInMorpher(mdlMorpher);
     }
 
@@ -1095,7 +1095,7 @@ public class operator {
                     mFi.addObserver(fiManager);
                     if (mFi.getMorpherFidelity() != null) {
                         // set the default morpher
-                        mFi.setMorpher(( Morpheus ) (( Entry ) mFi.getMorpherFidelity().get(0)).getImpl());
+                        mFi.setMorpher(( Morpher ) (( Entry ) mFi.getMorpherFidelity().get(0)).getImpl());
                     }
                 }
             }
@@ -1112,9 +1112,9 @@ public class operator {
             Object[] dest = new Object[items.length + 1];
             System.arraycopy(items, 0, dest, 1, items.length);
             dest[0] = model;
-            return ( Model ) domainContext(dest);
+            return ( Model ) contextDomain(dest);
         }
-        return ( Model ) domainContext(items);
+        return ( Model ) contextDomain(items);
     }
 
     public static void update(Mogram mogram, Setup... entries) throws ContextException {
@@ -1175,14 +1175,14 @@ public class operator {
         }
     }
 
-    public static Context dmnCxt(Requestor request, String domainName) {
+    public static Context dmnCxt(Request request, String domainName) {
         if (request instanceof Context) {
             return getDomainContext(( Context ) request, domainName);
         }
         return null;
     }
 
-    public static Context setDmnCxt(Requestor request, String domainName, Context context) {
+    public static Context setDmnCxt(Request request, String domainName, Context context) {
         if (request instanceof Context) {
             try {
                 return addDomainContext(( Context ) request, context, domainName);
@@ -1197,7 +1197,7 @@ public class operator {
         return context;
     }
 
-    public static Context dmnIn(Requestor request, String domainName) {
+    public static Context dmnIn(Request request, String domainName) {
         if (request instanceof Collaboration) {
             return (( Collaboration ) request).getChildrenContexts().get(domainName);
         } else {
@@ -1205,7 +1205,7 @@ public class operator {
         }
     }
 
-    public static Context dmnOut(Requestor request, String domainName) {
+    public static Context dmnOut(Request request, String domainName) {
         if (request instanceof Collaboration) {
             ContextList outs = (( Collaboration ) request).getOutputs();
             if (outs != null) {
@@ -1227,7 +1227,7 @@ public class operator {
         }
     }
 
-    public static void setDmnOut(Requestor request, Context context) {
+    public static void setDmnOut(Request request, Context context) {
         if (request instanceof Collaboration) {
             (( Collaboration ) request).getOutputs().set(context);
         }
@@ -1733,30 +1733,30 @@ public class operator {
         fi.setSelect(null);
     }
 
-    public static Morpher mfr(String name, Morpheus morpher) {
-        return new Morpher(name, morpher, Morpheus.Dir.OUT);
+    public static Morpheus mfr(String name, Morpher morpher) {
+        return new Morpheus(name, morpher, Morpher.Dir.OUT);
     }
 
-    public static Morpher inMfr(String name, Morpheus morpher) {
-        return new Morpher(name, morpher, Morpheus.Dir.IN);
+    public static Morpheus inMfr(String name, Morpher morpher) {
+        return new Morpheus(name, morpher, Morpher.Dir.IN);
     }
 
-    public static Morpher outMfr(String name, Morpheus morpher) {
-        return new Morpher(name, morpher, Morpheus.Dir.OUT);
+    public static Morpheus outMfr(String name, Morpher morpher) {
+        return new Morpheus(name, morpher, Morpher.Dir.OUT);
     }
 
-    public static Morpher mfr(String name, Morpheus morpher, Morpheus.Dir direction) {
-        return new Morpher(name, morpher, direction);
+    public static Morpheus mfr(String name, Morpher morpher, Morpher.Dir direction) {
+        return new Morpheus(name, morpher, direction);
     }
 
-    public static ServiceFidelity mfrFi(Morpheus... mmfrEntries) {
+    public static ServiceFidelity mfrFi(Morpher... mmfrEntries) {
         return mfrFi(null, mmfrEntries);
     }
 
-    public static ServiceFidelity mfrFi(String name, Morpheus... mmfrEntries) {
-        Morpher[] entries = new Morpher[mmfrEntries.length];
+    public static ServiceFidelity mfrFi(String name, Morpher... mmfrEntries) {
+        Morpheus[] entries = new Morpheus[mmfrEntries.length];
         for (int i = 0; i < mmfrEntries.length; i++) {
-            entries[i] = ( Morpher ) mmfrEntries[i];
+            entries[i] = ( Morpheus ) mmfrEntries[i];
         }
         ServiceFidelity mdaFi = new ServiceFidelity(entries);
         if (name != null) {
@@ -1801,9 +1801,9 @@ public class operator {
         List<Service> outMfrs = new ArrayList();
 
         for (Object fi : morherFi.getSelects()) {
-            if (fi instanceof Morpher && (( Morpher ) fi).getDirection().equals(Morpheus.Dir.IN)) {
+            if (fi instanceof Morpheus && (( Morpheus ) fi).getDirection().equals(Morpher.Dir.IN)) {
                 inMfrs.add(( Service ) fi);
-            } else if (fi instanceof Morpher && (( Morpher ) fi).getDirection().equals(Morpheus.Dir.OUT)) {
+            } else if (fi instanceof Morpheus && (( Morpheus ) fi).getDirection().equals(Morpher.Dir.OUT)) {
                 outMfrs.add(( Service ) fi);
             }
         }
@@ -1819,11 +1819,11 @@ public class operator {
         return morphFi;
     }
 
-    public static MorphFidelity devFi(String name, Morpheus inMorher, Morpheus outMorher, Development... devEntries) {
+    public static MorphFidelity devFi(String name, Morpher inMorher, Morpher outMorher, Development... devEntries) {
         ServiceFidelity devFi = sorcer.mo.operator.devFi(name, devEntries);
         MorphFidelity morphFi = new MorphFidelity(devFi);
-        ServiceFidelity inMrfFi = new ServiceFidelity(( Morpher ) mfr(name, inMorher));
-        ServiceFidelity outMrfFi = new ServiceFidelity(( Morpher ) mfr(name, outMorher));
+        ServiceFidelity inMrfFi = new ServiceFidelity(( Morpheus ) mfr(name, inMorher));
+        ServiceFidelity outMrfFi = new ServiceFidelity(( Morpheus ) mfr(name, outMorher));
         if (name != null) {
             morphFi.setName(name);
         }
@@ -1833,10 +1833,10 @@ public class operator {
         return morphFi;
     }
 
-    public static MorphFidelity devFi(String name, Morpheus morher, Development... devEntries) {
+    public static MorphFidelity devFi(String name, Morpher morher, Development... devEntries) {
         ServiceFidelity devFi = sorcer.mo.operator.devFi(name, devEntries);
         MorphFidelity morphFi = new MorphFidelity(devFi);
-        ServiceFidelity mrfFi = new ServiceFidelity(( Morpher ) mfr(name, morher));
+        ServiceFidelity mrfFi = new ServiceFidelity(( Morpheus ) mfr(name, morher));
         if (name != null) {
             morphFi.setName(name);
         }

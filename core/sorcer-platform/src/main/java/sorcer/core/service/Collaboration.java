@@ -40,7 +40,7 @@ import static sorcer.so.operator.*;
 /**
  * @author Mike Sobolewski
  */
-public class Collaboration extends Realm implements Dependency, cxtn {
+public class Collaboration extends ServiceDiscipline implements Dependency, cxtn {
 
 	static final long serialVersionUID = 1L;
 
@@ -238,7 +238,7 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 	}
 
 	@Override
-	public Morpheus getMorpher() {
+	public Morpher getMorpher() {
 		return morpher;
 	}
 
@@ -356,7 +356,7 @@ public class Collaboration extends Realm implements Dependency, cxtn {
 		return evaluateDomain(children.get(domainName), context);
 	}
 
-	public Context evaluateDomain(Requestor request, Context context) throws ServiceException {
+	public Context evaluateDomain(Request request, Context context) throws ServiceException {
 			return response((Mogram) request, context);
 	}
 

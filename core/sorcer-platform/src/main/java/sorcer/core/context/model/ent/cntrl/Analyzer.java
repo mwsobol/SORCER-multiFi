@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 01/05/20.
  */
-public class Analyzer extends Entry<Analysis> implements Controlling, Analysis {
+public class Analyzer extends Entry<Analysis> implements Driver, Analysis {
 
     private static final long serialVersionUID = 1L;
 
@@ -72,7 +72,7 @@ public class Analyzer extends Entry<Analysis> implements Controlling, Analysis {
     }
 
     @Override
-    public void analyze(Requestor request, Context context) throws ServiceException {
+    public void analyze(Request request, Context context) throws ServiceException {
         try {
             if (impl != null && impl instanceof Analysis) {
                 if (contextion == null || context == contextion) {

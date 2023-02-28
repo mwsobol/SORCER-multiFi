@@ -123,7 +123,7 @@ public class ServiceMograms {
         Model mdl = model(
                 inVal("by", entFi(inVal("by-10", 10.0), inVal("by-20", 20.0))), inVal("out", 0.0),
                 ent(sig("increment", incrementer, result("out", inPaths("by", "template")))),
-                ent("multiply", invoker("add * out", ents("add", "out"))));
+                ent("multiply", invoker("add * out", args("add", "out"))));
 
         responseUp(mdl, "increment", "out", "multiply", "by");
 //        Context out = response(mdl, val("add", 100.0));

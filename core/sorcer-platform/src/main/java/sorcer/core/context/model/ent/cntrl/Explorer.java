@@ -33,7 +33,7 @@ import static sorcer.so.operator.response;
 /**
  * Created by Mike Sobolewski on 01/05/20.
  */
-public class Explorer extends Entry<Exploration> implements Controlling, Exploration {
+public class Explorer extends Entry<Exploration> implements Driver, Exploration {
 
     private static final long serialVersionUID = 1L;
 

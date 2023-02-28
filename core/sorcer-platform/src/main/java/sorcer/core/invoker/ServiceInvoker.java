@@ -28,6 +28,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Pcr;
 import sorcer.eo.operator;
 import sorcer.service.*;
+import sorcer.service.modeling.ArgList;
 import sorcer.service.modeling.Data;
 import sorcer.service.modeling.evr;
 
@@ -112,7 +113,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 
 	protected Fi multiFi;
 
-	protected Morpheus morpher;
+	protected Morpher morpher;
 
 	// default instance new Return(Context.RETURN);
 	protected Context.Return contextReturn;
@@ -651,7 +652,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	}
 
 	@Override
-	public Morpheus getMorpher() {
+	public Morpher getMorpher() {
 		return morpher;
 	}
 

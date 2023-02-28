@@ -18,6 +18,7 @@
 package sorcer.core.signature;
 
 import sorcer.service.Evaluation;
+import sorcer.service.Evaluator;
 import sorcer.service.modeling.sig;
 
 public class EvaluationSignature extends ServiceSignature implements sig {
@@ -70,5 +71,14 @@ public class EvaluationSignature extends ServiceSignature implements sig {
 	public String toString() {
 		return this.getClass() + ":" + providerName + ";" + execType + ";"
 				+ isActive + ";" + evaluator;
+	}
+
+	@Override
+	public String getName() {
+		if (name != null) {
+			return  name;
+		} else {
+			return (( Evaluator )evaluator).getName();
+		}
 	}
 }

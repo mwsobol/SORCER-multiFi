@@ -11,7 +11,7 @@ import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.req.Req;
-import sorcer.service.Morpheus;
+import sorcer.service.Morpher;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -33,7 +33,7 @@ import static sorcer.so.operator.*;
 @ProjectContext("examples/sml")
 public class ArithmeticMograms {
 	private final static Logger logger = LoggerFactory.getLogger(ArithmeticMograms.class);
-	private Morpheus mFi1Morpher;
+	private Morpher mFi1Morpher;
 
 	@Test
 	public void evaluatorEntryModel() throws Exception {
@@ -57,6 +57,7 @@ public class ArithmeticMograms {
 		assertTrue(get(out, "y2").equals(100.0));
 	}
 
+	// The pattern recommended for INN HA4 assignment
 	@Test
 	public void arithmeticStructuredBlock() throws Exception {
 
@@ -257,6 +258,7 @@ public class ArithmeticMograms {
 		assertEquals(get(batch3, "result/y"), 400.0);
 	}
 
+	// The pattern recommended for INN HA4 assignment
 	@Test
 	public void arithmeticBlock() throws Exception {
 
@@ -280,6 +282,7 @@ public class ArithmeticMograms {
 		assertEquals(value(context(result), "block/result"), 400.00);
 	}
 
+	// The pattern recommended for INN HA4 assignment
 	@Test
 	public void altBlock() throws Exception {
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
@@ -382,7 +385,7 @@ public class ArithmeticMograms {
 	@Test
 	public void amorphousModel() throws Exception {
 
-		Morpheus mFi1Morpher =  (mgr, mFi, value) -> {
+		Morpher mFi1Morpher =  (mgr, mFi, value) -> {
 			Fidelity fi =  mFi.getFidelity();
 			if (fi.getSelectName().equals("add")) {
 				if (((Double) value) <= 200.0) {
@@ -395,7 +398,7 @@ public class ArithmeticMograms {
 			}
 		};
 
-		Morpheus mFi2Morpher = (mgr, mFi, value) -> {
+		Morpher mFi2Morpher = (mgr, mFi, value) -> {
 			Fidelity<Signature> fi =  mFi.getFidelity();
 			if (fi.getSelectName().equals("divide")) {
 				if (((Double) value) <= 9.0) {

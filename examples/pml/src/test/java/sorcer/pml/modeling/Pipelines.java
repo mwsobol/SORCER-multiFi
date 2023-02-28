@@ -82,7 +82,7 @@ public class Pipelines {
 		Opservice sigOut = sig("multiply", MultiplierImpl.class,
 				result("z", inPaths("lambdaOut", "exprOut")));
 
-		Pipeline pp = n2("n-squared", data,
+		Pipeline pp = pl("n-squared", data,
 				lambdaOut,
 				exprOut,
 				sigOut,

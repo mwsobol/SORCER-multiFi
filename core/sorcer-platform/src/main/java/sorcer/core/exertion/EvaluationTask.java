@@ -166,7 +166,7 @@ public class EvaluationTask extends Task {
 				dataContext.setContextReturn(getProcessSignature().getContextReturn());
 			dataContext.setReturnValue(result);
 			if (evaluator instanceof Scopable && evaluator.getScope() != null) {
-				(((Scopable)evaluator).getScope()).putValue(dataContext.getContextReturn().returnPath, result);
+				evaluator.getScope().putValue(dataContext.getContextReturn().returnPath, result);
 			}
 			if (evaluator instanceof Req && dataContext.getScope() != null)
 				dataContext.getScope().putValue(((Identifiable)evaluator).getName(), result);

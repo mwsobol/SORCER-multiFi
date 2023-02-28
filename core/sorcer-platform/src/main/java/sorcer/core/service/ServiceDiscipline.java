@@ -14,8 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sorcer.service;
 
-public interface Directive {
+package sorcer.core.service;
 
+import net.jini.id.Uuid;
+import net.jini.id.UuidFactory;
+import sorcer.service.*;
+
+/**
+ * @author Mike Sobolewski
+ */
+abstract public class ServiceDiscipline extends MultiFiSlot implements Transdiscipline {
+
+    protected Uuid id = UuidFactory.generate();
+
+    @Override
+    public Object getId() {
+        return id;
+    }
 }

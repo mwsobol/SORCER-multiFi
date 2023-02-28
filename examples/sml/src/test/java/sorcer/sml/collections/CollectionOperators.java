@@ -340,7 +340,7 @@ public class CollectionOperators {
 				ent("arg/x5", 1.5));
 
 		add(cxt, ent("arg/x6", 1.6));
-		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));
+		add(cxt, ent("arg/x7", invoker("x1 + x3", args("x1", "x3"))));
 
 		assertTrue(value(cxt, "arg/x1").equals(1.1));
 		assertTrue(get(cxt, "arg/x1").equals(1.1));

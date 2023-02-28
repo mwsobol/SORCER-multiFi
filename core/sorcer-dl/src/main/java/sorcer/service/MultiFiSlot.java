@@ -38,9 +38,9 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
     protected Fi multiFi;
     // morphing fidelities
     protected ServiceFidelity morpherFi;
-    protected Morpheus morpher;
+    protected Morpher morpher;
     protected ServiceFidelity inMorpherFi;
-    protected Morpheus inMorpher;
+    protected Morpher inMorpher;
     protected FidelityManagement fiManager;
 
     // a pool of all controllers available for bindig free controllers
@@ -188,29 +188,29 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
         }
     }
 
-    public Morpheus getMorpher() {
+    public Morpher getMorpher() {
         if (morpherFi != null) {
-            morpher = ( Morpheus ) morpherFi.getSelect();
+            morpher = ( Morpher ) morpherFi.getSelect();
             return morpher;
         } else {
             return morpher;
         }
     }
 
-    public void setMorpher(Morpheus morpher) {
+    public void setMorpher(Morpher morpher) {
         this.morpher = morpher;
     }
 
-    public Morpheus getInMorpher() {
+    public Morpher getInMorpher() {
         if (inMorpherFi != null) {
-            inMorpher = ( Morpheus ) inMorpherFi.getSelect();
+            inMorpher = ( Morpher ) inMorpherFi.getSelect();
             return inMorpher;
         } else {
             return inMorpher;
         }
     }
 
-    public void setInMorpher(Morpheus inMorpher) {
+    public void setInMorpher(Morpher inMorpher) {
         this.inMorpher = inMorpher;
     }
 
