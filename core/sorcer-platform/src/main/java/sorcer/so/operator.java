@@ -30,8 +30,9 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.req.Req;
 import sorcer.core.plexus.*;
 import sorcer.core.service.Collaboration;
+import sorcer.core.service.DesignProject;
 import sorcer.core.service.Governance;
-import sorcer.core.service.MdDesign;
+import sorcer.core.service.ServiceDesign;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.Exertion;
 import sorcer.core.provider.exerter.ServiceShell;
@@ -359,17 +360,17 @@ public class operator extends Operator {
         }
     }
 
-    public static MdDesign dzn(String name) throws ServiceException {
-        return new MdDesign(name);
+    public static ServiceDesign dzn(String name) throws ServiceException {
+        return new ServiceDesign(name);
     }
 
-    public static MdDesign dzn(Intent designIntent) throws ServiceException {
+    public static ServiceDesign dzn(Intent designIntent) throws ServiceException {
         return dzn(null, designIntent);
     }
 
-    public static MdDesign dzn(String name, Intent designIntent) throws ServiceException {
+    public static ServiceDesign dzn(String name, Intent designIntent) throws ServiceException {
         try {
-            MdDesign design = new MdDesign(name, designIntent);
+            ServiceDesign design = new ServiceDesign(name, designIntent);
             FidelityManager fiManger = new DesignFidelityManager(design);
             design.setFidelityManager(fiManger);
             designIntent.setSubject(design.getName(),design);
@@ -379,12 +380,22 @@ public class operator extends Operator {
         }
     }
 
-    public static MdDesign dzn(String name, Discipline discipline, Context discContext, Development developer) throws ServiceException {
-        return new MdDesign(name, discipline, discContext, developer);
+    public static Project proj(Design design) {
+        return new DesignProject(design);
     }
 
-    public static MdDesign dzn(Discipline discipline, Context discContext, Development developer) throws ServiceException {
-        return new MdDesign(null, discipline, discContext, developer);
+    public static Project proj(String name, Design design) {
+        Project project = new DesignProject(design);
+        project.setName(name);
+        return project;
+    }
+
+    public static ServiceDesign dzn(String name, Discipline discipline, Context discContext, Development developer) throws ServiceException {
+        return new ServiceDesign(name, discipline, discContext, developer);
+    }
+
+    public static ServiceDesign dzn(Discipline discipline, Context discContext, Development developer) throws ServiceException {
+        return new ServiceDesign(null, discipline, discContext, developer);
     }
 
     public static ServiceContext dvlp(Request request, Object... items) throws ServiceException {
@@ -409,9 +420,11 @@ public class operator extends Operator {
         try {
             if (request instanceof Mogram) {
                 out = response((Mogram)request, items);
+            } else if (request instanceof DesignProject) {
+                return morphDesign(( ServiceDesign ) ((DesignProject)request).getDesign(), items);
             } else if (request instanceof Design) {
-                return morphDesign(( MdDesign ) request, items);
-            }else if (request instanceof Node) {
+                return morphDesign(( ServiceDesign ) request, items);
+            } else if (request instanceof Node) {
                 Arg[] args = new Arg[items.length];
                 System.arraycopy(items, 0, args, 0, items.length);
                 return (ServiceContext) request.execute(args);
@@ -432,7 +445,7 @@ public class operator extends Operator {
         return (ServiceContext)out;
     }
 
-    public static ServiceContext morphDesign(MdDesign design, Object... items)
+    public static ServiceContext morphDesign(ServiceDesign design, Object... items)
         throws ServiceException, RemoteException, ExecutiveException, ConfigurationException {
         if (design.getDevelopmentFi() == null) {
             design.setDeveloperFi(design.getDesignIntent());

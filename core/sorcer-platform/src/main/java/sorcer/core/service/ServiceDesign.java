@@ -32,12 +32,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A multidisciplinary design (MdDesign) is a design class holding its transdiscipline, intent context,
+ * A service design is a design class holding its transdiscipline, intent context,
  * developer (development controller), and morphers.
  *
- * @author Mike Sobolewski 05/24/2021
+ * @author Mike Sobolewski 02/27/2023
  */
-public class MdDesign extends MultiFiSlot implements Design {
+public class ServiceDesign extends MultiFiSlot implements Design {
 
     // transdiscipline
     private Contextion discipline;
@@ -64,7 +64,7 @@ public class MdDesign extends MultiFiSlot implements Design {
 
     private static int count = 0;
 
-    public MdDesign(String name) {
+    public ServiceDesign(String name) {
         if (name == null) {
             this.key = getClass().getSimpleName() + "-" + count++;
         } else {
@@ -73,7 +73,13 @@ public class MdDesign extends MultiFiSlot implements Design {
         serviceStrategy = new ModelStrategy(this);
     }
 
-    public MdDesign(String name, Context designIntent) throws SignatureException {
+    public ServiceDesign(Discipline disc) {
+        discipline = disc;
+        this.key = disc.getName();
+        serviceStrategy = new ModelStrategy(this);
+    }
+
+    public ServiceDesign(String name, Context designIntent) throws SignatureException {
         this(name);
         this.designIntent = designIntent;
         Intent dznCxt = (Intent)designIntent;
@@ -91,7 +97,7 @@ public class MdDesign extends MultiFiSlot implements Design {
         developmentIntent = dznCxt.getDevelopmentIntent();
     }
 
-    public MdDesign(String name, Discipline discipline, Context disciplineIntent, Development developer ) {
+    public ServiceDesign(String name, Discipline discipline, Context disciplineIntent, Development developer ) {
         this(name);
         this.discipline = discipline;
         this.disciplineIntent = disciplineIntent;

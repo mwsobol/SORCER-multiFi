@@ -40,7 +40,7 @@ import static sorcer.so.operator.*;
 /**
  * @author Mike Sobolewski
  */
-public class Collaboration extends MdDiscipline implements Dependency, cxtn {
+public class Collaboration extends ServiceDiscipline implements Dependency, cxtn {
 
 	static final long serialVersionUID = 1L;
 

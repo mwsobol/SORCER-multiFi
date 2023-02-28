@@ -17,7 +17,7 @@
 package sorcer.core.plexus;
 
 import sorcer.core.context.Intent;
-import sorcer.core.service.MdDesign;
+import sorcer.core.service.ServiceDesign;
 import sorcer.core.signature.LocalSignature;
 import sorcer.service.*;
 
@@ -33,8 +33,8 @@ public class DesignFidelityManager extends FidelityManager {
 
     public DesignFidelityManager(Design design) throws RemoteException {
         super(design.getName());
-        this.mogram = (( MdDesign ) design).getDesignIntent();
-        setDesignFidelities(( MdDesign ) design);
+        this.mogram = (( ServiceDesign ) design).getDesignIntent();
+        setDesignFidelities(( ServiceDesign ) design);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class DesignFidelityManager extends FidelityManager {
         for (Fi fi : fidelities) {
             if (fi.getFiType().equals(Fi.Type.INTENT)) {
                 Fi intentFi = (Fi)getSelectFi(fi);
-                (( MdDesign )(( Intent )mogram).getSubjectValue()).setDisciplineIntent(( Context ) intentFi.getSelect());
+                (( ServiceDesign )(( Intent )mogram).getSubjectValue()).setDisciplineIntent(( Context ) intentFi.getSelect());
                 continue;
             } else if (fi.getFiType().equals(Fi.Type.DEV)) {
                 developerFidelities.selectSelect(fi.getName());
@@ -98,7 +98,7 @@ public class DesignFidelityManager extends FidelityManager {
         this.developerFidelities = developerFidelities;
     }
 
-    private void setDesignFidelities(MdDesign design) throws RemoteException {
+    private void setDesignFidelities(ServiceDesign design) throws RemoteException {
         Fi devFi = design.getDevelopmentFi();
         Fi dznFi = design.getDesignIntent().getMultiFi();
         if (devFi != null) {
