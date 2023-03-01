@@ -25,13 +25,13 @@ import java.util.List;
 /**
  * @author Mike Sobolewski
  */
-public class CollabRegion extends Collaboration implements Region {
+public class RegionCollab extends Collaboration implements Region {
 
     private static int count = 0;
 
     private Supervision supervisor;
 
-    public CollabRegion(String name) {
+    public RegionCollab(String name) {
         if (name == null) {
             this.key = getClass().getSimpleName() + "-" + count++;
         } else {
@@ -40,14 +40,14 @@ public class CollabRegion extends Collaboration implements Region {
         serviceStrategy = new ModelStrategy(this);
     }
 
-    public CollabRegion(String name, Node[] nodes) {
+    public RegionCollab(String name, Node[] nodes) {
         this(name);
         for (Node node : nodes) {
             this.children.put(node.getName(), node);
         }
     }
 
-    public CollabRegion(String name, List<Node> nodes) {
+    public RegionCollab(String name, List<Node> nodes) {
         this(name);
         for (Node node : nodes) {
             this.children.put(node.getName(), node);

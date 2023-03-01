@@ -1567,7 +1567,7 @@ public class operator {
             }
         }
 
-        Region rgn = new CollabRegion(name, nodes);
+        Region rgn = new RegionCollab(name, nodes);
         if (nodes.size() == 1 && (name == null || name.contains("unknown"))) {
             rgn.setName(nodes.get(0).getName());
         }
