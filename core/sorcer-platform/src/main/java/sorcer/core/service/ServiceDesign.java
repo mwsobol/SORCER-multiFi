@@ -27,6 +27,7 @@ import sorcer.service.modeling.ExecutiveException;
 import sorcer.service.modeling.Finalization;
 import sorcer.service.modeling.Initialization;
 
+import java.lang.reflect.Type;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
@@ -271,6 +272,11 @@ public class ServiceDesign extends MultiFiSlot implements Design {
     @Override
     public Context getContext() throws ContextException {
         return developmentIntent;
+    }
+
+    @Override
+    public Type getArchitectureType() throws RemoteException {
+        return getDiscipline().getClass();
     }
 
     @Override
