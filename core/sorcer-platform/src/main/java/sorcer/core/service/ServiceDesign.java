@@ -19,6 +19,7 @@ package sorcer.core.service;
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.Intent;
 import sorcer.core.context.ModelStrategy;
+import sorcer.core.context.ModelTask;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.cntrl.Developer;
 import sorcer.core.signature.LocalSignature;
@@ -276,6 +277,10 @@ public class ServiceDesign extends MultiFiSlot implements Design {
 
     @Override
     public Type getArchitectureType() throws RemoteException {
+        Contextion obj = getDiscipline();
+        if (obj instanceof ServiceNode) {
+            return (( ModelTask )((ServiceNode)obj).getOutDispatcher()).getModel().getClass();
+        }
         return getDiscipline().getClass();
     }
 

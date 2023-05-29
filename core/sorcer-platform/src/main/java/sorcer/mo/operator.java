@@ -27,6 +27,7 @@ import sorcer.core.context.model.ent.cntrl.*;
 import sorcer.core.context.model.ent.cntrl.Dispatch;
 import sorcer.core.context.model.req.RequestTransmodel;
 import sorcer.core.context.model.req.Req;
+import sorcer.core.context.model.req.SnrModel;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.service.*;
 import sorcer.service.Analysis;
@@ -977,11 +978,6 @@ public class operator {
         return context;
     }
 
-    public static Model snrModel(String name, Object... objects)
-        throws ContextException, RemoteException {
-        return reqModel(name, objects);
-    }
-
     public static EntryModel entModel(String name, Object... objects)
         throws ContextException {
         EntryModel pm = new EntryModel(name);
@@ -998,6 +994,15 @@ public class operator {
         if (obj instanceof Pcr)
             obj = (( Pcr ) obj).evaluate(parametrs);
         return obj;
+    }
+
+    public static Model snrModel(Object... items) throws ContextException, RemoteException {
+        // to be continued with specialized neural models
+        SnrModel snrMdel = new SnrModel();
+        Object[] dest = new Object[items.length + 1];
+        System.arraycopy(items, 0, dest, 1, items.length);
+        dest[0] = snrMdel;
+        return reqModel(items);
     }
 
     public static Model reqModel(Object... items) throws ContextException, RemoteException {
