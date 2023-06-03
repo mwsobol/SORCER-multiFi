@@ -1318,7 +1318,7 @@ public class operator {
             return ( Collaboration ) (( Context ) data[0]).getSubjectValue();
         }
         String name = getUnknown();
-        List<Domain> domains = new ArrayList<>();
+        List<Discipline> domains = new ArrayList<>();
         List<ServiceFidelity> discFis = new ArrayList<>();
         Dependency dependency = null;
         ExecDeps execDeps = null;
@@ -1379,7 +1379,7 @@ public class operator {
 
         if (domainPaths == null) {
             domainPaths = new Paths();
-            for (Domain d : domains) {
+            for (Discipline d : domains) {
                 domainPaths.add(new Path(d.getName()));
             }
         }
@@ -1536,7 +1536,7 @@ public class operator {
         if (rgnName != null) {
             name = rgnName;
         }
-        List<Node> nodes = new ArrayList<>();
+        List<Discipline> nodes = new ArrayList<>();
         List<ServiceFidelity> discFis = new ArrayList<>();
         Dependency dependency = null;
         ExecDeps execDeps = null;
@@ -1555,10 +1555,10 @@ public class operator {
                 // initialize node if thr instance was created frm builder signature
                 if ((( Node ) o).getName() == null) {
                     NodeFi fi = ( NodeFi ) (( Node ) o).getMultiFi().get(0);
-                    (( Node ) o).getMultiFi().setSelect(fi);
-                    (( Node ) o).setName(fi.getName());
+                    (( Discipline ) o).getMultiFi().setSelect(fi);
+                    (( Discipline ) o).setName(fi.getName());
                 }
-                nodes.add(( Node ) o);
+                nodes.add(( Discipline ) o);
             } else if (o instanceof DataContext) {
                 inContext = ( Context ) o;
             } else if (o instanceof Dependency) {
@@ -1572,7 +1572,7 @@ public class operator {
             }
         }
 
-        Region rgn = new RegionCollab(name, nodes);
+        Region rgn = new Collaboration(name, nodes);
         if (nodes.size() == 1 && (name == null || name.contains("unknown"))) {
             rgn.setName(nodes.get(0).getName());
         }
@@ -1598,7 +1598,7 @@ public class operator {
 
         if (nodePaths == null) {
             nodePaths = new Paths();
-            for (Node nd : nodes) {
+            for (Contextion nd : nodes) {
                 nodePaths.add(new Path(nd.getName()));
             }
         }

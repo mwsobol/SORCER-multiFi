@@ -40,7 +40,7 @@ import static sorcer.so.operator.*;
 /**
  * @author Mike Sobolewski
  */
-public class Collaboration extends ServiceDiscipline implements Dependency, cxtn {
+public class Collaboration extends ServiceDiscipline implements Region, Dependency, cxtn {
 
 	static final long serialVersionUID = 1L;
 
@@ -74,7 +74,7 @@ public class Collaboration extends ServiceDiscipline implements Dependency, cxtn
 
 	protected Fidelity<Development> developerFi;
 
-	protected Map<String, Contextion> children = new HashMap<>();
+	protected Map<String, Discipline> children = new HashMap<>();
 
 	protected List<Coupling> couplings;
 
@@ -102,6 +102,8 @@ public class Collaboration extends ServiceDiscipline implements Dependency, cxtn
 
 	protected Contextion parent;
 
+	private Supervision supervisor;
+
 	protected boolean isExec = true;
 
 	public Collaboration() {
@@ -117,16 +119,9 @@ public class Collaboration extends ServiceDiscipline implements Dependency, cxtn
 		serviceStrategy = new ModelStrategy(this);
     }
 
-    public Collaboration(String name, Contextion[] domains) throws RemoteException {
-        this(name);
-        for (Contextion domain : domains) {
-                this.children.put(domain.getDomainName(), domain);
-        }
-    }
-
-	public Collaboration(String name, List<Domain> domains) throws RemoteException {
+	public Collaboration(String name, List<Discipline> domains) throws RemoteException {
 		this(name);
-		for (Domain domain : domains) {
+		for (Discipline domain : domains) {
 			this.children.put(domain.getDomainName(), domain);
 		}
 	}
@@ -361,7 +356,25 @@ public class Collaboration extends ServiceDiscipline implements Dependency, cxtn
 	}
 
 	@Override
+	public Supervision getSupervisor() {
+		return supervisor;
+	}
+
+	@Override
+	public void setSupervisor(Supervision supervisor) {
+		this.supervisor = supervisor;
+	}
+
+	@Override
 	public Context evaluate(Context context, Arg... args) throws ServiceException {
+		if (children.size() == 1) {
+			try {
+				output =  children.values().iterator().next().evaluate(context, args);
+				return output;
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
 		Context out = null;
 		try {
 			input = getInput();
@@ -453,7 +466,7 @@ public class Collaboration extends ServiceDiscipline implements Dependency, cxtn
 				collabOut = new ServiceContext(getName());
 			}
 		}
-		Contextion domain = null;
+		Discipline domain = null;
 		try {
 			for (Path path : domainPaths) {
 				domain = children.get(path.path);
@@ -546,12 +559,12 @@ public class Collaboration extends ServiceDiscipline implements Dependency, cxtn
 	public void initializeDomains() throws SignatureException {
 		// initialize domains specified by builder signatures
 		try {
-			List<Contextion> domainList = new ArrayList<>();
+			List<Discipline> domainList = new ArrayList<>();
 			List<String> dnv = new ArrayList<>();
-			Iterator<Map.Entry<String, Contextion>> i = children.entrySet().iterator();
+			Iterator<Map.Entry<String, Discipline>> i = children.entrySet().iterator();
 			while (i.hasNext()) {
-				Map.Entry<String, Contextion> ent = i.next();
-				Contextion cxtn = ent.getValue();
+				Map.Entry<String, Discipline> ent = i.next();
+				Discipline cxtn = ent.getValue();
 				String name = ent.getKey();
 				if (cxtn instanceof SignatureDomain) {
 					domainList.add(cxtn);
@@ -563,7 +576,7 @@ public class Collaboration extends ServiceDiscipline implements Dependency, cxtn
 				children.remove(name);
 			}
 			// recreate domains from deleted Signatures
-			for (Contextion domain : domainList) {
+			for (Discipline domain : domainList) {
 				boolean isExec = domain.isExec();
 				domain = (( SignatureDomain ) domain).getDomain();
 				children.put(domain.getName(), domain);
@@ -663,7 +676,7 @@ public class Collaboration extends ServiceDiscipline implements Dependency, cxtn
 		this.domainName = domainName;
 	}
 
-	public Map<String, Contextion> getChildren() {
+	public Map<String, Discipline> getChildren() {
 		return children;
 	}
 
