@@ -47,6 +47,8 @@ public class ArithmeticMograms {
 //			ent("y3", expr("y1 - y2", args("y1", "y2"))),
 			ent("y3", expr("y1 - y2", args("y1", "y2")), ckpt(true)),
 			response("y1", "y2", "y3"));
+		// implement a composition functor for entries in the model
+//			ent( "y4", args("y1", "y2", "y3"));
 
 		Context out = response(mdl);
 		logger.info("out: " + out);
@@ -55,6 +57,8 @@ public class ArithmeticMograms {
 		assertTrue(get(out, "y3").equals(400.0));
 		assertTrue(get(out, "y1").equals(500.0));
 		assertTrue(get(out, "y2").equals(100.0));
+
+
 	}
 
 	// The pattern recommended for INN HA4 assignment

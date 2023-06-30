@@ -5,6 +5,7 @@ import sorcer.service.*;
 import sorcer.service.modeling.Finalization;
 import sorcer.service.modeling.Initialization;
 
+import java.lang.reflect.Type;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -208,6 +209,11 @@ public class Transdesign implements Design {
     @Override
     public void setName(String name) {
 
+    }
+
+    @Override
+    public Type getArchitectureType() {
+        return getClass();
     }
 
     @Override

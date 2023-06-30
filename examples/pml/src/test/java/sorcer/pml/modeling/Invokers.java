@@ -133,7 +133,7 @@ public class Invokers {
 
 	@Test
 	public void serviceNeuronFidelities() throws Exception {
-		Model nm = model("neural-model",
+		Model nm = snrModel("neural-model",
 			snr("x1", 10.0), snr("x2", 20.0),
 			snr("x3", weights(val("x1", 2.0), val("x2", 5.0)), signals("x1", "x2")),
 			snr("x4", mnFi(

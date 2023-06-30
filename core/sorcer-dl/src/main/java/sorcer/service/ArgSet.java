@@ -179,8 +179,7 @@ public class ArgSet extends LinkedHashSet<Arg> {
 		}
 	}
 
-	@Override
-	public int size() {
+	public int count() {
 		if (super.size() == 0 && paths != null) {
 			return paths.size();
 		} else {

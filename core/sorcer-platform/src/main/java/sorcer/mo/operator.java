@@ -27,6 +27,7 @@ import sorcer.core.context.model.ent.cntrl.*;
 import sorcer.core.context.model.ent.cntrl.Dispatch;
 import sorcer.core.context.model.req.RequestTransmodel;
 import sorcer.core.context.model.req.Req;
+import sorcer.core.context.model.req.SnrModel;
 import sorcer.core.plexus.ContextFidelityManager;
 import sorcer.core.service.*;
 import sorcer.service.Analysis;
@@ -977,11 +978,6 @@ public class operator {
         return context;
     }
 
-    public static Model snrModel(String name, Object... objects)
-        throws ContextException, RemoteException {
-        return reqModel(name, objects);
-    }
-
     public static EntryModel entModel(String name, Object... objects)
         throws ContextException {
         EntryModel pm = new EntryModel(name);
@@ -998,6 +994,15 @@ public class operator {
         if (obj instanceof Pcr)
             obj = (( Pcr ) obj).evaluate(parametrs);
         return obj;
+    }
+
+    public static Model snrModel(Object... items) throws ContextException, RemoteException {
+        // to be continued with specialized neural models
+        SnrModel snrMdel = new SnrModel();
+        Object[] dest = new Object[items.length + 1];
+        System.arraycopy(items, 0, dest, 1, items.length);
+        dest[0] = snrMdel;
+        return reqModel(items);
     }
 
     public static Model reqModel(Object... items) throws ContextException, RemoteException {
@@ -1313,7 +1318,7 @@ public class operator {
             return ( Collaboration ) (( Context ) data[0]).getSubjectValue();
         }
         String name = getUnknown();
-        List<Domain> domains = new ArrayList<>();
+        List<Discipline> domains = new ArrayList<>();
         List<ServiceFidelity> discFis = new ArrayList<>();
         Dependency dependency = null;
         ExecDeps execDeps = null;
@@ -1374,7 +1379,7 @@ public class operator {
 
         if (domainPaths == null) {
             domainPaths = new Paths();
-            for (Domain d : domains) {
+            for (Discipline d : domains) {
                 domainPaths.add(new Path(d.getName()));
             }
         }
@@ -1531,7 +1536,7 @@ public class operator {
         if (rgnName != null) {
             name = rgnName;
         }
-        List<Node> nodes = new ArrayList<>();
+        List<Discipline> nodes = new ArrayList<>();
         List<ServiceFidelity> discFis = new ArrayList<>();
         Dependency dependency = null;
         ExecDeps execDeps = null;
@@ -1550,10 +1555,10 @@ public class operator {
                 // initialize node if thr instance was created frm builder signature
                 if ((( Node ) o).getName() == null) {
                     NodeFi fi = ( NodeFi ) (( Node ) o).getMultiFi().get(0);
-                    (( Node ) o).getMultiFi().setSelect(fi);
-                    (( Node ) o).setName(fi.getName());
+                    (( Discipline ) o).getMultiFi().setSelect(fi);
+                    (( Discipline ) o).setName(fi.getName());
                 }
-                nodes.add(( Node ) o);
+                nodes.add(( Discipline ) o);
             } else if (o instanceof DataContext) {
                 inContext = ( Context ) o;
             } else if (o instanceof Dependency) {
@@ -1567,7 +1572,7 @@ public class operator {
             }
         }
 
-        Region rgn = new CollabRegion(name, nodes);
+        Region rgn = new Collaboration(name, nodes);
         if (nodes.size() == 1 && (name == null || name.contains("unknown"))) {
             rgn.setName(nodes.get(0).getName());
         }
@@ -1593,7 +1598,7 @@ public class operator {
 
         if (nodePaths == null) {
             nodePaths = new Paths();
-            for (Node nd : nodes) {
+            for (Contextion nd : nodes) {
                 nodePaths.add(new Path(nd.getName()));
             }
         }

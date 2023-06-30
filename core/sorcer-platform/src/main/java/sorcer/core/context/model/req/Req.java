@@ -24,7 +24,7 @@ import static sorcer.eo.operator.task;
 
 /**
  * A service request function <code>Req</code> is a functional entry <code>Entry</code> which
- * is dependent on its encapsulated requst service (requestor).
+ * is dependent on its encapsulated requst service (Req).
  * Created by Mike Sobolewski
  */
 public class Req extends Function<Object> implements Serviceableness,
