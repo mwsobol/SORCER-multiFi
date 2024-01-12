@@ -23,7 +23,7 @@ String ref = new File(rootProject.projectDir, ".git/HEAD").text
 int ndx = ref.lastIndexOf("/")
 String branch = ref.substring(ndx+1).trim()
 String branchRef = branch.equals("master")?"":"-$branch"
-version = "8.9$branchRef"
+version = "8.9.1$branchRef"
 
 apply plugin: 'idea'
 idea {
