@@ -24,12 +24,14 @@ import java.util.List;
 /**
  * @author Mike Sobolewski
  */
-public interface Region extends Transdiscipline {
+public  class Region extends Collaboration {
 
-    public Supervision getSupervisor();
+    public Region(String name) {
+        super(name);
+    }
 
-    public void setSupervisor(Supervision supervisor);
-
-    public Context evaluate(Context context, Arg... args) throws ServiceException;
+    public Region(String name, List<Discipline> domains) throws RemoteException {
+        super(name, domains);
+    }
 
 }

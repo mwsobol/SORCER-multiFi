@@ -59,7 +59,11 @@ public class Paths extends ArrayList<Path> implements Arg {
     public List<String> getPathNames() {
         List<String> paths = new ArrayList<>();
         for (int i = 0; i < size(); i++) {
-            paths.add(get(i).path);
+            if (get(i).domain != null) {
+                paths.add(get(i).path + "$" + get(i).domain);
+            } else {
+                paths.add(get(i).path);
+            }
         }
 
         return paths;

@@ -40,7 +40,7 @@ import static sorcer.so.operator.*;
 /**
  * @author Mike Sobolewski
  */
-public class Collaboration extends ServiceTransdiscipline implements Region, Dependency, cxtn {
+public class Collaboration extends ServiceTransdiscipline implements Dependency, cxtn {
 
 	static final long serialVersionUID = 1L;
 
@@ -355,12 +355,10 @@ public class Collaboration extends ServiceTransdiscipline implements Region, Dep
 			return response((Mogram) request, context);
 	}
 
-	@Override
 	public Supervision getSupervisor() {
 		return supervisor;
 	}
 
-	@Override
 	public void setSupervisor(Supervision supervisor) {
 		this.supervisor = supervisor;
 	}

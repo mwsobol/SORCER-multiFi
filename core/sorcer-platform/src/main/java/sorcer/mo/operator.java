@@ -1572,7 +1572,7 @@ public class operator {
             }
         }
 
-        Region rgn = new Collaboration(name, nodes);
+        Region rgn = new Region(name, nodes);
         if (nodes.size() == 1 && (name == null || name.contains("unknown"))) {
             rgn.setName(nodes.get(0).getName());
         }
