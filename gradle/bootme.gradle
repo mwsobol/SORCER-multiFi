@@ -1,5 +1,5 @@
 import com.sun.tools.attach.VirtualMachine
-import sun.management.ConnectorAddressLink
+import sun.management.ConnectionAddressLink
 
 import javax.management.MBeanServerConnection
 import javax.management.remote.JMXConnector
