@@ -75,7 +75,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected ServiceStrategy domainStrategy;
     protected Differentiator differentiator;
     protected Differentiator fdDifferentiator;
-    protected Differentiator globalDifferentiator;
     protected Fidelity<Analyzer> mdaFi;
     protected List<Coupling> couplings;
     protected ContextSelector contextSelector;
@@ -1185,14 +1184,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     }
 
-    public Differentiator getGlobalDifferentiator() {
-        return globalDifferentiator;
-    }
-
-    public void setGlobalDifferentiator(Differentiator globalDifferentiator) {
-        this.globalDifferentiator = globalDifferentiator;
-    }
-
     @Override
     public List<ThrowableTrace> getAllExceptions() throws RemoteException {
         return null;
@@ -1386,7 +1377,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.domainStrategy = mogram.domainStrategy;
         this.differentiator = mogram.differentiator;
         this.fdDifferentiator = mogram.fdDifferentiator;
-        this.globalDifferentiator = mogram.globalDifferentiator;
         this.mdaFi = mogram.mdaFi;
         this.couplings = mogram.couplings;
         this.contextSelector = mogram.contextSelector;
