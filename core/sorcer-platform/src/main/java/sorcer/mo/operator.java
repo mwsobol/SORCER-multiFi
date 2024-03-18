@@ -1775,6 +1775,9 @@ public class operator {
         return new Developer(name, development);
     }
 
+    public static Designer des(String name, Development development) {
+        return new Designer(name, development);
+    }
     public static ServiceFidelity dscFi(Signature... signatures) {
         return dscFi(null, signatures);
     }
